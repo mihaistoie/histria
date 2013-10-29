@@ -18,38 +18,18 @@ namespace Sikia
             bool isSet = (invocation.Method.Name.StartsWith("set_"));
             string propertyName = "";
             string className = "" ;
+            PropertyInfo pi = null;
             if (isSet) 
             {
                propertyName = invocation.Method.Name.Substring(4);
                className = invocation.TargetType.Name;
-              // if (invocation.Arguments[0] == "John") return; 
+               pi = invocation.TargetType.GetProperty(propertyName);
+               if (invocation.Arguments[0] == pi.GetValue(invocation.InvocationTarget, null)) return; 
             }
             invocation.Proceed();
 
             if (isSet)
-            {
-                var pi = invocation.TargetType.GetProperty(propertyName);
-
- /*
-                // check for the special attribute
-                if (!pi.HasAttribute<INPCAttribute>())
-                    return;
-
-                FieldInfo info = invocation.TargetType.GetFields(
-                        BindingFlags.Instance | BindingFlags.NonPublic)
-                            .Where(f => f.FieldType == typeof(PropertyChangedEventHandler))
-                            .FirstOrDefault();
-
-                if (info != null)
-                {
-                    //get the INPC field, and invoke it we managed to get it ok
-                    PropertyChangedEventHandler evHandler = 
-                        info.GetValue(invocation.InvocationTarget) as PropertyChangedEventHandler;
-                    if (evHandler != null)
-                        evHandler.Invoke(invocation.TargetType, 
-                            new PropertyChangedEventArgs(propertyName));
-                }
-				*/
+            {   
             }
 			
         }
