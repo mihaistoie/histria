@@ -21,8 +21,11 @@ namespace Sikia
             PropertyInfo pi = null;
             if (isSet) 
             {
+               
                propertyName = invocation.Method.Name.Substring(4);
                className = invocation.TargetType.Name;
+               //System.Console.WriteLine("Set on  {0}.{0}", className, propertyName);
+
                pi = invocation.TargetType.GetProperty(propertyName);
                if (invocation.Arguments[0] == pi.GetValue(invocation.InvocationTarget, null)) return; 
             }

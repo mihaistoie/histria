@@ -58,6 +58,8 @@
     <Compile Include="src\Aop\Interceptors\InterceptorInstaller.cs" />
     <Compile Include="src\Aop\Interceptors\PropChangedInterceptor.cs" />
     <Compile Include="src\Framework\BaseObject.cs" />
+    <Compile Include="src\Framework\AttributeReader.cs" />
+    <Compile Include="src\Framework\DataModel.cs" />
     <Compile Include="src\Models\Customer.cs" />
   </ItemGroup>
   <ItemGroup />
