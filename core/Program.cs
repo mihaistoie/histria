@@ -7,7 +7,6 @@ using Castle.Windsor.Installer;
 using Sikia.Models;
 using Sikia.Framework.Attributes;
 using Sikia.Framework.Model;
-using Sikia.Models;
 
 namespace Sikia
 {
