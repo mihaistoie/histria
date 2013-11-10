@@ -7,6 +7,7 @@ using Castle.Windsor.Installer;
 using Sikia.Models;
 using Sikia.Framework.Attributes;
 using Sikia.Framework.Model;
+using Sikia.Framework.DataModel;
 
 namespace Sikia
 {
@@ -22,7 +23,8 @@ namespace Sikia
             Customer cust = container.Resolve<Customer>();
             cust.FirstName = "John";
             cust.LastName = "Smith";
-
+            ClassModelLoader.LoadFromNameSpace(typeof(DummyClass).Namespace, Model.Instance);
+            
 
             ModelLoader.ReadAttributes(typeof(DummyClass).Namespace);
             System.Console.WriteLine("Press any key to continue");

@@ -1,12 +1,42 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Reflection;
+using System.Text;
 using Sikia.Framework.Attributes;
 
-namespace Sikia.Framework.Model
+namespace Sikia.Framework.DataModel
 {
+    class ClassModelLoader
+    {
+        public static void LoadFromNameSpace(string nameSpace, Model model)
+        {
+            Assembly cAssembly = Assembly.GetExecutingAssembly();
+            List<Type> allTypes = cAssembly.GetTypes().Where(t => String.Equals(t.Namespace, nameSpace, StringComparison.Ordinal)).ToList<Type>();
+            allTypes.ForEach(delegate(Type iType)
+            {
+                if (iType.IsEnum)
+                {
+                    //load enums 
+                    model.Enums.Add(new EnumInfoItem(iType));
+                }
+                else if (iType.IsClass && iType.IsSubclassOf(typeof(BaseObject)))
+                {
+                    model.Classes.Add(new ClassInfoItem(iType));
+                }
+                    
+                
+            });
+
+
+        }
+
+    }
+}
+
+
+
+/*
     static class ModelLoader
     {
         public static void ReadAttributes(string nameSpace)
@@ -44,13 +74,9 @@ namespace Sikia.Framework.Model
                         System.Console.WriteLine("Description of \"{0}\"  is \"{1}\"", da.Title, da.Description);
                     }
                     
-                    /*
-                    foreach (object oTemp in type.GetCustomAttributes(true))
-                    {
-                    }
-                    */
+                    
                 }
             }
         }
     }
-}
+} */

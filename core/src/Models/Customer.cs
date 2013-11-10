@@ -15,7 +15,8 @@ namespace Sikia.Models
     public enum Gender 
     {
         [Display("Masculin")]
-        Male, 
+        Male,
+        [Display("Féminin")]
         Female 
     };
 
