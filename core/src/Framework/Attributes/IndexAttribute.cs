@@ -7,6 +7,7 @@
     class IndexAttribute : System.Attribute
     {
         public string Columns = "";
+        public string Name = "";
         public bool Unique = false;
         public IndexAttribute(string iColumns) 
         {

@@ -68,7 +68,11 @@
   <ItemGroup>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="src\Framework\DataModel\PropInfo.cs" />
+    <Compile Include="src\Framework\DataModel\IndexInfo.cs" />
+    <Compile Include="src\Framework\DataModel\IndexInfoItem.cs" />
+    <Compile Include="src\Framework\DataModel\KeyItem.cs" />
+    <Compile Include="src\Framework\DataModel\ModelException.cs" />
+    <Compile Include="src\Framework\DataModel\PropInfoItem.cs" />
     <Compile Include="src\Framework\Utils\StrUtils.cs" />
     <Compile Include="src\Models\DummyClass.cs" />
     <Compile Include="src\Aop\Installers\ModelInstaller.cs" />
@@ -81,10 +85,10 @@
     <Compile Include="src\Framework\BaseObject.cs" />
     <Compile Include="src\Framework\AttributeReader.cs" />
     <Compile Include="src\Framework\DataModel.cs" />
-    <Compile Include="src\Framework\DataModel\ClassInfo.cs" />
+    <Compile Include="src\Framework\DataModel\ClassInfoItem.cs" />
     <Compile Include="src\Framework\DataModel\ClassModelLoader.cs" />
     <Compile Include="src\Framework\DataModel\Model.cs" />
-    <Compile Include="src\Framework\DataModel\EnumInfo.cs" />
+    <Compile Include="src\Framework\DataModel\EnumInfoItem.cs" />
     <Compile Include="src\Models\Customer.cs" />
   </ItemGroup>
   <ItemGroup>

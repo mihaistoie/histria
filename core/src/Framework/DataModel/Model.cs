@@ -6,20 +6,7 @@ using System.Collections.ObjectModel;
 namespace Sikia.Framework.DataModel
 {
 
-    class EnumCollection : KeyedCollection<Type, EnumInfoItem>
-    {
-        protected override Type GetKeyForItem(EnumInfoItem item)
-        {
-            return item.EnumType;
-        }
-    }
-    class ClassCollection : KeyedCollection<Type, ClassInfoItem>
-    {
-        protected override Type GetKeyForItem(ClassInfoItem item)
-        {
-            return item.ClassTypeInfo;
-        }
-    }
+   
 
     public sealed class Model
     {
@@ -38,5 +25,20 @@ namespace Sikia.Framework.DataModel
         public KeyedCollection<Type, EnumInfoItem> Enums { get { return enums; } }
         public KeyedCollection<Type, ClassInfoItem> Classes { get { return classes; } }
 
+    }
+
+    class EnumCollection : KeyedCollection<Type, EnumInfoItem>
+    {
+        protected override Type GetKeyForItem(EnumInfoItem item)
+        {
+            return item.EnumType;
+        }
+    }
+    class ClassCollection : KeyedCollection<Type, ClassInfoItem>
+    {
+        protected override Type GetKeyForItem(ClassInfoItem item)
+        {
+            return item.ClassTypeInfo;
+        }
     }
 }

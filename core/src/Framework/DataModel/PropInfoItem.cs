@@ -8,18 +8,20 @@ using Sikia.Framework.Utils;
 
 namespace Sikia.Framework.DataModel
 {
-    public class Propinfo
+    public class PropinfoItem
     {
-        private PropertyInfo pi;
+        public PropertyInfo PropInfo;
         public string Name { get; set; }
+        public string DbName { get; set; }
         public string Title { get; set; }
         public string Description { get; set; }
-        public Propinfo(PropertyInfo cPi)
+        public PropinfoItem(PropertyInfo cPi)
         {
-            pi = cPi;
-            Name = pi.Name;
+            PropInfo = cPi;
+            Name = PropInfo.Name;
+            DbName = PropInfo.Name;
             Title = Name;
-            DisplayAttribute da = pi.GetCustomAttributes(typeof(DisplayAttribute), false).FirstOrDefault() as DisplayAttribute;
+            DisplayAttribute da = PropInfo.GetCustomAttributes(typeof(DisplayAttribute), false).FirstOrDefault() as DisplayAttribute;
             Title = Name;
             if (da != null)
             {

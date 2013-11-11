@@ -20,6 +20,7 @@ namespace Sikia.Models
         Female 
     };
 
+    [Db("FirstName, LastName")]
     [Display("Customer", Description = "Class Customer")]
     public class Customer : BaseObject
     {
@@ -31,10 +32,13 @@ namespace Sikia.Models
         public virtual string FullName { get { return FirstName + " " + LastName.ToUpper(); } }
     }
     [Display("Address", Description = "Class Address")]
+    [Index("Street desc, Complement", Unique = true)]
     public class Address : BaseObject
     {
         [Display("Street", Description = "Street Address")]
         public virtual string Street { get; set; }
+        [Display("Complement", Description = "Complement Address")]
+        public virtual string Complement { get; set; }
     }
 
 }
