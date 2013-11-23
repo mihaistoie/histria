@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.ComponentModel;
+using Sikia.Aop;
 using Sikia.Framework;
 using Sikia.Framework.Attributes;
 
@@ -11,7 +12,6 @@ namespace Sikia.Models
 {
 
     [Display("Gender", Description = "Gender of Customer")]
-    [EnumCaptions("Masculin","Féminin")]
     public enum Gender 
     {
         [Display("Masculin")]
@@ -22,7 +22,7 @@ namespace Sikia.Models
 
     [Db("FirstName, LastName")]
     [Display("Customer", Description = "Class Customer")]
-    public class Customer : BaseObject
+    public class Customer : InterceptedObject
     {
         [Display("First Name", Description = "First Name of Customer")]
         public virtual string FirstName { get; set; }
@@ -33,7 +33,7 @@ namespace Sikia.Models
     }
     [Display("Address", Description = "Class Address")]
     [Index("Street desc, Complement", Unique = true)]
-    public class Address : BaseObject
+    public class Address : InterceptedObject
     {
         [Display("Street", Description = "Street Address")]
         public virtual string Street { get; set; }

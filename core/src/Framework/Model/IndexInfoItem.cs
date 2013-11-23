@@ -4,7 +4,7 @@ using System.Linq;
 using System.Reflection;
 using System.Text;
 
-namespace Sikia.Framework.DataModel
+namespace Sikia.Framework.Model
 {
     public class IndexInfoItem
     {

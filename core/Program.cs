@@ -6,8 +6,7 @@ using Castle.Windsor;
 using Castle.Windsor.Installer;
 using Sikia.Models;
 using Sikia.Framework.Attributes;
-using Sikia.Framework.Model;
-using Sikia.Framework.DataModel;
+using Sikia.Aop;
 
 namespace Sikia
 {
@@ -15,18 +14,19 @@ namespace Sikia
     {
         static void Main(string[] args)
         {
-            WindsorContainer container = new WindsorContainer();
-            container.Install(FromAssembly.This());
+            Sikia.Application.GlbApplicaton.Start();
 
 
-
-            Customer cust = container.Resolve<Customer>();
+            Customer cust = ModelFactory.Create<Customer>();
+            
             cust.FirstName = "John";
             cust.LastName = "Smith";
-            ClassModelLoader.LoadFromNameSpace(typeof(DummyClass).Namespace, Model.Instance);
+            cust.LastName = "Smith";
+            cust.LastName = "Smith";
             
 
-            ModelLoader.ReadAttributes(typeof(DummyClass).Namespace);
+            
+            //ModelLoader.ReadAttributes(typeof(DummyClass).Namespace);
             System.Console.WriteLine("Press any key to continue");
             System.Console.ReadKey();
 

@@ -7,16 +7,16 @@ using Sikia.Framework.Attributes;
 using Sikia.Framework.Utils;
 using System.Collections.ObjectModel;
 
-namespace Sikia.Framework.DataModel
+namespace Sikia.Framework.Model
 {
-    class PropCollection : KeyedCollection<PropertyInfo, PropinfoItem>
+    public class PropertiesCollection : KeyedCollection<PropertyInfo, PropinfoItem>
     {
         protected override PropertyInfo GetKeyForItem(PropinfoItem item)
         {
             return item.PropInfo;
         }
     }
-    class KeysCollection : KeyedCollection<PropertyInfo, KeyItem>
+    public class KeysCollection : KeyedCollection<PropertyInfo, KeyItem>
     {
         protected override PropertyInfo GetKeyForItem(KeyItem item)
         {
@@ -31,10 +31,11 @@ namespace Sikia.Framework.DataModel
     {
         #region private members
         private readonly Dictionary<string, PropertyInfo> propsMap = new Dictionary<string, PropertyInfo>();
-        private readonly KeyedCollection<PropertyInfo, PropinfoItem> properties = new PropCollection();
-        private readonly KeyedCollection<PropertyInfo, KeyItem> keys;
+        private readonly PropertiesCollection properties = new PropertiesCollection();
+        private readonly KeysCollection key;
         private readonly List<IndexInfo> indexes = new List<IndexInfo>();
         #endregion
+
         public Type ClassTypeInfo { get; set; }
         public ClassType ClassType = ClassType.Unknown;
         public string Name { get; set; }
@@ -42,16 +43,38 @@ namespace Sikia.Framework.DataModel
         public string Description { get; set; }
         public string DbName { get; set; }
 
-        #region Properties/Keys/Indexes
-        public KeyedCollection<PropertyInfo, PropinfoItem> Properties { get { return properties; } }
-        public KeyedCollection<PropertyInfo, KeyItem> Keys { get { return keys; } }
+        #region Properties/Primary Key/Indexes
+        public PropertiesCollection Properties { get { return properties; } }
+        public KeysCollection Key { get { return key; } }
         public List<IndexInfo> Indexes { get { return indexes; } }
         #endregion
-        public PropertyInfo Name2Propertyinfo(string propName)
+
+        
+        #region Loading
+        public void AfterLoad()
+        {
+            foreach(PropinfoItem pi in properties)
+            {
+                pi.AfterLoad(this);
+            }
+        }
+        #endregion
+        public PropertyInfo PropertyInfoByName(string propName)
         {
             try
             {
                 return propsMap[propName];
+            }
+            catch (Exception)
+            {
+                return null;
+            }
+        }
+        public PropinfoItem PropertyByName(string propName)
+        {
+            try
+            {
+                return properties[propsMap[propName]];
             }
             catch (Exception)
             {
@@ -75,6 +98,7 @@ namespace Sikia.Framework.DataModel
             if (Description == "") Description = Title;
 
             PropertyInfo[] props = ClassTypeInfo.GetProperties(BindingFlags.Public | BindingFlags.Instance);
+            
             foreach (PropertyInfo pi in props)
             {
                 PropinfoItem item = new PropinfoItem(pi);
@@ -88,7 +112,7 @@ namespace Sikia.Framework.DataModel
                 ClassType = ClassType.Model;
                 DbName = (String.IsNullOrEmpty(db.TableName) ? Name : db.TableName);
                 // Load primary key
-                keys = new KeysCollection();
+                key = new KeysCollection();
                 string[] akeys = db.Keys.Split(',');
                 if (akeys.Length == 0)
                 {
@@ -96,11 +120,11 @@ namespace Sikia.Framework.DataModel
                 }
                 foreach (string akey in akeys)
                 {
-                    string key = akey.Trim();
-                    PropertyInfo pi = Name2Propertyinfo(key);
+                    string skey = akey.Trim();
+                    PropertyInfo pi = PropertyInfoByName(skey);
                     if (pi == null)
-                        throw new ModelException(String.Format(StrUtils.TT("Invalid field {0}  in Primary key for {1}."), key, Name), Name);
-                    keys.Add(new KeyItem(key, pi));
+                        throw new ModelException(String.Format(StrUtils.TT("Invalid field {0}  in Primary key for {1}."), skey, Name), Name);
+                    key.Add(new KeyItem(skey, pi));
                 }
 
             }
@@ -112,9 +136,7 @@ namespace Sikia.Framework.DataModel
                 IndexInfo ii = new IndexInfo();
                 ii.Load(ia.Columns, ia.Name, ia.Unique, this);
                 indexes.Add(ii);
-            };
-
-
+            }
 
         }
 

@@ -6,7 +6,7 @@ using System.Text;
 using Sikia.Framework.Attributes;
 using Sikia.Framework.Utils;
 
-namespace Sikia.Framework.DataModel
+namespace Sikia.Framework.Model
 {
     public class EnumInfoItem: Dictionary<int, string>
     {

@@ -3,7 +3,7 @@ using Castle.MicroKernel.Registration;
 using Castle.MicroKernel.SubSystems.Configuration;
 using Castle.Windsor;
 
-namespace CastleInterceptors
+namespace Sikia.Aop.Castle
 {
     /// <summary>
     /// Installs all castle Interceptors
@@ -14,7 +14,7 @@ namespace CastleInterceptors
 
         public void Install(IWindsorContainer container, IConfigurationStore store)
         {
-            container.Register(AllTypes.FromThisAssembly().BasedOn<IInterceptor>());
+            container.Register(Classes.FromThisAssembly().BasedOn<IInterceptor>());
         }
 
         #endregion

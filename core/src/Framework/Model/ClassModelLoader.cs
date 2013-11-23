@@ -3,9 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Text;
+using Sikia.Aop;
 using Sikia.Framework.Attributes;
 
-namespace Sikia.Framework.DataModel
+namespace Sikia.Framework.Model
 {
     class ClassModelLoader
     {
@@ -20,9 +21,9 @@ namespace Sikia.Framework.DataModel
                     //load enums 
                     model.Enums.Add(new EnumInfoItem(iType));
                 }
-                else if (iType.IsClass && iType.IsSubclassOf(typeof(BaseObject)))
+                else if (iType.IsClass && iType.IsSubclassOf(typeof(InterceptedObject)))
                 {
-                    model.Classes.Add(new ClassInfoItem(iType));
+                    model.ModelClasses.Add(new ClassInfoItem(iType));
                 }
                     
                 
