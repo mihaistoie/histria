@@ -71,6 +71,7 @@
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="src\Aop\Castle\CastleFactory.cs" />
+    <Compile Include="src\Aop\RulePluginObject.cs" />
     <Compile Include="src\Aop\ModelFactory.cs" />
     <Compile Include="src\Application\GlbApplicaton.cs" />
     <Compile Include="src\DataBase\ConnectionInfo.cs" />
@@ -79,13 +80,17 @@
     <Compile Include="src\DataBase\DBServices.cs" />
     <Compile Include="src\DataBase\SqlServer\MSSqlConnectionInfo.cs" />
     <Compile Include="src\DataBase\SqlServer\SqlServerTranslator.cs" />
+    <Compile Include="src\Framework\Attributes\RuleAttribute.cs" />
+    <Compile Include="src\Framework\Attributes\RulesForAttribute.cs" />
     <Compile Include="src\Framework\Model\IndexInfo.cs" />
     <Compile Include="src\Framework\Model\IndexInfoItem.cs" />
     <Compile Include="src\Framework\Model\KeyItem.cs" />
-    <Compile Include="src\Framework\Model\ModelException.cs" />
+    <Compile Include="src\Framework\Model\RuleItem.cs" />
+    <Compile Include="src\Framework\Types\ModelException.cs" />
     <Compile Include="src\Framework\Model\PropInfoItem.cs" />
     <Compile Include="src\DataBase\DBStructure.cs" />
     <Compile Include="src\DataBase\DBTable.cs" />
+    <Compile Include="src\Framework\Types\Defs.cs" />
     <Compile Include="src\Framework\Utils\StrUtils.cs" />
     <Compile Include="src\Aop\Castle\ModelInstaller.cs" />
     <Compile Include="src\Aop\Castle\InterceptorInstaller.cs" />
@@ -96,7 +101,6 @@
     <Compile Include="src\Framework\Attributes\IndexAttribute.cs" />
     <Compile Include="src\Aop\InterceptedObject.cs" />
     <Compile Include="src\Framework\Model\ClassInfoItem.cs" />
-    <Compile Include="src\Framework\Model\ClassModelLoader.cs" />
     <Compile Include="src\Framework\Model\Model.cs" />
     <Compile Include="src\Framework\Model\EnumInfoItem.cs" />
     <Compile Include="src\Models\Customer.cs" />

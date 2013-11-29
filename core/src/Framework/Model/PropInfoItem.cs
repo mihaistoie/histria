@@ -12,14 +12,14 @@ namespace Sikia.Framework.Model
     {
         private string title;
         private string description;
-        //private MethodInfo mtitle = null;
-        //private MethodInfo mdescription = null;
-   
+        private MethodInfo titleGet = null;
+        private MethodInfo descriptionGet = null;
+
         public PropertyInfo PropInfo;
         public string Name { get; set; }
         public string DbName { get; set; }
-        public string Title { get { return title; } }
-        public string Description { get { return description; } }
+        public string Title { get { return titleGet == null ? title : (string)titleGet.Invoke(this, null); } }
+        public string Description { get { return descriptionGet == null ? description : (string)descriptionGet.Invoke(this, null); } }
         public PropinfoItem(PropertyInfo cPi)
         {
             PropInfo = cPi;

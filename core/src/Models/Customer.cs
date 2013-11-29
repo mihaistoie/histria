@@ -25,11 +25,18 @@ namespace Sikia.Models
     public class Customer : InterceptedObject
     {
         [Display("First Name", Description = "First Name of Customer")]
-        public virtual string FirstName { get; set; }
+        public  string FirstName { get; set; }
+        
         [Display("Last Name", Description = "Last Name of Customer")]
-        public virtual string LastName { get; set; }
+        public  string LastName { get; set; }
+        
         [Display("Full Name", Description = "Full Name of Customer")]
-        public virtual string FullName { get { return FirstName + " " + LastName.ToUpper(); } }
+        public string FullName { get; set; }
+        
+        [Rule("Propagation", Property = "FirstName")]
+        [Rule("Propagation", Property = "LastName")]
+        [Display("Calculate Full Name", Description = "Calculate Full Name")]
+        public void CalculatePersistentFullName() { FullName = FirstName + " " + LastName.ToUpper(); }
     }
     [Display("Address", Description = "Class Address")]
     [Index("Street desc, Complement", Unique = true)]

@@ -1,9 +1,10 @@
-﻿using Sikia.Framework.Utils;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Text;
+using Sikia.Framework.Types;
+using Sikia.Framework.Utils;
 
 namespace Sikia.Framework.Model
 {

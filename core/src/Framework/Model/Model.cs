@@ -66,7 +66,11 @@ namespace Sikia.Framework.Model
                         }
                         else if (iType.IsClass && iType.IsSubclassOf(typeof(InterceptedObject)))
                         {
-                            classes.Add(new ClassInfoItem(iType));
+                            classes.Add(new ClassInfoItem(iType, false));
+                        }
+                        else if (iType.IsClass && iType.IsSubclassOf(typeof(RulePluginObject)))
+                        {
+                            classes.Add(new ClassInfoItem(iType, false));
                         }
 
                     });

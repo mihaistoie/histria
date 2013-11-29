@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace Sikia.Framework.Model
+namespace Sikia.Framework.Types
 {
     public class ModelException : Exception
     {
