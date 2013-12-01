@@ -85,7 +85,9 @@
     <Compile Include="src\Framework\Model\IndexInfo.cs" />
     <Compile Include="src\Framework\Model\IndexInfoItem.cs" />
     <Compile Include="src\Framework\Model\KeyItem.cs" />
+    <Compile Include="src\Framework\Model\MethodItem.cs" />
     <Compile Include="src\Framework\Model\RuleItem.cs" />
+    <Compile Include="src\Framework\Model\RuleList.cs" />
     <Compile Include="src\Framework\Types\ModelException.cs" />
     <Compile Include="src\Framework\Model\PropInfoItem.cs" />
     <Compile Include="src\DataBase\DBStructure.cs" />

@@ -21,12 +21,19 @@ namespace Sikia
             
             cust.FirstName = "John";
             cust.LastName = "Smith";
-            cust.LastName = "Smith";
-            cust.LastName = "Smith";
+            System.Console.WriteLine(cust.FullName);
+
+            RussianCustomer rcust = ModelFactory.Create<RussianCustomer>();
+
+            rcust.FirstName = "Fiodor";
+            rcust.LastName = "Dostoïevski";
+            rcust.MiddleName = "A."; 
+            System.Console.WriteLine(rcust.FullName);
             
 
             
             //ModelLoader.ReadAttributes(typeof(DummyClass).Namespace);
+           
             System.Console.WriteLine("Press any key to continue");
             System.Console.ReadKey();
 
