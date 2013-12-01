@@ -12,12 +12,12 @@ namespace Sikia.Models
 {
 
     [Display("Gender", Description = "Gender of Customer")]
-    public enum Gender 
+    public enum Gender
     {
         [Display("Masculin")]
         Male,
         [Display("Féminin")]
-        Female 
+        Female
     };
 
     [Db("FirstName, LastName")]
@@ -25,19 +25,37 @@ namespace Sikia.Models
     public class Customer : InterceptedObject
     {
         [Display("First Name", Description = "First Name of Customer")]
-        public  string FirstName { get; set; }
-        
+        public virtual string FirstName { get; set; }
+
         [Display("Last Name", Description = "Last Name of Customer")]
-        public  string LastName { get; set; }
-        
+        public virtual string LastName { get; set; }
+
         [Display("Full Name", Description = "Full Name of Customer")]
-        public string FullName { get; set; }
-        
+        public virtual string FullName { get; set; }
+
         [Rule("Propagation", Property = "FirstName")]
         [Rule("Propagation", Property = "LastName")]
         [Display("Calculate Full Name", Description = "Calculate Full Name")]
-        public void CalculatePersistentFullName() { FullName = FirstName + " " + LastName.ToUpper(); }
+        protected virtual void CalculatePersistentFullName()
+        {
+            FullName = FirstName + " " + (String.IsNullOrEmpty(LastName) ? "" : LastName).ToUpper();
+        }
     }
+
+
+    [Display("Russian Customer", Description = "Russian Class Customer")]
+    public class RussianCustomer : Customer
+    {
+        [Display("Middle Name", Description = "Middle Name of Customer")]
+        public virtual string MiddleName { get; set; }
+        [Rule("Propagation", Property = "MiddleName")]
+        protected override void CalculatePersistentFullName()
+        {
+            FullName = (String.IsNullOrEmpty(LastName) ? "" : LastName).ToUpper() + " " + MiddleName + " " + FirstName;
+        }
+    }
+
+
     [Display("Address", Description = "Class Address")]
     [Index("Street desc, Complement", Unique = true)]
     public class Address : InterceptedObject

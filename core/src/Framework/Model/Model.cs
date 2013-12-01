@@ -6,6 +6,7 @@ using System.Reflection;
 using Sikia.Settings;
 using Sikia.Aop;
 
+
 namespace Sikia.Framework.Model
 {
 
@@ -70,7 +71,7 @@ namespace Sikia.Framework.Model
                         }
                         else if (iType.IsClass && iType.IsSubclassOf(typeof(RulePluginObject)))
                         {
-                            classes.Add(new ClassInfoItem(iType, false));
+                            classes.Add(new ClassInfoItem(iType, true));
                         }
 
                     });
@@ -84,7 +85,16 @@ namespace Sikia.Framework.Model
         {
             foreach (ClassInfoItem cc in classes)
             {
-                cc.AfterLoad();
+                cc.ValidateAndPrepare(this);
+            }
+            foreach (ClassInfoItem cc in classes)
+            {
+                cc.ResolveInheritance(this);
+            }
+
+            foreach (ClassInfoItem cc in classes)
+            {
+                cc.Loaded(this);
             }
         }
         #endregion
@@ -100,7 +110,21 @@ namespace Sikia.Framework.Model
         ///<summary>
         /// List of Model Classes used by Application 
         ///</summary>
-        public ClassCollection ModelClasses { get { return classes; } }
+        public ClassCollection Classes { get { return classes; } }
+        ///<summary>
+        /// Class by type
+        ///</summary>
+        public ClassInfoItem ClassByType(Type ct)
+        {
+            try
+            {
+                return classes[ct];
+            }
+            catch
+            {
+                return null;
+            }
+        }
         #endregion
     }
 

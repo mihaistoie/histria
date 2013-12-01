@@ -7,7 +7,8 @@ namespace Sikia.Framework.Types
 {
     
  
-    public enum RuleType {Unknown = 0, Validation = 2, Propagation = 4, AfterCreate = 8, AfterLoaded =16 , BeforeSave = 32};
+    public enum RuleType {Unknown = 0, Validation = 2, Propagation = 4, AfterCreate = 8, 
+        AfterLoaded =16 , BeforeSave = 32};
     public static class AttributeParser
     {
         static public RuleType ParseRuleType(string value)
@@ -24,5 +25,5 @@ namespace Sikia.Framework.Types
             return RuleType.Unknown; 
         }
     }
-
+  
 }

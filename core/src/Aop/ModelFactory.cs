@@ -16,10 +16,13 @@ namespace Sikia.Aop
             if (instance is InterceptedObject)
             {
                 InterceptedObject io = instance as InterceptedObject;
-                io.ClassInfo = Model.Instance.ModelClasses[typeof(T)];
+                io.ClassInfo = Model.Instance.Classes[typeof(T)];
             }
             return instance;
 
+        }
+        public static void Install() {
+            var  instance = CastleFactory.Instance;
         }
     }
 }

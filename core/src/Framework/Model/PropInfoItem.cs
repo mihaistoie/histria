@@ -5,6 +5,7 @@ using System.Reflection;
 using System.Text;
 using Sikia.Framework.Attributes;
 using Sikia.Framework.Utils;
+using Sikia.Framework.Types;
 
 namespace Sikia.Framework.Model
 {
@@ -14,6 +15,7 @@ namespace Sikia.Framework.Model
         private string description;
         private MethodInfo titleGet = null;
         private MethodInfo descriptionGet = null;
+        private readonly Dictionary<RuleType, RuleList> rules = new Dictionary<RuleType, RuleList>();
 
         public PropertyInfo PropInfo;
         public string Name { get; set; }
@@ -23,7 +25,6 @@ namespace Sikia.Framework.Model
         public PropinfoItem(PropertyInfo cPi)
         {
             PropInfo = cPi;
-            Console.WriteLine(" --> " + PropInfo.Name);
             Name = PropInfo.Name;
             DbName = PropInfo.Name;
             title = Name;
@@ -37,11 +38,32 @@ namespace Sikia.Framework.Model
             if (description == "") description = title;
 
         }
-        public void AfterLoad(ClassInfoItem ci) 
+        public void AfterLoad(ClassInfoItem ci)
         {
-            Console.WriteLine(" <--> " + Name);
+           
         }
-
+        public void AddRule(RuleItem ri)
+        {
+            RuleList rl = null;
+            if (!rules.ContainsKey(ri.Kind))
+            {
+                rl = new RuleList();
+                rules[ri.Kind] = rl;
+            }
+            else
+            {
+                rl = rules[ri.Kind];
+            }
+            rl.Add(ri);
+        }
+        public void ExecuteRules(RuleType kind, Object target)
+        {
+            if (rules.ContainsKey(kind))
+            {
+                rules[kind].Execute(target);
+            }
+            
+        }
     }
 }
 
