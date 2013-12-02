@@ -6,7 +6,7 @@
     <ProductVersion>8.0.30703</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{52A8CF5F-525B-4037-A674-BFE0ADDA3D4C}</ProjectGuid>
-    <OutputType>Exe</OutputType>
+    <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>Sikia</RootNamespace>
     <AssemblyName>Sikia</AssemblyName>
@@ -48,6 +48,9 @@
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup>
+    <StartupObject />
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Castle.Core, Version=2.5.0.0, Culture=neutral, PublicKeyToken=407dd0808d44fbdc, processorArchitecture=MSIL">
@@ -103,9 +106,10 @@
     <Compile Include="src\Framework\Attributes\IndexAttribute.cs" />
     <Compile Include="src\Aop\InterceptedObject.cs" />
     <Compile Include="src\Framework\Model\ClassInfoItem.cs" />
-    <Compile Include="src\Framework\Model\Model.cs" />
+    <Compile Include="src\Framework\Model\ModelManager.cs" />
     <Compile Include="src\Framework\Model\EnumInfoItem.cs" />
     <Compile Include="src\Models\Customer.cs" />
+    <Compile Include="src\Settings\ApplicationConfig.cs" />
     <Compile Include="src\Settings\GlobalSettings.cs" />
   </ItemGroup>
   <ItemGroup>

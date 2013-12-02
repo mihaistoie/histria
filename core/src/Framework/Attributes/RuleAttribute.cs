@@ -4,13 +4,13 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace Sikia.Framework.Attributes
+namespace Sikia.Framework
 {
     /// <summary>
     /// Rule attribute for a method
     /// </summary>
     [System.AttributeUsage(System.AttributeTargets.All, AllowMultiple = true)]
-    class RuleAttribute : System.Attribute  
+    public class RuleAttribute : System.Attribute  
     {
         public string Property = "";
         public RuleType Rule = RuleType.Unknown;

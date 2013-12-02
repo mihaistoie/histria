@@ -4,7 +4,6 @@ using System.Linq;
 using System.Reflection;
 using System.Text;
 using System.Collections.ObjectModel;
-using Sikia.Framework.Attributes;
 using Sikia.Framework.Utils;
 using Sikia.Framework.Types;
 
@@ -83,14 +82,14 @@ namespace Sikia.Framework.Model
         }
         #region Loading
         // validate class after load
-        public void ValidateAndPrepare(Model model)
+        public void ValidateAndPrepare(ModelManager model)
         {
             foreach (PropinfoItem pi in properties)
             {
                 pi.AfterLoad(this);
             }
         }
-        public void ResolveInheritance(Model model)
+        public void ResolveInheritance(ModelManager model)
         {
             if (Static) return;
             if (inherianceResolved) return;
@@ -118,7 +117,7 @@ namespace Sikia.Framework.Model
 
         }
         // Prepare memory strutures for faster executing
-        public void Loaded(Model model)
+        public void Loaded(ModelManager model)
         {
             if (Static) return;
             foreach (RuleItem ri in rulesList)

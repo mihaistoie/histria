@@ -1,7 +1,8 @@
 ﻿using System;
 using Sikia.Framework.Model;
 using Sikia.Framework.Types;
-namespace Sikia.Aop
+
+namespace Sikia.Framework
 {
     public class InterceptedObject
     {
@@ -20,7 +21,7 @@ namespace Sikia.Aop
                 if (ci == null)
                 {
                     Type tt = this.GetType();
-                    ci = Model.Instance.Classes[tt.BaseType];  
+                    ci = ModelManager.Instance.Classes[tt.BaseType];  
                 }
                 return ci;
             }

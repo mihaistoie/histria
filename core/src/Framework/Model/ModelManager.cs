@@ -10,7 +10,7 @@ using Sikia.Aop;
 namespace Sikia.Framework.Model
 {
 
-    public sealed class Model
+    public sealed class ModelManager
     {
         #region Private Members
         private readonly EnumCollection enums;
@@ -18,14 +18,14 @@ namespace Sikia.Framework.Model
         #endregion
 
         #region Singleton thread-safe pattern
-        private static volatile Model instance = null;
+        private static volatile ModelManager instance = null;
         private static object syncRoot = new Object();
-        private Model()
+        private ModelManager()
         {
             enums = new EnumCollection();
             classes = new ClassCollection();
         }
-        public static Model Instance
+        public static ModelManager Instance
         {
             get
             {
@@ -35,7 +35,7 @@ namespace Sikia.Framework.Model
                     {
                         if (instance == null)
                         {
-                            Model model = new Model();
+                            ModelManager model = new ModelManager();
                             model.Load();
                             instance = model;
                         }
@@ -49,36 +49,49 @@ namespace Sikia.Framework.Model
         #region Implementation
         #region Model Loading
 
+        private void LoadTypes(List<Type> types)
+        {
+            types.ForEach(delegate(Type iType)
+            {
+                if (iType.IsEnum)
+                {
+                    //load enums 
+                    enums.Add(new EnumInfoItem(iType));
+                }
+                else if (iType.IsClass && iType.IsSubclassOf(typeof(InterceptedObject)))
+                {
+                    classes.Add(new ClassInfoItem(iType, false));
+                }
+                else if (iType.IsClass && iType.IsSubclassOf(typeof(RulePluginObject)))
+                {
+                    classes.Add(new ClassInfoItem(iType, true));
+                }
+
+            });
+
+        }
+
         private void Load()
         {
-            GlobalSettings settings = GlobalSettings.Instance;
-            Dictionary<Assembly, List<String>> nameSpaces = settings.ModelNameSpaces();
-            foreach (var ns in nameSpaces)
+            GlobalSettings settings = GlobalSettings.Instance();
+            if ((settings.ModelTypes != null) && (settings.ModelTypes.Count() > 0))
             {
-                ns.Value.ForEach(delegate(string nameSpace)
+                LoadTypes(settings.ModelTypes.ToList<Type>());
+            }
+            else
+            {
+                
+                Dictionary<Assembly, List<String>> nameSpaces = settings.ModelNameSpaces();
+                foreach (var ns in nameSpaces)
                 {
-                    List<Type> allTypes = ns.Key.GetTypes().Where(t => String.Equals(t.Namespace, nameSpace, StringComparison.Ordinal)).ToList<Type>();
-                    allTypes.ForEach(delegate(Type iType)
+                    ns.Value.ForEach(delegate(string nameSpace)
                     {
-                        if (iType.IsEnum)
-                        {
-                            //load enums 
-                            enums.Add(new EnumInfoItem(iType));
-                        }
-                        else if (iType.IsClass && iType.IsSubclassOf(typeof(InterceptedObject)))
-                        {
-                            classes.Add(new ClassInfoItem(iType, false));
-                        }
-                        else if (iType.IsClass && iType.IsSubclassOf(typeof(RulePluginObject)))
-                        {
-                            classes.Add(new ClassInfoItem(iType, true));
-                        }
-
+                        LoadTypes(ns.Key.GetTypes().Where(t => String.Equals(t.Namespace, nameSpace, StringComparison.Ordinal)).ToList<Type>());
                     });
 
-                });
-                AfterLoad();
+                }
             }
+            AfterLoad();
 
         }
         private void AfterLoad()

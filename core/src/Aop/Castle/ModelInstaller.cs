@@ -20,7 +20,7 @@ namespace Sikia.Aop.Castle
         public void Install(IWindsorContainer container, IConfigurationStore store)
         {
             //register Classes from Models namespace and add interceptors
-            container.Register(Classes.From(Model.Instance.Classes.Types).Pick().Configure(c => c.LifeStyle.Transient
+            container.Register(Classes.From(ModelManager.Instance.Classes.Types).Pick().Configure(c => c.LifeStyle.Transient
                             .Interceptors(typeof(NotifyPropertyChangedInterceptor))));
         }
         #endregion

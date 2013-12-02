@@ -2,3 +2,6 @@
 /core/bin/Debug
 /core/bin
 /core/*.suo
+obj
+bin
+TestResults

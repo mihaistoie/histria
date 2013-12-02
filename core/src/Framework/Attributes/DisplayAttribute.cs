@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace Sikia.Framework.Attributes
+namespace Sikia.Framework
 {
     [System.AttributeUsage(System.AttributeTargets.Class |
                            System.AttributeTargets.Struct |
@@ -13,10 +13,10 @@ namespace Sikia.Framework.Attributes
                            System.AttributeTargets.Method,
                            AllowMultiple = false)
     ]
-    class DisplayAttribute : System.Attribute
+    public class DisplayAttribute : System.Attribute
     {
         public string Title;
-        public string Description;
+        public string Description {get; set;}
         public DisplayAttribute(string iTitle)
         {
             Title = iTitle;

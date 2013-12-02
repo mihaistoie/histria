@@ -6,7 +6,7 @@ using Sikia.Aop.Castle;
 using Sikia.Framework.Model;
 
 
-namespace Sikia.Aop
+namespace Sikia.Framework
 {
     public static class ModelFactory
     {
@@ -16,7 +16,7 @@ namespace Sikia.Aop
             if (instance is InterceptedObject)
             {
                 InterceptedObject io = instance as InterceptedObject;
-                io.ClassInfo = Model.Instance.Classes[typeof(T)];
+                io.ClassInfo = ModelManager.Instance.Classes[typeof(T)];
             }
             return instance;
 

@@ -11,14 +11,18 @@ namespace Sikia.Application
     ///<summary>
     /// Global Application used to initialize / uninitialize une application
     ///</summary>
-    static class GlbApplicaton
+    static public class GlbApplicaton
     {
         public static void Start()
         {
+            GlbApplicaton.Start(null);
+        }
+        public static void Start(ApplicationConfig config)
+        {
             // Load application settings  
-            GlobalSettings settings = GlobalSettings.Instance;
+            GlobalSettings settings = GlobalSettings.Instance(config);
             // Load current model
-            Model model = Model.Instance;
+            ModelManager model = ModelManager.Instance;
 
         }
 

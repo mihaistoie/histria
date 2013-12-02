@@ -11,15 +11,17 @@ namespace Sikia.Settings
     ///</summary>
     public class GlobalSettings
     {
-        private List<String> modelNameSpaces = new List<String>();
+        private readonly List<String> modelNameSpaces = new List<String>();
+        public Type[] ModelTypes = null;
 
         ///<summary>
         /// Load settings from  a JSON config file
         ///</summary>
-        private void Load()
+        private void Load(ApplicationConfig config)
         {
             //TODO: Load settings from  a JSON config file
-            modelNameSpaces.Add("Models");
+            ModelTypes = config.Types;
+            modelNameSpaces.AddRange(config.Namespaces.ToList<string>());
         }
 
         #region Singleton thread-safe pattern 
@@ -28,25 +30,28 @@ namespace Sikia.Settings
         private GlobalSettings()
         {
         }
-        public static GlobalSettings Instance
+        public static GlobalSettings Instance()
         {
-            get
+            return Instance(null);
+        }
+        public static GlobalSettings Instance(ApplicationConfig config)
+        {
+            if (instance == null)
             {
-                if (instance == null)
+                lock (syncRoot)
                 {
-                    lock (syncRoot)
+                    if (instance == null)
                     {
-                        if (instance == null)
-                        {
-                            GlobalSettings settings = new GlobalSettings();
-                            settings.Load();
-                            instance = settings;
-                        }
+                        GlobalSettings settings = new GlobalSettings();
+                        if (config == null)
+                            config = new ApplicationConfig();
+                        settings.Load(config);
+                        instance = settings;
                     }
                 }
-
-                return instance;
             }
+
+            return instance;
         }
         #endregion
 

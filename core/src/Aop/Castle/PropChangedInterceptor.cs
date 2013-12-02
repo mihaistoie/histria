@@ -3,6 +3,7 @@ using System.ComponentModel;
 using System.Linq;
 using System.Reflection;
 using Castle.DynamicProxy;
+using Sikia.Framework;
 
 namespace Sikia.Aop.Castle
 {

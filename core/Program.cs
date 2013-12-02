@@ -5,8 +5,7 @@ using System.Text;
 using Castle.Windsor;
 using Castle.Windsor.Installer;
 using Sikia.Models;
-using Sikia.Framework.Attributes;
-using Sikia.Aop;
+using Sikia.Framework;
 
 namespace Sikia
 {
@@ -17,18 +16,18 @@ namespace Sikia
             Sikia.Application.GlbApplicaton.Start();
 
 
-            Customer cust = ModelFactory.Create<Customer>();
+            //Customer cust = ModelFactory.Create<Customer>();
             
-            cust.FirstName = "John";
-            cust.LastName = "Smith";
-            System.Console.WriteLine(cust.FullName);
+            //cust.FirstName = "John";
+            //cust.LastName = "Smith";
+            //System.Console.WriteLine(cust.FullName);
 
-            RussianCustomer rcust = ModelFactory.Create<RussianCustomer>();
+            //RussianCustomer rcust = ModelFactory.Create<RussianCustomer>();
 
-            rcust.FirstName = "Fiodor";
-            rcust.LastName = "Dostoïevski";
-            rcust.MiddleName = "A."; 
-            System.Console.WriteLine(rcust.FullName);
+            //rcust.FirstName = "Fiodor";
+            //rcust.LastName = "Dostoïevski";
+            //rcust.MiddleName = "A."; 
+            //System.Console.WriteLine(rcust.FullName);
             
 
             
