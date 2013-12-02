@@ -1,15 +1,40 @@
 ﻿using System;
-using Sikia.Framework.Model;
-using Sikia.Framework.Types;
 
 namespace Sikia.Framework
 {
+    using Sikia.Framework.Model;
+    using Sikia.Framework.Types;
+
+    public enum ObjectState
+    {
+        Iddle = 0,
+        Creating = 1,
+        Loading = 2,
+        Saving = 4,
+        Deleting = 8
+    }
+
     public class InterceptedObject
     {
         #region Warnings & Errors
         #endregion
 
         #region Errors
+        #endregion
+
+        #region State
+        private ObjectState state = ObjectState.Iddle;
+        public ObjectState State
+        {
+            get
+            {
+                return state;
+            }
+            set
+            {
+                state = value;
+            }
+        }
         #endregion
 
         #region Model
@@ -21,7 +46,7 @@ namespace Sikia.Framework
                 if (ci == null)
                 {
                     Type tt = this.GetType();
-                    ci = ModelManager.Instance.Classes[tt.BaseType];  
+                    ci = ModelManager.Instance.Classes[tt.BaseType];
                 }
                 return ci;
             }
@@ -36,6 +61,13 @@ namespace Sikia.Framework
         protected void CheckInTransaction()
         {
         }
+        #endregion
+
+        #region Initialization
+        public void AOPAfterCreate()
+        {
+        }
+
         #endregion
 
         #region Intercepors

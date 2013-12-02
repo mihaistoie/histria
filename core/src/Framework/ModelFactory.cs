@@ -2,12 +2,12 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using Sikia.Aop.Castle;
-using Sikia.Framework.Model;
 
 
 namespace Sikia.Framework
 {
+    using Sikia.Aop.Castle;
+    using Sikia.Framework.Model;
     public static class ModelFactory
     {
         public static T Create<T>()
@@ -17,6 +17,7 @@ namespace Sikia.Framework
             {
                 InterceptedObject io = instance as InterceptedObject;
                 io.ClassInfo = ModelManager.Instance.Classes[typeof(T)];
+                io.AOPAfterCreate();
             }
             return instance;
 
