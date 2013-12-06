@@ -66,26 +66,32 @@ namespace Sikia.Framework
         #region Initialization
         public void AOPAfterCreate()
         {
+            state = ObjectState.Creating;
+            ClassInfo.ExecuteRules(RuleType.AfterCreate, this);
+            state = ObjectState.Iddle;
         }
 
         #endregion
 
         #region Intercepors
-        public bool AOPBeforeSetProperty(string propertyName, object target, object value)
+        public bool AOPBeforeSetProperty(string propertyName, ref object value)
         {
             PropinfoItem pi = ClassInfo.PropertyByName(propertyName);
             object oldValue = pi.PropInfo.GetValue(this, null);
+            pi.ExecuteRules(RuleType.Propagation, this);
             if (oldValue == value) return false;
             CheckInTransaction();
             return true;
 
         }
-        public void AOPAfterSetProperty(string propertyName, object target, object value)
+        public void AOPAfterSetProperty(string propertyName, object value)
         {
             PropinfoItem pi = ClassInfo.PropertyByName(propertyName);
             // Validate
+            pi.SchemaValidation(ref value);
+            pi.ExecuteRules(RuleType.Validation, this);
             // Propagate
-            pi.ExecuteRules(RuleType.Propagation, target);
+            pi.ExecuteRules(RuleType.Propagation, this);
 
         }
         #endregion

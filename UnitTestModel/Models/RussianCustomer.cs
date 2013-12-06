@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using Sikia.Framework;
 
-namespace TestRules.Models
+namespace UnitTestModel.Models
 {
     [Display("Russian Customer", Description = "Russian Class Customer")]
     public class RussianCustomer : Customer

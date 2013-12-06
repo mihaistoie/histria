@@ -52,6 +52,14 @@
   <PropertyGroup>
     <StartupObject />
   </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|AnyCPU'">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <OutputPath>bin\Debug\</OutputPath>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|AnyCPU'">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <OutputPath>bin\Release\</OutputPath>
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="Castle.Core, Version=2.5.0.0, Culture=neutral, PublicKeyToken=407dd0808d44fbdc, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -71,7 +79,6 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="src\Aop\Castle\CastleFactory.cs" />
     <Compile Include="src\Framework\RulePluginObject.cs" />
@@ -108,7 +115,6 @@
     <Compile Include="src\Framework\Model\ClassInfoItem.cs" />
     <Compile Include="src\Framework\Model\ModelManager.cs" />
     <Compile Include="src\Framework\Model\EnumInfoItem.cs" />
-    <Compile Include="src\Models\Customer.cs" />
     <Compile Include="src\Settings\ApplicationConfig.cs" />
     <Compile Include="src\Settings\GlobalSettings.cs" />
   </ItemGroup>
@@ -139,9 +145,7 @@
     <Content Include="lib\Castle.Windsor.dll" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="src\DataBase\Jet\" />
-    <Folder Include="src\DataBase\MySql\" />
-    <Folder Include="src\DataBase\Oracle\" />
+    <Folder Include="src\Tests\" />
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />

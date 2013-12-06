@@ -1,16 +1,13 @@
-using System;
-using System.Text;
-using System.Collections.Generic;
-using System.Linq;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Sikia.Framework;
 using Sikia.Settings;
-using TestRules.Models;
+using System;
+using UnitTestModel.Models;
 
-namespace TestRules
+namespace UnitTestModel
 {
     [TestClass]
-    public  class RulesTests
+    public class RulesTests
     {
         [ClassInitialize]
         public static void Setup(TestContext testContext)
@@ -28,6 +25,16 @@ namespace TestRules
             cust.FirstName = "John";
             cust.LastName = "Smith";
             Assert.AreEqual("John SMITH", cust.FullName, "Propagation rule not called");
+        }
+        [TestMethod]
+        public void InheritedPropagationRule()
+        {
+            RussianCustomer rcust = ModelFactory.Create<RussianCustomer>();
+
+            rcust.FirstName = "Fiodor";
+            rcust.LastName = "Dostoievski";
+            rcust.MiddleName = "A."; 
+            Assert.AreEqual("DOSTOIEVSKI A. Fiodor", rcust.FullName, "Propagation rule not called");
         }
     }
 }

@@ -80,6 +80,12 @@ namespace Sikia.Framework.Model
             }
             return false;
         }
+        #region Rules
+        public void ExecuteRules(RuleType kind, Object target)
+        {
+        }
+        #endregion
+
         #region Loading
         // validate class after load
         public void ValidateAndPrepare(ModelManager model)

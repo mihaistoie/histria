@@ -1,11 +1,7 @@
-﻿using System;
-using Castle.MicroKernel.Registration;
+﻿using Castle.MicroKernel.Registration;
 using Castle.MicroKernel.SubSystems.Configuration;
 using Castle.Windsor;
-using Sikia.Models;
-using Sikia.Framework;
 using Sikia.Framework.Model;
-using System.Collections.Generic;
 
 
 

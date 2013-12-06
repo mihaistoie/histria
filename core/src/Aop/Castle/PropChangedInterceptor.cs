@@ -24,14 +24,16 @@ namespace Sikia.Aop.Castle
                 if (isSet)
                 {
                     propertyName = invocation.Method.Name.Substring(4);
-                    if (!io.AOPBeforeSetProperty(propertyName, invocation.InvocationTarget, invocation.Arguments[0]))
+                    object value = invocation.Arguments[0];
+                    if (!io.AOPBeforeSetProperty(propertyName, ref value))
                         return;
+                    invocation.Arguments[0] = value;
                 }
                 // let the original call 
                 invocation.Proceed();
                 if (isSet)
                 {
-                    io.AOPAfterSetProperty(propertyName, invocation.InvocationTarget, invocation.Arguments[0]);
+                    io.AOPAfterSetProperty(propertyName, invocation.Arguments[0]);
                 }
             } 
             else invocation.Proceed(); 

@@ -46,6 +46,7 @@ namespace Sikia.Framework.Model
             }
         }
         #endregion
+        
         #region Implementation
         #region Model Loading
 
@@ -112,7 +113,6 @@ namespace Sikia.Framework.Model
         }
         #endregion
         #endregion
-
 
         #region Properties
         ///<summary>
