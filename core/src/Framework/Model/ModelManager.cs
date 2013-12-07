@@ -25,6 +25,15 @@ namespace Sikia.Framework.Model
             enums = new EnumCollection();
             classes = new ClassCollection();
         }
+        //used only for tests
+        public static ModelManager LoadModel(ApplicationConfig cfg)
+        {
+            ModelManager model = new ModelManager();
+            model.Load(cfg);
+            return model;       
+        }
+        
+            
         public static ModelManager Instance
         {
             get
@@ -36,7 +45,7 @@ namespace Sikia.Framework.Model
                         if (instance == null)
                         {
                             ModelManager model = new ModelManager();
-                            model.Load();
+                            model.Load(null);
                             instance = model;
                         }
                     }
@@ -72,12 +81,19 @@ namespace Sikia.Framework.Model
 
         }
 
-        private void Load()
+        private void Load(ApplicationConfig cfg)
         {
+            Type[] ModelTypes = null;
+            
             GlobalSettings settings = GlobalSettings.Instance();
-            if ((settings.ModelTypes != null) && (settings.ModelTypes.Count() > 0))
+            if (cfg != null)
+                ModelTypes = cfg.Types;
+            else
+                ModelTypes = settings.ModelTypes;
+
+            if ((ModelTypes != null) && (ModelTypes.Count() > 0))
             {
-                LoadTypes(settings.ModelTypes.ToList<Type>());
+                LoadTypes(ModelTypes.ToList<Type>());
             }
             else
             {

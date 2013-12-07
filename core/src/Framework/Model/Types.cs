@@ -3,20 +3,34 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace Sikia.Framework.Types
+namespace Sikia.Framework.Model
 {
-
-
+    ///<summary>
+    /// Type of rules: validation, propagation ...  
+    ///</summary>   
     public enum RuleType
     {
         Unknown = 0, Validation = 2, Propagation = 4, AfterCreate = 8,
         AfterLoaded = 16, BeforeSave = 32, Correction = 64
     };
+
+
+    ///<summary>
+    /// Type classes 
+    ///</summary>   
+    public enum ClassType { Unknown, Model, ViewModel, Process };
+
+    ///<summary>
+    /// Helper for attribute parsing
+    ///</summary>   
     public static class AttributeParser
     {
+        ///<summary>
+        /// Convert string to RuleType
+        ///</summary>   
         static public RuleType ParseRuleType(string value)
         {
-            foreach (RuleType enumValue in Enum.GetValues(typeof(RuleType)))
+           foreach (RuleType enumValue in Enum.GetValues(typeof(RuleType)))
             {
                 string svalue = Enum.GetName(typeof(RuleType), enumValue);
                 if (String.Compare(svalue, value, true) == 0) return enumValue;

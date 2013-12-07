@@ -1,14 +1,24 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 
-namespace Sikia.Framework.Types
+namespace Sikia.Framework.Model
 {
+    ///<summary>
+    ///Represents  errors that occurs during model loading
+    ///</summary>      
     public class ModelException : Exception
     {
+        #region Properties
+        ///<summary>
+        ///Tha class  that has raised the exception
+        ///</summary>      
         public string ClassName;
+        ///<summary>
+        ///Tha property  that has raised the exception
+        ///</summary>      
         public string PropName;
+        #endregion
+
+        #region Construtors
         public ModelException() : base() { }
         public ModelException(string message) : base(message) { }
         public ModelException(string message, string className)
@@ -22,5 +32,7 @@ namespace Sikia.Framework.Types
             ClassName = className;
             PropName = propName;
         }
+        #endregion
+
     }
 }

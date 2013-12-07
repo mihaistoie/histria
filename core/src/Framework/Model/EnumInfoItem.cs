@@ -2,11 +2,12 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using System.Text;
-using Sikia.Framework.Utils;
+
 
 namespace Sikia.Framework.Model
 {
+    using Sikia.Framework.Utils;
+
     public class EnumInfoItem: Dictionary<int, string>
     {
         public Type EnumType { get; set; }

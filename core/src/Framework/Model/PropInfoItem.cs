@@ -2,39 +2,44 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using System.Text;
-using Sikia.Framework.Utils;
-using Sikia.Framework.Types;
 
 namespace Sikia.Framework.Model
 {
+
     ///<summary>
     /// Provides access to  property metadata
     ///</summary>   
     public class PropinfoItem
     {
         #region Internal fields
+        // Static title and description
         private string title;
         private string description;
+        // Handlers to get title and description
         private MethodInfo titleGet = null;
         private MethodInfo descriptionGet = null;
+        // Rules by type
         private readonly Dictionary<RuleType, RuleList> rules = new Dictionary<RuleType, RuleList>();
         #endregion
 
         #region Properties
         public PropertyInfo PropInfo;
+        
         ///<summary>
         /// Name of property
         ///</summary>   
         public string Name { get; set; }
+        
         ///<summary>
         /// Column Name - database Mapping
         ///</summary>   
         public string DbName { get; set; }
+        
         ///<summary>
         /// Title of property
         ///</summary>   
         public string Title { get { return titleGet == null ? title : (string)titleGet.Invoke(this, null); } }
+        
         ///<summary>
         /// A short description of property 
         ///</summary>   
@@ -66,6 +71,9 @@ namespace Sikia.Framework.Model
         #endregion
 
         #region Rules
+        ///<summary>
+        /// Associate a rule at this property
+        ///</summary>   
         public void AddRule(RuleItem ri)
         {
             RuleList rl = null;
@@ -80,11 +88,15 @@ namespace Sikia.Framework.Model
             }
             rl.Add(ri);
         }
-        //
+        ///<summary>
+        /// Check value (range, length ....) 
+        ///</summary>   
         public void SchemaValidation(ref Object value)
         {
         }
-
+        ///<summary>
+        /// Execute rules by type
+        ///</summary>   
         public void ExecuteRules(RuleType kind, Object target)
         {
             if (rules.ContainsKey(kind))

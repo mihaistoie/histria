@@ -17,6 +17,10 @@ namespace Sikia.Application
         {
             GlbApplicaton.Start(null);
         }
+        public static void Stop()
+        {
+            //uninstall 
+        }
         public static void Start(ApplicationConfig config)
         {
             // Load application settings  

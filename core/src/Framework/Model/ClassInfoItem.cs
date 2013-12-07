@@ -2,45 +2,21 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using System.Text;
 using System.Collections.ObjectModel;
-using Sikia.Framework.Utils;
-using Sikia.Framework.Types;
+
 
 namespace Sikia.Framework.Model
 {
-    public class PropertiesCollection : KeyedCollection<PropertyInfo, PropinfoItem>
-    {
-        protected override PropertyInfo GetKeyForItem(PropinfoItem item)
-        {
-            return item.PropInfo;
-        }
-    }
-    public class KeysCollection : KeyedCollection<PropertyInfo, KeyItem>
-    {
-        protected override PropertyInfo GetKeyForItem(KeyItem item)
-        {
-            return item.Property;
-        }
-    }
-
-    public class RulesCollection : KeyedCollection<MethodInfo, RuleItem>
-    {
-        protected override MethodInfo GetKeyForItem(RuleItem item)
-        {
-            return item.Method;
-        }
-    }
-
-    public enum ClassType { Unknown, Model, ViewModel, Process };
-
+    using Sikia.Framework.Utils;
+    
+    
     public class ClassInfoItem
     {
         #region private members
         private readonly Dictionary<string, PropertyInfo> propsMap = new Dictionary<string, PropertyInfo>();
         private readonly PropertiesCollection properties = new PropertiesCollection();
         private List<RuleItem> rulesList = new List<RuleItem>();
-        private readonly List<MethodItem> methods = new List<MethodItem>();
+        private readonly List<MethodItem> methodsList = new List<MethodItem>();
         private readonly KeysCollection key = new KeysCollection();
         private readonly List<IndexInfo> indexes = new List<IndexInfo>();
         private bool inherianceResolved = false;
@@ -65,6 +41,11 @@ namespace Sikia.Framework.Model
         public List<IndexInfo> Indexes { get { return indexes; } }
         #endregion
 
+        #region Rules
+        public void ExecuteRules(RuleType kind, Object target)
+        {
+        }
+
         private bool _ruleExists(RuleItem ri, List<RuleItem> rl)
         {
             Type dt = ri.Method.GetBaseDefinition().DeclaringType;
@@ -72,17 +53,38 @@ namespace Sikia.Framework.Model
             {
                 foreach (RuleItem rule in rl)
                 {
-                   if (ri.IsOveriddenOf(rule))
-                   {
-                       throw new ModelException(String.Format(StrUtils.TT("Rule \"{0}.{1}\": Duplicated rule ({2}.{3}). "), ri.SrcClassName, ri.Name, ri.Kind, ri.Property), Name);
-                   }
+                    if (ri.IsOveriddenOf(rule))
+                    {
+                        throw new ModelException(String.Format(StrUtils.TT("Rule \"{0}.{1}\": Duplicated rule ({2}.{3}). "), ri.SrcClassName, ri.Name, ri.Kind, ri.Property), Name);
+                    }
                 }
             }
             return false;
         }
-        #region Rules
-        public void ExecuteRules(RuleType kind, Object target)
+      
+        #endregion
+
+        #region Methods
+        private void CheckAndSetRules()
         {
+             
+            if (Static) return;
+            //Attach rules to properties/classes
+            foreach (RuleItem ri in rulesList)
+            {
+
+                if (!String.IsNullOrEmpty(ri.Property))
+                {
+                    //checked peoperty exists  
+                    PropinfoItem pi = PropertyByName(ri.Property);
+                    if (pi == null)
+                        throw new ModelException(String.Format(StrUtils.TT("Rule \"{0}.{1}\": The class \"{2}\" has not the property \"{3}\". "), ri.SrcClassName, ri.Name, ri.ClassName, ri.Property), Name);
+                    pi.AddRule(ri);
+
+                }
+            }
+            rulesList.Clear();
+
         }
         #endregion
 
@@ -95,6 +97,10 @@ namespace Sikia.Framework.Model
                 pi.AfterLoad(this);
             }
         }
+
+        ///<summary>
+        /// Prepare memory strutures for faster executing
+        ///</summary>
         public void ResolveInheritance(ModelManager model)
         {
             if (Static) return;
@@ -122,24 +128,13 @@ namespace Sikia.Framework.Model
             inherianceResolved = true;
 
         }
-        // Prepare memory strutures for faster executing
+       
+        ///<summary>
+        /// Prepare memory strutures for faster executing
+        ///</summary>
         public void Loaded(ModelManager model)
         {
-            if (Static) return;
-            foreach (RuleItem ri in rulesList)
-            {
-
-                if (!String.IsNullOrEmpty(ri.Property))
-                {
-                    //checked peoperty exists  
-                    PropinfoItem pi = PropertyByName(ri.Property);
-                    if (pi == null)
-                        throw new ModelException(String.Format(StrUtils.TT("Rule \"{0}.{1}\": The class \"{2}\" has not the property \"{3}\". "), ri.SrcClassName, ri.Name, ri.ClassName, ri.Property), Name);
-                    pi.AddRule(ri);
-
-                }
-            }
-            rulesList.Clear();
+            CheckAndSetRules();
         }
 
         private void LoadTitle()
@@ -202,6 +197,12 @@ namespace Sikia.Framework.Model
                         rulesList.Add(ri);
                     }
                 }
+                //Add method
+                MethodItem method = new MethodItem(mi);
+                method.ClassName = ClassName;
+                method.SrcClassName = Name;
+                methodsList.Add(method);
+                    
             }
 
         }
@@ -285,5 +286,29 @@ namespace Sikia.Framework.Model
         }
 
     }
+    public class PropertiesCollection : KeyedCollection<PropertyInfo, PropinfoItem>
+    {
+        protected override PropertyInfo GetKeyForItem(PropinfoItem item)
+        {
+            return item.PropInfo;
+        }
+    }
+    public class KeysCollection : KeyedCollection<PropertyInfo, KeyItem>
+    {
+        protected override PropertyInfo GetKeyForItem(KeyItem item)
+        {
+            return item.Property;
+        }
+    }
+
+    public class RulesCollection : KeyedCollection<MethodInfo, RuleItem>
+    {
+        protected override MethodInfo GetKeyForItem(RuleItem item)
+        {
+            return item.Method;
+        }
+    }
+
+
 }
 

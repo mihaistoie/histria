@@ -3,7 +3,6 @@
 namespace Sikia.Framework
 {
     using Sikia.Framework.Model;
-    using Sikia.Framework.Types;
 
     public enum ObjectState
     {

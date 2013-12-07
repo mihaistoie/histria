@@ -98,11 +98,11 @@
     <Compile Include="src\Framework\Model\MethodItem.cs" />
     <Compile Include="src\Framework\Model\RuleItem.cs" />
     <Compile Include="src\Framework\Model\RuleList.cs" />
-    <Compile Include="src\Framework\Types\ModelException.cs" />
+    <Compile Include="src\Framework\Model\ModelException.cs" />
     <Compile Include="src\Framework\Model\PropInfoItem.cs" />
     <Compile Include="src\DataBase\DBStructure.cs" />
     <Compile Include="src\DataBase\DBTable.cs" />
-    <Compile Include="src\Framework\Types\Defs.cs" />
+    <Compile Include="src\Framework\Model\Types.cs" />
     <Compile Include="src\Framework\Utils\StrUtils.cs" />
     <Compile Include="src\Aop\Castle\ModelInstaller.cs" />
     <Compile Include="src\Aop\Castle\InterceptorInstaller.cs" />
