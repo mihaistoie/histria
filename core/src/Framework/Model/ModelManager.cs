@@ -154,6 +154,7 @@ namespace Sikia.Framework.Model
                 return null;
             }
         }
+     
         #endregion
     }
 
@@ -168,7 +169,7 @@ namespace Sikia.Framework.Model
     {
         protected override Type GetKeyForItem(ClassInfoItem item)
         {
-            return item.ClassTypeInfo;
+            return item.CurrentType;
         }
         public Type[] Types
         {

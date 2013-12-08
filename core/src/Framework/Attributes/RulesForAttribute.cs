@@ -11,10 +11,14 @@ namespace Sikia.Framework
     [System.AttributeUsage(System.AttributeTargets.Class, AllowMultiple = false)]
     public class RulesForAttribute : System.Attribute
     {
-        public String ClassName; 
-        public RulesForAttribute(string className)
+        public Type TargetType;
+        public RulesForAttribute(Type targetType)
         {
-            ClassName = className;
+            TargetType = targetType;
+        }
+        public RulesForAttribute(string targetType)
+        {
+            TargetType =  Type.GetType(targetType);
         }
     }
 }

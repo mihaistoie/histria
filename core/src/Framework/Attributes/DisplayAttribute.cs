@@ -1,10 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 
 namespace Sikia.Framework
 {
+ 
     [System.AttributeUsage(System.AttributeTargets.Class |
                            System.AttributeTargets.Struct |
                            System.AttributeTargets.Property |
@@ -20,6 +22,7 @@ namespace Sikia.Framework
         public DisplayAttribute(string iTitle)
         {
             Title = iTitle;
+            
         }
     }
 

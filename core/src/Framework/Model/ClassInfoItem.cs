@@ -8,8 +8,8 @@ using System.Collections.ObjectModel;
 namespace Sikia.Framework.Model
 {
     using Sikia.Framework.Utils;
-    
-    
+
+
     public class ClassInfoItem
     {
         #region private members
@@ -19,19 +19,20 @@ namespace Sikia.Framework.Model
         private readonly List<MethodItem> methodsList = new List<MethodItem>();
         private readonly KeysCollection key = new KeysCollection();
         private readonly List<IndexInfo> indexes = new List<IndexInfo>();
+        // Rules by type
+        private readonly Dictionary<RuleType, RuleList> rules = new Dictionary<RuleType, RuleList>();
         private bool inherianceResolved = false;
         private string title;
         private string description;
-        private MethodInfo titleGet = null;
-        private MethodInfo descriptionGet = null;
         #endregion
 
-        public Type ClassTypeInfo { get; set; }
+        public Type CurrentType { get; set; }
+        public Type TargetType { get; set; }
+
         public ClassType ClassType = ClassType.Unknown;
         public string Name { get; set; }
-        public string ClassName { get; set; }
-        public string Title { get { return titleGet == null ? title : (string)titleGet.Invoke(this, null); } }
-        public string Description { get { return descriptionGet == null ? description : (string)descriptionGet.Invoke(this, null); } }
+        public string Title { get { return title; } }
+        public string Description { get { return description; } }
         public string DbName { get; set; }
         public bool Static { get; set; }
 
@@ -49,25 +50,42 @@ namespace Sikia.Framework.Model
         private bool _ruleExists(RuleItem ri, List<RuleItem> rl)
         {
             Type dt = ri.Method.GetBaseDefinition().DeclaringType;
-            if (ClassTypeInfo.IsSubclassOf(dt))
+            if (CurrentType.IsSubclassOf(dt))
             {
                 foreach (RuleItem rule in rl)
                 {
                     if (ri.IsOveriddenOf(rule))
                     {
-                        throw new ModelException(String.Format(StrUtils.TT("Rule \"{0}.{1}\": Duplicated rule ({2}.{3}). "), ri.SrcClassName, ri.Name, ri.Kind, ri.Property), Name);
+                        throw new ModelException(String.Format(StrUtils.TT("Rule \"{0}.{1}\": Duplicated rule ({2}.{3}). "), ri.DeclaringType.Name, ri.Name, ri.Kind, ri.Property), Name);
                     }
                 }
             }
             return false;
         }
-      
+
+        ///<summary>
+        /// Associate a rule at this property
+        ///</summary>   
+        private void AddRule(RuleItem ri)
+        {
+            RuleList rl = null;
+            if (!rules.ContainsKey(ri.Kind))
+            {
+                rl = new RuleList();
+                rules[ri.Kind] = rl;
+            }
+            else
+            {
+                rl = rules[ri.Kind];
+            }
+            rl.Add(ri);
+        }
         #endregion
 
         #region Methods
-        private void CheckAndSetRules()
+        private void CheckMehodsAndSetRules()
         {
-             
+
             if (Static) return;
             //Attach rules to properties/classes
             foreach (RuleItem ri in rulesList)
@@ -78,12 +96,17 @@ namespace Sikia.Framework.Model
                     //checked peoperty exists  
                     PropinfoItem pi = PropertyByName(ri.Property);
                     if (pi == null)
-                        throw new ModelException(String.Format(StrUtils.TT("Rule \"{0}.{1}\": The class \"{2}\" has not the property \"{3}\". "), ri.SrcClassName, ri.Name, ri.ClassName, ri.Property), Name);
+                        throw new ModelException(String.Format(StrUtils.TT("Rule \"{0}.{1}\": The class \"{2}\" has not the property \"{3}\". "), ri.DeclaringType.Name, ri.Name, ri.TargetType.Name, ri.Property), Name);
                     pi.AddRule(ri);
 
                 }
+                else
+                {
+                    AddRule(ri);
+                }
             }
             rulesList.Clear();
+
 
         }
         #endregion
@@ -96,6 +119,35 @@ namespace Sikia.Framework.Model
             {
                 pi.AfterLoad(this);
             }
+            if (Static)
+            {
+                if (Static)
+                {
+                    //Move rules to target class
+                    ClassInfoItem dst = model.ClassByType(TargetType);
+                    foreach (RuleItem ri in rulesList)
+                    {
+                        ClassInfoItem cdst = (ri.TargetType == TargetType ? dst : model.ClassByType(ri.TargetType));
+                        if (cdst != null)
+                        {
+                            cdst.rulesList.Add(ri);
+                        }
+                    }
+                    rulesList.Clear();
+                    //Move rules to target class
+                    foreach (MethodItem mi in methodsList)
+                    {
+                        ClassInfoItem cdst = (mi.TargetType == TargetType ? dst : model.ClassByType(mi.TargetType));
+                        if (cdst != null)
+                        {
+                            cdst.methodsList.Add(mi);
+                        }
+                    }
+                    methodsList.Clear();
+                }
+
+
+            }
         }
 
         ///<summary>
@@ -105,17 +157,18 @@ namespace Sikia.Framework.Model
         {
             if (Static) return;
             if (inherianceResolved) return;
-            if (ClassTypeInfo.BaseType != null)
+            if (CurrentType.BaseType != null)
             {
-                ClassInfoItem pci = model.ClassByType(ClassTypeInfo.BaseType);
-                if (pci  != null) 
+                ClassInfoItem pci = model.ClassByType(CurrentType.BaseType);
+                if (pci != null)
                 {
                     pci.ResolveInheritance(model);
                     // Copy rules from parent
                     List<RuleItem> parentRules = new List<RuleItem>();
                     parentRules.AddRange(pci.rulesList);
                     // add child Rules
-                    foreach(RuleItem ri in rulesList) {
+                    foreach (RuleItem ri in rulesList)
+                    {
                         if (!_ruleExists(ri, parentRules))
                         {
                             parentRules.Add(ri);
@@ -126,20 +179,19 @@ namespace Sikia.Framework.Model
 
             }
             inherianceResolved = true;
-
         }
-       
+
         ///<summary>
         /// Prepare memory strutures for faster executing
         ///</summary>
         public void Loaded(ModelManager model)
         {
-            CheckAndSetRules();
+            CheckMehodsAndSetRules();
         }
 
         private void LoadTitle()
         {
-            DisplayAttribute da = ClassTypeInfo.GetCustomAttributes(typeof(DisplayAttribute), false).FirstOrDefault() as DisplayAttribute;
+            DisplayAttribute da = CurrentType.GetCustomAttributes(typeof(DisplayAttribute), false).FirstOrDefault() as DisplayAttribute;
             if (da != null)
             {
                 title = da.Title;
@@ -148,10 +200,10 @@ namespace Sikia.Framework.Model
             if (description == "") description = title;
             if (Static)
             {
-                RulesForAttribute rf = ClassTypeInfo.GetCustomAttributes(typeof(RulesForAttribute), false).FirstOrDefault() as RulesForAttribute;
+                RulesForAttribute rf = CurrentType.GetCustomAttributes(typeof(RulesForAttribute), false).FirstOrDefault() as RulesForAttribute;
                 if (rf != null)
                 {
-                    ClassName = rf.ClassName;
+                    TargetType = rf.TargetType;
                 }
             }
 
@@ -160,7 +212,7 @@ namespace Sikia.Framework.Model
         private void LoadProperties()
         {
             if (Static) return;
-            PropertyInfo[] props = ClassTypeInfo.GetProperties(BindingFlags.Public | BindingFlags.Instance);
+            PropertyInfo[] props = CurrentType.GetProperties(BindingFlags.Public | BindingFlags.Instance);
             foreach (PropertyInfo pi in props)
             {
                 PropinfoItem item = new PropinfoItem(pi);
@@ -171,9 +223,13 @@ namespace Sikia.Framework.Model
         }
         private void LoadMethodsAndRules()
         {
-            MethodInfo[] methods = ClassTypeInfo.GetMethods(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Static);
+            BindingFlags bindingAttr = (Static ? (BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static)
+                : (BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Static));
+
+            MethodInfo[] methods = CurrentType.GetMethods(bindingAttr);
             foreach (MethodInfo mi in methods)
             {
+
                 if (mi.Name.StartsWith("get_") || mi.Name.StartsWith("set_") || mi.Name.StartsWith("AOP")) continue;
 
                 RuleAttribute[] ras = mi.GetCustomAttributes(typeof(RuleAttribute), false) as RuleAttribute[];
@@ -192,24 +248,38 @@ namespace Sikia.Framework.Model
                         RuleItem ri = new RuleItem(mi);
                         ri.Kind = ra.Rule;
                         ri.Property = ra.Property;
-                        ri.ClassName = ClassName;
-                        ri.SrcClassName = Name;
+                        if (Static)
+                        {
+                            if (ri.TargetType == null)
+                                ri.TargetType = TargetType;
+                            if (ri == null)
+                            {
+                                throw new ModelException(String.Format(StrUtils.TT("Invalid rule target for \"{0}\" in the class \"{1}\"."), mi.Name, Name), Name);
+                            }
+                        }
+                        else
+                        {
+                            ri.TargetType = CurrentType;
+                        }
+                        ri.DeclaringType = CurrentType;
                         rulesList.Add(ri);
                     }
                 }
-                //Add method
-                MethodItem method = new MethodItem(mi);
-                method.ClassName = ClassName;
-                method.SrcClassName = Name;
-                methodsList.Add(method);
-                    
+                //Add methods
+                if (TargetType != null)
+                {
+                    MethodItem method = new MethodItem(mi);
+                    method.TargetType = TargetType;
+                    method.DeclaringType = CurrentType;
+                    methodsList.Add(method);
+                }
             }
 
         }
         private void LoadTableNameAndPrimarykey()
         {
             if (Static) return;
-            DbAttribute db = ClassTypeInfo.GetCustomAttributes(typeof(DbAttribute), false).FirstOrDefault() as DbAttribute;
+            DbAttribute db = CurrentType.GetCustomAttributes(typeof(DbAttribute), false).FirstOrDefault() as DbAttribute;
             if (db != null)
             {
                 ClassType = ClassType.Model;
@@ -234,7 +304,7 @@ namespace Sikia.Framework.Model
         private void LoadIndexes()
         {
             //load indexes 
-            object[] attributes = ClassTypeInfo.GetCustomAttributes(typeof(IndexAttribute), false);
+            object[] attributes = CurrentType.GetCustomAttributes(typeof(IndexAttribute), false);
             foreach (object arttr in attributes)
             {
                 IndexAttribute ia = arttr as IndexAttribute;
@@ -271,10 +341,11 @@ namespace Sikia.Framework.Model
 
         public ClassInfoItem(Type cType, bool staticClass)
         {
-            ClassTypeInfo = cType;
-            Name = ClassTypeInfo.Name;
-            ClassName = Name;
-            title = Name;
+            CurrentType = cType;
+            TargetType = (staticClass ? null : CurrentType);
+
+            Name = CurrentType.Name;
+            title = CurrentType.Name;
             Static = staticClass;
 
             LoadTitle();

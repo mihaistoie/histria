@@ -10,6 +10,7 @@ namespace UnitTestModel.Models
     [Display("Customer", Description = "Class Customer")]
     public class Customer : InterceptedObject
     {
+        public int RCount = 0; 
         [Display("First Name", Description = "First Name of Customer")]
         public virtual string FirstName { get; set; }
 
@@ -19,11 +20,14 @@ namespace UnitTestModel.Models
         [Display("Full Name", Description = "Full Name of Customer")]
         public virtual string FullName { get; set; }
 
+        public virtual string AfterFirstNameChanged { get; set; }
+
         [Rule("Propagation", Property = "FirstName")]
         [Rule("Propagation", Property = "LastName")]
         [Display("Calculate Full Name", Description = "Calculate Full Name")]
         protected virtual void CalculatePersistentFullName()
         {
+            RCount++;
             FullName = FirstName + " " + (String.IsNullOrEmpty(LastName) ? "" : LastName).ToUpper();
         }
     }

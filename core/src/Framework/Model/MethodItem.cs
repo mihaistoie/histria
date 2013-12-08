@@ -12,14 +12,15 @@ namespace Sikia.Framework.Model
         private string title;
         private string description;
         public MethodInfo Method;
-        public string ClassName { get; set; }
-        public string SrcClassName { get; set; }
+        public Type TargetType { get; set; }
+        public Type DeclaringType { get; set; }
         public string Title { get { return title; } }
         public string Description { get { return description; } }
         public MethodItem(MethodInfo info)
         {
             Method = info;
             title = Method.Name;
+            DeclaringType = Method.DeclaringType;
             DisplayAttribute da = Method.GetCustomAttributes(typeof(DisplayAttribute), false).FirstOrDefault() as DisplayAttribute;
             title = Method.Name;
             if (da != null)
@@ -27,7 +28,10 @@ namespace Sikia.Framework.Model
                 title = da.Title;
                 description = da.Description;
             }
-            if (description == "") description = title;
+            if (description == "")
+            {
+                description = title;
+            }
         }
 
     }

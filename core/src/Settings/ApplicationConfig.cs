@@ -5,6 +5,7 @@ using System.Text;
 
 namespace Sikia.Settings
 {
+    
     public class ApplicationConfig
     {
 

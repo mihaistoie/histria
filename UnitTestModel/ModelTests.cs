@@ -45,38 +45,6 @@ namespace UnitTestModel
             Assert.AreEqual(ci.Description, "M3-D", "Class static description");
         }
        
-        [TestMethod]
-        [ExpectedException(typeof(ModelException))]
-        public void DynamicClassTitle_NonStaticMethod()
-        {
-            ApplicationConfig config = new ApplicationConfig();
-            Type[] Types = { typeof(MR4) };
-            config.Types = Types;
-            ModelManager m = ModelManager.LoadModel(config);
-        }
-
-        [TestMethod]
-        [ExpectedException(typeof(ModelException))]
-        public void DynamicClassTitle_NotFoundMethod()
-        {
-            ApplicationConfig config = new ApplicationConfig();
-            Type[] Types = { typeof(MR5) };
-            config.Types = Types;
-            ModelManager m = ModelManager.LoadModel(config);
-        }
-       
-        [TestMethod]
-        public void DynamicClassTitle()
-        {
-            ApplicationConfig config = new ApplicationConfig();
-            Type[] Types = { typeof(MR6) };
-            config.Types = Types;
-            ModelManager m = ModelManager.LoadModel(config);
-            ClassInfoItem ci = m.ClassByType(typeof(MR6));
-            Assert.AreEqual(ci.Title, "M6", "Dynamic static title");
-            Assert.AreEqual(ci.Description, "M6", "Dynamic static description");
-        }
-
         
     }
 }

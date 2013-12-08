@@ -42,6 +42,7 @@ namespace Sikia.Framework.Model
             if (String.Compare("corection", value, true) == 0) return RuleType.Correction;
             return RuleType.Unknown;
         }
+       
     }
 
 }

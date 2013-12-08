@@ -77,7 +77,7 @@ namespace Sikia.Framework
         {
             PropinfoItem pi = ClassInfo.PropertyByName(propertyName);
             object oldValue = pi.PropInfo.GetValue(this, null);
-            pi.ExecuteRules(RuleType.Propagation, this);
+            pi.SchemaValidation(ref value);
             if (oldValue == value) return false;
             CheckInTransaction();
             return true;
@@ -87,7 +87,7 @@ namespace Sikia.Framework
         {
             PropinfoItem pi = ClassInfo.PropertyByName(propertyName);
             // Validate
-            pi.SchemaValidation(ref value);
+            
             pi.ExecuteRules(RuleType.Validation, this);
             // Propagate
             pi.ExecuteRules(RuleType.Propagation, this);

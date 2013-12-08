@@ -6,6 +6,7 @@ using Sikia.Framework;
 
 namespace UnitTestModel.Models
 {
+    
     public class MInvalidRule : InterceptedObject
     {
         public virtual string Name { get; set; }
@@ -39,30 +40,6 @@ namespace UnitTestModel.Models
     public class MR3 : InterceptedObject
     {
     }
-    
-    [Display("@ClassTitle")]
-    public class MR4 : InterceptedObject
-    {
-        public string ClassTitle()
-        {
-            return "M4";
 
-        }
-    }
-
-    [Display("@ClassTitle")]
-    public class MR5 : InterceptedObject
-    {
-    }
-
-    [Display("@ClassTitle", Description = "@ClassTitle")]
-    public class MR6 : InterceptedObject
-    {
-        public static string ClassTitle()
-        {
-            return "M6";
-
-        }
-    }
     
 }

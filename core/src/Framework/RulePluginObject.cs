@@ -1,7 +1,7 @@
 ﻿
 namespace Sikia.Framework
 {
-    public static class RulePluginObject
+    public class RulePluginObject
     {
     }
 }

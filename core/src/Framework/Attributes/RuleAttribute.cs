@@ -10,6 +10,7 @@ namespace Sikia.Framework
     public class RuleAttribute : System.Attribute  
     {
         public string Property = "";
+        public Type TargetType = null;
         public RuleType Rule = RuleType.Unknown;
         public RuleAttribute(string ruleType) 
         {
