@@ -7,7 +7,7 @@ using System.Reflection;
 
 namespace Sikia.Framework.Model
 {
-    class MethodItem
+    public class MethodItem
     {
         private string title;
         private string description;

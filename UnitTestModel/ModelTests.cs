@@ -32,7 +32,7 @@ namespace UnitTestModel
             ModelManager m = ModelManager.LoadModel(config);
 
         }
-        
+
         [TestMethod]
         public void StaticClassTitle()
         {
@@ -40,11 +40,23 @@ namespace UnitTestModel
             Type[] Types = { typeof(MR3) };
             config.Types = Types;
             ModelManager m = ModelManager.LoadModel(config);
-            ClassInfoItem ci = m.ClassByType(typeof(MR3));
+            ClassInfoItem ci = m.Class<MR3>();
             Assert.AreEqual(ci.Title, "M3-T", "Class static title");
             Assert.AreEqual(ci.Description, "M3-D", "Class static description");
         }
-       
-        
+
+        [TestMethod]
+        public void DynamicClassTitle()
+        {
+            ApplicationConfig config = new ApplicationConfig();
+            Type[] Types = { typeof(MR4) };
+            config.Types = Types;
+            ModelManager m = ModelManager.LoadModel(config);
+            ClassInfoItem ci = m.Class<MR4>();
+            Assert.AreEqual(ci.Title, "MR4.xxx", "Class dynamic title");
+            Assert.AreEqual(ci.Description, "MR4.yyy", "Class dynamic title");
+        }
+
+
     }
 }

@@ -41,5 +41,18 @@ namespace UnitTestModel.Models
     {
     }
 
+    [Display("@xxx", Description = "@yyy")]
+    public class MR4 : InterceptedObject
+    {
+        public static string xxx()
+        {
+            return "MR4.xxx";
+        }
+        public static string yyy()
+        {
+            return "MR4.yyy";
+        }
+    }
+
     
 }

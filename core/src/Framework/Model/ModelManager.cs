@@ -154,6 +154,14 @@ namespace Sikia.Framework.Model
                 return null;
             }
         }
+        ///<summary>
+        /// Class by VALUS
+        ///</summary>
+        public ClassInfoItem Class<T>()
+        {
+            return ClassByType(typeof(T));
+        }
+     
      
         #endregion
     }

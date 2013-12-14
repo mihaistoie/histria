@@ -11,10 +11,11 @@ namespace UnitTestModel.Models
     [RulesFor(typeof(Customer))]
     public class PlugInCustomer : RulePluginObject
     {
-        [Rule("Propagation", Property = "FirstName", TargetType=typeof(Customer))]
+        [Rule("Propagation", Property = "FirstName")]
         public static void Test(object target)
         {
             (target as Customer).AfterFirstNameChanged = "AfterFirstNameChanged";
         }
+        
     }
 }

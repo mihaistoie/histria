@@ -72,7 +72,7 @@
     <Compile Include="Models\Enums.cs" />
     <Compile Include="Models\PlugInCustomer.cs" />
     <Compile Include="Models\RussianCustomer.cs" />
-    <Compile Include="Models\WrongModel.cs" />
+    <Compile Include="Models\Modelloading.cs" />
     <Compile Include="Properties\Settings.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>

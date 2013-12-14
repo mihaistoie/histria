@@ -17,6 +17,7 @@ namespace Sikia.Framework.Model
         private readonly PropertiesCollection properties = new PropertiesCollection();
         private List<RuleItem> rulesList = new List<RuleItem>();
         private readonly List<MethodItem> methodsList = new List<MethodItem>();
+        private readonly Dictionary<string, MethodItem> methods = new Dictionary<string, MethodItem>();
         private readonly KeysCollection key = new KeysCollection();
         private readonly List<IndexInfo> indexes = new List<IndexInfo>();
         // Rules by type
@@ -24,6 +25,8 @@ namespace Sikia.Framework.Model
         private bool inherianceResolved = false;
         private string title;
         private string description;
+        private MethodItem gTitle = null;
+        private MethodItem gDescription = null;
         #endregion
 
         public Type CurrentType { get; set; }
@@ -31,8 +34,8 @@ namespace Sikia.Framework.Model
 
         public ClassType ClassType = ClassType.Unknown;
         public string Name { get; set; }
-        public string Title { get { return title; } }
-        public string Description { get { return description; } }
+        public string Title { get { return ModelHelper.GetStringValue(title, gTitle); } }
+        public string Description { get { return ModelHelper.GetStringValue(description, gDescription); } }
         public string DbName { get; set; }
         public bool Static { get; set; }
 
@@ -106,8 +109,25 @@ namespace Sikia.Framework.Model
                 }
             }
             rulesList.Clear();
+            foreach (MethodItem mi in methodsList)
+            {
+                methods.Add(mi.Method.Name, mi);
+            }
+            methodsList.Clear();
 
-
+            gTitle = ExtractMethod(title);
+            gDescription = ExtractMethod(description);
+        }
+        private MethodItem MethodByName(string methodName)
+        {
+            try
+            {
+                return methods[methodName];
+            }
+            catch
+            {
+                return null;
+            }
         }
         #endregion
 
@@ -121,33 +141,41 @@ namespace Sikia.Framework.Model
             }
             if (Static)
             {
-                if (Static)
+                //Move rules to target class
+                ClassInfoItem dst = model.ClassByType(TargetType);
+                foreach (RuleItem ri in rulesList)
                 {
-                    //Move rules to target class
-                    ClassInfoItem dst = model.ClassByType(TargetType);
-                    foreach (RuleItem ri in rulesList)
+                    ClassInfoItem cdst = (ri.TargetType == TargetType ? dst : model.ClassByType(ri.TargetType));
+                    if (cdst != null)
                     {
-                        ClassInfoItem cdst = (ri.TargetType == TargetType ? dst : model.ClassByType(ri.TargetType));
-                        if (cdst != null)
-                        {
-                            cdst.rulesList.Add(ri);
-                        }
+                        cdst.rulesList.Add(ri);
                     }
-                    rulesList.Clear();
-                    //Move rules to target class
-                    foreach (MethodItem mi in methodsList)
-                    {
-                        ClassInfoItem cdst = (mi.TargetType == TargetType ? dst : model.ClassByType(mi.TargetType));
-                        if (cdst != null)
-                        {
-                            cdst.methodsList.Add(mi);
-                        }
-                    }
-                    methodsList.Clear();
                 }
-
-
+                rulesList.Clear();
+                //Move rules to target class
+                foreach (MethodItem mi in methodsList)
+                {
+                    ClassInfoItem cdst = (mi.TargetType == TargetType ? dst : model.ClassByType(mi.TargetType));
+                    if (cdst != null)
+                    {
+                        cdst.methodsList.Add(mi);
+                    }
+                }
+                methodsList.Clear();
             }
+
+
+        }
+        public MethodItem ExtractMethod(string value)
+        {
+            if (string.IsNullOrEmpty(value))
+                return null;
+            if (value[0] == '@')
+            {
+                string methodName = value.Substring(1);
+                return MethodByName(methodName);
+            }
+            return null;
         }
 
         ///<summary>
