@@ -9,7 +9,9 @@ namespace Sikia.Framework.Model
 {
     using Sikia.Framework.Utils;
 
-
+	///<summary>
+	/// 
+	///</summary>   
     public class ClassInfoItem
     {
         #region private members
@@ -33,11 +35,24 @@ namespace Sikia.Framework.Model
         public Type TargetType { get; set; }
 
         public ClassType ClassType = ClassType.Unknown;
+		///<summary>
+        /// The name of the class
+        ///</summary>   		
         public string Name { get; set; }
+		///<summary>
+        /// The title of the class
+        ///</summary>   		
         public string Title { get { return ModelHelper.GetStringValue(title, gTitle); } }
-        public string Description { get { return ModelHelper.GetStringValue(description, gDescription); } }
+		///<summary>
+        /// The Description of the class
+        ///</summary>   		
+		public string Description { get { return ModelHelper.GetStringValue(description, gDescription); } }
+		///<summary>
+        ///(Persistence) Name of table used to store this class
+        ///</summary>   		
         public string DbName { get; set; }
-        public bool Static { get; set; }
+        
+		public bool Static { get; set; }
 
         #region Properties/Primary Key/Indexes
         public PropertiesCollection Properties { get { return properties; } }
@@ -67,7 +82,7 @@ namespace Sikia.Framework.Model
         }
 
         ///<summary>
-        /// Associate a rule at this property
+        /// Associate a rule to this class
         ///</summary>   
         private void AddRule(RuleItem ri)
         {
@@ -96,7 +111,7 @@ namespace Sikia.Framework.Model
 
                 if (!String.IsNullOrEmpty(ri.Property))
                 {
-                    //checked peoperty exists  
+                    //checked if property exists  
                     PropinfoItem pi = PropertyByName(ri.Property);
                     if (pi == null)
                         throw new ModelException(String.Format(StrUtils.TT("Rule \"{0}.{1}\": The class \"{2}\" has not the property \"{3}\". "), ri.DeclaringType.Name, ri.Name, ri.TargetType.Name, ri.Property), Name);
@@ -152,7 +167,7 @@ namespace Sikia.Framework.Model
                     }
                 }
                 rulesList.Clear();
-                //Move rules to target class
+                //Move methods to target class
                 foreach (MethodItem mi in methodsList)
                 {
                     ClassInfoItem cdst = (mi.TargetType == TargetType ? dst : model.ClassByType(mi.TargetType));
@@ -194,7 +209,7 @@ namespace Sikia.Framework.Model
                     // Copy rules from parent
                     List<RuleItem> parentRules = new List<RuleItem>();
                     parentRules.AddRange(pci.rulesList);
-                    // add child Rules
+                    // Add child Rules
                     foreach (RuleItem ri in rulesList)
                     {
                         if (!_ruleExists(ri, parentRules))
@@ -210,7 +225,7 @@ namespace Sikia.Framework.Model
         }
 
         ///<summary>
-        /// Prepare memory strutures for faster executing
+        /// Prepare memory structures for faster executing
         ///</summary>
         public void Loaded(ModelManager model)
         {
