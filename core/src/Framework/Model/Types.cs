@@ -8,10 +8,11 @@ namespace Sikia.Framework.Model
     ///<summary>
     /// Type of rules: validation, propagation ...  
     ///</summary>   
-    public enum RuleType
+    public enum Rule
     {
         Unknown = 0, Validation = 2, Propagation = 4, AfterCreate = 8,
-        AfterLoaded = 16, BeforeSave = 32, Correction = 64
+        AfterLoaded = 16, BeforeSave = 32, Correction = 64,
+        Required = 128
     };
 
     ///<summary>
@@ -28,31 +29,7 @@ namespace Sikia.Framework.Model
     ///</summary>   
     public enum ClassType { Unknown, Model, ViewModel, Process };
 
-    ///<summary>
-    /// Helper for attribute parsing
-    ///</summary>   
-    public static class AttributeParser
-    {
-        ///<summary>
-        /// Convert string to RuleType
-        ///</summary>   
-        static public RuleType ParseRuleType(string value)
-        {
-           foreach (RuleType enumValue in Enum.GetValues(typeof(RuleType)))
-            {
-                string svalue = Enum.GetName(typeof(RuleType), enumValue);
-                if (String.Compare(svalue, value, true) == 0) return enumValue;
-            }
-            if (String.Compare("create", value, true) == 0) return RuleType.AfterCreate;
-            if (String.Compare("loaded", value, true) == 0) return RuleType.AfterLoaded;
-            if (String.Compare("save", value, true) == 0) return RuleType.BeforeSave;
-            if (String.Compare("validate", value, true) == 0) return RuleType.Validation;
-            if (String.Compare("corection", value, true) == 0) return RuleType.Correction;
-            return RuleType.Unknown;
-        }
-       
-    }
-
+    
     ///<summary>
     /// Helper for model
     ///</summary>   

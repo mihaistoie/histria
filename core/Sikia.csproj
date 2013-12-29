@@ -81,6 +81,7 @@
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="src\Aop\Castle\CastleFactory.cs" />
+    <Compile Include="src\DataTypes\Association.cs" />
     <Compile Include="src\DataTypes\BelongsTo.cs" />
     <Compile Include="src\DataTypes\HasMany.cs" />
     <Compile Include="src\DataTypes\HasOne.cs" />

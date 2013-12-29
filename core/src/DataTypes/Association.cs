@@ -6,7 +6,7 @@ using System.Text;
 
 namespace Sikia.DataTypes
 {
-    public class BelongsTo<T> : Association<T> where T: InterceptedObject
+    public abstract class Association<T> where T : InterceptedObject
     {
     }
 }

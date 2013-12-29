@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using Sikia.Framework;
+using Sikia.Framework.Model;
 
 namespace UnitTestModel.Models
 {
@@ -11,7 +12,7 @@ namespace UnitTestModel.Models
     {
         [Display("Middle Name", Description = "Middle Name of Customer")]
         public virtual string MiddleName { get; set; }
-        [Rule("Propagation", Property = "MiddleName")]
+        [Rule(Rule.Propagation, Property = "MiddleName")]
         protected override void CalculatePersistentFullName()
         {
             FullName = (String.IsNullOrEmpty(LastName) ? "" : LastName).ToUpper() + " " + MiddleName + " " + FirstName;

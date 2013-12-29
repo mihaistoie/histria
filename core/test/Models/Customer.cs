@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using Sikia.Framework;
+using Sikia.Framework.Model;
 
 namespace UnitTestModel.Models
 {
@@ -22,8 +23,8 @@ namespace UnitTestModel.Models
 
         public virtual string AfterFirstNameChanged { get; set; }
 
-        [Rule("Propagation", Property = "FirstName")]
-        [Rule("Propagation", Property = "LastName")]
+        [Rule(Rule.Propagation, Property = "FirstName")]
+        [Rule(Rule.Propagation, Property = "LastName")]
         [Display("Calculate Full Name", Description = "Calculate Full Name")]
         protected virtual void CalculatePersistentFullName()
         {

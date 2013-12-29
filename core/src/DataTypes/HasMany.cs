@@ -10,7 +10,7 @@ namespace Sikia.DataTypes
 {
 
 
-    public class HasMany<T> : IEnumerable<T>
+    public class HasMany<T> : Association<T>, IEnumerable<T> where T : InterceptedObject
     {
         #region Internal members
         private InterceptedObject parent;

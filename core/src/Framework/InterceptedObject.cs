@@ -10,7 +10,9 @@ namespace Sikia.Framework
         Creating = 1,
         Loading = 2,
         Saving = 4,
-        Deleting = 8
+        Deleting = 8,
+        Disposing = 16,
+        Frozen = 32
     }
 
     public class InterceptedObject
@@ -33,6 +35,15 @@ namespace Sikia.Framework
             {
                 state = value;
             }
+        }
+
+        private bool canExecuteRules()
+        {
+            if ((state & ObjectState.Disposing) == ObjectState.Disposing)
+                return false;
+            if ((state & ObjectState.Frozen) == ObjectState.Frozen)
+                return false;
+            return true;
         }
         #endregion
 
@@ -66,7 +77,8 @@ namespace Sikia.Framework
         public void AOPAfterCreate()
         {
             state = ObjectState.Creating;
-            ClassInfo.ExecuteRules(RuleType.AfterCreate, this);
+            AOPInitializeAssociations();
+            ClassInfo.ExecuteRules(Rule.AfterCreate, this);
             state = ObjectState.Iddle;
         }
 
@@ -75,6 +87,7 @@ namespace Sikia.Framework
         #region Intercepors
         public bool AOPBeforeSetProperty(string propertyName, ref object value)
         {
+            if (!canExecuteRules()) return true;
             PropinfoItem pi = ClassInfo.PropertyByName(propertyName);
             object oldValue = pi.PropInfo.GetValue(this, null);
             pi.SchemaValidation(ref value);
@@ -83,16 +96,30 @@ namespace Sikia.Framework
             return true;
 
         }
+
         public void AOPAfterSetProperty(string propertyName, object value)
         {
+            if (!canExecuteRules()) return;
             PropinfoItem pi = ClassInfo.PropertyByName(propertyName);
             // Validate
-            
-            pi.ExecuteRules(RuleType.Validation, this);
+            pi.ExecuteRules(Rule.Validation, this);
             // Propagate
-            pi.ExecuteRules(RuleType.Propagation, this);
+            pi.ExecuteRules(Rule.Propagation, this);
 
         }
+
+        public void AOPInitializeAssociations()
+        {
+        }
+        #endregion
+
+        #region Memory
+
+        public void CleanObject()
+        {
+            state = ObjectState.Disposing;
+        }
+
         #endregion
     }
 

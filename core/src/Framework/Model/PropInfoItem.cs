@@ -19,7 +19,7 @@ namespace Sikia.Framework.Model
         private MethodInfo titleGet = null;
         private MethodInfo descriptionGet = null;
         // Rules by type
-        private readonly Dictionary<RuleType, RuleList> rules = new Dictionary<RuleType, RuleList>();
+        private readonly Dictionary<Rule, RuleList> rules = new Dictionary<Rule, RuleList>();
         #endregion
 
         #region Properties
@@ -97,7 +97,7 @@ namespace Sikia.Framework.Model
         ///<summary>
         /// Execute rules by type
         ///</summary>   
-        public void ExecuteRules(RuleType kind, Object target)
+        public void ExecuteRules(Rule kind, Object target)
         {
             if (rules.ContainsKey(kind))
             {

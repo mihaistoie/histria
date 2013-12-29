@@ -11,14 +11,14 @@ namespace Sikia.Framework
     {
         public string Property = "";
         public Type TargetType = null;
-        public RuleType Rule = RuleType.Unknown;
-        public RuleAttribute(string ruleType) 
+        public Rule Rule = Rule.Unknown;
+        public RuleAttribute(Rule ruleType)
         {
-            Rule = AttributeParser.ParseRuleType(ruleType);
+            Rule = ruleType;
         }
         public bool CheckProperty()
         {
-            if (String.IsNullOrEmpty(Property) && ((Rule & (RuleType.Validation | RuleType.Propagation)) != 0)) {
+            if (String.IsNullOrEmpty(Property) && ((Rule & (Rule.Validation | Rule.Propagation)) != 0)) {
                 return false;
             }
             return true;

@@ -23,7 +23,7 @@ namespace Sikia.Framework.Model
         private readonly KeysCollection key = new KeysCollection();
         private readonly List<IndexInfo> indexes = new List<IndexInfo>();
         // Rules by type
-        private readonly Dictionary<RuleType, RuleList> rules = new Dictionary<RuleType, RuleList>();
+        private readonly Dictionary<Rule, RuleList> rules = new Dictionary<Rule, RuleList>();
         private bool inherianceResolved = false;
         private string title;
         private string description;
@@ -61,7 +61,7 @@ namespace Sikia.Framework.Model
         #endregion
 
         #region Rules
-        public void ExecuteRules(RuleType kind, Object target)
+        public void ExecuteRules(Rule kind, Object target)
         {
         }
 
@@ -280,7 +280,7 @@ namespace Sikia.Framework.Model
                 {
                     foreach (RuleAttribute ra in ras)
                     {
-                        if (ra.Rule == RuleType.Unknown)
+                        if (ra.Rule == Rule.Unknown)
                         {
                             throw new ModelException(String.Format(StrUtils.TT("Invalid rule type for \"{0}\" in the class \"{1}\"."), mi.Name, Name), Name);
                         }

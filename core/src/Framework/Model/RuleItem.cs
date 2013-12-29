@@ -12,7 +12,7 @@ namespace Sikia.Framework.Model
         public MethodInfo Method;
         public Type DeclaringType;
         public Type TargetType;
-        public RuleType Kind { get; set; }
+        public Rule Kind { get; set; }
         public string Name { get; set; }
         public string Property { get; set; }
         public string Title { get { return title; } }
@@ -31,7 +31,7 @@ namespace Sikia.Framework.Model
         {
             Method = info;
             Name = Method.Name;
-            Kind = RuleType.Unknown;
+            Kind = Rule.Unknown;
             title = Method.Name;
             DeclaringType = info.DeclaringType;
             TargetType = null;
