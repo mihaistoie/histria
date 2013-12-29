@@ -96,7 +96,6 @@
     <Compile Include="src\Framework\Attributes\RuleAttribute.cs" />
     <Compile Include="src\Framework\Attributes\RulesForAttribute.cs" />
     <Compile Include="src\Framework\Model\IndexInfo.cs" />
-    <Compile Include="src\Framework\Model\IndexInfoItem.cs" />
     <Compile Include="src\Framework\Model\KeyItem.cs" />
     <Compile Include="src\Framework\Model\MethodItem.cs" />
     <Compile Include="src\Framework\Model\RuleItem.cs" />

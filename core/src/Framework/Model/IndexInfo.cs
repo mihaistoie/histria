@@ -6,18 +6,44 @@ using System.Reflection;
 namespace Sikia.Framework.Model
 {
     using Sikia.Framework.Utils;
+
+    ///<summary>
+    /// Definition of an index: name/unique/fields
+    ///</summary>
     public class IndexInfo
     {
-        public bool Unique { get; set; }
-        public string IndexName { get; set; }
-        public List<IndexInfoItem> Items = new List<IndexInfoItem>();
+        /// A field in an index
+        ///</summary>
+        ///<summary>
+        private class IndexInfoItem
+        {
+            public string FiledName { get; set; }
+            public PropertyInfo Property { get; set; }
+            public bool Descendent { get; set; }
+
+   
+            public IndexInfoItem(PropertyInfo pi, string fieldName, bool descendent = false)
+            {
+                FiledName = fieldName;
+                Property = pi;
+                Descendent = descendent;
+            }
+
+        }
+       
+        private bool Unique { get; set; }
+        private string IndexName { get; set; }
+        private List<IndexInfoItem> Items = new List<IndexInfoItem>();
         public IndexInfo() { }
 
+        ///<summary>
+        /// Load index definition
+        ///</summary>
         public void Load(string fields, string indexName, bool unique, ClassInfoItem ci)
         {
             Unique = unique;
             IndexName = indexName;
-            string defIndexName = ci.Name; 
+            string defIndexName = ci.Name;
             string[] aFields = fields.Trim().Split(',');
             foreach (string field in aFields)
             {
@@ -32,7 +58,7 @@ namespace Sikia.Framework.Model
                 if (pi == null)
                     throw new ModelException(String.Format(StrUtils.TT("Class {0}: Invalid property {1} for index {2}."), ci.Name, sfield, indexName), ci.Name);
                 PropinfoItem pp = ci.Properties[pi];
-                defIndexName += '_' +  pp.DbName;
+                defIndexName += '_' + pp.DbName;
                 Items.Add(new IndexInfoItem(pi, sfield, desc));
             }
             if (Items.Count == 0)
@@ -42,5 +68,6 @@ namespace Sikia.Framework.Model
             if (String.IsNullOrEmpty(indexName))
                 IndexName = defIndexName;
         }
+  
     }
 }
