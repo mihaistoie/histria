@@ -84,6 +84,7 @@
     <Compile Include="src\DataTypes\BelongsTo.cs" />
     <Compile Include="src\DataTypes\HasMany.cs" />
     <Compile Include="src\DataTypes\HasOne.cs" />
+    <Compile Include="src\Framework\Attributes\RelationAttribute.cs" />
     <Compile Include="src\Framework\RulePluginObject.cs" />
     <Compile Include="src\Framework\ModelFactory.cs" />
     <Compile Include="src\Application\GlbApplicaton.cs" />

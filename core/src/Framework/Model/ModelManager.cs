@@ -155,7 +155,7 @@ namespace Sikia.Framework.Model
             }
         }
         ///<summary>
-        /// Class by VALUS
+        /// Class by value
         ///</summary>
         public ClassInfoItem Class<T>()
         {

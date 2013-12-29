@@ -14,6 +14,14 @@ namespace Sikia.Framework.Model
         AfterLoaded = 16, BeforeSave = 32, Correction = 64
     };
 
+    ///<summary>
+    /// Type of associations : association, composition, embedded  
+    ///</summary>   
+    public enum Relation
+    {
+        Association, Composition, Embedded
+    };
+
 
     ///<summary>
     /// Type classes 
