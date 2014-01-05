@@ -9,13 +9,14 @@ namespace Sikia.DataBase.SqlServer
 {
     public class MsSqlSession : DbSession
     {
+        private MsSqlConnectionInfo connection = null;
         private void initialize(string url, DbConnectionManger cm)
         {
             this.url = url;
             if (cm == null)
                 cm = DbConnectionManger.Instance();
-            DbConnectionInfo ci = cm.ConnectionInfo(url);
-            this.db = new SqlConnection(ci.ConnectionString());
+            connection = (MsSqlConnectionInfo)cm.ConnectionInfo(url);
+            this.db = new SqlConnection(connection.ConnectionString());
         }
 
         public MsSqlSession(string url)
@@ -34,7 +35,7 @@ namespace Sikia.DataBase.SqlServer
         {
             SqlConnection conn = (SqlConnection)this.db;
             conn.Open();
-
+     
         }
     }
 }

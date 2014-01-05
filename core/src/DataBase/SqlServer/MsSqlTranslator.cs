@@ -23,9 +23,11 @@ namespace Sikia.DataBase
         #endregion
 
 
-        public override List<string> Tables(DbConnection connection)
+        public override List<string> Tables(DbSession session)
         {
             List<string> res = new List<string>();
+           
+            /*
             SqlCommand command = new SqlCommand(SQL_TableList(), (SqlConnection)connection);
             SqlDataReader reader = command.ExecuteReader();
             if (reader.HasRows)
@@ -36,6 +38,7 @@ namespace Sikia.DataBase
                 }
             }
             reader.Close();
+             * */
             return res;
         }
     }

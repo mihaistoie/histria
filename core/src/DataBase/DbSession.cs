@@ -33,7 +33,7 @@ namespace Sikia.DataBase
                     // Dispose managed resources.
                     db.Dispose();
                 }
-            }
+             }
         }
         ~DbSession()
         {
