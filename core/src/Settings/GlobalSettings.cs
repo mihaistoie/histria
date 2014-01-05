@@ -34,6 +34,15 @@ namespace Sikia.Settings
         {
             return Instance(null);
         }
+        public static void CleanUp()
+        {
+            lock (syncRoot)
+            {
+                instance = null;
+            }
+
+        }
+
         public static GlobalSettings Instance(ApplicationConfig config)
         {
             if (instance == null)

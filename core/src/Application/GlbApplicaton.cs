@@ -5,6 +5,7 @@ using System.Text;
 using Sikia.Settings;
 using Sikia.Framework.Model;
 using Sikia.Aop;
+using Sikia.DataBase;
 
 namespace Sikia.Application
 {
@@ -20,11 +21,16 @@ namespace Sikia.Application
         public static void Stop()
         {
             //uninstall 
+            ModelManager.CleanUp();
+            DbConnectionManger.CleanUp();
+            GlobalSettings.CleanUp();
         }
         public static void Start(ApplicationConfig config)
         {
             // Load application settings  
             GlobalSettings settings = GlobalSettings.Instance(config);
+            // Load Connection manager
+            DbConnectionManger db = DbConnectionManger.Instance(config);
             // Load current model
             ModelManager model = ModelManager.Instance;
 

@@ -54,6 +54,15 @@ namespace Sikia.Framework.Model
                 return instance;
             }
         }
+
+        public static void CleanUp()
+        {
+            lock (syncRoot)
+            {
+                instance = null;
+            }
+
+        }
         #endregion
         
         #region Implementation

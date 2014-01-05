@@ -17,7 +17,9 @@ namespace UnitTestModel
             config.Types = Types;
             Sikia.Application.GlbApplicaton.Start(config);
         }
-
+ 
+      
+  
         [TestMethod]
         public void SimplePropagationRule()
         {

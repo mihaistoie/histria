@@ -1,13 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+﻿using System.Collections.Generic;
+using System.Data.Common;
+
 
 namespace Sikia.DataBase
 {
-    public class DatabaseTranslator
+    public abstract class DatabaseTranslator
     {
-
+        public abstract List<string> Tables(DbConnection connection);
     }
 
 }

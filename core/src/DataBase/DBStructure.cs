@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Data.SqlClient;
 using System.Linq;
 using System.Text;
 
@@ -10,14 +9,13 @@ namespace Sikia.Framework.DBModel
 {
     public class DBStructure
     {
-        
-        
+
+        protected DatabaseTranslator Translator { get; set; }
         public Dictionary<string, DBTable> Tables = new Dictionary<string, DBTable>();
-        public void LoadFromDataBase(SqlConnection connection, DatabaseTranslator translator)
+        public virtual void Load(string databaseUrl)
         {
-            /* */
-        
         }
         
     }
+
 }

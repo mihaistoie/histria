@@ -7,9 +7,9 @@ namespace Sikia.DataBase
 {
 
     
-    public enum DBProvider
+    public enum DbProtocol
     {
-       mssql, ora, jet, mysql 
+       unknown, mssql, ora, jet, mysql 
     }
 
 
