@@ -12,19 +12,23 @@ namespace Sikia.DataBase
        unknown, mssql, ora, jet, mysql 
     }
 
-
-    public enum DBType
+    //Supported DB types
+    public enum DbType
     {
-        Int,
-        Enum, 
-        Varchar,
-        Float, 
-        Currency,
-        DateTime,
-        Memo, 
-        Binary
+        uuid,      //uniqueidentifier 
+        Int,        //int   
+        BigInt,     //bigint
+        Bool,       //bit
+        Enum,       //smallint
+        Varchar,    //varchar or nvarchar
+        Float,      //decimal(20,8)    
+        Currency,   //Money ?
+        Date,       //Date
+        Time,       //time
+        DateTime,   //DateTime
+        Memo,       //Text or Ntext 
+        Binary      //binary
     }
     
 }
-
 
