@@ -41,8 +41,17 @@
   <ItemGroup>
     <Compile Include="GlbApplicaton.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Settings\ApplicationConfig.cs" />
     <Compile Include="Settings\GlobalSettings.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Sikia.Core\Sikia.Core.csproj">
+      <Project>{78ad75af-a56f-418f-bf38-56959c893dd3}</Project>
+      <Name>Sikia.Core</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Sikia.Json\Sikia.Json.csproj">
+      <Project>{129e2aa1-5a70-42b0-9051-f84360105480}</Project>
+      <Name>Sikia.Json</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

@@ -3,9 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using Sikia.Settings;
-using Sikia.Framework.Model;
-using Sikia.Aop;
-using Sikia.DataBase;
+using Sikia.Core.Model;
 
 namespace Sikia.Application
 {
@@ -14,20 +12,15 @@ namespace Sikia.Application
     ///</summary>
     static public class GlbApplicaton
     {
-        public static void Start()
-        {
-            GlbApplicaton.Start(null);
-        }
         public static void Stop()
         {
         }
-        public static void Start(ApplicationConfig config)
+        public static void Start()
         {
             // Load application settings  
-            GlobalSettings settings = GlobalSettings.Instance(config);
+            GlobalSettings settings = GlobalSettings.Instance;
             // Load current model
-            ModelManager model = ModelManager.Instance;
-
+            ModelManager model = ModelManager.LoadModelFromConfig(settings.Model()); 
         }
 
     }
