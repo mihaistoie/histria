@@ -18,7 +18,7 @@ namespace Sikia.Core.Model
         {
             DisplayAttribute da = enumType.GetCustomAttributes(typeof(DisplayAttribute), false).FirstOrDefault() as DisplayAttribute;
             EnumType = enumType;
-            Name = StrUtils.Namespace2Name(enumType.ToString());
+            Name = EnumType.Name;
             Title = Name;
             if (da != null)
             {
