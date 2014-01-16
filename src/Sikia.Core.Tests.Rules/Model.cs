@@ -47,9 +47,9 @@ namespace Sikia.Core.Tests.Rules.Customers
     public class PlugInCustomer : RulePluginObject
     {
         [Rule(Rule.Propagation, Property = "FirstName")]
-        public static void Test(object target)
+        public static void Test(Customer target)
         {
-            (target as Customer).AfterFirstNameChanged = "AfterFirstNameChanged";
+            target.AfterFirstNameChanged = "AfterFirstNameChanged";
         }
 
     }
