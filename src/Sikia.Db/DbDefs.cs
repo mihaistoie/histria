@@ -9,7 +9,7 @@ namespace Sikia.Db
     
     public enum DbProtocol
     {
-       unknown, mssql, ora, jet, mysql 
+       unknown, nodb, mssql, ora, mysql 
     }
 
     //Supported DB types

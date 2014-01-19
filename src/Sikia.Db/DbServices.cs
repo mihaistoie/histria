@@ -8,13 +8,23 @@ namespace Sikia.Db
 {
     public static class DbServices
     {
+        public static string DB = "DB"; 
+        public static string SQL = "DB.SQL"; 
+        
+        
         #region Provider
-        public static string ProtocolToString(DbProtocol val)
+        ///<summary>
+        /// Convert DbProtocol to string 
+        ///</summary>
+        public static string DbProtocol2Str(DbProtocol val)
         {
             return Enum.GetName(typeof(DbProtocol), val);
         }
-        
-        public static DbProtocol StringToProtocol(string val)
+
+        ///<summary>
+        /// Convert string to DbProtocol 
+        ///</summary>
+        public static DbProtocol Str2DbProtocol(string val)
         {
             DbProtocol[]allValues =  (DbProtocol[])Enum.GetValues(typeof(DbProtocol));
             Type tdp = typeof(DbProtocol);
@@ -25,40 +35,10 @@ namespace Sikia.Db
             }
             return DbProtocol.unknown;
         }
-
-        public static DbConnectionInfo ConnectionInfo(string url, JsonObject settings)
+        public static DbProtocol Url2Protocol(string url)
         {
-            DbUri uri = new DbUri(url);
-            switch (uri.Protocol)
-            {
-                case DbProtocol.mssql:
-                    MsSqlConnectionInfo ci = new MsSqlConnectionInfo(uri, settings);
-                    return ci;
-                default:
-                    throw new ArgumentException(StrUtils.TT("Database protocol : Not implemented."));
-            
+            return Str2DbProtocol(url.Substring(0, url.IndexOf(':')));
 
-            }
-        }
-
-        public static DbSession Connection(string url, DbConnectionManger cm)
-        {
-            DbConnectionInfo ci = cm.ConnectionInfo(url);
-            switch (ci.Protocol())
-            {
-                case DbProtocol.mssql:
-                    MsSqlSession session = new MsSqlSession(url, cm);
-                    return session;
-                default:
-                    throw new ArgumentException(StrUtils.TT("Database protocol : Not implemented."));
-
-
-            }
-        }
-        
-        public static DbSession Connection(string url)
-        {
-            return DbServices.Connection(url, DbConnectionManger.Instance());
         }
 
         #endregion

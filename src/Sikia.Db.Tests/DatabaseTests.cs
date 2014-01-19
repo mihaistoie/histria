@@ -21,12 +21,11 @@ namespace Sikia.Db.Tests
         public void MsSqlUrlParser()
         {
             string dburl = "mssql://(local)\\SQLEXPRESS/master?schema=dbo";
-            JsonObject databases = (JsonObject)JsonValue.Parse("{\"mssql://(local)\\\\SQLEXPRESS/master?schema=dbo\":{\"trustedConnection\":true, \"user\":\"sa\"}}");
-            DbConnectionManger conn = DbConnectionManger.LoadConfig(databases);
-            DbConnectionInfo ci = conn.ConnectionInfo(dburl);
+            JsonObject databases = (JsonObject)JsonValue.Parse("{\"mssql://(local)\\\\SQLEXPRESS/master?schema=dbo\":{\"trustedConnection\":true}}");
+            DbConnectionManger.Instance.Load(databases);
+            DbConnectionInfo ci = DbDrivers.Instance.Connection(dburl);
             Assert.AreEqual(ci.ServerAddress, "(local)\\SQLEXPRESS", "Parse Server part");
             Assert.AreEqual(ci.DatabaseName, "master", "Parse Database part");
-            Assert.AreEqual(ci.UserName, "sa", "Parse user name");
             MsSqlConnectionInfo ms = (MsSqlConnectionInfo)ci;
             Assert.AreEqual(ms.Schema, "dbo", "Parse schema part");
         }
@@ -36,11 +35,12 @@ namespace Sikia.Db.Tests
         {
             string dburl = "mssql://(local)\\SQLEXPRESS/master?schema=dbo";
             JsonObject databases = (JsonObject)JsonValue.Parse("{\"mssql://(local)\\\\SQLEXPRESS/master?schema=dbo\":{\"trustedConnection\":true}}");
-            DbConnectionManger conn = DbConnectionManger.LoadConfig(databases);
-            using (DbSession ss = DbServices.Connection(dburl, conn))
+            DbConnectionManger.Instance.Load(databases);
+            using (DbSession ss = DbDrivers.Instance.Session(dburl))
             {
                 ss.Open();
-
+                DbCmd cmd = ss.Command("use master");
+                cmd.Execute();
             }
             
         }

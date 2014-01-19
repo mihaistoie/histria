@@ -1,9 +1,10 @@
-﻿using System;
+﻿using Sikia.Json;
+using System;
 using System.Data.Common;
 
 namespace Sikia.Db
 {
-    public abstract class DbConnectionInfo
+    public class DbConnectionInfo
     {
 
         public bool TrustedConnection { get; set; }
@@ -12,8 +13,19 @@ namespace Sikia.Db
         public string DatabaseName { get; set; }
         public string UserName { get; set; }
         public string Password { get; set; }
-        public abstract DbProtocol Protocol();
-        public abstract string ConnectionString();
-  
+        public string Url { get; set; }
+
+        public virtual DbProtocol Protocol()
+        {
+            return DbProtocol.nodb;
+        }
+        public virtual string ConnectionString()
+        {
+            return "";
+        }
+        public virtual void Load(string url)
+        {
+        }
+
     }
 }

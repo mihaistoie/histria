@@ -7,18 +7,18 @@ using System.Text;
 
 namespace Sikia.Db.SqlServer
 {
-    public class MsSqlTranslator : DatabaseTranslator
+    public class MsSqlTranslator : DbTranslator
     {
         #region SQL's
 
         private string SQL_TableList()
         {
-            return "SELECT TABLE_NAME FROM  INFORMATION_SCHEMA.TABLES WHERE TABLE_SCHEMA = ? and Table_Type='BASE TABLE' ORDER BY TABLE_NAME";
+            return "SELECT TABLE_NAME FROM  INFORMATION_SCHEMA.TABLES WHERE TABLE_SCHEMA = @schema and Table_Type='BASE TABLE' ORDER BY TABLE_NAME";
         }
 
         public string SQL_DatabaseExists()
         {
-            return "SELECT count(*) FROM master.dbo.sysdatabases where name = ?";
+            return "SELECT count(*) FROM master.dbo.sysdatabases where name = @name";
         }
         #endregion
 

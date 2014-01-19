@@ -10,7 +10,7 @@ namespace Sikia.Db.Model
     public class DBStructure
     {
 
-        protected DatabaseTranslator Translator { get; set; }
+        protected DbTranslator Translator { get; set; }
         public Dictionary<string, DBTable> Tables = new Dictionary<string, DBTable>();
         public virtual void Load(string databaseUrl)
         {

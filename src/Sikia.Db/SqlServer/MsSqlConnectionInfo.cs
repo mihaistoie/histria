@@ -14,15 +14,18 @@ namespace Sikia.Db.SqlServer
         public string Schema = "dbo";
         public override DbProtocol Protocol() { return DbProtocol.mssql; }
 
-        public MsSqlConnectionInfo(DbUri uri, JsonObject settings)
+ 
+        public override void Load(string url)
         {
+            DbUri uri = new DbUri(url);
             TrustedConnection = true;
             ServerAddress = uri.ServerAddress;
             DatabaseName = uri.DatabaseName;
-            if (uri.Query.ContainsKey("schema")) 
+            if (uri.Query.ContainsKey("schema"))
             {
                 Schema = uri.Query["schema"];
             }
+            JsonObject settings = DbConnectionManger.Instance.ConnectionSettings(url);
             if (settings != null)
             {
                 if (settings.ContainsKey("trustedConnection"))

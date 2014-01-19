@@ -33,6 +33,7 @@
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Net" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -40,21 +41,27 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="DatabaseTranslator.cs" />
+    <Compile Include="DbDrivers.cs" />
+    <Compile Include="DbTranslator.cs" />
     <Compile Include="DbConnectionInfo.cs" />
     <Compile Include="DbConnectionManger.cs" />
     <Compile Include="DbDefs.cs" />
-    <Compile Include="DbQuery.cs" />
-    <Compile Include="DbQueryParameter.cs" />
+    <Compile Include="DbCmd.cs" />
+    <Compile Include="DbCmdParameter.cs" />
+    <Compile Include="DbCmdParameters.cs" />
     <Compile Include="DbServices.cs" />
     <Compile Include="DbSession.cs" />
+    <Compile Include="DbTran.cs" />
     <Compile Include="Model\DBStructure.cs" />
     <Compile Include="Model\DBTable.cs" />
     <Compile Include="DbUri.cs" />
     <Compile Include="SqlServer\MsSqlConnectionInfo.cs" />
+    <Compile Include="SqlServer\MsSqlCmd.cs" />
     <Compile Include="SqlServer\MsSqlSession.cs" />
+    <Compile Include="SqlServer\MsSqlTransaction.cs" />
     <Compile Include="SqlServer\MsSqlTranslator.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="SqlServer\SqlServer.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Sikia.Utils\Sikia.Utils.csproj">
