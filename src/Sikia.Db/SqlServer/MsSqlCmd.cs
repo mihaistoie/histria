@@ -77,7 +77,7 @@ namespace Sikia.Db.SqlServer
 
         private void DeclareParameter(DbCmdParameter p)
         {
-            Command.Parameters.Add(p.Name, MsSqlCmd.SqlType(p.Type)).Value = p.Value;
+            Command.Parameters.Add(p.Name, MsSqlCmd.SqlType(p.Type), p.Size).Value = p.Value;
         }
 
         private void DeclareParameters()
@@ -108,7 +108,7 @@ namespace Sikia.Db.SqlServer
                 DeclareParameters();
                 if ((parameters != null) && parameters.Count() > 0)
                 {
-                    //Command.Prepare();
+                    Command.Prepare();
                 }
             }
             else

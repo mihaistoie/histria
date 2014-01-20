@@ -11,6 +11,7 @@ namespace Sikia.Db
     ///</summary>  
     public class DbCmdParameters : IEnumerable<DbCmdParameter>
     {
+        
         private List<DbCmdParameter> parameters = new List<DbCmdParameter>();
         public DbCmdParameter Add(string name)
         {

@@ -10,6 +10,7 @@ namespace Sikia.Db
     ///</summary>
     public class DbCmdParameter
     {
+        private static int MAX_VARCHAR_SIZE = 128;
         ///<summary>
         /// Name of  parameter
         ///</summary>
@@ -17,7 +18,26 @@ namespace Sikia.Db
         ///<summary>
         /// Maximum size, in bytes, of the data within the column
         ///</summary>
-        public int Size { get; set; }
+        private int size = 0;
+        public int Size {
+            get
+            {
+                if (size <= 0)
+                {
+                    switch (Type)
+                    {
+                        case DbType.Varchar :
+                            size = MAX_VARCHAR_SIZE;
+                            break;
+                    }
+                }
+                return size;
+            }
+            set
+            {
+                size = value;
+            }
+        }
         ///<summary>
         /// Value of  parameter
         ///</summary>
@@ -29,7 +49,7 @@ namespace Sikia.Db
         public DbCmdParameter()
         {
             Name = "";
-            Size = -1;
+            Size = 0;
             Type = DbType.Varchar;
             Value = null;
 

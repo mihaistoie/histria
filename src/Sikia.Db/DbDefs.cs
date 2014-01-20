@@ -29,6 +29,7 @@ namespace Sikia.Db
         Memo,       //Text or Ntext 
         Binary      //binary
     }
+
     
 }
 
