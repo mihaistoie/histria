@@ -21,8 +21,6 @@ namespace Sikia.Db.Tests
         public void MsSqlUrlParser()
         {
             string dburl = "mssql://(local)\\SQLEXPRESS/master?schema=dbo";
-            JsonObject databases = (JsonObject)JsonValue.Parse("{\"mssql://(local)\\\\SQLEXPRESS/master?schema=dbo\":{\"trustedConnection\":true}}");
-            DbConnectionManger.Instance.Load(databases);
             DbConnectionInfo ci = DbDrivers.Instance.Connection(dburl);
             Assert.AreEqual(ci.ServerAddress, "(local)\\SQLEXPRESS", "Parse Server part");
             Assert.AreEqual(ci.DatabaseName, "master", "Parse Database part");
@@ -34,8 +32,6 @@ namespace Sikia.Db.Tests
         public void MsConnection()
         {
             string dburl = "mssql://(local)\\SQLEXPRESS/master?schema=dbo";
-            JsonObject databases = (JsonObject)JsonValue.Parse("{\"mssql://(local)\\\\SQLEXPRESS/master?schema=dbo\":{\"trustedConnection\":true}}");
-            DbConnectionManger.Instance.Load(databases);
             using (DbSession ss = DbDrivers.Instance.Session(dburl))
             {
                 ss.Open();
@@ -43,6 +39,21 @@ namespace Sikia.Db.Tests
                 cmd.Execute();
             }
             
+        }
+        [TestMethod]
+        public void CreateAndDropDatabase()
+        {
+            string dburl = "mssql://(local)\\SQLEXPRESS/xyzgrls?schema=dbo";
+            DbStructure ss = DbDrivers.Instance.Structure(DbServices.Url2Protocol(dburl));
+            if (ss.DatabaseExists(dburl))
+            {
+                ss.DropDatabase(dburl);
+            }
+            ss.CreateDatabase(dburl);
+            Assert.AreEqual( ss.DatabaseExists(dburl), true, "DatabaseExists");
+            ss.DropDatabase(dburl);
+            Assert.AreEqual(ss.DatabaseExists(dburl), false, "DatabaseExists");
+
         }
     }
 }

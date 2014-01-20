@@ -34,8 +34,10 @@ namespace Sikia.Db.SqlServer
                 {
                     tran = (transaction as MsSqlTransaction).Transaction;
                 }
-
-                cmd = new SqlCommand(Sql, sess.Connection, tran);
+                cmd = new SqlCommand();
+                cmd.Connection = sess.Connection;
+                if (tran != null)
+                    cmd.Transaction = tran;
             }
         }
         private static SqlDbType SqlType(DbType type)
@@ -80,8 +82,11 @@ namespace Sikia.Db.SqlServer
 
         private void DeclareParameters()
         {
-            foreach (var p in parameters)
-                DeclareParameter(p);
+            if (parameters != null)
+            {
+                foreach (var p in parameters)
+                    DeclareParameter(p);
+            }
         }
 
         private void SetParameters()
@@ -101,17 +106,16 @@ namespace Sikia.Db.SqlServer
                 Command.Parameters.Clear();
                 Command.CommandText = Sql;
                 DeclareParameters();
-                if (parameters.Count() > 0)
+                if ((parameters != null) && parameters.Count() > 0)
                 {
-                    Command.Prepare();
+                    //Command.Prepare();
                 }
             }
             else
             {
                 SetParameters();
             }
-            Command.ExecuteNonQuery();
-
+    
         }
         public override void Clear()
         {

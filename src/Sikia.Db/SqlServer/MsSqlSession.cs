@@ -12,6 +12,7 @@ namespace Sikia.Db.SqlServer
     public class MsSqlSession : DbSession
     {
         private MsSqlConnectionInfo connection = null;
+        private bool connected = false;
         public SqlConnection Connection
         {
             get
@@ -48,8 +49,11 @@ namespace Sikia.Db.SqlServer
 
         public override void Open()
         {
-            Connection.Open();
-            int version = ServerMajorVersion();
+            if (!connected)
+            {
+                Connection.Open();
+                connected = true;
+            }
         }
 
         #region SqlServer
@@ -68,14 +72,15 @@ namespace Sikia.Db.SqlServer
         {
             using (DbCmd cmd = Command("SELECT SERVERPROPERTY('EngineEdition')"))
             {
-                string engine = (string)cmd.ExecuteScalar();
-                return Convert.ToInt32(engine);
+                return  (int)cmd.ExecuteScalar();
             }
         }
 
         public bool DatabaseExists(string dbname)
         {
-            using (DbCmd cmd = Command("SELECT count(*) FROM master.dbo.sysdatabases where name = @name"))
+            MsSqlTranslator translator = (MsSqlTranslator)DbDrivers.Instance.Translator(DbProtocol.mssql);
+
+            using (DbCmd cmd = Command(translator.SQL_DatabaseExists()))
             {
                 cmd.Parameters.AddWithValue("@name", DbType.Varchar, dbname);
                 int count = (int)cmd.ExecuteScalar();
@@ -86,7 +91,8 @@ namespace Sikia.Db.SqlServer
 
         public void DropDatabase(string dbname)
         {
-            using (DbCmd cmd = Command(string.Format("DROP DATABASE {0}", dbname)))
+            MsSqlTranslator translator = (MsSqlTranslator)DbDrivers.Instance.Translator(DbProtocol.mssql);
+            using (DbCmd cmd = Command(string.Format(translator.SQL_DropDatabase(), dbname)))
             {
                 cmd.Execute();
             }
@@ -94,7 +100,8 @@ namespace Sikia.Db.SqlServer
 
         public void CreateDatabase(string dbname)
         {
-            using (DbCmd cmd = Command(string.Format("CREATE DATABASE {0}", dbname)))
+            MsSqlTranslator translator = (MsSqlTranslator) DbDrivers.Instance.Translator(DbProtocol.mssql);
+            using (DbCmd cmd = Command(string.Format(translator.SQL_CreateDatabase(), dbname)))
             {
                 cmd.Execute();
             }
@@ -103,7 +110,7 @@ namespace Sikia.Db.SqlServer
             if ((version > SqlServer.Vers2005) && (engine != (int)SqlServer.Engine.Azure))
             {
                 // default for Azure
-                using (DbCmd cmd = Command("ALTER DATABASE %s SET READ_COMMITTED_SNAPSHOT ON"))
+                using (DbCmd cmd = Command(string.Format(translator.SQL_READ_COMMITTED_SNAPSHOT(), dbname)))
                 {
                     cmd.Execute();
                 }

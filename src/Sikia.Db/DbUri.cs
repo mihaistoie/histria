@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Net;
 using System.Text;
+using Sikia.Utils;
 
 namespace Sikia.Db
 {
@@ -14,7 +14,8 @@ namespace Sikia.Db
     {
         #region Private members
         private Dictionary<string, string> query = new Dictionary<string,string>();
-        void parseUri(string url)
+        
+        private void parseUri(string url)
         {
             int index = url.IndexOf("://");
             if (index <= 0)
@@ -35,7 +36,7 @@ namespace Sikia.Db
                     var ii = ss.IndexOf('=');
                     if (ii > 0)
                     {
-                        query.Add(ss.Substring(0, ii), WebUtility.HtmlDecode(ss.Substring(ii + 1)));
+                        query.Add(ss.Substring(0, ii), StrUtils.UrlDecode(ss.Substring(ii + 1)));
                     }
                 }
             }
@@ -52,6 +53,26 @@ namespace Sikia.Db
         {
              parseUri(url);
         }
+        ///<summary>
+        /// Database url
+        ///</summary>
+        public string Url { 
+            get {
+                string sbase = string.Format("{0}://{1}/{2}", DbServices.DbProtocol2Str(Protocol), ServerAddress, DatabaseName); 
+                string squery = string.Empty;
+                string sep = string.Empty;
+                
+                foreach (var key in query.Keys)
+                {
+                    squery += sep + string.Format("{0}={1}", key, StrUtils.UrlEncode(query[key]));
+                    sep = "&";
+                }
+                if (!string.IsNullOrEmpty(squery))
+                    sbase += "?" + squery;
+                return sbase; 
+            } 
+        }
+      
         #endregion
 
         #region Properties

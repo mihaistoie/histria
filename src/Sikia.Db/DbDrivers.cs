@@ -13,6 +13,7 @@ namespace Sikia.Db
         {
             private Type connection = null;
             private Type session = null;
+            private Type structure = null;
             public DbTranslator Translator = null;
             private DbDriver()
             {
@@ -27,11 +28,17 @@ namespace Sikia.Db
                 return (DbSession)Activator.CreateInstance(session);
             }
 
-            public DbDriver(Type ConnectionType, Type DbSessionType, Type TranslatorType)
+            public DbStructure Structure()
+            {
+                return (DbStructure)Activator.CreateInstance(structure);
+            }
+            
+            public DbDriver(Type ConnectionType, Type DbSessionType, Type TranslatorType, Type DbStructure)
             {
                 Translator = (DbTranslator)Activator.CreateInstance(TranslatorType);
                 connection = ConnectionType;
                 session = DbSessionType;
+                structure = DbStructure;
             }
         }
 
@@ -47,8 +54,8 @@ namespace Sikia.Db
         private DbDrivers()
         {
             //Register supported Drivers
-            drivers.Add(DbProtocol.nodb, new DbDriver(typeof(DbConnectionInfo), typeof(DbSession), typeof(DbTranslator)));
-            drivers.Add(DbProtocol.mssql, new DbDriver(typeof(MsSqlConnectionInfo), typeof(MsSqlSession), typeof(MsSqlTranslator)));
+            drivers.Add(DbProtocol.nodb, new DbDriver(typeof(DbConnectionInfo), typeof(DbSession), typeof(DbTranslator), typeof(DbStructure)));
+            drivers.Add(DbProtocol.mssql, new DbDriver(typeof(MsSqlConnectionInfo), typeof(MsSqlSession), typeof(MsSqlTranslator), typeof(MsSqlStructure)));
         }
 
         public static DbDrivers Instance
@@ -110,6 +117,16 @@ namespace Sikia.Db
 
         }
 
+        public DbStructure Structure(DbProtocol protocol)
+        {
+             DbDriver driver = drivers[protocol];
+            if (driver != null)
+            {
+                return driver.Structure();
+            }
+            return null;
+
+        }
         #endregion
 
     }

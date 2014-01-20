@@ -21,6 +21,7 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -29,11 +30,11 @@
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="System.Core" />
-    <Reference Include="System.Net" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -42,6 +43,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="DbDrivers.cs" />
+    <Compile Include="DbStructure.cs" />
     <Compile Include="DbTranslator.cs" />
     <Compile Include="DbConnectionInfo.cs" />
     <Compile Include="DbConnectionManger.cs" />
@@ -55,6 +57,7 @@
     <Compile Include="Model\DBStructure.cs" />
     <Compile Include="Model\DBTable.cs" />
     <Compile Include="DbUri.cs" />
+    <Compile Include="SqlServer\MsSqlStructure.cs" />
     <Compile Include="SqlServer\MsSqlConnectionInfo.cs" />
     <Compile Include="SqlServer\MsSqlCmd.cs" />
     <Compile Include="SqlServer\MsSqlSession.cs" />
