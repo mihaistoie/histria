@@ -3,19 +3,27 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-using Sikia.Db;
-
 namespace Sikia.Db.Model
 {
-    public class DBStructure
+    public class DbStructure
     {
-
-        protected DbTranslator Translator { get; set; }
-        public Dictionary<string, DBTable> Tables = new Dictionary<string, DBTable>();
-        public virtual void Load(string databaseUrl)
+        protected Dictionary<string, DBTable> tables = new Dictionary<string, DBTable>();
+        public virtual void CreateDatabase(string url) 
         {
         }
-        
-    }
 
+        public virtual bool DatabaseExists(string url)
+        {
+            return true;
+        }
+
+        public virtual void DropDatabase(string url)
+        {
+        }
+        public virtual void Load(string url)
+        {
+            tables.Clear();
+        }
+
+    }
 }

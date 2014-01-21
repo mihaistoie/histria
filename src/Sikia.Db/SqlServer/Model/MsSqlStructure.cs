@@ -2,8 +2,9 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Sikia.Db.Model;
 
-namespace Sikia.Db.SqlServer
+namespace Sikia.Db.SqlServer.Model
 {
     public class MsSqlStructure: DbStructure
     {
@@ -17,6 +18,8 @@ namespace Sikia.Db.SqlServer
             uri.Query["schema"] = MsSqlStructure.dbo;
             return uri.Url;
         }
+        private void LoadTables(MsSqlTranslator translator, DbCmd cmd) {
+        }
 
         public override void CreateDatabase(string url)
         {
@@ -25,7 +28,6 @@ namespace Sikia.Db.SqlServer
             {
                 if (session != null)
                 {
-                    session.Open();
                     session.CreateDatabase(uri.DatabaseName);
                 }
             }
@@ -37,7 +39,6 @@ namespace Sikia.Db.SqlServer
             using (MsSqlSession session = (MsSqlSession)DbDrivers.Instance.Session(MasterUrl(url)))
             if (session != null)
             {
-                session.Open();
                 return session.DatabaseExists(uri.DatabaseName);
             }
             return false;
@@ -50,10 +51,22 @@ namespace Sikia.Db.SqlServer
             {
                 if (session != null)
                 {
-                    session.Open();
                     session.DropDatabase(uri.DatabaseName);
                 }
             }
         }
+        public override void Load(string url)
+        {
+            tables.Clear();
+            MsSqlTranslator translator = (MsSqlTranslator)DbDrivers.Instance.Translator(DbProtocol.mssql);
+            using (MsSqlSession session = (MsSqlSession)DbDrivers.Instance.Session(url))
+            {
+                using (DbCmd cmd = session.Command(""))
+                {
+                    LoadTables(translator, cmd);
+                } 
+            }
+        }
+
     }
 }

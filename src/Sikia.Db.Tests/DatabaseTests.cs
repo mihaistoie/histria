@@ -2,6 +2,7 @@
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Sikia.Json;
 using Sikia.Db;
+using Sikia.Db.Model;
 using Sikia.Db.SqlServer;
 
 

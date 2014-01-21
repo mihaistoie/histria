@@ -3,6 +3,8 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Sikia.Db.Model;
+using Sikia.Db.SqlServer.Model;
 
 namespace Sikia.Db
 {
@@ -111,6 +113,7 @@ namespace Sikia.Db
             {
                 DbSession session = driver.Session();
                 session.Url = url;
+                session.Open();
                 return session;
             }
             return null;
