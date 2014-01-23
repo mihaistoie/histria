@@ -27,7 +27,7 @@ namespace UnitTestModel
             cust.LastName = "Smith";
             Assert.AreEqual(2, cust.RCount, "Rule hits");
             Assert.AreEqual("John SMITH", cust.FullName, "Propagation rule not called");
-            Assert.AreEqual("AfterFirstNameChanged", cust.AfterFirstNameChanged, "Plugin rule");
+            Assert.AreEqual("AfterFirstNameChanged", cust.AfterFirstNameChanged, "Plugin  rule");
         }
         [TestMethod]
         public void InheritedPropagationRule()
