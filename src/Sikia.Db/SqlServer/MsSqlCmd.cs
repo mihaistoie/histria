@@ -115,7 +115,7 @@ namespace Sikia.Db.SqlServer
             {
                 SetParameters();
             }
-    
+
         }
         public override void Clear()
         {
@@ -126,18 +126,25 @@ namespace Sikia.Db.SqlServer
             }
         }
 
+        protected override DbDataReader InternalExecuteReader()
+        {
+            PrepareExecute();
+            return Command.ExecuteReader();
+        }
+
+
         protected override void InternalExecute()
         {
             PrepareExecute();
             Command.ExecuteNonQuery();
         }
-        
+
         protected override Object InternalExecuteScalar()
         {
             PrepareExecute();
             return Command.ExecuteScalar();
         }
-       
+
 
     }
 }

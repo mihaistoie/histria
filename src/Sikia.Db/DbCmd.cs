@@ -28,7 +28,11 @@ namespace Sikia.Db
         {
             return null;
         }
-       
+
+        protected virtual DbDataReader InternalExecuteReader()
+        {
+            return null;
+        }
 
         private DbCmd()
         {
@@ -75,6 +79,22 @@ namespace Sikia.Db
             }
         }
 
+        public DbDataReader ExecuteReader()
+        {
+            DateTime start = DateTime.Now;
+
+            try
+            {
+                return InternalExecuteReader();
+
+            }
+            finally
+            {
+                TimeSpan interval = start - DateTime.Now;
+                Logger.Info(DbServices.SQL, SQL(), interval.TotalMilliseconds);
+            }
+        }
+
         public Object ExecuteScalar()
         {
             DateTime start = DateTime.Now;
@@ -90,7 +110,7 @@ namespace Sikia.Db
         }
 
         // Implement IDisposable. 
-        
+
         public void Dispose()
         {
             Dispose(true);

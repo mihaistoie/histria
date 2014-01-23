@@ -35,9 +35,9 @@ namespace Sikia.Db.Tests
             string dburl = "mssql://(local)\\SQLEXPRESS/master?schema=dbo";
             using (DbSession ss = DbDrivers.Instance.Session(dburl))
             {
-                ss.Open();
-                DbCmd cmd = ss.Command("use master");
-                cmd.Execute();
+                DbCmd cmd = ss.Command("select 1");
+                int res = (int)cmd.ExecuteScalar();
+                Assert.AreEqual(res, 1, "ExecuteScalar");
             }
             
         }
@@ -52,6 +52,20 @@ namespace Sikia.Db.Tests
             }
             ss.CreateDatabase(dburl);
             Assert.AreEqual( ss.DatabaseExists(dburl), true, "DatabaseExists");
+            using (DbSession session = DbDrivers.Instance.Session(dburl))
+            {
+                using (DbCmd cmd = session.Command(""))
+                {
+                    cmd.Sql = "create table a1 (a integer not null)";
+                    cmd.Execute();
+                    cmd.Sql = "create table B1 (a integer not null)";
+                    cmd.Execute();
+                }
+            }
+            ss.Load(dburl);
+            Assert.AreEqual(ss.Tables.ContainsKey("a1"), true, "DatabaseExists");
+            Assert.AreEqual(ss.Tables.ContainsKey("B1"), true, "DatabaseExists");
+           
             ss.DropDatabase(dburl);
             Assert.AreEqual(ss.DatabaseExists(dburl), false, "DatabaseExists");
 

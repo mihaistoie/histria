@@ -7,9 +7,12 @@ namespace Sikia.Db.Model
 {
     public class DbStructure
     {
-        protected Dictionary<string, DBTable> tables = new Dictionary<string, DBTable>();
-        public virtual void CreateDatabase(string url) 
+        protected Dictionary<string, DbTable> tables = new Dictionary<string, DbTable>();
+
+        public Dictionary<string, DbTable> Tables { get { return tables; } }
+        public virtual void CreateDatabase(string url)
         {
+
         }
 
         public virtual bool DatabaseExists(string url)

@@ -74,6 +74,7 @@ namespace Sikia.Db
                 {
                     // Dispose managed resources.
                     db.Dispose();
+                    db = null;
                 }
                 disposed = true;
             }

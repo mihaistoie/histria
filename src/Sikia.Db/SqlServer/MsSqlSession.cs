@@ -60,19 +60,17 @@ namespace Sikia.Db.SqlServer
 
         public int ServerMajorVersion()
         {
-            using (DbCmd cmd = Command("SELECT SERVERPROPERTY('ProductVersion')"))
-            {
-                string version = (string)cmd.ExecuteScalar();
-                version = version.Substring(0, version.IndexOf("."));
-                return Convert.ToInt32(version);
-            }
+            string version = Connection.ServerVersion;
+            version = version.Substring(0, version.IndexOf("."));
+            return Convert.ToInt32(version);
+
         }
 
         public int EngineEdition()
         {
             using (DbCmd cmd = Command("SELECT SERVERPROPERTY('EngineEdition')"))
             {
-                return  (int)cmd.ExecuteScalar();
+                return (int)cmd.ExecuteScalar();
             }
         }
 
@@ -91,6 +89,7 @@ namespace Sikia.Db.SqlServer
 
         public void DropDatabase(string dbname)
         {
+            SqlConnection.ClearAllPools();
             MsSqlTranslator translator = (MsSqlTranslator)DbDrivers.Instance.Translator(DbProtocol.mssql);
             using (DbCmd cmd = Command(string.Format(translator.SQL_DropDatabase(), dbname)))
             {
@@ -100,7 +99,7 @@ namespace Sikia.Db.SqlServer
 
         public void CreateDatabase(string dbname)
         {
-            MsSqlTranslator translator = (MsSqlTranslator) DbDrivers.Instance.Translator(DbProtocol.mssql);
+            MsSqlTranslator translator = (MsSqlTranslator)DbDrivers.Instance.Translator(DbProtocol.mssql);
             using (DbCmd cmd = Command(string.Format(translator.SQL_CreateDatabase(), dbname)))
             {
                 cmd.Execute();

@@ -11,10 +11,6 @@ namespace Sikia.Db.SqlServer
     {
         #region SQL's
 
-        private string SQL_TableList()
-        {
-            return "SELECT TABLE_NAME FROM  INFORMATION_SCHEMA.TABLES WHERE TABLE_SCHEMA = @schema and Table_Type='BASE TABLE' ORDER BY TABLE_NAME";
-        }
         public string SQL_READ_COMMITTED_SNAPSHOT()
         {
             return "ALTER DATABASE {0} SET READ_COMMITTED_SNAPSHOT ON";

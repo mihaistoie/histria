@@ -5,7 +5,7 @@ using System.Text;
 
 namespace Sikia.Db.Model
 {
-    public class DBTable
+    public class DbTable
     {
         public string TableName { get; set; } 
     }
