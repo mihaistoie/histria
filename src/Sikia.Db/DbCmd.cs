@@ -74,7 +74,7 @@ namespace Sikia.Db
             }
             finally
             {
-                TimeSpan interval = start - DateTime.Now;
+                TimeSpan interval = DateTime.Now - start;
                 Logger.Info(DbServices.SQL, SQL(), interval.TotalMilliseconds);
             }
         }
@@ -90,7 +90,7 @@ namespace Sikia.Db
             }
             finally
             {
-                TimeSpan interval = start - DateTime.Now;
+                TimeSpan interval = DateTime.Now - start;
                 Logger.Info(DbServices.SQL, SQL(), interval.TotalMilliseconds);
             }
         }
@@ -104,7 +104,7 @@ namespace Sikia.Db
             }
             finally
             {
-                TimeSpan interval = start - DateTime.Now;
+                TimeSpan interval = DateTime.Now - start;
                 Logger.Info(DbServices.SQL, SQL(), interval.TotalMilliseconds);
             }
         }

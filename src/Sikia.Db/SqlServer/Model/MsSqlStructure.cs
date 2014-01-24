@@ -23,7 +23,8 @@ namespace Sikia.Db.SqlServer.Model
         private void LoadTables(MsSqlTranslator translator,  DbUri uri, DbCmd cmd)
         {
             cmd.Clear();
-            cmd.Sql =  "SELECT TABLE_NAME FROM  INFORMATION_SCHEMA.TABLES WHERE TABLE_SCHEMA = @schema and Table_Type='BASE TABLE' ORDER BY TABLE_NAME";
+            cmd.Sql = "SELECT TABLE_NAME FROM  INFORMATION_SCHEMA.TABLES WHERE TABLE_CATALOG =@db and TABLE_SCHEMA = @schema and Table_Type='BASE TABLE' ORDER BY TABLE_NAME";
+            cmd.Parameters.AddWithValue("@db", DbType.Varchar, uri.DatabaseName);
             cmd.Parameters.AddWithValue("@schema", DbType.Varchar, uri.Query["schema"]);
             using (DbDataReader rdr = cmd.ExecuteReader())
             {
@@ -31,6 +32,39 @@ namespace Sikia.Db.SqlServer.Model
                 {
                     var tableName = rdr.GetString(0);
                     tables.Add(tableName, new MsSqlTable{ TableName = tableName });
+                }
+            }
+        }
+
+        private void LoadColumns(MsSqlTranslator translator, DbUri uri, DbCmd cmd)
+        {
+            cmd.Clear();
+            StringBuilder sql = new StringBuilder();
+            sql.AppendLine(" SELECT");
+            sql.AppendLine(" TABLE_NAME, COLUMN_NAME");
+            sql.AppendLine(" FROM");
+            sql.AppendLine(" INFORMATION_SCHEMA.COLUMNS");
+            sql.AppendLine(" WHERE");
+            sql.AppendLine(" TABLE_CATALOG =@db");
+            sql.AppendLine(" AND TABLE_SCHEMA = @schema");
+            sql.AppendLine(" ORDER BY TABLE_NAME, COLUMN_NAME, ORDINAL_POSITION");
+            cmd.Sql = sql.ToString();
+            cmd.Parameters.AddWithValue("@db", DbType.Varchar, uri.DatabaseName);
+            cmd.Parameters.AddWithValue("@schema", DbType.Varchar, uri.Query["schema"]);
+            DbTable table = null;
+            using (DbDataReader rdr = cmd.ExecuteReader())
+            {
+                while (rdr.Read())
+                {
+                    var tableName = rdr.GetString(0);
+                    if (table == null || table.TableName != tableName)
+                    {
+                        tables.TryGetValue(tableName, out table);
+                    }
+                    if (table != null)
+                    {
+                        //
+                    }
                 }
             }
         }
@@ -83,6 +117,7 @@ namespace Sikia.Db.SqlServer.Model
                 using (DbCmd cmd = session.Command(""))
                 {
                     LoadTables(translator, uri, cmd);
+                    LoadColumns(translator, uri, cmd);
                 }
             }
         }
