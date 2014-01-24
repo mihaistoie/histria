@@ -19,7 +19,7 @@ namespace Sikia.Db
         Int,        //int   
         BigInt,     //bigint
         Bool,       //bit
-        Enum,       //smallint
+        Enum,       //tinyint, smallint
         Varchar,    //varchar or nvarchar
         Float,      //decimal(20,8)    
         Currency,   //Money ?
