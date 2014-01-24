@@ -7,6 +7,9 @@ namespace Sikia.Db.Model
 {
     public class DbTable
     {
-        public string TableName { get; set; } 
+        protected Dictionary<string, DbColumn> columns = new Dictionary<string, DbColumn>();
+        
+        public Dictionary<string, DbColumn> Columns { get { return columns; } }
+        public string TableName { get; set; }
     }
 }

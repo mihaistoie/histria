@@ -55,7 +55,7 @@ namespace Sikia.Db
             var p = Add(name, type);
             p.Value = value;
         }
-        public void AddWithValue(string name, DbType type, int size, object value)
+        public void AddWithValue(string name, DbType type, object value, int size)
         {
             var p = Add(name, type, size);
             p.Value = value;
