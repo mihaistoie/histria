@@ -34,6 +34,20 @@ namespace Sikia.Db.SqlServer.Model
                 }
             }
         }
+        private void LoadColumns(MsSqlTranslator translator, DbUri uri, DbCmd cmd)
+        {
+            cmd.Clear();
+            cmd.Sql = "SELECT TABLE_NAME FROM  INFORMATION_SCHEMA.TABLES WHERE TABLE_SCHEMA = @schema and Table_Type='BASE TABLE' ORDER BY TABLE_NAME";
+            cmd.Parameters.AddWithValue("@schema", DbType.Varchar, uri.Query["schema"]);
+            using (DbDataReader rdr = cmd.ExecuteReader())
+            {
+                while (rdr.Read())
+                {
+                    var tableName = rdr.GetString(0);
+                    tables.Add(tableName, new MsSqlTable { TableName = tableName });
+                }
+            }
+        }
 
         public override void CreateDatabase(string url)
         {
