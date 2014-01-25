@@ -1,4 +1,4 @@
-﻿using Sikia.Utils;
+﻿using Sikia.Sys;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -54,10 +54,10 @@ namespace Sikia.Db.SqlServer
                     return SqlDbType.Bit;
                 case DbType.Enum:
                     return SqlDbType.SmallInt;
-                case DbType.Varchar:
+                case DbType.String:
                     return SqlDbType.VarChar;
-                case DbType.Float:
-                    return SqlDbType.Float;
+                case DbType.Number:
+                    return SqlDbType.Decimal;
                 case DbType.Currency:
                     return SqlDbType.Money;
                 case DbType.Date:

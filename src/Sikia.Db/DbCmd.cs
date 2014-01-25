@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Data.Common;
 using System.Linq;
 using System.Text;
-using Sikia.Utils;
+using Sikia.Sys;
 
 namespace Sikia.Db
 {
@@ -75,7 +75,7 @@ namespace Sikia.Db
             finally
             {
                 TimeSpan interval = DateTime.Now - start;
-                Logger.Info(DbServices.SQL, SQL(), interval.TotalMilliseconds);
+                Logger.Info(Logger.SQL, SQL(), interval.TotalMilliseconds);
             }
         }
 
@@ -91,7 +91,7 @@ namespace Sikia.Db
             finally
             {
                 TimeSpan interval = DateTime.Now - start;
-                Logger.Info(DbServices.SQL, SQL(), interval.TotalMilliseconds);
+                Logger.Info(Logger.SQL, SQL(), interval.TotalMilliseconds);
             }
         }
 
@@ -105,7 +105,7 @@ namespace Sikia.Db
             finally
             {
                 TimeSpan interval = DateTime.Now - start;
-                Logger.Info(DbServices.SQL, SQL(), interval.TotalMilliseconds);
+                Logger.Info(Logger.SQL, SQL(), interval.TotalMilliseconds);
             }
         }
 

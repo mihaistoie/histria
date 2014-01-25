@@ -1,5 +1,5 @@
 ﻿
-namespace Sikia.Utils
+namespace Sikia.Sys
 {
     public static class StrUtils
     {

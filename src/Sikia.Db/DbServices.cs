@@ -1,6 +1,6 @@
 ﻿using Sikia.Db.SqlServer;
 using Sikia.Json;
-using Sikia.Utils;
+using Sikia.Sys;
 using System;
 
 
@@ -8,10 +8,6 @@ namespace Sikia.Db
 {
     public static class DbServices
     {
-        public static string DB = "DB"; 
-        public static string SQL = "DB.SQL"; 
-        
-        
         #region Provider
         ///<summary>
         /// Convert DbProtocol to string 

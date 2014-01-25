@@ -6,7 +6,7 @@ using System.Reflection;
 
 namespace Sikia.Core.Model
 {
-    using Sikia.Utils;
+    using Sikia.Sys;
 
     public class EnumInfoItem: Dictionary<int, string>
     {

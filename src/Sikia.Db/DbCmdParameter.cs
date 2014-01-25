@@ -26,7 +26,7 @@ namespace Sikia.Db
                 {
                     switch (Type)
                     {
-                        case DbType.Varchar :
+                        case DbType.String :
                             size = MAX_VARCHAR_SIZE;
                             break;
                     }
@@ -50,7 +50,7 @@ namespace Sikia.Db
         {
             Name = "";
             Size = 0;
-            Type = DbType.Varchar;
+            Type = DbType.String;
             Value = null;
 
         }

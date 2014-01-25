@@ -7,8 +7,8 @@
     <ProjectGuid>{7E07AF0F-212D-42BF-B505-87018F6619BD}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Sikia.Utils</RootNamespace>
-    <AssemblyName>Sikia.Utils</AssemblyName>
+    <RootNamespace>Sikia.Sys</RootNamespace>
+    <AssemblyName>Sikia.Sys</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <TargetFrameworkProfile />
@@ -40,6 +40,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="DbType.cs" />
     <Compile Include="Logger.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="StrUtils.cs" />

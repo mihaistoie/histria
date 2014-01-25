@@ -5,7 +5,7 @@ using System.Reflection;
 
 namespace Sikia.Core.Model
 {
-    using Sikia.Utils;
+    using Sikia.Sys;
 
     ///<summary>
     /// Definition of an index: name/unique/fields

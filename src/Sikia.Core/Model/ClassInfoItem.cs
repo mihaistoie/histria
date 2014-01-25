@@ -7,7 +7,7 @@ using System.Collections.ObjectModel;
 
 namespace Sikia.Core.Model
 {
-    using Sikia.Utils;
+    using Sikia.Sys;
 
 	///<summary>
 	/// 

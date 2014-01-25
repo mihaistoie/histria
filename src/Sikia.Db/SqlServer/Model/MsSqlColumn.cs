@@ -8,5 +8,9 @@ namespace Sikia.Db.SqlServer.Model
 {
     public class MsSqlColumn: DbColumn
     {
+        public MsSqlColumn()
+            : base()
+        {
+        }
     }
 }

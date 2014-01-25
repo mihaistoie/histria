@@ -12,7 +12,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sikia.Json", "Sikia.Json\Si
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sikia.Db", "Sikia.Db\Sikia.Db.csproj", "{7989F2D8-575F-414A-9E6A-2923AE9DF0FA}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sikia.Utils", "Sikia.Utils\Sikia.Utils.csproj", "{7E07AF0F-212D-42BF-B505-87018F6619BD}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sikia.Sys", "Sikia.Utils\Sikia.Sys.csproj", "{7E07AF0F-212D-42BF-B505-87018F6619BD}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sikia.Db.Tests", "Sikia.Db.Tests\Sikia.Db.Tests.csproj", "{C8D843FA-C617-4A2B-834D-A88C825B5567}"
 EndProject

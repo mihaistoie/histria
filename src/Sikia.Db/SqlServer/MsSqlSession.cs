@@ -80,7 +80,7 @@ namespace Sikia.Db.SqlServer
 
             using (DbCmd cmd = Command(translator.SQL_DatabaseExists()))
             {
-                cmd.Parameters.AddWithValue("@name", DbType.Varchar, dbname);
+                cmd.Parameters.AddWithValue("@name", DbType.String, dbname);
                 int count = (int)cmd.ExecuteScalar();
                 return count > 0;
             }

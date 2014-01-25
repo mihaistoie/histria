@@ -33,25 +33,6 @@ namespace Sikia.Db.SqlServer
 
         #endregion
 
-
-        public override List<string> Tables(DbSession session)
-        {
-            List<string> res = new List<string>();
-           
-            /*
-            SqlCommand command = new SqlCommand(SQL_TableList(), (SqlConnection)connection);
-            SqlDataReader reader = command.ExecuteReader();
-            if (reader.HasRows)
-            {
-                while (reader.Read())
-                {
-                    res.Add(reader.GetString(0));
-                }
-            }
-            reader.Close();
-             * */
-            return res;
-        }
     }
         
 }

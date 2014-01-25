@@ -4,11 +4,15 @@ using System.Diagnostics;
 using System.Linq;
 using System.Text;
 
-namespace Sikia.Utils
+namespace Sikia.Sys
 {
    
     public static class Logger
     {
+        public static string DB = "DB";
+        public static string SQL = "DB.SQL";
+        public static string DBMAP = "DB.MAP"; 
+
         public static void Error(string module, string message)
         {
             WriteEntry(message, "error", module);
@@ -31,7 +35,7 @@ namespace Sikia.Utils
 
         private static void WriteEntry(string module, string message, string type, double interval = 0)
         {
-            Trace.WriteLine( string.Format("{0},{1},{2},{3}",type, module, message, interval));
+            Trace.WriteLine(string.Format("{0}:{1}:{2}:{3}", type, interval.ToString("#.0"), module, message));
         }
     }
 }
