@@ -9,6 +9,7 @@ namespace Sikia.Db.Model
     {
         protected Dictionary<string, DbColumn> columns = new Dictionary<string, DbColumn>();
         protected List<string> pks = new List<string>();
+        protected DbIndexes indexes = new DbIndexes();
 
         ///<summary>
         /// Primary key columns
@@ -18,8 +19,13 @@ namespace Sikia.Db.Model
         ///<summary>
         /// Table columns
         ///</summary>
-        
         public Dictionary<string, DbColumn> Columns { get { return columns; } }
+  
+        ///<summary>
+        /// Table indexes
+        ///</summary>
+        public DbIndexes Indexes { get { return indexes; } }
+        
         ///<summary>
         /// Table name
         ///</summary

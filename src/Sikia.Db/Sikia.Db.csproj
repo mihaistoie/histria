@@ -44,6 +44,7 @@
   <ItemGroup>
     <Compile Include="DbDrivers.cs" />
     <Compile Include="Model\DbColumn.cs" />
+    <Compile Include="Model\DbIndex.cs" />
     <Compile Include="Model\DbStructure.cs" />
     <Compile Include="DbTranslator.cs" />
     <Compile Include="DbConnectionInfo.cs" />
@@ -57,6 +58,7 @@
     <Compile Include="DbTran.cs" />
     <Compile Include="Model\DbTable.cs" />
     <Compile Include="DbUri.cs" />
+    <Compile Include="Model\DbIndexItem.cs" />
     <Compile Include="SqlServer\Model\MsSqlColumn.cs" />
     <Compile Include="SqlServer\Model\MsSqlStructure.cs" />
     <Compile Include="SqlServer\Model\MsSqlTable.cs" />

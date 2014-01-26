@@ -213,5 +213,105 @@ namespace Sikia.Db.Tests
             Assert.AreEqual(ss.DatabaseExists(dburl), false, "DatabaseExists");
 
         }
+
+        [TestMethod]
+        public void MsSqlIndexes()
+        {
+            string dburl = "mssql://(local)\\SQLEXPRESS/slfsrgrls?schema=dbo";
+            DbStructure ss = DbDrivers.Instance.Structure(DbServices.Url2Protocol(dburl));
+            if (ss.DatabaseExists(dburl))
+            {
+                ss.DropDatabase(dburl);
+            }
+            ss.CreateDatabase(dburl);
+            Assert.AreEqual(ss.DatabaseExists(dburl), true, "DatabaseExists");
+            using (DbSession session = DbDrivers.Instance.Session(dburl))
+            {
+                using (DbCmd cmd = session.Command(""))
+                {
+                    var sql = new StringBuilder();
+                    sql.AppendLine("CREATE TABLE INDEXTEST1(");
+                    sql.AppendLine("a int not null,");
+                    sql.AppendLine("code varchar(10) not null,");
+                    sql.AppendLine("title varchar(100) not null,");
+                    sql.AppendLine("description varchar(100) not null,");
+                    sql.AppendLine("PRIMARY KEY(code, a)");
+                    sql.AppendLine(")");
+                    cmd.Sql = sql.ToString();
+                    cmd.Execute();
+
+                    cmd.Clear();
+                    cmd.Sql = "CREATE UNIQUE INDEX INDEXTEST1_title_code on INDEXTEST1(title, code)";
+                    cmd.Execute();
+
+
+                    cmd.Clear();
+                    cmd.Sql = "CREATE INDEX INDEXTEST1_title_description on INDEXTEST1(title, description desc)";
+                    cmd.Execute();
+
+                    sql.Clear();
+                    sql.AppendLine("CREATE TABLE INDEXTEST2(");
+                    sql.AppendLine("a int not null,");
+                    sql.AppendLine("code varchar(10) not null,");
+                    sql.AppendLine("title varchar(100) not null,");
+                    sql.AppendLine("description varchar(100) not null,");
+                    sql.AppendLine("PRIMARY KEY(code, a)");
+                    sql.AppendLine(")");
+                    cmd.Sql = sql.ToString();
+                    cmd.Execute();
+
+                    cmd.Clear();
+                    cmd.Sql = "CREATE INDEX INDEXTEST2_title_description on INDEXTEST2(title, description)";
+                    cmd.Execute();
+
+
+                }
+            }
+            ss.Load(dburl);
+            Assert.AreEqual(ss.Tables.ContainsKey("INDEXTEST1"), true, "Table exists");
+            DbTable table = null;
+            DbIndex index = null;
+            if (ss.Tables.TryGetValue("INDEXTEST1", out table))
+            {
+                Assert.AreEqual(table.Indexes.Count, 2, "Number of indexes");
+                bool hi = table.Indexes.Contains("INDEXTEST1_title_description");
+                Assert.AreEqual(hi, true, "Index name");
+                if (hi)
+                {
+                    index = table.Indexes["INDEXTEST1_title_description"];
+                    Assert.AreEqual(index.Unique, false, "Index unique");
+                    Assert.AreEqual(index.Columns.Count, 2, "Number of fields in index");
+                    if (index.Columns.Count > 0)
+                    {
+                        Assert.AreEqual(index.Columns[0].ColumnName, "title", "Fields in index");
+                        Assert.AreEqual(index.Columns[0].Descending, false, "Descending");
+                    }
+                    if (index.Columns.Count > 1)
+                    {
+                        Assert.AreEqual(index.Columns[1].ColumnName, "description", "Fields in index");
+                        Assert.AreEqual(index.Columns[1].Descending, true, "Descending");
+                    }
+                }
+                hi = table.Indexes.Contains("INDEXTEST1_title_code");
+                Assert.AreEqual(hi, true, "Index name");
+                if (hi)
+                {
+                    index = table.Indexes["INDEXTEST1_title_code"];
+                    Assert.AreEqual(index.Unique, true, "Index unique");
+                    Assert.AreEqual(index.Columns.Count, 2, "Number of fields in index");
+                }
+
+            }
+            Assert.AreEqual(ss.Tables.ContainsKey("INDEXTEST2"), true, "Table exists");
+            table = null;
+            if (ss.Tables.TryGetValue("INDEXTEST2", out table))
+            {
+                Assert.AreEqual(table.Indexes.Count, 1, "Number of indexes");
+
+            }
+            ss.DropDatabase(dburl);
+            Assert.AreEqual(ss.DatabaseExists(dburl), false, "DatabaseExists");
+
+        }
     }
 }

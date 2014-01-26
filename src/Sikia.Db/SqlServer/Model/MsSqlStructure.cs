@@ -224,7 +224,8 @@ namespace Sikia.Db.SqlServer.Model
             sql.AppendLine(" t.name as TABLE_NAME,");
             sql.AppendLine(" ind.name as INDEX_NAME,");
             sql.AppendLine(" col.name as COLUMN_NAME,");
-            sql.AppendLine(" ic.is_descending_key as DESCENDING");
+            sql.AppendLine(" ic.is_descending_key as DESCENDING,");
+            sql.AppendLine(" ind.is_unique as IsUnique");
             sql.AppendLine(" FROM");
             sql.AppendLine(" sys.indexes ind");
             sql.AppendLine(" INNER JOIN  sys.index_columns ic ON  ind.object_id = ic.object_id and ind.index_id = ic.index_id");
@@ -233,7 +234,7 @@ namespace Sikia.Db.SqlServer.Model
             sql.AppendLine(" inner join  sys.schemas s on t.schema_id = s.schema_id");
             sql.AppendLine(" WHERE");
             sql.AppendLine(" ind.is_primary_key = 0");
-            sql.AppendLine(" AND ind.is_unique = 0");
+            sql.AppendLine(" AND ic.key_ordinal > 0");
             sql.AppendLine(" AND ind.is_unique_constraint = 0");
             sql.AppendLine(" AND t.is_ms_shipped = 0");
             sql.AppendLine(" AND s.name = @schema");
@@ -242,22 +243,33 @@ namespace Sikia.Db.SqlServer.Model
             cmd.Sql = sql.ToString();
             cmd.Parameters.AddWithValue("@schema", DbType.String, uri.Query["schema"]);
             DbTable table = null;
+            DbIndex index = null;
             using (DbDataReader rdr = cmd.ExecuteReader())
             {
                 int idxTN = rdr.GetOrdinal("TABLE_NAME");
                 int idxIN = rdr.GetOrdinal("INDEX_NAME");
                 int idxCN = rdr.GetOrdinal("COLUMN_NAME");
                 int idxCD = rdr.GetOrdinal("DESCENDING");
+                int idxIU = rdr.GetOrdinal("IsUnique");
+                
                 while (rdr.Read())
                 {
                     var tableName = rdr.GetString(idxTN);
                     if (table == null || table.TableName != tableName)
                     {
+                        index = null;
                         tables.TryGetValue(tableName, out table);
                     }
                     if (table != null)
                     {
-                        table.PKs.Add(rdr.GetString(idxCN));
+                        var indexName = rdr.GetString(idxIN);
+                        if (index == null || index.IndexName != indexName)
+                        {
+                            index = new DbIndex() { IndexName = indexName, Unique = rdr.GetBoolean(idxIU) };
+                            table.Indexes.Add(index);
+                        }
+                        index.AddColumn(rdr.GetString(idxCN), rdr.GetBoolean(idxCD));
+
                     }
                 }
             }
@@ -326,6 +338,7 @@ namespace Sikia.Db.SqlServer.Model
                     LoadTables(translator, uri, cmd);
                     LoadColumns(translator, uri, cmd);
                     LoadPKs(translator, uri, cmd);
+                    LoadIndexes(translator, uri, cmd);
                 }
             }
         }
