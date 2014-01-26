@@ -24,10 +24,10 @@ namespace Sikia.Db.Tests
         {
             string dburl = "mssql://(local)\\SQLEXPRESS/master?schema=dbo";
             DbConnectionInfo ci = DbDrivers.Instance.Connection(dburl);
-            Assert.AreEqual(ci.ServerAddress, "(local)\\SQLEXPRESS", "Parse Server part");
-            Assert.AreEqual(ci.DatabaseName, "master", "Parse Database part");
+            Assert.AreEqual("(local)\\SQLEXPRESS", ci.ServerAddress, "Parse Server part");
+            Assert.AreEqual("master", ci.DatabaseName, "Parse Database part");
             MsSqlConnectionInfo ms = (MsSqlConnectionInfo)ci;
-            Assert.AreEqual(ms.Schema, "dbo", "Parse schema part");
+            Assert.AreEqual("dbo", ms.Schema, "Parse schema part");
         }
 
         [TestMethod]
@@ -38,7 +38,7 @@ namespace Sikia.Db.Tests
             {
                 DbCmd cmd = ss.Command("select 1");
                 int res = (int)cmd.ExecuteScalar();
-                Assert.AreEqual(res, 1, "ExecuteScalar");
+                Assert.AreEqual(1, res, "ExecuteScalar");
             }
 
         }
@@ -52,21 +52,14 @@ namespace Sikia.Db.Tests
                 ss.DropDatabase(dburl);
             }
             ss.CreateDatabase(dburl);
-            ss.DropDatabase(dburl);
-            Assert.AreEqual(ss.DatabaseExists(dburl), false, "DatabaseExists");
+            DropDB(dburl, ss);
 
         }
         [TestMethod]
         public void MsSqlTables()
         {
             string dburl = "mssql://(local)\\SQLEXPRESS/msergrls?schema=dbo";
-            DbStructure ss = DbDrivers.Instance.Structure(DbServices.Url2Protocol(dburl));
-            if (ss.DatabaseExists(dburl))
-            {
-                ss.DropDatabase(dburl);
-            }
-            ss.CreateDatabase(dburl);
-            Assert.AreEqual(ss.DatabaseExists(dburl), true, "DatabaseExists");
+            DbStructure ss = CreateDB(dburl);
             using (DbSession session = DbDrivers.Instance.Session(dburl))
             {
                 using (DbCmd cmd = session.Command(""))
@@ -78,26 +71,25 @@ namespace Sikia.Db.Tests
                 }
             }
             ss.Load(dburl);
-            Assert.AreEqual(ss.Tables.ContainsKey("a1"), true, "Table exists");
-            Assert.AreEqual(ss.Tables.ContainsKey("B1"), true, "Table exists");
-            ss.DropDatabase(dburl);
-            Assert.AreEqual(ss.DatabaseExists(dburl), false, "DatabaseExists");
+            Assert.AreEqual(true, ss.Tables.ContainsKey("a1"), "Table exists");
+            Assert.AreEqual(true, ss.Tables.ContainsKey("B1"), "Table exists");
+            DropDB(dburl, ss);
 
         }
         void checkColumn(DbTable table, string name, DbType dt, string dbtype, int size, int prec, int scale, bool nullable)
         {
-            Assert.AreEqual(table.Columns.ContainsKey(name), true, "Column exists");
+            Assert.AreEqual(true, table.Columns.Contains(name), "Column exists");
             DbColumn column = null;
             if (table.Columns.TryGetValue(name, out column))
             {
-                Assert.AreEqual(column.Type, dt, "column type");
-                Assert.AreEqual(column.DbType, dbtype, "column sql type");
-                Assert.AreEqual(column.Size, size, "column length");
-                Assert.AreEqual(column.Nullable, nullable, "column nullable");
+                Assert.AreEqual(dt, column.Type, "column type");
+                Assert.AreEqual(dbtype, column.DbType, "column sql type");
+                Assert.AreEqual(size, column.Size, "column length");
+                Assert.AreEqual(nullable, column.Nullable, "column nullable");
                 if ((dbtype != "int") && (dbtype != "bigint") && (dbtype != "smallint") && (dbtype != "tinyint") && (dbtype != "money"))
                 {
-                    Assert.AreEqual(column.Precision, prec, "column precision");
-                    Assert.AreEqual(column.Scale, scale, "column scale");
+                    Assert.AreEqual(prec, column.Precision, "column precision");
+                    Assert.AreEqual(scale, column.Scale, "column scale");
                 }
 
             }
@@ -107,13 +99,7 @@ namespace Sikia.Db.Tests
         public void MsSqlColumns()
         {
             string dburl = "mssql://(local)\\SQLEXPRESS/slergrls?schema=dbo";
-            DbStructure ss = DbDrivers.Instance.Structure(DbServices.Url2Protocol(dburl));
-            if (ss.DatabaseExists(dburl))
-            {
-                ss.DropDatabase(dburl);
-            }
-            ss.CreateDatabase(dburl);
-            Assert.AreEqual(ss.DatabaseExists(dburl), true, "DatabaseExists");
+            DbStructure ss = CreateDB(dburl);
             using (DbSession session = DbDrivers.Instance.Session(dburl))
             {
                 using (DbCmd cmd = session.Command(""))
@@ -144,7 +130,7 @@ namespace Sikia.Db.Tests
                 }
             }
             ss.Load(dburl);
-            Assert.AreEqual(ss.Tables.ContainsKey("SUPPORTEDTYPES"), true, "Table exists");
+            Assert.AreEqual(true, ss.Tables.ContainsKey("SUPPORTEDTYPES"), "Table exists");
             DbTable table = null;
             if (ss.Tables.TryGetValue("SUPPORTEDTYPES", out table))
             {
@@ -166,8 +152,7 @@ namespace Sikia.Db.Tests
                 checkColumn(table, "t", DbType.Binary, "varbinary", -1, 0, 0, true);
                 checkColumn(table, "u", DbType.Memo, "varchar", -1, 0, 0, true);
             }
-            ss.DropDatabase(dburl);
-            Assert.AreEqual(ss.DatabaseExists(dburl), false, "DatabaseExists");
+            DropDB(dburl, ss);
 
         }
 
@@ -175,13 +160,7 @@ namespace Sikia.Db.Tests
         public void MsSqlPrimarykeys()
         {
             string dburl = "mssql://(local)\\SQLEXPRESS/slfsrgrls?schema=dbo";
-            DbStructure ss = DbDrivers.Instance.Structure(DbServices.Url2Protocol(dburl));
-            if (ss.DatabaseExists(dburl))
-            {
-                ss.DropDatabase(dburl);
-            }
-            ss.CreateDatabase(dburl);
-            Assert.AreEqual(ss.DatabaseExists(dburl), true, "DatabaseExists");
+            DbStructure ss = CreateDB(dburl);
             using (DbSession session = DbDrivers.Instance.Session(dburl))
             {
                 using (DbCmd cmd = session.Command(""))
@@ -200,31 +179,43 @@ namespace Sikia.Db.Tests
                 }
             }
             ss.Load(dburl);
-            Assert.AreEqual(ss.Tables.ContainsKey("PKTEST"), true, "Table exists");
+            Assert.AreEqual(true, ss.Tables.ContainsKey("PKTEST"), "Table exists");
             DbTable table = null;
             if (ss.Tables.TryGetValue("PKTEST", out table))
             {
-                Assert.AreEqual(table.PKs.Count, 2, "Number of fields in PK");
-                Assert.AreEqual(table.PKs.IndexOf("a"), 1, "Fields order in PK");
-                Assert.AreEqual(table.PKs.IndexOf("code"), 0, "Fields order in PK");
+                Assert.AreEqual(2, table.PK.Count, "Number of fields in PK");
+                Assert.AreEqual(1, table.PK.IndexOf("a"), "Fields order in PK");
+                Assert.AreEqual(0, table.PK.IndexOf("code"), "Fields order in PK");
 
             }
-            ss.DropDatabase(dburl);
-            Assert.AreEqual(ss.DatabaseExists(dburl), false, "DatabaseExists");
+            DropDB(dburl, ss);
+
 
         }
 
-        [TestMethod]
-        public void MsSqlIndexes()
+        private DbStructure CreateDB(string dburl)
         {
-            string dburl = "mssql://(local)\\SQLEXPRESS/slfsrgrls?schema=dbo";
             DbStructure ss = DbDrivers.Instance.Structure(DbServices.Url2Protocol(dburl));
             if (ss.DatabaseExists(dburl))
             {
                 ss.DropDatabase(dburl);
             }
             ss.CreateDatabase(dburl);
-            Assert.AreEqual(ss.DatabaseExists(dburl), true, "DatabaseExists");
+            Assert.AreEqual(true, ss.DatabaseExists(dburl), "DatabaseExists");
+            return ss;
+        }
+
+        private void DropDB(string dburl, DbStructure ss)
+        {
+            ss.DropDatabase(dburl);
+            Assert.AreEqual(false, ss.DatabaseExists(dburl), "DatabaseExists");
+        }
+
+        [TestMethod]
+        public void MsSqlIndexes()
+        {
+            string dburl = "mssql://(local)\\SQLEXPRESS/slfsrgrls?schema=dbo";
+            DbStructure ss = CreateDB(dburl);
             using (DbSession session = DbDrivers.Instance.Session(dburl))
             {
                 using (DbCmd cmd = session.Command(""))
@@ -268,28 +259,28 @@ namespace Sikia.Db.Tests
                 }
             }
             ss.Load(dburl);
-            Assert.AreEqual(ss.Tables.ContainsKey("INDEXTEST1"), true, "Table exists");
+            Assert.AreEqual(true, ss.Tables.ContainsKey("INDEXTEST1"), "Table exists");
             DbTable table = null;
             DbIndex index = null;
             if (ss.Tables.TryGetValue("INDEXTEST1", out table))
             {
-                Assert.AreEqual(table.Indexes.Count, 2, "Number of indexes");
+                Assert.AreEqual(2, table.Indexes.Count, "Number of indexes");
                 bool hi = table.Indexes.Contains("INDEXTEST1_title_description");
-                Assert.AreEqual(hi, true, "Index name");
+                Assert.AreEqual(true, hi, "Index name");
                 if (hi)
                 {
                     index = table.Indexes["INDEXTEST1_title_description"];
-                    Assert.AreEqual(index.Unique, false, "Index unique");
-                    Assert.AreEqual(index.Columns.Count, 2, "Number of fields in index");
+                    Assert.AreEqual(false, index.Unique, "Index unique");
+                    Assert.AreEqual(2, index.Columns.Count, "Number of fields in index");
                     if (index.Columns.Count > 0)
                     {
-                        Assert.AreEqual(index.Columns[0].ColumnName, "title", "Fields in index");
-                        Assert.AreEqual(index.Columns[0].Descending, false, "Descending");
+                        Assert.AreEqual("title", index.Columns[0].ColumnName, "Fields in index");
+                        Assert.AreEqual(false, index.Columns[0].Descending, "Descending");
                     }
                     if (index.Columns.Count > 1)
                     {
-                        Assert.AreEqual(index.Columns[1].ColumnName, "description", "Fields in index");
-                        Assert.AreEqual(index.Columns[1].Descending, true, "Descending");
+                        Assert.AreEqual("description", index.Columns[1].ColumnName, "Fields in index");
+                        Assert.AreEqual(true, index.Columns[1].Descending, "Descending");
                     }
                 }
                 hi = table.Indexes.Contains("INDEXTEST1_title_code");
@@ -297,21 +288,97 @@ namespace Sikia.Db.Tests
                 if (hi)
                 {
                     index = table.Indexes["INDEXTEST1_title_code"];
-                    Assert.AreEqual(index.Unique, true, "Index unique");
-                    Assert.AreEqual(index.Columns.Count, 2, "Number of fields in index");
+                    Assert.AreEqual(true, index.Unique, "Index unique");
+                    Assert.AreEqual(2, index.Columns.Count, "Number of fields in index");
                 }
 
             }
-            Assert.AreEqual(ss.Tables.ContainsKey("INDEXTEST2"), true, "Table exists");
+            Assert.AreEqual(true, ss.Tables.ContainsKey("INDEXTEST2"), "Table exists");
             table = null;
             if (ss.Tables.TryGetValue("INDEXTEST2", out table))
             {
-                Assert.AreEqual(table.Indexes.Count, 1, "Number of indexes");
+                Assert.AreEqual(1, table.Indexes.Count, "Number of indexes");
 
             }
-            ss.DropDatabase(dburl);
-            Assert.AreEqual(ss.DatabaseExists(dburl), false, "DatabaseExists");
+            DropDB(dburl, ss);
+        }
+        [TestMethod]
+        public void MsSqlForeignkeys()
+        {
+            string dburl = "mssql://(local)\\SQLEXPRESS/zqmsrgrls?schema=dbo";
+            DbStructure ss = CreateDB(dburl);
+            using (DbSession session = DbDrivers.Instance.Session(dburl))
+            {
+                using (DbCmd cmd = session.Command(""))
+                {
+                    var sql = new StringBuilder();
+                    sql.AppendLine(" create table exams");
+                    sql.AppendLine(" (");
+                    sql.AppendLine(" exam_id uniqueidentifier not null,");
+                    sql.AppendLine(" exam_key int not null,");
+                    sql.AppendLine(" exam_name varchar(50),");
+                    sql.AppendLine("PRIMARY KEY(exam_key, exam_id)");
+                    sql.AppendLine(" )");
+                    cmd.Clear();
+                    cmd.Sql = sql.ToString();
+                    cmd.Execute();
 
+                    sql.Clear();
+                    sql.AppendLine(" create table question_bank");
+                    sql.AppendLine(" (");
+                    sql.AppendLine(" question_id uniqueidentifier primary key,");
+                    sql.AppendLine(" question_exam_id uniqueidentifier,");
+                    sql.AppendLine(" question_exam_key int,");
+                    sql.AppendLine(" question_text varchar(1024) not null,");
+                    sql.AppendLine(" question_point_value decimal");
+                    sql.AppendLine(" )");
+                    cmd.Clear();
+                    cmd.Sql = sql.ToString();
+                    cmd.Execute();
+
+                    sql.Clear();
+                    sql.AppendLine(" create table anwser_bank");
+                    sql.AppendLine(" (");
+                    sql.AppendLine("anwser_id           uniqueidentifier primary key,");
+                    sql.AppendLine("anwser_question_id  uniqueidentifier,");
+                    sql.AppendLine("anwser_text         varchar(1024),");
+                    sql.AppendLine("anwser_is_correct   bit");
+                    sql.AppendLine(" );");
+                    cmd.Clear();
+                    cmd.Sql = sql.ToString();
+                    cmd.Execute();
+
+                    cmd.Clear();
+                    cmd.Sql = "Alter table question_bank Add foreign key (question_exam_key, question_exam_id) references exams(exam_key, exam_id)";
+                    cmd.Execute();
+
+                    cmd.Clear();
+                    cmd.Sql = "Alter table anwser_bank Add foreign key (anwser_question_id) references question_bank(question_id)";
+                    cmd.Execute();
+
+                }
+            }
+            ss.Load(dburl);
+            DbTable table = null;
+            if (ss.Tables.TryGetValue("question_bank", out table))
+            {
+                Assert.AreEqual(1, table.ForeignKeys.Count, "FK count");
+                if (table.ForeignKeys.Count > 0)
+                {
+                    var fk = table.ForeignKeys[0];
+                    Assert.AreEqual(2, fk.Columns.Count, "Number of fields in fkFK");
+                    if (fk.Columns.Count > 1) {
+                        var fkc = fk.Columns[0];
+                        Assert.AreEqual("question_exam_key", fkc.ColumnName, "FK1");
+                        Assert.AreEqual("exam_key", fkc.UniqueColumnName, "FK1");
+                        fkc = fk.Columns[1];
+                        Assert.AreEqual("question_exam_id", fkc.ColumnName, "FK2");
+                        Assert.AreEqual("exam_id", fkc.UniqueColumnName, "FK2");
+
+                    }
+                }
+            }
+            DropDB(dburl, ss);
         }
     }
 }

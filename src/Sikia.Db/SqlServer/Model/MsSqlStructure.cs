@@ -164,7 +164,7 @@ namespace Sikia.Db.SqlServer.Model
                         size = rdr.IsDBNull(idxLEN) ? 0 : rdr.GetInt32(idxLEN);
 
                         MsSqlStructure.Load(col, rdr.GetString(idxDT), size, precision, scale);
-                        table.Columns.Add(col.ColumnName, col);
+                        table.Columns.Add(col);
                     }
                 }
             }
@@ -182,7 +182,11 @@ namespace Sikia.Db.SqlServer.Model
             sql.AppendLine(" SELECT");
             sql.AppendLine(" CC.TABLE_NAME, CC.COLUMN_NAME");
             sql.AppendLine(" FROM");
-            sql.AppendLine(" INFORMATION_SCHEMA.KEY_COLUMN_USAGE CC INNER JOIN INFORMATION_SCHEMA.TABLE_CONSTRAINTS TC ON  CC.CONSTRAINT_NAME = TC.CONSTRAINT_NAME");
+            sql.AppendLine(" INFORMATION_SCHEMA.KEY_COLUMN_USAGE CC");
+            sql.AppendLine(" INNER JOIN INFORMATION_SCHEMA.TABLE_CONSTRAINTS TC ON");
+            sql.AppendLine(" CC.CONSTRAINT_NAME = TC.CONSTRAINT_NAME");
+            sql.AppendLine(" AND CC.TABLE_CATALOG = TC.TABLE_CATALOG");
+            sql.AppendLine(" AND CC.TABLE_SCHEMA = TC.TABLE_SCHEMA");
             sql.AppendLine(" WHERE");
             sql.AppendLine(" CC.TABLE_CATALOG =@db");
             sql.AppendLine(" AND CC.TABLE_SCHEMA = @schema");
@@ -205,7 +209,7 @@ namespace Sikia.Db.SqlServer.Model
                     }
                     if (table != null)
                     {
-                        table.PKs.Add(rdr.GetString(idxCN));
+                        table.PK.Add(rdr.GetString(idxCN));
                     }
                 }
             }
@@ -251,7 +255,7 @@ namespace Sikia.Db.SqlServer.Model
                 int idxCN = rdr.GetOrdinal("COLUMN_NAME");
                 int idxCD = rdr.GetOrdinal("DESCENDING");
                 int idxIU = rdr.GetOrdinal("IsUnique");
-                
+
                 while (rdr.Read())
                 {
                     var tableName = rdr.GetString(idxTN);
@@ -275,6 +279,83 @@ namespace Sikia.Db.SqlServer.Model
             }
         }
         #endregion
+
+        #region Foreign keys
+        ///<summary>
+        /// Load Foreign keys
+        ///</summary>
+        private void LoadForeignKeys(MsSqlTranslator translator, DbUri uri, DbCmd cmd)
+        {
+            cmd.Clear();
+            StringBuilder sql = new StringBuilder();
+            sql.AppendLine(" SELECT");
+            sql.AppendLine(" FKC.TABLE_NAME as RTABLE, PKC.TABLE_NAME as UTABLE, FKC.COLUMN_NAME as RCOLUMN,");
+            sql.AppendLine(" PKC.COLUMN_NAME as UCOLUMN,");
+            sql.AppendLine(" FKC.CONSTRAINT_NAME");
+            sql.AppendLine(" from INFORMATION_SCHEMA.KEY_COLUMN_USAGE FKC");
+            sql.AppendLine(" inner join INFORMATION_SCHEMA.REFERENTIAL_CONSTRAINTS R");
+            sql.AppendLine(" ON R.CONSTRAINT_CATALOG = FKC.CONSTRAINT_CATALOG");
+            sql.AppendLine(" AND R.CONSTRAINT_SCHEMA = FKC.CONSTRAINT_SCHEMA");
+            sql.AppendLine(" AND R.CONSTRAINT_NAME = FKC.CONSTRAINT_NAME");
+            sql.AppendLine(" inner join INFORMATION_SCHEMA.KEY_COLUMN_USAGE PKC");
+            sql.AppendLine(" ON R.UNIQUE_CONSTRAINT_CATALOG = PKC.CONSTRAINT_CATALOG");
+            sql.AppendLine(" AND R.UNIQUE_CONSTRAINT_SCHEMA = PKC.CONSTRAINT_SCHEMA");
+            sql.AppendLine(" AND R.UNIQUE_CONSTRAINT_NAME = PKC.CONSTRAINT_NAME");
+            sql.AppendLine(" AND FKC.ORDINAL_POSITION = PKC.ORDINAL_POSITION");
+            sql.AppendLine(" WHERE");
+            sql.AppendLine(" FKC.TABLE_CATALOG =@db");
+            sql.AppendLine(" AND FKC.TABLE_SCHEMA = @schema");
+            sql.AppendLine(" order by FKC.TABLE_NAME, PKC.ORDINAL_POSITION");
+
+            cmd.Sql = sql.ToString();
+            cmd.Parameters.AddWithValue("@db", DbType.String, uri.DatabaseName);
+            cmd.Parameters.AddWithValue("@schema", DbType.String, uri.Query["schema"]);
+            DbTable rtable = null;
+            DbTable utable = null;
+            DbFk fk = null;
+            using (DbDataReader rdr = cmd.ExecuteReader())
+            {
+                int idxRT = rdr.GetOrdinal("RTABLE");
+                int idxUT = rdr.GetOrdinal("UTABLE");
+                int idxRC = rdr.GetOrdinal("RCOLUMN");
+                int idxUC = rdr.GetOrdinal("UCOLUMN");
+                int idxCN = rdr.GetOrdinal("CONSTRAINT_NAME");
+
+
+                while (rdr.Read())
+                {
+                    var rtableName = rdr.GetString(idxRT);
+                    var utableName = rdr.GetString(idxUT);
+
+                    if (rtable == null || rtable.TableName != rtableName)
+                    {
+                        fk = null;
+                        tables.TryGetValue(rtableName, out rtable);
+                    }
+
+                    if (utable == null || utable.TableName != utableName)
+                    {
+                        fk = null;
+                        tables.TryGetValue(utableName, out utable);
+                    }
+                    if (rtable != null && utable != null)
+                    {
+                        var fkName = rdr.GetString(idxCN);
+                        if (fk == null || fk.FKName != fkName)
+                        {
+                            fk = new DbFk() { FKName = fkName, TableName = rdr.GetString(idxRT), UniqueTableName = rdr.GetString(idxUT) };
+                            rtable.ForeignKeys.Add(fk);
+                        }
+                        var fki = new DbFkItem() { ColumnName = rdr.GetString(idxRC), UniqueColumnName = rdr.GetString(idxUC) };
+                        fk.Columns.Add(fki);
+
+                    }
+                }
+            }
+        }
+        #endregion
+
+
 
         #endregion
 
@@ -339,6 +420,7 @@ namespace Sikia.Db.SqlServer.Model
                     LoadColumns(translator, uri, cmd);
                     LoadPKs(translator, uri, cmd);
                     LoadIndexes(translator, uri, cmd);
+                    LoadForeignKeys(translator, uri, cmd);
                 }
             }
         }

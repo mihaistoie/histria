@@ -44,7 +44,13 @@
   <ItemGroup>
     <Compile Include="DbDrivers.cs" />
     <Compile Include="Model\DbColumn.cs" />
+    <Compile Include="Model\DbColumns.cs" />
+    <Compile Include="Model\DbFk.cs" />
+    <Compile Include="Model\DbFkColumns.cs" />
+    <Compile Include="Model\DbFkItem.cs" />
     <Compile Include="Model\DbIndex.cs" />
+    <Compile Include="Model\DbIndexColumns.cs" />
+    <Compile Include="Model\DbIndexes.cs" />
     <Compile Include="Model\DbStructure.cs" />
     <Compile Include="DbTranslator.cs" />
     <Compile Include="DbConnectionInfo.cs" />
