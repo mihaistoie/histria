@@ -36,5 +36,11 @@ namespace Sikia.Db.Model
         /// Table name
         ///</summary
         public string TableName { get; set; }
+
+        #region Schema
+        public virtual void CreateColumnsSQL(StringBuilder sql) {}
+        public virtual void CreateIndexesSQL(StringBuilder sql) { }
+        public virtual void CreateFKSQL(StringBuilder sql) { }
+        #endregion
     }
 }

@@ -367,7 +367,8 @@ namespace Sikia.Db.Tests
                 {
                     var fk = table.ForeignKeys[0];
                     Assert.AreEqual(2, fk.Columns.Count, "Number of fields in fkFK");
-                    if (fk.Columns.Count > 1) {
+                    if (fk.Columns.Count > 1)
+                    {
                         var fkc = fk.Columns[0];
                         Assert.AreEqual("question_exam_key", fkc.ColumnName, "FK1");
                         Assert.AreEqual("exam_key", fkc.UniqueColumnName, "FK1");
@@ -379,6 +380,17 @@ namespace Sikia.Db.Tests
                 }
             }
             DropDB(dburl, ss);
+        }
+        [TestMethod]
+        public void LoadComplexDB()
+        {
+            string dburl = "mssql://(local)\\SQLEXPRESS/SFR?schema=dbo";
+            DbStructure ss = DbDrivers.Instance.Structure(DbServices.Url2Protocol(dburl));
+            if (ss.DatabaseExists(dburl))
+            {
+                ss.Load(dburl);
+                Assert.AreEqual(212, ss.Tables.Count, "Loaded");
+            }
         }
     }
 }

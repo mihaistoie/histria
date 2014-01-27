@@ -34,7 +34,7 @@ namespace Sikia.Db.Model
         public virtual void DropDatabase(string url)
         {
         }
-        #endregion        
+        #endregion
 
         #region Factory
         public virtual DbTable Table()
@@ -47,6 +47,7 @@ namespace Sikia.Db.Model
         }
         #endregion
 
+        #region Structure
         ///<summary>
         /// Load database structure (tables/columns/constraints)
         ///</summary>
@@ -54,7 +55,35 @@ namespace Sikia.Db.Model
         {
             tables.Clear();
         }
-    
+        #endregion
+
+        #region SQL
+
+        public StringBuilder CreateSQL(bool createTables = true, bool createIndexes = true, bool createFKs = true)
+        {
+            StringBuilder sql = new StringBuilder();
+            if (createTables)
+            {
+                foreach (var table in tables)
+                {
+                }
+            }
+            if (createFKs)
+            {
+                foreach (var table in tables)
+                {
+                }
+            }
+            if (createIndexes)
+            {
+                foreach (var table in tables)
+                {
+                }
+            }
+            return sql;
+        }
+
+        #endregion
 
     }
 }
