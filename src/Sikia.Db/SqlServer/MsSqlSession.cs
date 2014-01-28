@@ -68,7 +68,8 @@ namespace Sikia.Db.SqlServer
 
         public int EngineEdition()
         {
-            using (DbCmd cmd = Command("SELECT SERVERPROPERTY('EngineEdition')"))
+
+             using (DbCmd cmd = Command("SELECT SERVERPROPERTY('EngineEdition')"))
             {
                 return (int)cmd.ExecuteScalar();
             }

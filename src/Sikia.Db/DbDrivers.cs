@@ -30,9 +30,9 @@ namespace Sikia.Db
                 return (DbSession)Activator.CreateInstance(session);
             }
 
-            public DbStructure Structure()
+            public DbSchema Structure()
             {
-                return (DbStructure)Activator.CreateInstance(structure);
+                return (DbSchema)Activator.CreateInstance(structure);
             }
             
             public DbDriver(Type ConnectionType, Type DbSessionType, Type TranslatorType, Type DbStructure)
@@ -56,8 +56,8 @@ namespace Sikia.Db
         private DbDrivers()
         {
             //Register supported Drivers
-            drivers.Add(DbProtocol.nodb, new DbDriver(typeof(DbConnectionInfo), typeof(DbSession), typeof(DbTranslator), typeof(DbStructure)));
-            drivers.Add(DbProtocol.mssql, new DbDriver(typeof(MsSqlConnectionInfo), typeof(MsSqlSession), typeof(MsSqlTranslator), typeof(MsSqlStructure)));
+            drivers.Add(DbProtocol.nodb, new DbDriver(typeof(DbConnectionInfo), typeof(DbSession), typeof(DbTranslator), typeof(DbSchema)));
+            drivers.Add(DbProtocol.mssql, new DbDriver(typeof(MsSqlConnectionInfo), typeof(MsSqlSession), typeof(MsSqlTranslator), typeof(MsSqlSchema)));
         }
 
         public static DbDrivers Instance
@@ -120,7 +120,7 @@ namespace Sikia.Db
 
         }
 
-        public DbStructure Structure(DbProtocol protocol)
+        public DbSchema Schema(DbProtocol protocol)
         {
              DbDriver driver = drivers[protocol];
             if (driver != null)

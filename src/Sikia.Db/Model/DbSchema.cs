@@ -5,7 +5,7 @@ using System.Text;
 
 namespace Sikia.Db.Model
 {
-    public class DbStructure
+    public class DbSchema
     {
         protected Dictionary<string, DbTable> tables = new Dictionary<string, DbTable>();
         ///<summary>
@@ -55,32 +55,69 @@ namespace Sikia.Db.Model
         {
             tables.Clear();
         }
+
+        public virtual void ExecuteSchemaScript(string url, List<string> structure)
+        {
+            using (DbSession session = DbDrivers.Instance.Session(url))
+            {
+                using (DbCmd cmd = session.Command(""))
+                {
+                    for (var i = 0; i < structure.Count; ++i)
+                    {
+                        cmd.Sql = structure[i];
+                        cmd.Execute();
+                    }
+                }
+            }
+        }
+
+        ///<summary>
+        /// Check model before generate migration script
+        ///</summary>
+        public virtual void CheckModel()
+        {
+            //Add indexes for all foreign keys   
+            foreach (var table in tables.Values)
+            {
+                table.CheckIndexesForFK();
+            }
+        }
+
         #endregion
 
         #region SQL
 
-        public StringBuilder CreateSQL(bool createTables = true, bool createIndexes = true, bool createFKs = true)
+
+        ///<summary>
+        /// Generate create script for database
+        ///</summary>
+        public List<string> CreateSQL(bool createTables = true, bool createIndexes = true, bool createFKs = true)
         {
-            StringBuilder sql = new StringBuilder();
+            var structure = new List<string>();
             if (createTables)
             {
-                foreach (var table in tables)
+                foreach (var table in tables.Values)
                 {
+                    table.CreateColumnsSQL(structure);
+                    table.CreatePKSQL(structure);
                 }
+
             }
             if (createFKs)
             {
-                foreach (var table in tables)
+                foreach (var table in tables.Values)
                 {
+                    table.CreateFKSQL(structure);
                 }
             }
             if (createIndexes)
             {
-                foreach (var table in tables)
+                foreach (var table in tables.Values)
                 {
+                    table.CreateIndexesSQL(structure);
                 }
             }
-            return sql;
+            return structure;
         }
 
         #endregion

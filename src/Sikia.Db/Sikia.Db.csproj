@@ -51,7 +51,7 @@
     <Compile Include="Model\DbIndex.cs" />
     <Compile Include="Model\DbIndexColumns.cs" />
     <Compile Include="Model\DbIndexes.cs" />
-    <Compile Include="Model\DbStructure.cs" />
+    <Compile Include="Model\DbSchema.cs" />
     <Compile Include="DbTranslator.cs" />
     <Compile Include="DbConnectionInfo.cs" />
     <Compile Include="DbConnectionManger.cs" />
@@ -66,7 +66,7 @@
     <Compile Include="DbUri.cs" />
     <Compile Include="Model\DbIndexItem.cs" />
     <Compile Include="SqlServer\Model\MsSqlColumn.cs" />
-    <Compile Include="SqlServer\Model\MsSqlStructure.cs" />
+    <Compile Include="SqlServer\Model\MsSqlSchema.cs" />
     <Compile Include="SqlServer\Model\MsSqlTable.cs" />
     <Compile Include="SqlServer\MsSqlConnectionInfo.cs" />
     <Compile Include="SqlServer\MsSqlCmd.cs" />

@@ -9,7 +9,7 @@ using Sikia.Sys;
 
 namespace Sikia.Db.SqlServer.Model
 {
-    public class MsSqlStructure : DbStructure
+    public class MsSqlSchema : DbSchema
     {
         private static string master = "master";
         private static string dbo = "dbo";
@@ -17,9 +17,9 @@ namespace Sikia.Db.SqlServer.Model
         private static string MasterUrl(string url)
         {
             DbUri uri = new DbUri(url);
-            uri.DatabaseName = MsSqlStructure.master;
+            uri.DatabaseName = MsSqlSchema.master;
             uri.Query.Clear();
-            uri.Query["schema"] = MsSqlStructure.dbo;
+            uri.Query["schema"] = MsSqlSchema.dbo;
             return uri.Url;
         }
 
@@ -163,7 +163,7 @@ namespace Sikia.Db.SqlServer.Model
                         precision = rdr.IsDBNull(idxPrec) ? 0 : rdr.GetByte(idxPrec);
                         size = rdr.IsDBNull(idxLEN) ? 0 : rdr.GetInt32(idxLEN);
 
-                        MsSqlStructure.Load(col, rdr.GetString(idxDT), size, precision, scale);
+                        MsSqlSchema.Load(col, rdr.GetString(idxDT), size, precision, scale);
                         table.Columns.Add(col);
                     }
                 }
@@ -269,7 +269,7 @@ namespace Sikia.Db.SqlServer.Model
                         var indexName = rdr.GetString(idxIN);
                         if (index == null || index.IndexName != indexName)
                         {
-                            index = new DbIndex() { IndexName = indexName, Unique = rdr.GetBoolean(idxIU) };
+                            index = new DbIndex() { TableName = tableName, IndexName = indexName, Unique = rdr.GetBoolean(idxIU) };
                             table.Indexes.Add(index);
                         }
                         index.AddColumn(rdr.GetString(idxCN), rdr.GetBoolean(idxCD));
@@ -354,8 +354,6 @@ namespace Sikia.Db.SqlServer.Model
             }
         }
         #endregion
-
-
 
         #endregion
 

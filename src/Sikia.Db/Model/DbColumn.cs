@@ -22,5 +22,6 @@ namespace Sikia.Db.Model
             Scale = 0;
             Nullable = true;
         }
+        public virtual void CreateSQL(StringBuilder sql) {}
     }
 }

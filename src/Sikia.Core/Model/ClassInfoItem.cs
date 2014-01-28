@@ -361,14 +361,10 @@ namespace Sikia.Core.Model
         #endregion
         public PropertyInfo PropertyInfoByName(string propName)
         {
-            try
-            {
-                return propsMap[propName];
-            }
-            catch (Exception)
-            {
-                return null;
-            }
+            PropertyInfo pi = null;
+            propsMap.TryGetValue(propName, out pi);
+            return pi;
+            
         }
         public PropinfoItem PropertyByName(string propName)
         {
