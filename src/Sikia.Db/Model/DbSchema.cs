@@ -7,11 +7,34 @@ namespace Sikia.Db.Model
 {
     public class DbSchema
     {
-        protected Dictionary<string, DbTable> tables = new Dictionary<string, DbTable>();
+        protected DbTables tables = new DbTables();
+        /////<summary>
+        ///// List of tables
+        /////</summary>
+        //public DbTables Tables { get { return tables; } }
+
         ///<summary>
-        /// List of tables
+        /// Get Table By Name (case insensitive)
         ///</summary>
-        public Dictionary<string, DbTable> Tables { get { return tables; } }
+        public DbTable TableByName(string tableName) 
+        {
+            try
+            {
+                return tables[tableName.ToLower()];
+            }
+            catch
+            {
+                return null;
+            }
+        }
+        ///<summary>
+        /// Returns true if database contains tableName
+        ///</summary>
+        public bool ContainsTable(string tableName)
+        {
+            return tables.Contains(tableName.ToLower());
+        }
+
 
         #region Database Management : create/drop/exists
         ///<summary>
@@ -77,9 +100,9 @@ namespace Sikia.Db.Model
         public virtual void CheckModel()
         {
             //Add indexes for all foreign keys   
-            foreach (var table in tables.Values)
+            for (var i = 0; i < tables.Count; i++)
             {
-                table.CheckIndexesForFK();
+                tables[i].CheckIndexesForFK();
             }
         }
 
@@ -96,8 +119,9 @@ namespace Sikia.Db.Model
             var structure = new List<string>();
             if (createTables)
             {
-                foreach (var table in tables.Values)
+                for (var i = 0; i < tables.Count; i++)
                 {
+                    var table = tables[i]; 
                     table.CreateColumnsSQL(structure);
                     table.CreatePKSQL(structure);
                 }
@@ -105,15 +129,17 @@ namespace Sikia.Db.Model
             }
             if (createFKs)
             {
-                foreach (var table in tables.Values)
+                for (var i = 0; i < tables.Count; i++)
                 {
+                    var table = tables[i];
                     table.CreateFKSQL(structure);
                 }
             }
             if (createIndexes)
             {
-                foreach (var table in tables.Values)
+                for (var i = 0; i < tables.Count; i++)
                 {
+                    var table = tables[i];
                     table.CreateIndexesSQL(structure);
                 }
             }

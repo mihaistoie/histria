@@ -104,7 +104,7 @@ namespace Sikia.Db.SqlServer.Model
                 while (rdr.Read())
                 {
                     var tableName = rdr.GetString(0);
-                    tables.Add(tableName, new MsSqlTable { TableName = tableName });
+                    tables.Add(new MsSqlTable { TableName = tableName });
                 }
             }
         }
@@ -148,7 +148,7 @@ namespace Sikia.Db.SqlServer.Model
                     var tableName = rdr.GetString(idxTN);
                     if (table == null || table.TableName != tableName)
                     {
-                        tables.TryGetValue(tableName, out table);
+                        table = TableByName(tableName);
                     }
                     if (table != null)
                     {
@@ -164,7 +164,7 @@ namespace Sikia.Db.SqlServer.Model
                         size = rdr.IsDBNull(idxLEN) ? 0 : rdr.GetInt32(idxLEN);
 
                         MsSqlSchema.Load(col, rdr.GetString(idxDT), size, precision, scale);
-                        table.Columns.Add(col);
+                        table.AddColumn(col);
                     }
                 }
             }
@@ -205,7 +205,7 @@ namespace Sikia.Db.SqlServer.Model
                     var tableName = rdr.GetString(idxTN);
                     if (table == null || table.TableName != tableName)
                     {
-                        tables.TryGetValue(tableName, out table);
+                        table = TableByName(tableName);
                     }
                     if (table != null)
                     {
@@ -262,15 +262,15 @@ namespace Sikia.Db.SqlServer.Model
                     if (table == null || table.TableName != tableName)
                     {
                         index = null;
-                        tables.TryGetValue(tableName, out table);
+                        table = TableByName(tableName);
                     }
                     if (table != null)
                     {
                         var indexName = rdr.GetString(idxIN);
                         if (index == null || index.IndexName != indexName)
                         {
-                            index = new DbIndex() { TableName = tableName, IndexName = indexName, Unique = rdr.GetBoolean(idxIU) };
-                            table.Indexes.Add(index);
+                            index = new DbIndex() {IndexName = indexName, Unique = rdr.GetBoolean(idxIU) };
+                            table.AddIndex(index);
                         }
                         index.AddColumn(rdr.GetString(idxCN), rdr.GetBoolean(idxCD));
 
@@ -330,13 +330,13 @@ namespace Sikia.Db.SqlServer.Model
                     if (rtable == null || rtable.TableName != rtableName)
                     {
                         fk = null;
-                        tables.TryGetValue(rtableName, out rtable);
+                        rtable = TableByName(rtableName);
                     }
 
                     if (utable == null || utable.TableName != utableName)
                     {
                         fk = null;
-                        tables.TryGetValue(utableName, out utable);
+                        utable = TableByName(utableName);
                     }
                     if (rtable != null && utable != null)
                     {

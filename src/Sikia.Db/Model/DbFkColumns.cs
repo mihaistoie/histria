@@ -10,7 +10,8 @@ namespace Sikia.Db.Model
     {
         protected override string GetKeyForItem(DbFkItem item)
         {
-            return item.ColumnName;
+            return item.ColumnName.ToLower();
+            
         }
     }
 }

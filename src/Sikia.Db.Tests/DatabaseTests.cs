@@ -73,24 +73,25 @@ namespace Sikia.Db.Tests
             }
             //Test load structure
             ss.Load(dburl);
-            Assert.AreEqual(true, ss.Tables.ContainsKey("a1"), "Table exists");
-            Assert.AreEqual(true, ss.Tables.ContainsKey("B1"), "Table exists");
+            Assert.AreEqual(true, ss.ContainsTable("a1"), "Table exists");
+            Assert.AreEqual(true, ss.ContainsTable("B1"), "Table exists");
             var structure =  ss.CreateSQL();
             DropDB(dburl, ss);
             //Test create script
             CreateDB(dburl);
             ss.ExecuteSchemaScript(dburl, structure);
             ss.Load(dburl);
-            Assert.AreEqual(true, ss.Tables.ContainsKey("a1"), "Table exists");
-            Assert.AreEqual(true, ss.Tables.ContainsKey("B1"), "Table exists");
+            Assert.AreEqual(true, ss.ContainsTable("a1"), "Table exists");
+            Assert.AreEqual(true, ss.ContainsTable("B1"), "Table exists");
             DropDB(dburl, ss);
 
         }
         void checkColumn(DbTable table, string name, DbType dt, string dbtype, int size, int prec, int scale, bool nullable)
         {
-            Assert.AreEqual(true, table.Columns.Contains(name), "Column exists");
-            DbColumn column = null;
-            if (table.Columns.TryGetValue(name, out column))
+            Assert.AreEqual(true, table.ContainsColumn(name), "Column exists");
+            DbColumn column = table.ColumnByName(name);
+
+            if (column != null)
             {
                 Assert.AreEqual(dt, column.Type, "column type");
                 Assert.AreEqual(dbtype, column.DbType, "column sql type");
@@ -102,7 +103,8 @@ namespace Sikia.Db.Tests
                     Assert.AreEqual(scale, column.Scale, "column scale");
                 }
 
-            }
+            } else
+                Assert.AreEqual(true, false, "Column not found");
         }
 
         [TestMethod]
@@ -140,9 +142,9 @@ namespace Sikia.Db.Tests
                 }
             }
             ss.Load(dburl);
-            Assert.AreEqual(true, ss.Tables.ContainsKey("SUPPORTEDTYPES"), "Table exists");
-            DbTable table = null;
-            if (ss.Tables.TryGetValue("SUPPORTEDTYPES", out table))
+            Assert.AreEqual(true, ss.ContainsTable("SUPPORTEDTYPES"), "Table exists");
+            DbTable table = ss.TableByName("SUPPORTEDTYPES");
+            if (table != null)
             {
                 checkColumn(table, "a", DbType.Int, "int", 0, 0, 0, true);
                 checkColumn(table, "b", DbType.BigInt, "bigint", 0, 0, 0, true);
@@ -169,8 +171,9 @@ namespace Sikia.Db.Tests
             CreateDB(dburl);
             ss.ExecuteSchemaScript(dburl, structure);
             ss.Load(dburl);
-            Assert.AreEqual(true, ss.Tables.ContainsKey("SUPPORTEDTYPES"), "Table exists");
-            if (ss.Tables.TryGetValue("SUPPORTEDTYPES", out table))
+            Assert.AreEqual(true, ss.ContainsTable("SUPPORTEDTYPES"), "Table exists");
+            table = ss.TableByName("SUPPORTEDTYPES");
+            if (table != null)
             {
                 checkColumn(table, "a", DbType.Int, "int", 0, 0, 0, true);
                 checkColumn(table, "b", DbType.BigInt, "bigint", 0, 0, 0, true);
@@ -217,9 +220,9 @@ namespace Sikia.Db.Tests
                 }
             }
             ss.Load(dburl);
-            Assert.AreEqual(true, ss.Tables.ContainsKey("PKTEST"), "Table exists");
-            DbTable table = null;
-            if (ss.Tables.TryGetValue("PKTEST", out table))
+            Assert.AreEqual(true, ss.ContainsTable("PKTEST"), "Table exists");
+            DbTable table = ss.TableByName("PKTEST");
+            if (table != null)
             {
                 Assert.AreEqual(2, table.PK.Count, "Number of fields in PK");
                 Assert.AreEqual(1, table.PK.IndexOf("a"), "Fields order in PK");
@@ -234,9 +237,9 @@ namespace Sikia.Db.Tests
             CreateDB(dburl);
             ss.ExecuteSchemaScript(dburl, structure);
             ss.Load(dburl);
-            Assert.AreEqual(true, ss.Tables.ContainsKey("PKTEST"), "Table exists");
-            
-            if (ss.Tables.TryGetValue("PKTEST", out table))
+            Assert.AreEqual(true, ss.ContainsTable("PKTEST"), "Table exists");
+            table = ss.TableByName("PKTEST");
+            if (table != null)
             {
                 Assert.AreEqual(2, table.PK.Count, "Number of fields in PK");
                 Assert.AreEqual(1, table.PK.IndexOf("a"), "Fields order in PK");
@@ -313,45 +316,45 @@ namespace Sikia.Db.Tests
                 }
             }
             ss.Load(dburl);
-            Assert.AreEqual(true, ss.Tables.ContainsKey("INDEXTEST1"), "Table exists");
-            DbTable table = null;
+            Assert.AreEqual(true, ss.ContainsTable("INDEXTEST1"), "Table exists");
+            DbTable table = ss.TableByName("INDEXTEST1");
             DbIndex index = null;
-            if (ss.Tables.TryGetValue("INDEXTEST1", out table))
+            if (table != null)
             {
-                Assert.AreEqual(2, table.Indexes.Count, "Number of indexes");
-                bool hi = table.Indexes.Contains("INDEXTEST1_title_description");
+                Assert.AreEqual(2, table.IndexCount, "Number of indexes");
+                bool hi = table.ContainsIndex("INDEXTEST1_title_description");
                 Assert.AreEqual(true, hi, "Index name");
                 if (hi)
                 {
-                    index = table.Indexes["INDEXTEST1_title_description"];
+                    index = table.IndexByName("INDEXTEST1_title_description");
                     Assert.AreEqual(false, index.Unique, "Index unique");
-                    Assert.AreEqual(2, index.Columns.Count, "Number of fields in index");
-                    if (index.Columns.Count > 0)
+                    Assert.AreEqual(2, index.ColumnCount, "Number of fields in index");
+                    if (index.ColumnCount > 0)
                     {
-                        Assert.AreEqual("title", index.Columns[0].ColumnName, "Fields in index");
-                        Assert.AreEqual(false, index.Columns[0].Descending, "Descending");
+                        Assert.AreEqual("title", index.ColumnByIndex(0).ColumnName, true, "Fields in index");
+                        Assert.AreEqual(false, index.ColumnByIndex(0).Descending, "Descending");
                     }
-                    if (index.Columns.Count > 1)
+                    if (index.ColumnCount > 1)
                     {
-                        Assert.AreEqual("description", index.Columns[1].ColumnName, "Fields in index");
-                        Assert.AreEqual(true, index.Columns[1].Descending, "Descending");
+                        Assert.AreEqual("description", index.ColumnByIndex(1).ColumnName, true, "Fields in index");
+                        Assert.AreEqual(true, index.ColumnByIndex(1).Descending, "Descending");
                     }
                 }
-                hi = table.Indexes.Contains("INDEXTEST1_title_code");
+                hi = table.ContainsIndex("INDEXTEST1_title_code");
                 Assert.AreEqual(hi, true, "Index name");
                 if (hi)
                 {
-                    index = table.Indexes["INDEXTEST1_title_code"];
+                    index = table.IndexByName("INDEXTEST1_title_code");
                     Assert.AreEqual(true, index.Unique, "Index unique");
-                    Assert.AreEqual(2, index.Columns.Count, "Number of fields in index");
+                    Assert.AreEqual(2, index.ColumnCount, "Number of fields in index");
                 }
 
             }
-            Assert.AreEqual(true, ss.Tables.ContainsKey("INDEXTEST2"), "Table exists");
-            table = null;
-            if (ss.Tables.TryGetValue("INDEXTEST2", out table))
+            Assert.AreEqual(true, ss.ContainsTable("INDEXTEST2"), "Table exists");
+            table = ss.TableByName("INDEXTEST2");
+            if (table != null)
             {
-                Assert.AreEqual(1, table.Indexes.Count, "Number of indexes");
+                Assert.AreEqual(1, table.IndexCount, "Number of indexes");
 
             }
             ss.CheckModel();
@@ -363,45 +366,45 @@ namespace Sikia.Db.Tests
             ss.ExecuteSchemaScript(dburl, structure);
             ss.Load(dburl);
 
-            Assert.AreEqual(true, ss.Tables.ContainsKey("INDEXTEST1"), "Table exists");
-            table = null;
+            Assert.AreEqual(true, ss.ContainsTable("INDEXTEST1"), "Table exists");
             index = null;
-            if (ss.Tables.TryGetValue("INDEXTEST1", out table))
+            table = ss.TableByName("INDEXTEST1");
+            if (table != null)
             {
-                Assert.AreEqual(2, table.Indexes.Count, "Number of indexes");
-                bool hi = table.Indexes.Contains("INDEXTEST1_title_description");
+                Assert.AreEqual(2, table.IndexCount, "Number of indexes");
+                bool hi = table.ContainsIndex("INDEXTEST1_title_description");
                 Assert.AreEqual(true, hi, "Index name");
                 if (hi)
                 {
-                    index = table.Indexes["INDEXTEST1_title_description"];
+                    index = table.IndexByName("INDEXTEST1_title_description");
                     Assert.AreEqual(false, index.Unique, "Index unique");
-                    Assert.AreEqual(2, index.Columns.Count, "Number of fields in index");
-                    if (index.Columns.Count > 0)
+                    Assert.AreEqual(2, index.ColumnCount, "Number of fields in index");
+                    if (index.ColumnCount > 0)
                     {
-                        Assert.AreEqual("title", index.Columns[0].ColumnName, "Fields in index");
-                        Assert.AreEqual(false, index.Columns[0].Descending, "Descending");
+                        Assert.AreEqual("title", index.ColumnByIndex(0).ColumnName, true, "Fields in index");
+                        Assert.AreEqual(false, index.ColumnByIndex(0).Descending, "Descending");
                     }
-                    if (index.Columns.Count > 1)
+                    if (index.ColumnCount > 1)
                     {
-                        Assert.AreEqual("description", index.Columns[1].ColumnName, "Fields in index");
-                        Assert.AreEqual(true, index.Columns[1].Descending, "Descending");
+                        Assert.AreEqual("description", index.ColumnByIndex(1).ColumnName, true, "Fields in index");
+                        Assert.AreEqual(true, index.ColumnByIndex(1).Descending, "Descending");
                     }
                 }
-                hi = table.Indexes.Contains("INDEXTEST1_title_code");
+                hi = table.ContainsIndex("INDEXTEST1_title_code");
                 Assert.AreEqual(hi, true, "Index name");
                 if (hi)
                 {
-                    index = table.Indexes["INDEXTEST1_title_code"];
+                    index = table.IndexByName("INDEXTEST1_title_code");
                     Assert.AreEqual(true, index.Unique, "Index unique");
-                    Assert.AreEqual(2, index.Columns.Count, "Number of fields in index");
+                    Assert.AreEqual(2, index.ColumnCount, "Number of fields in index");
                 }
 
             }
-            Assert.AreEqual(true, ss.Tables.ContainsKey("INDEXTEST2"), "Table exists");
-            table = null;
-            if (ss.Tables.TryGetValue("INDEXTEST2", out table))
+            Assert.AreEqual(true, ss.ContainsTable("INDEXTEST2"), "Table exists");
+            table = ss.TableByName("INDEXTEST2");
+            if (table != null)
             {
-                Assert.AreEqual(1, table.Indexes.Count, "Number of indexes");
+                Assert.AreEqual(1, table.IndexCount, "Number of indexes");
 
             }
             DropDB(dburl, ss);
@@ -463,9 +466,9 @@ namespace Sikia.Db.Tests
                 }
             }
             ss.Load(dburl);
-           
-            DbTable table = null;
-            if (ss.Tables.TryGetValue("question_bank", out table))
+
+            DbTable table = ss.TableByName("question_bank");
+            if (table != null)
             {
                 Assert.AreEqual(1, table.ForeignKeys.Count, "FK count");
                 if (table.ForeignKeys.Count > 0)
@@ -475,11 +478,11 @@ namespace Sikia.Db.Tests
                     if (fk.Columns.Count > 1)
                     {
                         var fkc = fk.Columns[0];
-                        Assert.AreEqual("question_exam_key", fkc.ColumnName, "FK1");
-                        Assert.AreEqual("exam_key", fkc.UniqueColumnName, "FK1");
+                        Assert.AreEqual("question_exam_key", fkc.ColumnName, true, "FK1");
+                        Assert.AreEqual("exam_key", fkc.UniqueColumnName, true, "FK1");
                         fkc = fk.Columns[1];
-                        Assert.AreEqual("question_exam_id", fkc.ColumnName, "FK2");
-                        Assert.AreEqual("exam_id", fkc.UniqueColumnName, "FK2");
+                        Assert.AreEqual("question_exam_id", fkc.ColumnName, true, "FK2");
+                        Assert.AreEqual("exam_id", fkc.UniqueColumnName, true, "FK2");
 
                     }
                 }
@@ -493,7 +496,8 @@ namespace Sikia.Db.Tests
             CreateDB(dburl);
             ss.ExecuteSchemaScript(dburl, structure);
             ss.Load(dburl);
-            if (ss.Tables.TryGetValue("question_bank", out table))
+            table = ss.TableByName("question_bank");
+            if (table != null)
             {
                 Assert.AreEqual(1, table.ForeignKeys.Count, "FK count");
                 if (table.ForeignKeys.Count > 0)
@@ -503,29 +507,29 @@ namespace Sikia.Db.Tests
                     if (fk.Columns.Count > 1)
                     {
                         var fkc = fk.Columns[0];
-                        Assert.AreEqual("question_exam_key", fkc.ColumnName, "FK1");
-                        Assert.AreEqual("exam_key", fkc.UniqueColumnName, "FK1");
+                        Assert.AreEqual("question_exam_key", fkc.ColumnName, true, "FK1");
+                        Assert.AreEqual("exam_key", fkc.UniqueColumnName, true, "FK1");
                         fkc = fk.Columns[1];
-                        Assert.AreEqual("question_exam_id", fkc.ColumnName, "FK2");
-                        Assert.AreEqual("exam_id", fkc.UniqueColumnName, "FK2");
+                        Assert.AreEqual("question_exam_id", fkc.ColumnName, true, "FK2");
+                        Assert.AreEqual("exam_id", fkc.UniqueColumnName, true, "FK2");
                     }
                 }
-                bool hi = table.Indexes.Contains("question_bank_question_exam_key_question_exam_id");
+                bool hi = table.ContainsIndex("question_bank_question_exam_key_question_exam_id");
                 Assert.AreEqual(true, hi, "Index name");
                 if (hi)
                 {
-                    var index = table.Indexes["question_bank_question_exam_key_question_exam_id"];
+                    var index = table.IndexByName("question_bank_question_exam_key_question_exam_id");
                     Assert.AreEqual(false, index.Unique, "Index unique");
-                    Assert.AreEqual(2, index.Columns.Count, "Number of fields in index");
-                    if (index.Columns.Count > 0)
+                    Assert.AreEqual(2, index.ColumnCount, "Number of fields in index");
+                    if (index.ColumnCount > 0)
                     {
-                        Assert.AreEqual("question_exam_key", index.Columns[0].ColumnName, "Fields in index");
-                        Assert.AreEqual(false, index.Columns[0].Descending, "Descending");
+                        Assert.AreEqual("question_exam_key", index.ColumnByIndex(0).ColumnName, true, "Fields in index");
+                        Assert.AreEqual(false, index.ColumnByIndex(0).Descending, "Descending");
                     }
-                    if (index.Columns.Count > 1)
+                    if (index.ColumnCount > 1)
                     {
-                        Assert.AreEqual("question_exam_id", index.Columns[1].ColumnName, "Fields in index");
-                        Assert.AreEqual(false, index.Columns[1].Descending, "Descending");
+                        Assert.AreEqual("question_exam_id", index.ColumnByIndex(1).ColumnName, true, "Fields in index");
+                        Assert.AreEqual(false, index.ColumnByIndex(1).Descending, "Descending");
                     }
                 }
   
@@ -540,7 +544,6 @@ namespace Sikia.Db.Tests
             if (ss.DatabaseExists(dburl))
             {
                 ss.Load(dburl);
-                Assert.AreEqual(212, ss.Tables.Count, "Loaded");
             }
         }
     }

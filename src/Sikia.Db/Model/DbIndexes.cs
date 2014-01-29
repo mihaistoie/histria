@@ -10,7 +10,7 @@ namespace Sikia.Db.Model
     {
         protected override string GetKeyForItem(DbIndex item)
         {
-            return item.IndexName;
+            return item.IndexName.ToLower();
         }
     }
 }

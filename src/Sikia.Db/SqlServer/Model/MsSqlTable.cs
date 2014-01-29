@@ -13,7 +13,7 @@ namespace Sikia.Db.SqlServer.Model
         {
             var sql = new StringBuilder();
             sql.AppendLine(string.Format("CREATE TABLE {0}(", TableName));
-            var count = Columns.Count;
+            var count = columns.Count;
             for (var index = 0; index < count; ++index)
             {
                 var c = columns[index];
@@ -35,14 +35,7 @@ namespace Sikia.Db.SqlServer.Model
             {
                 var ii = indexes[index];
                 sql.Clear();
-                sql.Append(string.Format("CREATE {0}INDEX {1} ON {2}(", (ii.Unique ? "UNIQUE " : string.Empty), ii.IndexName, TableName));
-                for (var i = 0; i < ii.Columns.Count; ++i)
-                {
-                    var ic = ii.Columns[i];
-                    if (i > 0) sql.Append(", ");
-                    sql.Append(string.Format("{0}{1}", ic.ColumnName, (ic.Descending ? " DESC" : string.Empty)));
-                }
-                sql.Append(")");
+                ii.CreateSQL(sql);
                 structure.Add(sql.ToString());
             }
         }

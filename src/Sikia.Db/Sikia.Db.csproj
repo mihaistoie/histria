@@ -65,6 +65,7 @@
     <Compile Include="Model\DbTable.cs" />
     <Compile Include="DbUri.cs" />
     <Compile Include="Model\DbIndexItem.cs" />
+    <Compile Include="Model\DbTables.cs" />
     <Compile Include="SqlServer\Model\MsSqlColumn.cs" />
     <Compile Include="SqlServer\Model\MsSqlSchema.cs" />
     <Compile Include="SqlServer\Model\MsSqlTable.cs" />

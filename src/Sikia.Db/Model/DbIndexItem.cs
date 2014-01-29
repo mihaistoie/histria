@@ -5,7 +5,7 @@ using System.Text;
 
 namespace Sikia.Db.Model
 {
-    public class DbIndexItem
+    public class DbIndexColumn
     {
         public string ColumnName { get; set; }
         public bool Descending { get; set; }
