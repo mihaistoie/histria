@@ -99,7 +99,7 @@ namespace Sikia.Db.Model
         ///<summary>
         /// Generate create sql for the index
         ///</summary
-        internal void CreateSQL(StringBuilder sql)
+        public void CreateSQL(StringBuilder sql)
         {
             sql.Append(string.Format("CREATE {0}INDEX {1} ON {2}(", (Unique ? "UNIQUE " : string.Empty), IndexName, TableName));
 

@@ -16,12 +16,12 @@ namespace Sikia.Db.Tests
         [ClassInitialize]
         public static void Setup(TestContext testContext)
         {
-
+            ModulePlugIn.Load("Sikia.Db.MsSql");
 
         }
 
         [TestMethod]
-        public void MsSqlUrlParser()
+        public void MsSqlUrlParser()   
         {
             string dburl = "mssql://(local)\\SQLEXPRESS/master?schema=dbo";
             DbConnectionInfo ci = DbDrivers.Instance.Connection(dburl);

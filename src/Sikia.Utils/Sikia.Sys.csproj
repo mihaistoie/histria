@@ -42,6 +42,7 @@
   <ItemGroup>
     <Compile Include="DbType.cs" />
     <Compile Include="Logger.cs" />
+    <Compile Include="ModulePlugIn.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="StrUtils.cs" />
   </ItemGroup>

@@ -55,6 +55,10 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\Sikia.Db.MsSql\Sikia.Db.MsSql.csproj">
+      <Project>{7c410682-0d61-4ac8-b4ca-8a7f53ee10dd}</Project>
+      <Name>Sikia.Db.MsSql</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Sikia.Utils\Sikia.Sys.csproj">
       <Project>{7e07af0f-212d-42bf-b505-87018f6619bd}</Project>
       <Name>Sikia.Sys</Name>

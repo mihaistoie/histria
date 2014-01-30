@@ -1,10 +1,8 @@
-﻿using Sikia.Db.SqlServer;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using Sikia.Db.Model;
-using Sikia.Db.SqlServer.Model;
 
 namespace Sikia.Db
 {
@@ -34,7 +32,7 @@ namespace Sikia.Db
             {
                 return (DbSchema)Activator.CreateInstance(structure);
             }
-            
+
             public DbDriver(Type ConnectionType, Type DbSessionType, Type TranslatorType, Type DbStructure)
             {
                 Translator = (DbTranslator)Activator.CreateInstance(TranslatorType);
@@ -57,7 +55,11 @@ namespace Sikia.Db
         {
             //Register supported Drivers
             drivers.Add(DbProtocol.nodb, new DbDriver(typeof(DbConnectionInfo), typeof(DbSession), typeof(DbTranslator), typeof(DbSchema)));
-            drivers.Add(DbProtocol.mssql, new DbDriver(typeof(MsSqlConnectionInfo), typeof(MsSqlSession), typeof(MsSqlTranslator), typeof(MsSqlSchema)));
+        }
+   
+        public void RegisterDriver(DbProtocol protocol, Type connectionType, Type sessionType, Type translatorType, Type SchemaType)
+        {
+            drivers.Add(protocol, new DbDriver(connectionType, sessionType, translatorType, SchemaType));
         }
 
         public static DbDrivers Instance
@@ -122,7 +124,7 @@ namespace Sikia.Db
 
         public DbSchema Schema(DbProtocol protocol)
         {
-             DbDriver driver = drivers[protocol];
+            DbDriver driver = drivers[protocol];
             if (driver != null)
             {
                 return driver.Structure();

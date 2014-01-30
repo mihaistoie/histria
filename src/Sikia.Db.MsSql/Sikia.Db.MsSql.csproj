@@ -4,11 +4,11 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{7989F2D8-575F-414A-9E6A-2923AE9DF0FA}</ProjectGuid>
+    <ProjectGuid>{7C410682-0D61-4AC8-B4CA-8A7F53EE10DD}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Sikia.Db</RootNamespace>
-    <AssemblyName>Sikia.Db</AssemblyName>
+    <RootNamespace>Sikia.Db.MsSql</RootNamespace>
+    <AssemblyName>Sikia.Db.MsSql</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <TargetFrameworkProfile />
@@ -21,7 +21,6 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -30,7 +29,6 @@
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
@@ -42,40 +40,30 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="DbDrivers.cs" />
-    <Compile Include="Model\DbColumn.cs" />
-    <Compile Include="Model\DbColumns.cs" />
-    <Compile Include="Model\DbFk.cs" />
-    <Compile Include="Model\DbFkColumns.cs" />
-    <Compile Include="Model\DbFkItem.cs" />
-    <Compile Include="Model\DbIndex.cs" />
-    <Compile Include="Model\DbIndexColumns.cs" />
-    <Compile Include="Model\DbIndexes.cs" />
-    <Compile Include="Model\DbSchema.cs" />
-    <Compile Include="DbTranslator.cs" />
-    <Compile Include="DbConnectionInfo.cs" />
-    <Compile Include="DbConnectionManger.cs" />
-    <Compile Include="DbDefs.cs" />
-    <Compile Include="DbCmd.cs" />
-    <Compile Include="DbCmdParameter.cs" />
-    <Compile Include="DbCmdParameters.cs" />
-    <Compile Include="DbServices.cs" />
-    <Compile Include="DbSession.cs" />
-    <Compile Include="DbTran.cs" />
-    <Compile Include="Model\DbTable.cs" />
-    <Compile Include="DbUri.cs" />
-    <Compile Include="Model\DbIndexItem.cs" />
-    <Compile Include="Model\DbTables.cs" />
+    <Compile Include="Model\MsSqlColumn.cs" />
+    <Compile Include="Model\MsSqlSchema.cs" />
+    <Compile Include="Model\MsSqlTable.cs" />
+    <Compile Include="MsSqlCmd.cs" />
+    <Compile Include="MsSqlConnectionInfo.cs" />
+    <Compile Include="MsSqlModule.cs" />
+    <Compile Include="MsSqlSession.cs" />
+    <Compile Include="MsSqlTransaction.cs" />
+    <Compile Include="MsSqlTranslator.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="SqlServer.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Sikia.Utils\Sikia.Sys.csproj">
-      <Project>{7e07af0f-212d-42bf-b505-87018f6619bd}</Project>
-      <Name>Sikia.Sys</Name>
+    <ProjectReference Include="..\Sikia.Db\Sikia.Db.csproj">
+      <Project>{7989f2d8-575f-414a-9e6a-2923ae9df0fa}</Project>
+      <Name>Sikia.Db</Name>
     </ProjectReference>
     <ProjectReference Include="..\Sikia.Json\Sikia.Json.csproj">
       <Project>{129e2aa1-5a70-42b0-9051-f84360105480}</Project>
       <Name>Sikia.Json</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Sikia.Utils\Sikia.Sys.csproj">
+      <Project>{7e07af0f-212d-42bf-b505-87018f6619bd}</Project>
+      <Name>Sikia.Sys</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
