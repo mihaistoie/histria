@@ -1,7 +1,9 @@
 ﻿
+using Sikia.Model;
+
 namespace Sikia.Core
 {
-    public class RulePluginObject
+    public class RulePluginObject: IModelPlugin
     {
     }
 }

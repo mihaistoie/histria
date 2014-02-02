@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using Sikia.Settings;
-using Sikia.Core.Model;
+using Sikia.Model;
 
 namespace Sikia.Application
 {

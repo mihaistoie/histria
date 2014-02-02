@@ -52,30 +52,9 @@
     <Compile Include="DataTypes\BelongsTo.cs" />
     <Compile Include="DataTypes\HasMany.cs" />
     <Compile Include="DataTypes\HasOne.cs" />
-    <Compile Include="Attributes\DbAttribute.cs" />
-    <Compile Include="Attributes\DbColumnAttribute.cs" />
-    <Compile Include="Attributes\DisplayAttribute.cs" />
-    <Compile Include="Attributes\IndexAttribute.cs" />
-    <Compile Include="Attributes\RelationAttribute.cs" />
-    <Compile Include="Attributes\RuleAttribute.cs" />
-    <Compile Include="Attributes\RulesForAttribute.cs" />
-    <Compile Include="DataTypes\Types.cs" />
     <Compile Include="Objects\InterceptedObject.cs" />
     <Compile Include="Objects\ModelFactory.cs" />
-    <Compile Include="Model\ClassInfoItem.cs" />
-    <Compile Include="Model\EnumInfoItem.cs" />
-    <Compile Include="Model\IndexInfo.cs" />
-    <Compile Include="Model\KeyItem.cs" />
-    <Compile Include="Model\MethodItem.cs" />
-    <Compile Include="Model\ModelException.cs" />
-    <Compile Include="Model\ModelManager.cs" />
-    <Compile Include="Model\ModelProxy.cs" />
-    <Compile Include="Model\PropInfoItem.cs" />
-    <Compile Include="Model\RuleItem.cs" />
-    <Compile Include="Model\RuleList.cs" />
-    <Compile Include="Model\ModelHelper.cs" />
     <Compile Include="Objects\RulePluginObject.cs" />
-    <Compile Include="Helpers\ModelLoader.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Castle\CastleFactory.cs" />
     <Compile Include="Castle\InterceptorInstaller.cs" />
@@ -90,6 +69,10 @@
     <ProjectReference Include="..\Sikia.Json\Sikia.Json.csproj">
       <Project>{129e2aa1-5a70-42b0-9051-f84360105480}</Project>
       <Name>Sikia.Json</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Sikia.Model\Sikia.Model.csproj">
+      <Project>{a546c0e7-972d-47cb-849a-617f16855977}</Project>
+      <Name>Sikia.Model</Name>
     </ProjectReference>
     <ProjectReference Include="..\Sikia.Sys\Sikia.Sys.csproj">
       <Project>{7e07af0f-212d-42bf-b505-87018f6619bd}</Project>

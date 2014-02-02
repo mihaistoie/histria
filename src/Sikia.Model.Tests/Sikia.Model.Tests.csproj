@@ -3,11 +3,11 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{6C3852C5-D372-47EE-9FF0-B126308CDD72}</ProjectGuid>
+    <ProjectGuid>{16E9953D-93AD-49B2-8537-854D3A2F5592}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Sikia.Core.Tests.Associations</RootNamespace>
-    <AssemblyName>Sikia.Core.Tests.Associations</AssemblyName>
+    <RootNamespace>Sikia.Model.Tests</RootNamespace>
+    <AssemblyName>Sikia.Model.Tests</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <ProjectTypeGuids>{3AC096D0-A1C2-E12C-1390-A8335801FDAB};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
@@ -51,16 +51,12 @@
     </Otherwise>
   </Choose>
   <ItemGroup>
-    <Compile Include="HumanBody.cs" />
-    <Compile Include="Nose.cs" />
-    <Compile Include="TestRelations.cs" />
+    <Compile Include="Model.cs" />
+    <Compile Include="ModelInNamespace.cs" />
+    <Compile Include="ModelTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Sikia.Core\Sikia.Core.csproj">
-      <Project>{78ad75af-a56f-418f-bf38-56959c893dd3}</Project>
-      <Name>Sikia.Core</Name>
-    </ProjectReference>
     <ProjectReference Include="..\Sikia.Json\Sikia.Json.csproj">
       <Project>{129e2aa1-5a70-42b0-9051-f84360105480}</Project>
       <Name>Sikia.Json</Name>

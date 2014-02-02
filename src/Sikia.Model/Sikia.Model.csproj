@@ -4,13 +4,14 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{A517E3A3-F03D-461F-B038-B2A4B8F5407E}</ProjectGuid>
+    <ProjectGuid>{A546C0E7-972D-47CB-849A-617F16855977}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Sikia.Application</RootNamespace>
-    <AssemblyName>Sikia.Application</AssemblyName>
-    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <RootNamespace>Sikia.Model</RootNamespace>
+    <AssemblyName>Sikia.Model</AssemblyName>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
+    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -39,22 +40,41 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="GlbApplicaton.cs" />
+    <Compile Include="Attributes\DbAttribute.cs" />
+    <Compile Include="Attributes\DbColumnAttribute.cs" />
+    <Compile Include="Attributes\DisplayAttribute.cs" />
+    <Compile Include="Attributes\IndexAttribute.cs" />
+    <Compile Include="Attributes\RelationAttribute.cs" />
+    <Compile Include="Attributes\RuleAttribute.cs" />
+    <Compile Include="Attributes\RulesForAttribute.cs" />
+    <Compile Include="ClassType.cs" />
+    <Compile Include="Helpers\ModelLoader.cs" />
+    <Compile Include="Rule.cs" />
+    <Compile Include="Relation.cs" />
+    <Compile Include="IModelClass.cs" />
+    <Compile Include="IModelPlugin.cs" />
+    <Compile Include="Model\ClassInfoItem.cs" />
+    <Compile Include="Model\EnumInfoItem.cs" />
+    <Compile Include="Model\IndexInfo.cs" />
+    <Compile Include="Model\KeyItem.cs" />
+    <Compile Include="Model\MethodItem.cs" />
+    <Compile Include="Model\ModelException.cs" />
+    <Compile Include="Model\ModelHelper.cs" />
+    <Compile Include="Model\ModelManager.cs" />
+    <Compile Include="Model\ModelProxy.cs" />
+    <Compile Include="Model\PropInfoItem.cs" />
+    <Compile Include="Model\RuleItem.cs" />
+    <Compile Include="Model\RuleList.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Settings\GlobalSettings.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Sikia.Core\Sikia.Core.csproj">
-      <Project>{78ad75af-a56f-418f-bf38-56959c893dd3}</Project>
-      <Name>Sikia.Core</Name>
-    </ProjectReference>
     <ProjectReference Include="..\Sikia.Json\Sikia.Json.csproj">
       <Project>{129e2aa1-5a70-42b0-9051-f84360105480}</Project>
       <Name>Sikia.Json</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Sikia.Model\Sikia.Model.csproj">
-      <Project>{a546c0e7-972d-47cb-849a-617f16855977}</Project>
-      <Name>Sikia.Model</Name>
+    <ProjectReference Include="..\Sikia.Sys\Sikia.Sys.csproj">
+      <Project>{7e07af0f-212d-42bf-b505-87018f6619bd}</Project>
+      <Name>Sikia.Sys</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

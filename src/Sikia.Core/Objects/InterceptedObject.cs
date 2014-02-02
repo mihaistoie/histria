@@ -2,7 +2,7 @@
 
 namespace Sikia.Core
 {
-    using Sikia.Core.Model;
+    using Sikia.Model;
 
     public enum ObjectState
     {
@@ -15,7 +15,7 @@ namespace Sikia.Core
         Frozen = 32
     }
 
-    public class InterceptedObject
+    public class InterceptedObject: IModelClass
     {
         #region Warnings & Errors
         #endregion

@@ -4,8 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Sikia.Core;
+using Sikia.Model;
 
-namespace UnitTestModel.Models.One_to_one
+namespace Sikia.Core.Tests.Associations.One_to_one
 {
     public class HumanBody : InterceptedObject
     {

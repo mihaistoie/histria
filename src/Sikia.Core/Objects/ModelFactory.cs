@@ -7,7 +7,7 @@ using System.Text;
 namespace Sikia.Core
 {
     using Sikia.Core.Castle;
-    using Sikia.Core.Model;
+    using Sikia.Model;
     public static class ModelFactory
     {
         public static T Create<T>()

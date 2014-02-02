@@ -64,6 +64,10 @@
       <Project>{129e2aa1-5a70-42b0-9051-f84360105480}</Project>
       <Name>Sikia.Json</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Sikia.Model\Sikia.Model.csproj">
+      <Project>{a546c0e7-972d-47cb-849a-617f16855977}</Project>
+      <Name>Sikia.Model</Name>
+    </ProjectReference>
   </ItemGroup>
   <Choose>
     <When Condition="'$(VisualStudioVersion)' == '10.0' And '$(IsCodedUITest)' == 'True'">

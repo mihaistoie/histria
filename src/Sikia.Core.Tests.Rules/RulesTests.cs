@@ -1,6 +1,6 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Sikia.Core;
-using Sikia.Core.Model;
+using Sikia.Model;
 using Sikia.Core.Tests.Rules.Customers;
 using Sikia.Json;
 using System;
