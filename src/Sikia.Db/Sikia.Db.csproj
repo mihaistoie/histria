@@ -69,7 +69,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Sikia.Utils\Sikia.Sys.csproj">
+    <ProjectReference Include="..\Sikia.Sys\Sikia.Sys.csproj">
       <Project>{7e07af0f-212d-42bf-b505-87018f6619bd}</Project>
       <Name>Sikia.Sys</Name>
     </ProjectReference>
