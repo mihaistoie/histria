@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace Sikia.Model
+namespace Sikia
 {
-    public interface IModelPlugin
+    public interface IModelClass
     {
     }
 }

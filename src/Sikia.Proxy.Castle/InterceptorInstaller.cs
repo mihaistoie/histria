@@ -3,7 +3,7 @@ using Castle.MicroKernel.Registration;
 using Castle.MicroKernel.SubSystems.Configuration;
 using Castle.Windsor;
 
-namespace Sikia.Core.Castle
+namespace Sikia.Proxy.Castle
 {
     /// <summary>
     /// Installs all castle Interceptors

@@ -41,6 +41,10 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="DbType.cs" />
+    <Compile Include="Base\IInterceptedObject.cs" />
+    <Compile Include="Base\IModelClass.cs" />
+    <Compile Include="Base\IModelPlugin.cs" />
+    <Compile Include="Base\IProxyFactory.cs" />
     <Compile Include="Logger.cs" />
     <Compile Include="ModulePlugIn.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

@@ -4,6 +4,7 @@ using Sikia.Model;
 using Sikia.Core.Tests.Rules.Customers;
 using Sikia.Json;
 using System;
+using Sikia.Sys;
 
 namespace UnitTestModel
 {
@@ -15,6 +16,7 @@ namespace UnitTestModel
         {
             JsonObject cfg = (JsonObject)JsonValue.Parse("{\"nameSpaces\": [\"Customers\"]}");
             ModelManager m = ModelManager.LoadModelFromConfig(cfg);
+            ModulePlugIn.Load("Sikia.Proxy.Castle");
         }
  
       
@@ -22,7 +24,7 @@ namespace UnitTestModel
         [TestMethod]
         public void SimplePropagationRule()
         {
-            Customer cust = ModelFactory.Create<Customer>();
+            Customer cust = ProxyFactory.Create<Customer>();
             cust.FirstName = "John";
             cust.LastName = "Smith";
             Assert.AreEqual(2, cust.RCount, "Rule hits");
@@ -32,7 +34,7 @@ namespace UnitTestModel
         [TestMethod]
         public void InheritedPropagationRule()
         {
-            RussianCustomer rcust = ModelFactory.Create<RussianCustomer>();
+            RussianCustomer rcust = ProxyFactory.Create<RussianCustomer>();
 
             rcust.FirstName = "Fiodor";
             rcust.LastName = "Dostoievski";

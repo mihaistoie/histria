@@ -51,8 +51,6 @@
     <Compile Include="Helpers\ModelLoader.cs" />
     <Compile Include="Rule.cs" />
     <Compile Include="Relation.cs" />
-    <Compile Include="IModelClass.cs" />
-    <Compile Include="IModelPlugin.cs" />
     <Compile Include="Model\ClassInfoItem.cs" />
     <Compile Include="Model\EnumInfoItem.cs" />
     <Compile Include="Model\IndexInfo.cs" />

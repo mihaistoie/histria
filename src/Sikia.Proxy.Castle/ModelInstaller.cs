@@ -5,7 +5,7 @@ using Sikia.Model;
 
 
 
-namespace Sikia.Core.Castle
+namespace Sikia.Proxy.Castle
 {
     /// <summary>
     /// Installs all custom Models and adds on custom inteceptors to provide

@@ -4,7 +4,7 @@ using System.Linq;
 using System.Reflection;
 using Castle.DynamicProxy;
 
-namespace Sikia.Core.Castle
+namespace Sikia.Proxy.Castle
 {
     /// <summary>
     /// This interceptor is automatically applied to any Type in the "Models" namespace 
@@ -15,11 +15,11 @@ namespace Sikia.Core.Castle
         public void Intercept(IInvocation invocation)
         {
 
-            if (invocation.InvocationTarget is InterceptedObject)
+            if (invocation.InvocationTarget is IInterceptedObject)
             {
                 bool isSet = (invocation.Method.Name.StartsWith("set_"));
                 string propertyName = "";
-                InterceptedObject io = invocation.InvocationTarget as InterceptedObject;
+                IInterceptedObject io = invocation.InvocationTarget as IInterceptedObject;
                 if (isSet)
                 {
                     propertyName = invocation.Method.Name.Substring(4);

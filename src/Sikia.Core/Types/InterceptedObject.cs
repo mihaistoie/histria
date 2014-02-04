@@ -4,18 +4,7 @@ namespace Sikia.Core
 {
     using Sikia.Model;
 
-    public enum ObjectState
-    {
-        Iddle = 0,
-        Creating = 1,
-        Loading = 2,
-        Saving = 4,
-        Deleting = 8,
-        Disposing = 16,
-        Frozen = 32
-    }
-
-    public class InterceptedObject: IModelClass
+    public class InterceptedObject : IModelClass, IInterceptedObject
     {
         #region Warnings & Errors
         #endregion
@@ -82,7 +71,9 @@ namespace Sikia.Core
             ClassInfo.ExecuteRules(Rule.AfterCreate, this);
             state = ObjectState.Iddle;
         }
-
+        private void AOPInitializeAssociations()
+        {
+        }
         #endregion
 
         #region Intercepors
@@ -109,9 +100,7 @@ namespace Sikia.Core
 
         }
 
-        public void AOPInitializeAssociations()
-        {
-        }
+       
         #endregion
 
         #region Memory

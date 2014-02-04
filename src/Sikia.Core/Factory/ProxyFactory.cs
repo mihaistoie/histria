@@ -2,25 +2,22 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using Castle.Windsor;
-using Castle.Windsor.Installer;
 
-namespace Sikia.Core.Castle
+
+namespace Sikia.Core
 {
-    public class CastleFactory
+    using Sikia.Model;
+    public class ProxyFactory
     {
 
-        private WindsorContainer container = null;
-
         #region Singleton thread-safe pattern
-        private static volatile CastleFactory instance = null;
+        private static volatile ProxyFactory instance = null;
+        private IProxyFactory factory = null;
         private static object syncRoot = new Object();
-        private CastleFactory()
+        private ProxyFactory()
         {
-            container = new WindsorContainer();
-            container.Install(FromAssembly.This());
         }
-        public static CastleFactory Instance
+        public static ProxyFactory Instance
         {
             get
             {
@@ -30,20 +27,30 @@ namespace Sikia.Core.Castle
                     {
                         if (instance == null)
                         {
-                            CastleFactory cf = new CastleFactory();
+                            ProxyFactory cf = new ProxyFactory();
                             instance = cf;
                         }
                     }
                 }
-
                 return instance;
             }
         }
         #endregion
-        
-        public T CreateInstance<T>()
+
+        public IProxyFactory Factory
         {
-            return container.Resolve<T>();
+            get { return factory; }
+            set { factory = value; }
+        }
+
+        public static T Create<T>()
+        {
+            if (instance.Factory != null)
+            {
+                return instance.Factory.Resolve<T>();
+            }
+            return default(T);
+           
         }
     }
 }
