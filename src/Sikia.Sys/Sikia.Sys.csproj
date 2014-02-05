@@ -40,6 +40,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Base\ITranObject.cs" />
     <Compile Include="DbType.cs" />
     <Compile Include="Base\IInterceptedObject.cs" />
     <Compile Include="Base\IModelClass.cs" />

@@ -6,10 +6,11 @@ using System.Text;
 namespace Sikia
 {
     ///<summary>
-    /// The classes that support this interface will be loaded by the model manager
+    /// Instances that support this interface
+    /// 
     ///</summary>
-    public interface IModelClass
+    public interface ITranObject
     {
-
+        Type ClassType();
     }
 }

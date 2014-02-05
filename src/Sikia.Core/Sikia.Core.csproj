@@ -40,6 +40,10 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Transactions\InstanceList.cs" />
+    <Compile Include="Transactions\InstancesByClass.cs" />
+    <Compile Include="Transactions\Instances.cs" />
+    <Compile Include="Transactions\TranContext.cs" />
     <Compile Include="Types\ObjectState.cs" />
     <Compile Include="Associations\Association.cs" />
     <Compile Include="Associations\BelongsTo.cs" />
