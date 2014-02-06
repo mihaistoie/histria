@@ -58,7 +58,7 @@ namespace Sikia.Model
                 if (pi == null)
                     throw new ModelException(String.Format(StrUtils.TT("Class {0}: Invalid property {1} for index {2}."), ci.Name, sfield, indexName), ci.Name);
                 PropinfoItem pp = ci.Properties[pi];
-                defIndexName += '_' + pp.DbName;
+                defIndexName += '_' + pp.PersistentName;
                 Items.Add(new IndexInfoItem(pi, sfield, desc));
             }
             if (Items.Count == 0)

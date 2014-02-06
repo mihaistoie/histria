@@ -9,9 +9,9 @@ namespace Sikia.Model
 {
     using Sikia.Sys;
 
-	///<summary>
-	/// 
-	///</summary>   
+    ///<summary>
+    /// 
+    ///</summary>   
     public class ClassInfoItem
     {
         #region private members
@@ -31,7 +31,7 @@ namespace Sikia.Model
         private MethodItem gDescription = null;
         #endregion
         public ClassType ClassType = ClassType.Unknown;
-		
+
         public Type CurrentType { get; set; }
         public Type TargetType { get; set; }
         public bool UseUuid { get; set; }
@@ -40,25 +40,25 @@ namespace Sikia.Model
         /// Is persistent ?
         ///</summary>   		
         public bool IsPersistent { get; set; }
-        
+
         ///<summary>
         /// The name of the class
         ///</summary>   		
         public string Name { get; set; }
-		///<summary>
+        ///<summary>
         /// The title of the class
         ///</summary>   		
         public string Title { get { return ModelHelper.GetStringValue(title, gTitle); } }
-		///<summary>
+        ///<summary>
         /// The Description of the class
         ///</summary>   		
-		public string Description { get { return ModelHelper.GetStringValue(description, gDescription); } }
-		///<summary>
+        public string Description { get { return ModelHelper.GetStringValue(description, gDescription); } }
+        ///<summary>
         ///(Persistence) Name of table used to store this class
         ///</summary>   		
         public string DbName { get; set; }
-        
-		public bool Static { get; set; }
+
+        public bool Static { get; set; }
 
         #region Properties/Primary Key/Indexes
         public PropertiesCollection Properties { get { return properties; } }
@@ -212,7 +212,7 @@ namespace Sikia.Model
                 if (pci != null)
                 {
                     pci.ResolveInheritance(model);
-                    // Copy rules from parent
+                    // Add parent rules
                     List<RuleItem> parentRules = new List<RuleItem>();
                     parentRules.AddRange(pci.rulesList);
                     // Add child Rules
@@ -265,11 +265,31 @@ namespace Sikia.Model
             foreach (PropertyInfo pi in props)
             {
                 PropinfoItem item = new PropinfoItem(pi);
+                DefaultAttribute da = CurrentType.GetCustomAttributes(typeof(DefaultAttribute), false).FirstOrDefault() as DefaultAttribute;
+                if (da != null)
+                {
+                    item.IsDisabled = da.Disabled;
+                    item.IsHidden = da.Hidden;
+                    item.IsMandatory = da.Required;
+                    item.DefaultValue = da.Value;
+                }
+                item.IsPersistent = IsPersistent;
+
+                PersistentAttribute pa = CurrentType.GetCustomAttributes(typeof(PersistentAttribute), false).FirstOrDefault() as PersistentAttribute;
+                if (pa != null)
+                {
+                    item.IsPersistent = pa.IsPersistent;
+
+                    if (!string.IsNullOrEmpty(pa.PersistentName))
+                        item.PersistentName = pa.PersistentName;
+                }
+
                 propsMap.Add(item.Name, item.PropInfo);
                 properties.Add(item);
 
             }
         }
+
         private void LoadMethodsAndRules()
         {
             BindingFlags bindingAttr = (Static ? (BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static)
@@ -325,42 +345,45 @@ namespace Sikia.Model
             }
 
         }
-        private void LoadTableNameAndPrimarykey()
+        private void LoadPersistence()
         {
             if (Static) return;
-            UseUuid = true;
             DbAttribute db = CurrentType.GetCustomAttributes(typeof(DbAttribute), false).FirstOrDefault() as DbAttribute;
             if (db != null)
             {
                 IsPersistent = true;
                 ClassType = ClassType.Model;
                 DbName = (String.IsNullOrEmpty(db.TableName) ? Name : db.TableName);
-                // Load primary key
-                string[] akeys = db.Keys.Split(',');
-                if (akeys.Length == 0)
-                {
-                    throw new ModelException(String.Format(StrUtils.TT("Missing Primary key for {0}."), Name), Name);
-                }
-                UseUuid = ((akeys.Length == 0) && akeys[0] == "Uuid");
-                foreach (string akey in akeys)
-                {
-                    string skey = akey.Trim();
-                    PropertyInfo pi = PropertyInfoByName(skey);
-                    if (pi == null)
-                        throw new ModelException(String.Format(StrUtils.TT("Invalid field {0}  in Primary key for {1}."), skey, Name), Name);
-                    key.Add(new KeyItem(skey, pi));
-                }
+            }
+
+
+        }
+        private void LoadPrimarykey()
+        {
+            if (Static) return;
+            if (!IsPersistent) return;
+            DbAttribute db = CurrentType.GetCustomAttributes(typeof(DbAttribute), false).FirstOrDefault() as DbAttribute;
+            string[] akeys = db.Keys.Split(',');
+            if (akeys.Length == 0)
+            {
+                throw new ModelException(String.Format(StrUtils.TT("Missing Primary key for {0}."), Name), Name);
+            }
+            UseUuid = ((akeys.Length == 0) && akeys[0] == "Uuid");
+            foreach (string akey in akeys)
+            {
+                string skey = akey.Trim();
+                PropertyInfo pi = PropertyInfoByName(skey);
+                if (pi == null)
+                    throw new ModelException(String.Format(StrUtils.TT("Invalid field {0}  in Primary key for {1}."), skey, Name), Name);
+                key.Add(new KeyItem(skey, pi));
             }
             if (UseUuid)
             {
-                var pi = PropertyInfoByName("Uuid");
-                if (pi != null)
-                {
-               
-                }
+                var pi = PropertyByName("Uuid");
+                pi.IsPersistent = true;
             }
-
         }
+
         private void LoadIndexes()
         {
             //load indexes 
@@ -382,7 +405,7 @@ namespace Sikia.Model
             PropertyInfo pi = null;
             propsMap.TryGetValue(propName, out pi);
             return pi;
-            
+
         }
         public PropinfoItem PropertyByName(string propName)
         {
@@ -408,7 +431,7 @@ namespace Sikia.Model
             LoadTitle();
             LoadProperties();
             LoadMethodsAndRules();
-            LoadTableNameAndPrimarykey();
+            LoadPrimarykey();
             LoadIndexes();
 
         }
@@ -429,13 +452,7 @@ namespace Sikia.Model
         }
     }
 
-    public class RulesCollection : KeyedCollection<MethodInfo, RuleItem>
-    {
-        protected override MethodInfo GetKeyForItem(RuleItem item)
-        {
-            return item.Method;
-        }
-    }
+
 
 
 }

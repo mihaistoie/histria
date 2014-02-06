@@ -156,32 +156,5 @@ namespace Sikia.Model
         #endregion
     }
 
-    public class EnumCollection : KeyedCollection<Type, EnumInfoItem>
-    {
-        protected override Type GetKeyForItem(EnumInfoItem item)
-        {
-            return item.EnumType;
-        }
-    }
-    public class ClassCollection : KeyedCollection<Type, ClassInfoItem>
-    {
-        protected override Type GetKeyForItem(ClassInfoItem item)
-        {
-            return item.CurrentType;
-        }
-        public Type[] Types
-        {
-            get
-            {
-                if (this.Dictionary != null)
-                {
-                    return this.Dictionary.Keys.ToArray<Type>();
-                }
-                else
-                {
-                    return this.Select(i => this.GetKeyForItem(i)).ToArray();
-                }
-            }
-        }
-    }
+   
 }

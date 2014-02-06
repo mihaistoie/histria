@@ -33,7 +33,7 @@ namespace Sikia.Model
         ///<summary>
         /// Column Name - database Mapping
         ///</summary>   
-        public string DbName { get; set; }
+        public string PersistentName { get; set; }
 
         ///<summary>
         /// Is stored in db ?
@@ -55,7 +55,11 @@ namespace Sikia.Model
         ///</summary>   
         public bool IsDisabled { get; set; }
 
-        
+        ///<summary>
+        /// Default Value ?
+        ///</summary>   
+        public string DefaultValue { get; set; }
+       
         ///<summary>
         /// Title of property
         ///</summary>   
@@ -72,7 +76,7 @@ namespace Sikia.Model
         {
             PropInfo = cPi;
             Name = PropInfo.Name;
-            DbName = PropInfo.Name;
+            PersistentName = PropInfo.Name;
             title = Name;
             DisplayAttribute da = PropInfo.GetCustomAttributes(typeof(DisplayAttribute), false).FirstOrDefault() as DisplayAttribute;
             title = Name;
