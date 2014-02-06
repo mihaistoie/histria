@@ -36,6 +36,20 @@ namespace Sikia.Core
         }
         #endregion
 
+        #region Properties
+        private Guid uuid = default(Guid);
+        public Guid Uuid
+        {
+            get { return uuid; }
+            set { uuid = value; }
+        }
+        public void AllocId()
+        {
+            if (uuid == default(Guid)) 
+                uuid = Guid.NewGuid();
+        }
+        #endregion
+
         #region Model
         private ClassInfoItem ci = null;
         public ClassInfoItem ClassInfo
@@ -64,6 +78,10 @@ namespace Sikia.Core
         #endregion
 
         #region Initialization
+
+        ///<summary>
+        /// IInterceptedObject.AOPAfterCreate
+        ///</summary>
         public void AOPAfterCreate()
         {
             state = ObjectState.Creating;
@@ -76,7 +94,11 @@ namespace Sikia.Core
         }
         #endregion
 
-        #region Intercepors
+        #region Interceptors
+        ///<summary>
+        /// IInterceptedObject.AOPBeforeSetProperty
+        ///</summary>
+
         public bool AOPBeforeSetProperty(string propertyName, ref object value)
         {
             if (!canExecuteRules()) return true;
@@ -88,7 +110,9 @@ namespace Sikia.Core
             return true;
 
         }
-
+        ///<summary>
+        /// IInterceptedObject.AOPAfterSetProperty
+        ///</summary>
         public void AOPAfterSetProperty(string propertyName, object value)
         {
             if (!canExecuteRules()) return;
@@ -100,7 +124,7 @@ namespace Sikia.Core
 
         }
 
-       
+
         #endregion
 
         #region Memory
@@ -111,6 +135,7 @@ namespace Sikia.Core
         }
 
         #endregion
+
     }
 
 }

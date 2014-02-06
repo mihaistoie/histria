@@ -6,9 +6,19 @@
     [System.AttributeUsage(System.AttributeTargets.Class, AllowMultiple = false)]
     public class DbAttribute : System.Attribute
     {
-        public string Keys = "";
+        public string Keys = "uuid";
         public string TableName = "";
-        public DbAttribute(string iKeys) 
+        public DbAttribute()
+        {
+        }
+
+        public DbAttribute(string iTableName, string iKeys)
+        {
+            TableName = iTableName;
+            Keys = iKeys;
+        }
+
+        public DbAttribute(string iKeys)
         {
             Keys = iKeys;
         }

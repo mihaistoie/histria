@@ -41,7 +41,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Attributes\DbAttribute.cs" />
-    <Compile Include="Attributes\DbColumnAttribute.cs" />
+    <Compile Include="Attributes\DefaultAttribute.cs" />
     <Compile Include="Attributes\DisplayAttribute.cs" />
     <Compile Include="Attributes\IndexAttribute.cs" />
     <Compile Include="Attributes\RelationAttribute.cs" />

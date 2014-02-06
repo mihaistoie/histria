@@ -34,6 +34,27 @@ namespace Sikia.Model
         /// Column Name - database Mapping
         ///</summary>   
         public string DbName { get; set; }
+
+        ///<summary>
+        /// Is stored in db ?
+        ///</summary>   
+        public bool IsPersistent { get; set; }
+
+        ///<summary>
+        /// Default is required ?
+        ///</summary>   
+        public bool IsMandatory { get; set; }
+
+        ///<summary>
+        /// Default is hidden ?
+        ///</summary>   
+        public bool IsHidden { get; set; }
+
+        ///<summary>
+        /// Default is disabled ?
+        ///</summary>   
+        public bool IsDisabled { get; set; }
+
         
         ///<summary>
         /// Title of property

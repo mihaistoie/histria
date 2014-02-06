@@ -30,12 +30,18 @@ namespace Sikia.Model
         private MethodItem gTitle = null;
         private MethodItem gDescription = null;
         #endregion
-
+        public ClassType ClassType = ClassType.Unknown;
+		
         public Type CurrentType { get; set; }
         public Type TargetType { get; set; }
+        public bool UseUuid { get; set; }
 
-        public ClassType ClassType = ClassType.Unknown;
-		///<summary>
+        ///<summary>
+        /// Is persistent ?
+        ///</summary>   		
+        public bool IsPersistent { get; set; }
+        
+        ///<summary>
         /// The name of the class
         ///</summary>   		
         public string Name { get; set; }
@@ -322,9 +328,11 @@ namespace Sikia.Model
         private void LoadTableNameAndPrimarykey()
         {
             if (Static) return;
+            UseUuid = true;
             DbAttribute db = CurrentType.GetCustomAttributes(typeof(DbAttribute), false).FirstOrDefault() as DbAttribute;
             if (db != null)
             {
+                IsPersistent = true;
                 ClassType = ClassType.Model;
                 DbName = (String.IsNullOrEmpty(db.TableName) ? Name : db.TableName);
                 // Load primary key
@@ -333,6 +341,7 @@ namespace Sikia.Model
                 {
                     throw new ModelException(String.Format(StrUtils.TT("Missing Primary key for {0}."), Name), Name);
                 }
+                UseUuid = ((akeys.Length == 0) && akeys[0] == "Uuid");
                 foreach (string akey in akeys)
                 {
                     string skey = akey.Trim();
@@ -340,6 +349,14 @@ namespace Sikia.Model
                     if (pi == null)
                         throw new ModelException(String.Format(StrUtils.TT("Invalid field {0}  in Primary key for {1}."), skey, Name), Name);
                     key.Add(new KeyItem(skey, pi));
+                }
+            }
+            if (UseUuid)
+            {
+                var pi = PropertyInfoByName("Uuid");
+                if (pi != null)
+                {
+               
                 }
             }
 
@@ -359,6 +376,7 @@ namespace Sikia.Model
 
 
         #endregion
+
         public PropertyInfo PropertyInfoByName(string propName)
         {
             PropertyInfo pi = null;

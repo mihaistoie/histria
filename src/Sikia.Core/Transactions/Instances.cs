@@ -11,13 +11,13 @@ namespace Sikia.Core
     public class Instances
     {
         private InstancesByClass list = new InstancesByClass();
-        public void Add(object instance)
+        public void Add(TranObject instance)
         {
             ITranObject it = instance as ITranObject;
             if (it != null)
             {
                 Type type = it.ClassType();
-
+ 
             }
         }
     }

@@ -44,6 +44,7 @@
     <Compile Include="Transactions\InstancesByClass.cs" />
     <Compile Include="Transactions\Instances.cs" />
     <Compile Include="Transactions\TranContext.cs" />
+    <Compile Include="Transactions\TranObject.cs" />
     <Compile Include="Types\ObjectState.cs" />
     <Compile Include="Associations\Association.cs" />
     <Compile Include="Associations\BelongsTo.cs" />
