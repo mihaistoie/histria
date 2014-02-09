@@ -3,12 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace Sikia.Model
+namespace Sikia
 {
-    
-    public class RoleInfo
+    public interface IRoleRef
     {
-        public Relation Type { get; set; }
-        
     }
 }

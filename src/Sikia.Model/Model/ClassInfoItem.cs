@@ -261,7 +261,10 @@ namespace Sikia.Model
         private void LoadProperties()
         {
             if (Static) return;
-            Type associationType = typeof(IAssociation); 
+            Type associationType = typeof(IAssociation);
+            Type roleListType = typeof(IRoleList);
+            Type roleRefType = typeof(IRoleRef); 
+            
             PropertyInfo[] props = CurrentType.GetProperties(BindingFlags.Public | BindingFlags.Instance);
             foreach (PropertyInfo pi in props)
             {
@@ -292,6 +295,8 @@ namespace Sikia.Model
                     {
                         throw new ModelException(String.Format(StrUtils.TT("Association attribute is missing.({0}.{1})"), item.Name, Name), Name);
                     }
+                    RoleInfo role = new RoleInfo() { Type = ra.Type };
+                    item.Role = role;
 
                 }
                 propsMap.Add(item.Name, item.PropInfo);

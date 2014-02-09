@@ -41,6 +41,9 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Base\IAssociation.cs" />
+    <Compile Include="Base\IRoleChild.cs" />
+    <Compile Include="Base\IRoleList.cs" />
+    <Compile Include="Base\IRoleRef.cs" />
     <Compile Include="Base\ITranObject.cs" />
     <Compile Include="Base\Relation.cs" />
     <Compile Include="DbType.cs" />

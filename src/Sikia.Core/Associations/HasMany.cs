@@ -9,7 +9,7 @@ namespace Sikia.Core
 {
 
 
-    public class HasMany<T> : Association<T>, IEnumerable<T> where T : InterceptedObject
+    public class HasMany<T> : Association<T>, IEnumerable<T> where T : InterceptedObject, IRoleList
     {
         #region Internal members
         private InterceptedObject parent;
