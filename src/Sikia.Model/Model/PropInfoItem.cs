@@ -69,6 +69,16 @@ namespace Sikia.Model
         /// A short description of property 
         ///</summary>   
         public string Description { get { return descriptionGet == null ? description : (string)descriptionGet.Invoke(this, null); } }
+
+        ///<summary>
+        /// Role detail
+        ///</summary>   
+        public RoleInfo Role { get; set; }
+
+        ///<summary>
+        /// IsRole ?
+        ///</summary>  
+        public bool IsRole { get { return Role != null; } }
         #endregion
 
         #region Loading

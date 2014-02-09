@@ -57,7 +57,6 @@ namespace Sikia.Core
 
         #endregion
 
-
         #region IEnumerable Members
 
         IEnumerator IEnumerable.GetEnumerator()
@@ -66,7 +65,6 @@ namespace Sikia.Core
         }
 
         #endregion
-
 
         #region Add/Remove
 

@@ -6,6 +6,10 @@ using System.Text;
 
 namespace Sikia.Core
 {
+
+    ///<summary>
+    /// List of objects
+    ///</summary>
     public class InstanceList : KeyedCollection<Guid, TranObject>
     {
         protected override Guid GetKeyForItem(TranObject item)

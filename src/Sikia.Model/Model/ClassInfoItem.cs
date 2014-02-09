@@ -261,6 +261,7 @@ namespace Sikia.Model
         private void LoadProperties()
         {
             if (Static) return;
+            Type associationType = typeof(IAssociation); 
             PropertyInfo[] props = CurrentType.GetProperties(BindingFlags.Public | BindingFlags.Instance);
             foreach (PropertyInfo pi in props)
             {
@@ -283,7 +284,16 @@ namespace Sikia.Model
                     if (!string.IsNullOrEmpty(pa.PersistentName))
                         item.PersistentName = pa.PersistentName;
                 }
+                if (pi.PropertyType.IsAssignableFrom(associationType))
+                {
+                    //is association
+                    AssociationAttribute ra = CurrentType.GetCustomAttributes(typeof(AssociationAttribute), false).FirstOrDefault() as AssociationAttribute;
+                    if (ra == null)
+                    {
+                        throw new ModelException(String.Format(StrUtils.TT("Association attribute is missing.({0}.{1})"), item.Name, Name), Name);
+                    }
 
+                }
                 propsMap.Add(item.Name, item.PropInfo);
                 properties.Add(item);
 
