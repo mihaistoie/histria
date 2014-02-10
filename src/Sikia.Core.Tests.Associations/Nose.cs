@@ -12,7 +12,7 @@ namespace Sikia.Core.Tests.Associations.One_to_one
   {
       public virtual string BodyId { get; set; }
        /* Belongs to Body */
-      [Association(Relation.Composition, Inv = "Nose", Link = "BodyId=Body")]
+      [Association(Relation.Composition, Inv = "Nose", ForeignKey = "BodyId")]
       public virtual BelongsTo<HumanBody> Body { get; set; }
   }
 }

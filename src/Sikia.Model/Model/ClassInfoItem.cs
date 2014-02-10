@@ -295,8 +295,17 @@ namespace Sikia.Model
                     {
                         throw new ModelException(String.Format(StrUtils.TT("Association attribute is missing.({0}.{1})"), item.Name, Name), Name);
                     }
-                    RoleInfo role = new RoleInfo() { Type = ra.Type };
-                    item.Role = role;
+                    RoleInfoItem role = null;
+                    if (pi.PropertyType.IsAssignableFrom(roleListType))
+                    {
+                        role = new RoleListInfo();
+                    }
+                    else if (pi.PropertyType.IsAssignableFrom(roleRefType))
+                    {
+
+                    }
+                    //RoleInfo role = new RoleInfo() { Type = ra.Type };
+                    //item.Role = role;
 
                 }
                 propsMap.Add(item.Name, item.PropInfo);

@@ -5,10 +5,9 @@ using System.Text;
 
 namespace Sikia.Model
 {
-    
-    public class RoleInfo
+    public class RoleInfoItem
     {
-        public Relation Type { get; set; }
-        
+        public int Max { get; set; }
+        public int Min { get; set; }
     }
 }

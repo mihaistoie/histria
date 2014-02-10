@@ -73,7 +73,7 @@ namespace Sikia.Model
         ///<summary>
         /// Role detail
         ///</summary>   
-        public RoleInfo Role { get; set; }
+        public RoleInfoItem Role { get; set; }
 
         ///<summary>
         /// IsRole ?

@@ -5,7 +5,7 @@ using System.Text;
 
 namespace Sikia.Core
 {
-    public class BelongsTo<T> : Association<T> where T : InterceptedObject, IRoleRef, IRoleChild
+    public class BelongsTo<T> : Association<T>, IRoleRef, IRoleChild where T : InterceptedObject
     {
     }
 }

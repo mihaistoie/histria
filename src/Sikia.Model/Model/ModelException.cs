@@ -33,6 +33,5 @@ namespace Sikia.Model
             PropName = propName;
         }
         #endregion
-
     }
 }
