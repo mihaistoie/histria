@@ -11,7 +11,7 @@ namespace Sikia.Core
     public class Instances
     {
         private InstancesByClass list = new InstancesByClass();
-        public void Add(TranObject instance)
+        public void Add(ITranObject instance)
         {
             list.AddInstance(instance);
         }

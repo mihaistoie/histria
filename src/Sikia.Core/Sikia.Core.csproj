@@ -44,12 +44,8 @@
     <Compile Include="Transactions\InstancesByClass.cs" />
     <Compile Include="Transactions\Instances.cs" />
     <Compile Include="Transactions\TranContext.cs" />
-    <Compile Include="Transactions\TranObject.cs" />
+    <Compile Include="Types\TranObject.cs" />
     <Compile Include="Types\ObjectState.cs" />
-    <Compile Include="Associations\Association.cs" />
-    <Compile Include="Associations\BelongsTo.cs" />
-    <Compile Include="Associations\HasMany.cs" />
-    <Compile Include="Associations\HasOne.cs" />
     <Compile Include="Types\InterceptedObject.cs" />
     <Compile Include="Factory\ProxyFactory.cs" />
     <Compile Include="Types\RulePluginObject.cs" />

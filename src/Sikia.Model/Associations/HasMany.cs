@@ -5,14 +5,14 @@ using System.Linq;
 using System.Text;
 
 
-namespace Sikia.Core
+namespace Sikia.Model
 {
 
 
-    public class HasMany<T> : Association<T>, IEnumerable<T>, IRoleList where T : InterceptedObject
+    public class HasMany<T> : Association<T>, IEnumerable<T>, IRoleList where T : IInterceptedObject
     {
         #region Internal members
-        private InterceptedObject parent;
+        private IInterceptedObject parent;
         private List<T> _values = null;
         #endregion
 
@@ -37,7 +37,7 @@ namespace Sikia.Core
            
         }
 
-        public HasMany(InterceptedObject parent)
+        public HasMany(IInterceptedObject parent)
         {
             this.parent = parent;
         }

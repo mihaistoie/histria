@@ -10,11 +10,11 @@ namespace Sikia.Core
     ///<summary>
     /// List of objects
     ///</summary>
-    public class InstanceList : KeyedCollection<Guid, TranObject>
+    public class InstanceList : KeyedCollection<Guid, ITranObject>
     {
-        protected override Guid GetKeyForItem(TranObject item)
+        protected override Guid GetKeyForItem(ITranObject item)
         {
-            return item.Uuid;
+            return item.Uid;
         }
     }
 }

@@ -8,7 +8,7 @@ namespace Sikia.Core
 {
     public class InstancesByClass : Dictionary<Type, InstanceList>
     {
-        public void AddInstance(TranObject instance)
+        public void AddInstance(ITranObject instance)
         {
             Type type = instance.ClassType();
             InstanceList instances = null;

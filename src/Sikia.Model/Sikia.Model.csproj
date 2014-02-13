@@ -40,6 +40,10 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Associations\Association.cs" />
+    <Compile Include="Associations\BelongsTo.cs" />
+    <Compile Include="Associations\HasMany.cs" />
+    <Compile Include="Associations\HasOne.cs" />
     <Compile Include="Attributes\DbAttribute.cs" />
     <Compile Include="Attributes\DefaultAttribute.cs" />
     <Compile Include="Attributes\DisplayAttribute.cs" />

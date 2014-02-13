@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace Sikia.Core
+namespace Sikia.Model
 {
-    public class HasOne<T> : Association<T>, IRoleRef where T : InterceptedObject
+    public class HasOne<T> : Association<T>, IRoleRef where T : IInterceptedObject
     {
 
     }

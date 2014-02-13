@@ -37,16 +37,16 @@ namespace Sikia.Core
         #endregion
 
         #region Properties
-        private Guid uuid = default(Guid);
-        public Guid Uuid
+        private Guid uid = default(Guid);
+        public Guid Uid
         {
-            get { return uuid; }
-            set { uuid = value; }
+            get { return uid; }
+            set { uid = value; }
         }
         public void AllocId()
         {
-            if (uuid == default(Guid)) 
-                uuid = Guid.NewGuid();
+            if (uid == default(Guid))
+                uid = Guid.NewGuid();
         }
         #endregion
 
