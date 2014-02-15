@@ -6,7 +6,7 @@ using System.Text;
 
 namespace Sikia.Model.Tests.XXX
 {
-    public class ClassInXXX : IModelClass
+    public class ClassInXXX : BaseModel
     {
     }
 }

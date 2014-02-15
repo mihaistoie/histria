@@ -7,6 +7,5 @@ namespace Sikia
 {
     public interface IPersistentObj
     {
-        Guid Uuid { get; set; }
     }
 }

@@ -59,7 +59,9 @@ namespace Sikia.Model
         public string DbName { get; set; }
 
         public bool Static { get; set; }
-
+        ///<summary>
+        /// ModelManager
+        ///</summary>   		
         #region Properties/Primary Key/Indexes
         public PropertiesCollection Properties { get { return properties; } }
         public KeysCollection Key { get { return key; } }
@@ -158,7 +160,7 @@ namespace Sikia.Model
         {
             foreach (PropinfoItem pi in properties)
             {
-                pi.AfterLoad(this);
+                pi.AfterLoad(model, this);
             }
             if (Static)
             {
@@ -270,7 +272,7 @@ namespace Sikia.Model
             foreach (PropertyInfo pi in props)
             {
                 PropinfoItem item = new PropinfoItem(pi);
-                DefaultAttribute da = CurrentType.GetCustomAttributes(typeof(DefaultAttribute), false).FirstOrDefault() as DefaultAttribute;
+                DefaultAttribute da = pi.GetCustomAttributes(typeof(DefaultAttribute), false).FirstOrDefault() as DefaultAttribute;
                 if (da != null)
                 {
                     item.IsDisabled = da.Disabled;
@@ -280,7 +282,7 @@ namespace Sikia.Model
                 }
                 item.IsPersistent = IsPersistent;
 
-                PersistentAttribute pa = CurrentType.GetCustomAttributes(typeof(PersistentAttribute), false).FirstOrDefault() as PersistentAttribute;
+                PersistentAttribute pa = pi.GetCustomAttributes(typeof(PersistentAttribute), false).FirstOrDefault() as PersistentAttribute;
                 if (pa != null)
                 {
                     item.IsPersistent = pa.IsPersistent;
@@ -289,23 +291,23 @@ namespace Sikia.Model
                         item.PersistentName = pa.PersistentName;
                 }
                 //Association
-                if (pi.PropertyType.IsAssignableFrom(associationType))
+                if (associationType.IsAssignableFrom(pi.PropertyType))
                 {
                     //is association
-                    AssociationAttribute ra = CurrentType.GetCustomAttributes(typeof(AssociationAttribute), false).FirstOrDefault() as AssociationAttribute;
+                    AssociationAttribute ra = pi.GetCustomAttributes(typeof(AssociationAttribute), false).FirstOrDefault() as AssociationAttribute;
                     if (ra == null)
                     {
                         throw new ModelException(String.Format(StrUtils.TT("Association attribute is missing.({0}.{1})"), item.Name, Name), Name);
                     }
                     RoleInfoItem role = null;
-                    if (pi.PropertyType.IsAssignableFrom(roleListType))
+                    if (roleListType.IsAssignableFrom(pi.PropertyType))
                     {
-                        role = new RoleInfoItem() { Min = ra.Min, Max = ra.Max, RoleInvName = ra.Inv, Type = ra.Type };
+                        role = new RoleInfoItem() { Min = ra.Min, Max = ra.Max, RoleInvName = ra.Inv, Type = ra.Type,  IsList = true, IsChild = false};
                     }
-                    else if (pi.PropertyType.IsAssignableFrom(roleRefType))
+                    else if (roleRefType.IsAssignableFrom(pi.PropertyType))
                     {
-                        role = new RoleInfoItem() { Min = ra.Min, Max = ra.Max, RoleInvName = ra.Inv, Type = ra.Type };
-                        if (pi.PropertyType.IsAssignableFrom(roleChild))
+                        role = new RoleInfoItem() { Min = ra.Min, Max = ra.Max, RoleInvName = ra.Inv, Type = ra.Type, Foreingkey = ra.ForeignKey, IsList = false, IsChild = false };
+                        if (roleChild.IsAssignableFrom(pi.PropertyType))
                         {
                             if ((ra.Type != Relation.Embedded) || (ra.Type != Relation.Composition) || (ra.Type != Relation.Aggregation))
                             {
@@ -317,8 +319,9 @@ namespace Sikia.Model
                             }
 
                         }
-
+  
                     }
+                    item.Role = role;
 
                 }
                 propsMap.Add(item.Name, item.PropInfo);
@@ -385,11 +388,12 @@ namespace Sikia.Model
         private void LoadPersistence()
         {
             if (Static) return;
-            DbAttribute db = CurrentType.GetCustomAttributes(typeof(DbAttribute), false).FirstOrDefault() as DbAttribute;
-            if (db != null || CurrentType.IsAssignableFrom(typeof(IPersistentObj)))
+            
+            if(typeof(IPersistentObj).IsAssignableFrom(CurrentType))
             {
                 IsPersistent = true;
                 ClassType = ClassType.Model;
+                DbAttribute db = CurrentType.GetCustomAttributes(typeof(DbAttribute), false).FirstOrDefault() as DbAttribute;
                 DbName = (String.IsNullOrEmpty(db.TableName) ? Name : db.TableName);
             }
 
@@ -398,12 +402,11 @@ namespace Sikia.Model
         private void LoadPrimarykey()
         {
             if (Static) return;
-            if (!IsPersistent) return;
-            DbAttribute db = CurrentType.GetCustomAttributes(typeof(DbAttribute), false).FirstOrDefault() as DbAttribute;
+            PrimaryKeyAttribute pk = CurrentType.GetCustomAttributes(typeof(PrimaryKeyAttribute), false).FirstOrDefault() as PrimaryKeyAttribute;
             string[] akeys;
-            if (db == null)
+            if (pk != null)
             {
-                akeys = db.Keys.Split(',');
+                akeys = pk.Keys.Split(',');
                 if (akeys.Length == 0)
                 {
                     throw new ModelException(String.Format(StrUtils.TT("Missing Primary key for {0}."), Name), Name);
@@ -422,7 +425,6 @@ namespace Sikia.Model
                 PropinfoItem pi = PropertyByName(skey);
                 if (pi == null)
                     throw new ModelException(String.Format(StrUtils.TT("Invalid field {0}  in Primary key for {1}."), skey, Name), Name);
-                pi.IsPersistent = true;
                 key.Add(new KeyItem(skey, pi.PropInfo));
             }
         }

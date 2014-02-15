@@ -6,8 +6,8 @@ using Sikia.Model;
 
 namespace Sikia.Model.Tests.ModelToTest
 {
-    
-    public class MInvalidRule : IModelClass
+
+    public class MInvalidRule : BaseModel
     {
         public virtual string Name { get; set; }
         [Rule(Rule.Propagation, Property = "FirstName")]
@@ -16,7 +16,7 @@ namespace Sikia.Model.Tests.ModelToTest
         }
     }
 
-    public class MR1 : IModelClass
+    public class MR1 : BaseModel
     {
         public virtual string Name { get; set; }
         public virtual string RuleResult { get; set; }
@@ -37,12 +37,12 @@ namespace Sikia.Model.Tests.ModelToTest
     }
     
     [Display("M3-T", Description="M3-D")]
-    public class MR3 : IModelClass
+    public class MR3 : BaseModel
     {
     }
 
     [Display("@xxx", Description = "@yyy")]
-    public class MR4 : IModelClass
+    public class MR4 : BaseModel
     {
         public static string xxx()
         {

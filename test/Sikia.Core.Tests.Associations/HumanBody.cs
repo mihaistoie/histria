@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using Sikia.Core;
 using Sikia.Model;
 
-namespace Sikia.Core.Tests.Associations.One_to_one
+namespace Sikia.Core.Tests.Associations
 {
     public class HumanBody : InterceptedObject
     {

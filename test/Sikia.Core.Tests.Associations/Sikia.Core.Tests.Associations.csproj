@@ -69,6 +69,10 @@
       <Project>{a546c0e7-972d-47cb-849a-617f16855977}</Project>
       <Name>Sikia.Model</Name>
     </ProjectReference>
+    <ProjectReference Include="..\..\src\Sikia.Proxy.Castle\Sikia.Proxy.Castle.csproj">
+      <Project>{94e7363a-b458-4b2f-951d-de3fddd2d74d}</Project>
+      <Name>Sikia.Proxy.Castle</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\src\Sikia.Sys\Sikia.Sys.csproj">
       <Project>{7e07af0f-212d-42bf-b505-87018f6619bd}</Project>
       <Name>Sikia.Sys</Name>

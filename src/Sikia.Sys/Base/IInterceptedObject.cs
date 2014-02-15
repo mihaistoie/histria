@@ -8,9 +8,9 @@ namespace Sikia
     ///<summary>
     /// Interceptable objects
     ///</summary>
-    public interface IInterceptedObject
+    public interface IInterceptedObject: IModelClass
     {
-       
+
         #region Interceptors
         ///<summary>
         /// Before set property

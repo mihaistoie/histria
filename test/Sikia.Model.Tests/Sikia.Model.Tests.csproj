@@ -51,6 +51,7 @@
     </Otherwise>
   </Choose>
   <ItemGroup>
+    <Compile Include="BaseModel.cs" />
     <Compile Include="Model.cs" />
     <Compile Include="ModelInNamespace.cs" />
     <Compile Include="ModelTests.cs" />

@@ -10,8 +10,11 @@ namespace Sikia.Model
         public int Max { get; set; }
         public int Min { get; set; }
         public Relation Type { get; set; }
-        public RoleInfoItem InvRole = null;
-        public bool IsChild = false;
-        public string RoleInvName;
+        public RoleInfoItem InvRole { get; set; }
+        public bool IsChild { get; set; }
+        public bool IsList { get; set; }
+        public string RoleInvName { get; set; }
+        public string Foreingkey { get; set; }
+        public bool UseUuid { get; set; }
     }
 }

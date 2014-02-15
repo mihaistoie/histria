@@ -11,6 +11,7 @@ namespace Sikia
     public interface IModelClass
     {
         #region Properties
+        Guid Uuid { get; set; }
         #endregion
     }
 }

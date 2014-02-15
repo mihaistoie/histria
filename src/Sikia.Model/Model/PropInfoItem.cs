@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Sikia.Sys;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
@@ -24,12 +25,12 @@ namespace Sikia.Model
 
         #region Properties
         public PropertyInfo PropInfo;
-        
+
         ///<summary>
         /// Name of property
         ///</summary>   
         public string Name { get; set; }
-        
+
         ///<summary>
         /// Column Name - database Mapping
         ///</summary>   
@@ -59,12 +60,12 @@ namespace Sikia.Model
         /// Default Value ?
         ///</summary>   
         public string DefaultValue { get; set; }
-       
+
         ///<summary>
         /// Title of property
         ///</summary>   
         public string Title { get { return titleGet == null ? title : (string)titleGet.Invoke(this, null); } }
-        
+
         ///<summary>
         /// A short description of property 
         ///</summary>   
@@ -98,9 +99,29 @@ namespace Sikia.Model
             if (description == "") description = title;
 
         }
-        public void AfterLoad(ClassInfoItem ci)
+        public void AfterLoad(ModelManager model, ClassInfoItem ci)
         {
+            if (IsRole)
+            {
+                RoleInfoItem role = Role;
+                if (role.IsList && string.IsNullOrEmpty(role.RoleInvName))
+                {
+                    throw new ModelException(String.Format(StrUtils.TT("Invalid role definition {0}.{1}. Missing 'Inv' attribute."), ci.Name, PropInfo.Name), ci.Name);
+                }
+                Type invClassType = PropInfo.PropertyType.GetGenericArguments()[0];
+     
+                ClassInfoItem remoteClass = model.ClassByType(invClassType);
+                if (remoteClass == null)
+                {
+                    throw new ModelException(String.Format(StrUtils.TT("Invalid role definition {0}.{1}. Remote class not foind."), ci.Name, PropInfo.Name), ci.Name);
+                }
 
+                if (string.IsNullOrEmpty(role.RoleInvName))
+                {
+
+                }
+
+            }
 
         }
         #endregion

@@ -50,6 +50,7 @@
     <Compile Include="Attributes\IndexAttribute.cs" />
     <Compile Include="Attributes\PersistentAttribute.cs" />
     <Compile Include="Attributes\AssociationAttribute.cs" />
+    <Compile Include="Attributes\PrimaryKeyAttribute.cs" />
     <Compile Include="Attributes\RuleAttribute.cs" />
     <Compile Include="Attributes\RulesForAttribute.cs" />
     <Compile Include="ClassType.cs" />
