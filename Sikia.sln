@@ -8,29 +8,29 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		TraceAndTestImpact.testsettings = TraceAndTestImpact.testsettings
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sikia.Json", "Sikia.Json\Sikia.Json.csproj", "{129E2AA1-5A70-42B0-9051-F84360105480}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sikia.Json", "src\Sikia.Json\Sikia.Json.csproj", "{129E2AA1-5A70-42B0-9051-F84360105480}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sikia.Db", "Sikia.Db\Sikia.Db.csproj", "{7989F2D8-575F-414A-9E6A-2923AE9DF0FA}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sikia.Db", "src\Sikia.Db\Sikia.Db.csproj", "{7989F2D8-575F-414A-9E6A-2923AE9DF0FA}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sikia.Sys", "Sikia.Sys\Sikia.Sys.csproj", "{7E07AF0F-212D-42BF-B505-87018F6619BD}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sikia.Sys", "src\Sikia.Sys\Sikia.Sys.csproj", "{7E07AF0F-212D-42BF-B505-87018F6619BD}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sikia.Db.Tests", "Sikia.Db.Tests\Sikia.Db.Tests.csproj", "{C8D843FA-C617-4A2B-834D-A88C825B5567}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sikia.Db.Tests", "test\Sikia.Db.Tests\Sikia.Db.Tests.csproj", "{C8D843FA-C617-4A2B-834D-A88C825B5567}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sikia.Application", "Sikia.Application\Sikia.Application.csproj", "{A517E3A3-F03D-461F-B038-B2A4B8F5407E}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sikia.Application", "src\Sikia.Application\Sikia.Application.csproj", "{A517E3A3-F03D-461F-B038-B2A4B8F5407E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sikia.Core", "Sikia.Core\Sikia.Core.csproj", "{78AD75AF-A56F-418F-BF38-56959C893DD3}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sikia.Core", "src\Sikia.Core\Sikia.Core.csproj", "{78AD75AF-A56F-418F-BF38-56959C893DD3}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sikia.Model.Tests", "Sikia.Model.Tests\Sikia.Model.Tests.csproj", "{16E9953D-93AD-49B2-8537-854D3A2F5592}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sikia.Model.Tests", "test\Sikia.Model.Tests\Sikia.Model.Tests.csproj", "{16E9953D-93AD-49B2-8537-854D3A2F5592}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sikia.Core.Tests.Rules", "Sikia.Core.Tests.Rules\Sikia.Core.Tests.Rules.csproj", "{EB67246A-BFE4-443A-AD0B-F24F16CC2EFA}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sikia.Core.Tests.Rules", "test\Sikia.Core.Tests.Rules\Sikia.Core.Tests.Rules.csproj", "{EB67246A-BFE4-443A-AD0B-F24F16CC2EFA}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sikia.Core.Tests.Associations", "Sikia.Core.Tests.Associations\Sikia.Core.Tests.Associations.csproj", "{6C3852C5-D372-47EE-9FF0-B126308CDD72}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sikia.Core.Tests.Associations", "test\Sikia.Core.Tests.Associations\Sikia.Core.Tests.Associations.csproj", "{6C3852C5-D372-47EE-9FF0-B126308CDD72}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sikia.Db.MsSql", "Sikia.Db.MsSql\Sikia.Db.MsSql.csproj", "{7C410682-0D61-4AC8-B4CA-8A7F53EE10DD}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sikia.Db.MsSql", "src\Sikia.Db.MsSql\Sikia.Db.MsSql.csproj", "{7C410682-0D61-4AC8-B4CA-8A7F53EE10DD}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sikia.Model", "Sikia.Model\Sikia.Model.csproj", "{A546C0E7-972D-47CB-849A-617F16855977}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sikia.Model", "src\Sikia.Model\Sikia.Model.csproj", "{A546C0E7-972D-47CB-849A-617F16855977}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sikia.Proxy.Castle", "Sikia.Proxy.Castle\Sikia.Proxy.Castle.csproj", "{94E7363A-B458-4B2F-951D-DE3FDDD2D74D}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sikia.Proxy.Castle", "src\Sikia.Proxy.Castle\Sikia.Proxy.Castle.csproj", "{94E7363A-B458-4B2F-951D-DE3FDDD2D74D}"
 EndProject
 Global
 	GlobalSection(TestCaseManagementSettings) = postSolution
