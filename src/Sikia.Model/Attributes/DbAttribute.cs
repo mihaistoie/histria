@@ -6,7 +6,7 @@
     [System.AttributeUsage(System.AttributeTargets.Class, AllowMultiple = false)]
     public class DbAttribute : System.Attribute
     {
-        public string Keys = "uuid";
+        public string Keys = "";
         public string TableName = "";
         public DbAttribute()
         {

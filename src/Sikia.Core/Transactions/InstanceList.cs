@@ -14,7 +14,7 @@ namespace Sikia.Core
     {
         protected override Guid GetKeyForItem(ITranObject item)
         {
-            return item.Uid;
+            return item.Uuid;
         }
     }
 }

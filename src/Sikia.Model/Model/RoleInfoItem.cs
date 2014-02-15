@@ -9,5 +9,9 @@ namespace Sikia.Model
     {
         public int Max { get; set; }
         public int Min { get; set; }
+        public Relation Type { get; set; }
+        public RoleInfoItem InvRole = null;
+        public bool IsChild = false;
+        public string RoleInvName;
     }
 }

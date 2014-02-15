@@ -263,8 +263,9 @@ namespace Sikia.Model
             if (Static) return;
             Type associationType = typeof(IAssociation);
             Type roleListType = typeof(IRoleList);
-            Type roleRefType = typeof(IRoleRef); 
-            
+            Type roleRefType = typeof(IRoleRef);
+            Type roleChild = typeof(IRoleChild);
+
             PropertyInfo[] props = CurrentType.GetProperties(BindingFlags.Public | BindingFlags.Instance);
             foreach (PropertyInfo pi in props)
             {
@@ -287,6 +288,7 @@ namespace Sikia.Model
                     if (!string.IsNullOrEmpty(pa.PersistentName))
                         item.PersistentName = pa.PersistentName;
                 }
+                //Association
                 if (pi.PropertyType.IsAssignableFrom(associationType))
                 {
                     //is association
@@ -298,14 +300,25 @@ namespace Sikia.Model
                     RoleInfoItem role = null;
                     if (pi.PropertyType.IsAssignableFrom(roleListType))
                     {
-                        role = new RoleListInfo();
+                        role = new RoleInfoItem() { Min = ra.Min, Max = ra.Max, RoleInvName = ra.Inv, Type = ra.Type };
                     }
                     else if (pi.PropertyType.IsAssignableFrom(roleRefType))
                     {
+                        role = new RoleInfoItem() { Min = ra.Min, Max = ra.Max, RoleInvName = ra.Inv, Type = ra.Type };
+                        if (pi.PropertyType.IsAssignableFrom(roleChild))
+                        {
+                            if ((ra.Type != Relation.Embedded) || (ra.Type != Relation.Composition) || (ra.Type != Relation.Aggregation))
+                            {
+                                role.IsChild = true;
+                            }
+                            else
+                            {
+                                throw new ModelException(String.Format(StrUtils.TT("Invalid association type.({0}.{1}. Excepted composition.)"), item.Name, Name), Name);
+                            }
+
+                        }
 
                     }
-                    //RoleInfo role = new RoleInfo() { Type = ra.Type };
-                    //item.Role = role;
 
                 }
                 propsMap.Add(item.Name, item.PropInfo);
@@ -373,7 +386,7 @@ namespace Sikia.Model
         {
             if (Static) return;
             DbAttribute db = CurrentType.GetCustomAttributes(typeof(DbAttribute), false).FirstOrDefault() as DbAttribute;
-            if (db != null)
+            if (db != null || CurrentType.IsAssignableFrom(typeof(IPersistentObj)))
             {
                 IsPersistent = true;
                 ClassType = ClassType.Model;
@@ -387,24 +400,30 @@ namespace Sikia.Model
             if (Static) return;
             if (!IsPersistent) return;
             DbAttribute db = CurrentType.GetCustomAttributes(typeof(DbAttribute), false).FirstOrDefault() as DbAttribute;
-            string[] akeys = db.Keys.Split(',');
-            if (akeys.Length == 0)
+            string[] akeys;
+            if (db == null)
             {
-                throw new ModelException(String.Format(StrUtils.TT("Missing Primary key for {0}."), Name), Name);
+                akeys = db.Keys.Split(',');
+                if (akeys.Length == 0)
+                {
+                    throw new ModelException(String.Format(StrUtils.TT("Missing Primary key for {0}."), Name), Name);
+                }
+                UseUuid = ((akeys.Length == 0) && akeys[0] == "Uuid");
             }
-            UseUuid = ((akeys.Length == 0) && akeys[0] == "Uuid");
+            else
+            {
+                UseUuid = true;
+                akeys = new string[] { "Uuid" };
+
+            }
             foreach (string akey in akeys)
             {
                 string skey = akey.Trim();
-                PropertyInfo pi = PropertyInfoByName(skey);
+                PropinfoItem pi = PropertyByName(skey);
                 if (pi == null)
                     throw new ModelException(String.Format(StrUtils.TT("Invalid field {0}  in Primary key for {1}."), skey, Name), Name);
-                key.Add(new KeyItem(skey, pi));
-            }
-            if (UseUuid)
-            {
-                var pi = PropertyByName("Uuid");
                 pi.IsPersistent = true;
+                key.Add(new KeyItem(skey, pi.PropInfo));
             }
         }
 

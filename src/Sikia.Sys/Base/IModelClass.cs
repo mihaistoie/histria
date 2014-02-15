@@ -10,6 +10,7 @@ namespace Sikia
     ///</summary>
     public interface IModelClass
     {
-
+        #region Properties
+        #endregion
     }
 }

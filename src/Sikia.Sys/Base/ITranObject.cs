@@ -8,9 +8,8 @@ namespace Sikia
     ///<summary>
     /// Instances that support this interface can be add in transaction
     ///</summary>
-    public interface ITranObject: IInterceptedObject
+    public interface ITranObject : IPersistentObj, IInterceptedObject
     {
-        Guid Uid { get; set; }
         Type ClassType();
     }
 }

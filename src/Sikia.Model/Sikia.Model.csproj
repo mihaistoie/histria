@@ -57,8 +57,6 @@
     <Compile Include="Model\ClassCollection.cs" />
     <Compile Include="Model\EnumCollection.cs" />
     <Compile Include="Model\RoleInfoItem.cs" />
-    <Compile Include="Model\RoleListInfo.cs" />
-    <Compile Include="Model\RoleRefInfo.cs" />
     <Compile Include="Model\RulesCollection.cs" />
     <Compile Include="Rule.cs" />
     <Compile Include="Model\ClassInfoItem.cs" />

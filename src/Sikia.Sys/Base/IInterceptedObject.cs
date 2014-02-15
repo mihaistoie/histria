@@ -10,6 +10,7 @@ namespace Sikia
     ///</summary>
     public interface IInterceptedObject
     {
+       
         #region Interceptors
         ///<summary>
         /// Before set property
