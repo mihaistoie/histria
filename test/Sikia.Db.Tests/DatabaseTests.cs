@@ -212,9 +212,7 @@ namespace Sikia.Db.Tests
                     sql.AppendLine("code varchar(10) not null,");
                     sql.AppendLine("title varchar(100) not null,");
                     sql.AppendLine("PRIMARY KEY(code, a)");
-
                     sql.AppendLine(")");
-
                     cmd.Sql = sql.ToString();
                     cmd.Execute();
                 }
@@ -410,7 +408,7 @@ namespace Sikia.Db.Tests
             DropDB(dburl, ss);
         }
         [TestMethod]
-        public void MsSqlForeignkeys()
+        public void MsSqlForeignkeysUsingPk()
         {
             string dburl = "mssql://(local)\\SQLEXPRESS/zqmsrgrls?schema=dbo";
             DbSchema ss = CreateDB(dburl);
@@ -536,6 +534,115 @@ namespace Sikia.Db.Tests
             }
             DropDB(dburl, ss);
         }
+
+        [TestMethod]
+        public void MsSqlFKNotUsingPk()
+        {
+            string dburl = "mssql://(local)\\SQLEXPRESS/zqmsrwgrls?schema=dbo";
+            DbSchema ss = CreateDB(dburl);
+            using (DbSession session = DbDrivers.Instance.Session(dburl))
+            {
+                using (DbCmd cmd = session.Command(""))
+                {
+                    var sql = new StringBuilder();
+                    sql.AppendLine(" create table exams");
+                    sql.AppendLine(" (");
+                    sql.AppendLine(" exam_id int not null,");
+                    sql.AppendLine(" examName  varchar(50) not null,");
+                    sql.AppendLine(" PRIMARY KEY(exam_id)");
+                    sql.AppendLine(" )");
+                    cmd.Clear();
+                    cmd.Sql = sql.ToString();
+                    cmd.Execute();
+
+                    sql.Clear();
+                    sql.AppendLine(" create unique index exams_examName on exams(examName)");
+                    cmd.Clear();
+                    cmd.Sql = sql.ToString();
+                    cmd.Execute();
+
+                    sql.Clear();
+                    sql.AppendLine(" create table question_bank");
+                    sql.AppendLine(" (");
+                    sql.AppendLine(" question_id int not null,");
+                    sql.AppendLine(" question_examName varchar(50),");
+                    sql.AppendLine(" question_text varchar(1024) not null, ");
+                    sql.AppendLine(" PRIMARY KEY(question_id)");
+                    sql.AppendLine(" )");
+                    cmd.Clear();
+                    cmd.Sql = sql.ToString();
+                    cmd.Execute();
+
+                    cmd.Clear();
+                    cmd.Sql = "Alter table question_bank Add foreign key (question_examName) references exams(examName)";
+                    cmd.Execute();
+
+                }
+            }
+            ss.Load(dburl);
+
+            DbTable table = ss.TableByName("question_bank");
+            if (table != null)
+            {
+                Assert.AreEqual(1, table.ForeignKeys.Count, "FK count");
+                if (table.ForeignKeys.Count > 0)
+                {
+                    var fk = table.ForeignKeys[0];
+                    Assert.AreEqual(1, fk.Columns.Count, "Number of fields in fkFK");
+                    if (fk.Columns.Count > 0)
+                    {
+                        var fkc = fk.Columns[0];
+                        Assert.AreEqual("question_examName", fkc.ColumnName, true, "FK1");
+                        Assert.AreEqual("examName", fkc.UniqueColumnName, true, "FK1");
+                
+                    }
+                }
+
+            }
+            ss.CheckModel();
+            var structure = ss.CreateSQL();
+            DropDB(dburl, ss);
+
+            //Test create script
+            CreateDB(dburl);
+            ss.ExecuteSchemaScript(dburl, structure);
+            ss.Load(dburl);
+
+
+            table = ss.TableByName("question_bank");
+            if (table != null)
+            {
+                Assert.AreEqual(1, table.ForeignKeys.Count, "FK count");
+                if (table.ForeignKeys.Count > 0)
+                {
+                    var fk = table.ForeignKeys[0];
+                    Assert.AreEqual(1, fk.Columns.Count, "Number of fields in fkFK");
+                    if (fk.Columns.Count > 0)
+                    {
+                        var fkc = fk.Columns[0];
+                        Assert.AreEqual("question_examName", fkc.ColumnName, true, "FK1");
+                        Assert.AreEqual("examName", fkc.UniqueColumnName, true, "FK1");
+
+                    }
+                }
+                bool hi = table.ContainsIndex("question_bank_question_examName");
+                Assert.AreEqual(true, hi, "Index name");
+                if (hi)
+                {
+                    var index = table.IndexByName("question_bank_question_examName");
+                    Assert.AreEqual(false, index.Unique, "Index unique");
+                    Assert.AreEqual(1, index.ColumnCount, "Number of fields in index");
+                    if (index.ColumnCount > 0)
+                    {
+                        Assert.AreEqual("question_examName", index.ColumnByIndex(0).ColumnName, true, "Fields in index");
+                        Assert.AreEqual(false, index.ColumnByIndex(0).Descending, "Descending");
+                    }
+                }
+
+            }
+            DropDB(dburl, ss);
+        }
+ 
         [TestMethod]
         public void LoadComplexDB()
         {

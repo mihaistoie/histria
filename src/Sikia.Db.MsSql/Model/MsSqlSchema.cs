@@ -297,15 +297,32 @@ namespace Sikia.Db.SqlServer.Model
             sql.AppendLine(" ON R.CONSTRAINT_CATALOG = FKC.CONSTRAINT_CATALOG");
             sql.AppendLine(" AND R.CONSTRAINT_SCHEMA = FKC.CONSTRAINT_SCHEMA");
             sql.AppendLine(" AND R.CONSTRAINT_NAME = FKC.CONSTRAINT_NAME");
-            sql.AppendLine(" inner join INFORMATION_SCHEMA.KEY_COLUMN_USAGE PKC");
-            sql.AppendLine(" ON R.UNIQUE_CONSTRAINT_CATALOG = PKC.CONSTRAINT_CATALOG");
+            sql.AppendLine(" inner join  (");
+            sql.AppendLine(" SELECT");
+            sql.AppendLine(" t.name as TABLE_NAME,");
+            sql.AppendLine(" ind.name as CONSTRAINT_NAME,");
+            sql.AppendLine(" col.name as COLUMN_NAME,");
+            sql.AppendLine(" ic.key_ordinal as ORDINAL_POSITION,");
+            sql.AppendLine(" s.name as CONSTRAINT_SCHEMA");
+            sql.AppendLine(" FROM");
+            sql.AppendLine(" sys.indexes ind");
+            sql.AppendLine(" INNER JOIN  sys.index_columns ic ON  ind.object_id = ic.object_id and ind.index_id = ic.index_id");
+            sql.AppendLine(" INNER JOIN  sys.columns col ON ic.object_id = col.object_id and ic.column_id = col.column_id");
+            sql.AppendLine(" INNER JOIN  sys.tables t ON ind.object_id = t.object_id");
+            sql.AppendLine(" inner join  sys.schemas s on t.schema_id = s.schema_id");
+            sql.AppendLine(" WHERE");
+            sql.AppendLine(" ic.key_ordinal > 0");
+            sql.AppendLine(" AND ind.is_unique_constraint = 0");
+            sql.AppendLine(" AND t.is_ms_shipped = 0");
+            sql.AppendLine(" AND ind.is_unique = 1 ");
+            sql.AppendLine(" ) as PKC on  R.UNIQUE_CONSTRAINT_NAME = PKC.CONSTRAINT_NAME");
             sql.AppendLine(" AND R.UNIQUE_CONSTRAINT_SCHEMA = PKC.CONSTRAINT_SCHEMA");
-            sql.AppendLine(" AND R.UNIQUE_CONSTRAINT_NAME = PKC.CONSTRAINT_NAME");
             sql.AppendLine(" AND FKC.ORDINAL_POSITION = PKC.ORDINAL_POSITION");
             sql.AppendLine(" WHERE");
             sql.AppendLine(" FKC.TABLE_CATALOG =@db");
             sql.AppendLine(" AND FKC.TABLE_SCHEMA = @schema");
-            sql.AppendLine(" order by FKC.TABLE_NAME, PKC.ORDINAL_POSITION");
+            sql.AppendLine(" order by FKC.TABLE_NAME, FKC.ORDINAL_POSITION");
+
 
             cmd.Sql = sql.ToString();
             cmd.Parameters.AddWithValue("@db", DbType.String, uri.DatabaseName);

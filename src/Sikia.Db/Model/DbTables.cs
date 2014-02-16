@@ -12,6 +12,10 @@ namespace Sikia.Db.Model
         {
             return item.TableName.ToLower();
         }
+        public DbTables()
+            : base(StringComparer.OrdinalIgnoreCase)
+        {
+        }
     }
 
 }

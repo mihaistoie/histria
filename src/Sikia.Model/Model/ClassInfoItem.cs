@@ -315,7 +315,7 @@ namespace Sikia.Model
                             }
                             else
                             {
-                                throw new ModelException(String.Format(StrUtils.TT("Invalid association type.({0}.{1}. Excepted composition.)"), item.Name, Name), Name);
+                                throw new ModelException(String.Format(StrUtils.TT("Invalid association type.({0}.{1}. Excepted composition or aggregation.)"), item.Name, Name), Name);
                             }
 
                         }

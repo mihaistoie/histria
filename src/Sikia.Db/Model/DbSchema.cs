@@ -127,14 +127,6 @@ namespace Sikia.Db.Model
                 }
 
             }
-            if (createFKs)
-            {
-                for (var i = 0; i < tables.Count; i++)
-                {
-                    var table = tables[i];
-                    table.CreateFKSQL(structure);
-                }
-            }
             if (createIndexes)
             {
                 for (var i = 0; i < tables.Count; i++)
@@ -143,6 +135,15 @@ namespace Sikia.Db.Model
                     table.CreateIndexesSQL(structure);
                 }
             }
+            if (createIndexes && createFKs)
+            {
+                for (var i = 0; i < tables.Count; i++)
+                {
+                    var table = tables[i];
+                    table.CreateFKSQL(structure);
+                }
+            }
+           
             return structure;
         }
 

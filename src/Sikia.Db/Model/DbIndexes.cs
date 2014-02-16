@@ -12,5 +12,8 @@ namespace Sikia.Db.Model
         {
             return item.IndexName.ToLower();
         }
+        public DbIndexes(): 
+            base(StringComparer.OrdinalIgnoreCase) {
+        }
     }
 }

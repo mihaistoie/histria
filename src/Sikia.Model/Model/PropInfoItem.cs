@@ -113,8 +113,9 @@ namespace Sikia.Model
                 ClassInfoItem remoteClass = model.ClassByType(invClassType);
                 if (remoteClass == null)
                 {
-                    throw new ModelException(String.Format(StrUtils.TT("Invalid role definition {0}.{1}. Remote class not foind."), ci.Name, PropInfo.Name), ci.Name);
+                    throw new ModelException(String.Format(StrUtils.TT("Invalid role definition {0}.{1}. Remote class not found."), ci.Name, PropInfo.Name), ci.Name);
                 }
+                
 
                 if (string.IsNullOrEmpty(role.RoleInvName))
                 {

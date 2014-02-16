@@ -13,5 +13,8 @@ namespace Sikia.Db.Model
             return item.ColumnName.ToLower();
             
         }
+        public DbFkColumns() : 
+            base(StringComparer.OrdinalIgnoreCase) {
+        }
     }
 }
