@@ -34,7 +34,11 @@ namespace Sikia.Model
 
         public Type CurrentType { get; set; }
         public Type TargetType { get; set; }
-        public bool UseUuid { get; set; }
+        
+        ///<summary>
+        /// Use Uuid as primary key 
+        ///</summary>   	
+        public bool UseUuidAsPk { get; set; }
 
         ///<summary>
         /// Is persistent ?
@@ -302,11 +306,11 @@ namespace Sikia.Model
                     RoleInfoItem role = null;
                     if (roleListType.IsAssignableFrom(pi.PropertyType))
                     {
-                        role = new RoleInfoItem() { Min = ra.Min, Max = ra.Max, RoleInvName = ra.Inv, Type = ra.Type,  IsList = true, IsChild = false};
+                        role = new RoleInfoItem() { Min = ra.Min, Max = ra.Max, InvRoleName = ra.Inv, Type = ra.Type, IsList = true, IsChild = false, ClassType = CurrentType };
                     }
                     else if (roleRefType.IsAssignableFrom(pi.PropertyType))
                     {
-                        role = new RoleInfoItem() { Min = ra.Min, Max = ra.Max, RoleInvName = ra.Inv, Type = ra.Type, Foreingkey = ra.ForeignKey, IsList = false, IsChild = false };
+                        role = new RoleInfoItem() { Min = ra.Min, Max = ra.Max, InvRoleName = ra.Inv, Type = ra.Type, ForeingKey = ra.ForeignKey, IsList = false, IsChild = false, ClassType = CurrentType };
                         if (roleChild.IsAssignableFrom(pi.PropertyType))
                         {
                             if ((ra.Type != Relation.Embedded) || (ra.Type != Relation.Composition) || (ra.Type != Relation.Aggregation))
@@ -411,12 +415,12 @@ namespace Sikia.Model
                 {
                     throw new ModelException(String.Format(StrUtils.TT("Missing Primary key for {0}."), Name), Name);
                 }
-                UseUuid = ((akeys.Length == 0) && akeys[0] == "Uuid");
+                UseUuidAsPk = ((akeys.Length == 0) && akeys[0] == ModelConst.UUID);
             }
             else
             {
-                UseUuid = true;
-                akeys = new string[] { "Uuid" };
+                UseUuidAsPk = true;
+                akeys = new string[] { ModelConst.UUID };
 
             }
             foreach (string akey in akeys)
@@ -424,7 +428,7 @@ namespace Sikia.Model
                 string skey = akey.Trim();
                 PropinfoItem pi = PropertyByName(skey);
                 if (pi == null)
-                    throw new ModelException(String.Format(StrUtils.TT("Invalid field {0}  in Primary key for {1}."), skey, Name), Name);
+                    throw new ModelException(String.Format(StrUtils.TT("Invalid primary key declaration. Field not found '{0}.{1}'."), Name, skey), Name);
                 key.Add(new KeyItem(skey, pi.PropInfo));
             }
         }

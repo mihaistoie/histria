@@ -6,7 +6,7 @@ using System.Text;
 namespace Sikia.Model
 {
     /// <summary>
-    /// Allow to define the table name and  primary key for a class
+    /// Allow to declare the primary key for a class
     /// </summary>
     [System.AttributeUsage(System.AttributeTargets.Class, AllowMultiple = false)]
     public class PrimaryKeyAttribute : System.Attribute

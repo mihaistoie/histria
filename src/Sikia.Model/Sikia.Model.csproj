@@ -48,6 +48,7 @@
     <Compile Include="Attributes\DefaultAttribute.cs" />
     <Compile Include="Attributes\DisplayAttribute.cs" />
     <Compile Include="Attributes\IndexAttribute.cs" />
+    <Compile Include="Attributes\NoModelAttribute.cs" />
     <Compile Include="Attributes\PersistentAttribute.cs" />
     <Compile Include="Attributes\AssociationAttribute.cs" />
     <Compile Include="Attributes\PrimaryKeyAttribute.cs" />
@@ -55,6 +56,7 @@
     <Compile Include="Attributes\RulesForAttribute.cs" />
     <Compile Include="ClassType.cs" />
     <Compile Include="Helpers\ModelLoader.cs" />
+    <Compile Include="ModelConst.cs" />
     <Compile Include="Model\ClassCollection.cs" />
     <Compile Include="Model\EnumCollection.cs" />
     <Compile Include="Model\RoleInfoItem.cs" />

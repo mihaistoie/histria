@@ -21,6 +21,8 @@ namespace Sikia.Model
         private MethodInfo descriptionGet = null;
         // Rules by type
         private readonly Dictionary<Rule, RuleList> rules = new Dictionary<Rule, RuleList>();
+        // Roles that depend od this property
+        private List<RoleInfoItem> dependOnMe = null;
         #endregion
 
         #region Properties
@@ -99,27 +101,134 @@ namespace Sikia.Model
             if (description == "") description = title;
 
         }
-        public void AfterLoad(ModelManager model, ClassInfoItem ci)
+        internal void AddRole(RoleInfoItem role)
+        {
+            if (dependOnMe == null)
+            {
+                dependOnMe = new List<RoleInfoItem>();
+            }
+            dependOnMe.Add(role);
+        }
+
+        internal void AfterLoad(ModelManager model, ClassInfoItem ci)
         {
             if (IsRole)
             {
+                // Check role && Load role dependencies
+
                 RoleInfoItem role = Role;
-                if (role.IsList && string.IsNullOrEmpty(role.RoleInvName))
+                if (role.IsList && string.IsNullOrEmpty(role.InvRoleName))
                 {
                     throw new ModelException(String.Format(StrUtils.TT("Invalid role definition {0}.{1}. Missing 'Inv' attribute."), ci.Name, PropInfo.Name), ci.Name);
                 }
                 Type invClassType = PropInfo.PropertyType.GetGenericArguments()[0];
-     
+
                 ClassInfoItem remoteClass = model.ClassByType(invClassType);
                 if (remoteClass == null)
                 {
                     throw new ModelException(String.Format(StrUtils.TT("Invalid role definition {0}.{1}. Remote class not found."), ci.Name, PropInfo.Name), ci.Name);
                 }
-                
 
-                if (string.IsNullOrEmpty(role.RoleInvName))
+                if (!string.IsNullOrEmpty(role.InvRoleName))
                 {
+                    PropinfoItem pp = remoteClass.PropertyByName(role.InvRoleName);
+                    if (pp != null)
+                    {
+                        role.InvRole = pp.Role;
+                    }
+                    if (role.InvRole == null)
+                        throw new ModelException(String.Format(StrUtils.TT("Invalid role definition {0}.{1}. Invalid inv role {2}.{3}."), ci.Name, PropInfo.Name, remoteClass.Name, role.InvRoleName), ci.Name);
+                }
+                if (role.InvRole != null)
+                {
+                    //One-to-one relationship 
+                    if (role.IsRef && !role.IsChild && !role.InvRole.IsList && role.InvRole.IsChild)
+                    {
+                        role.IsList = true;
+                    }
+                }
+                if (role.IsRef)
+                {
+                    role.UsePk = false;
+                    if (!string.IsNullOrEmpty(role.ForeingKey))
+                    {
+                        string[] fks = role.ForeingKey.Split(',');
+                        role.PkFields = new string[fks.Length];
+                        role.FkFields = new string[fks.Length];
+                        role.UsePk = role.ForeingKey.IndexOf("=") < 0;
+                        if (role.UsePk && (fks.Length != remoteClass.Key.Count))
+                        {
+                            throw new ModelException(String.Format(StrUtils.TT("Invalid role definition {0}.{1}. Invalid inv role {2}.{3}."), ci.Name, PropInfo.Name, remoteClass.Name, role.InvRoleName), ci.Name);
+                        }
+                        int index = 0;
+                        foreach (string fk in fks)
+                        {
+                            if (role.UsePk)
+                            {
+                                role.FkFields[index] = fk.Trim();
+                                role.PkFields[index] = remoteClass.Key[index].Key;
+                            }
+                            else
+                            {
+                                string ff = fk.Trim();
+                                int pos = ff.IndexOf("=");
+                                if (pos <= 0)
+                                {
+                                    throw new ModelException(String.Format(StrUtils.TT("Invalid role definition {0}.{1}. Invalid foreing key '{2}'."), ci.Name, PropInfo.Name, role.ForeingKey), ci.Name);
+                                }
+                                role.FkFields[index] = fk.Substring(0, pos).Trim();
+                                role.PkFields[index] = fk.Substring(pos + 1).Trim();
+                            }
 
+                            index++;
+                        }
+
+                    }
+                    else
+                    {
+                        //Using Uuid
+                        role.UsePk = remoteClass.UseUuidAsPk;
+                        role.PkFields = new string[] { ModelConst.UUID };
+                        role.FkFields = new string[] { ModelConst.RefProperty(Name) };
+                        role.FkFieldsExist = false;
+
+                    }
+
+                    if (!role.UsePk && role.PkFields.Length == remoteClass.Key.Count)
+                    {
+                        role.UsePk = true;
+                        for (int i = 0; i < role.PkFields.Length; i++)
+                        {
+                            if (string.Compare(role.PkFields[i], remoteClass.Key[i].Key, true) != 0)
+                            {
+                                role.UsePk = false;
+                            }
+                        }
+                    }
+                    //Check if fields exists  
+                    for (int i = 0; i < role.PkFields.Length; i++)
+                    {
+                        PropinfoItem pp = remoteClass.PropertyByName(role.PkFields[i]);
+                        if (pp == null)
+                        {
+                            throw new ModelException(String.Format(StrUtils.TT("Invalid role definition {0}.{1}. Field not found '{2}.{3}'."), ci.Name, PropInfo.Name, remoteClass.Name, role.PkFields[i]), ci.Name);
+                        }
+                        pp.AddRole(role);
+                        if (role.FkFieldsExist)
+                        {
+                            var fp = ci.PropertyByName(role.FkFields[i]);
+                            if (fp == null)
+                            {
+                                throw new ModelException(String.Format(StrUtils.TT("Invalid role definition {0}.{1}. Field not found '{2}.{3}'."), ci.Name, PropInfo.Name, ci.Name, role.FkFields[i]), ci.Name);
+                            }
+                            if (fp.PropInfo.PropertyType != pp.PropInfo.PropertyType)
+                            {
+                                throw new ModelException(String.Format(StrUtils.TT("Invalid role definition {0}.{1}. Type mismatch '{2}({3}.{4}) != {5}({6}.{7})'."),
+                                    ci.Name, PropInfo.Name, fp.PropInfo.PropertyType.Name, ci.Name, fp.Name,
+                                    pp.PropInfo.PropertyType.Name, remoteClass.Name, pp.Name), ci.Name);
+                            }
+                        }
+                    }
                 }
 
             }
@@ -131,7 +240,7 @@ namespace Sikia.Model
         ///<summary>
         /// Associate a rule at this property
         ///</summary>   
-        public void AddRule(RuleItem ri)
+        internal void AddRule(RuleItem ri)
         {
             RuleList rl = null;
             if (!rules.ContainsKey(ri.Kind))

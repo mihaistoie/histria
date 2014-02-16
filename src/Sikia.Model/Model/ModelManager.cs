@@ -84,7 +84,11 @@ namespace Sikia.Model
                 }
                 else if (iType.IsClass && ii.IsAssignableFrom(iType))
                 {
-                    classes.Add(new ClassInfoItem(iType, false));
+                    NoModelAttribute nm = iType.GetCustomAttributes(typeof(NoModelAttribute), false).FirstOrDefault() as NoModelAttribute;
+                    if (nm == null)
+                    {
+                        classes.Add(new ClassInfoItem(iType, false));
+                    }
                 }
                 else if (iType.IsClass && ip.IsAssignableFrom(iType))
                 {

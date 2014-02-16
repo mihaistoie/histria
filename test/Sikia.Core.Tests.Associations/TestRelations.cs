@@ -21,6 +21,33 @@ namespace Sikia.Core.Tests.Associations
         public void AssociationsLoad()
         {
             HumanBody cust = ProxyFactory.Create<HumanBody>();
+            ModelManager mm = ModelProxy.Model();
+            ClassInfoItem ci = mm.Class<HumanBody>();
+            PropinfoItem pp = ci.PropertyByName("Nose");
+            bool hasProp = pp != null;
+            Assert.AreEqual(hasProp, true, "Property found");
+            if (hasProp)
+            {
+                Assert.AreEqual(pp.IsRole, true, "Is role");
+                if (pp.IsRole)
+                {
+                    Assert.AreEqual(pp.Role.IsList, true, "Is Role list");
+                }
+            }
+            ci = mm.Class<Nose>();
+            pp = ci.PropertyByName("Body");
+            hasProp = pp != null;
+            Assert.AreEqual(hasProp, true, "Property found");
+            if (hasProp)
+            {
+                Assert.AreEqual(pp.IsRole, true, "Is role");
+                if (pp.IsRole)
+                {
+                    Assert.AreEqual(pp.Role.IsRef, true, "Is Role Ref");
+                    Assert.AreEqual(pp.Role.IsChild, true, "Is Child");
+                }
+            }
+
         }
     }
 }
