@@ -1,5 +1,6 @@
 Sikia
 =====
-Sikia a c# object-relational mapper library.
+Sikia a c# Rules Engine library.
+
 
 See [Wiki] (https://github.com/mihaistoie/sikia/wiki) for more details.
