@@ -5,7 +5,7 @@ using System.Text;
 
 namespace Sikia
 {
-    public enum DbType
+    public enum DataTypes
     {
         Unknown,
         uuid,      //uniqueidentifier 

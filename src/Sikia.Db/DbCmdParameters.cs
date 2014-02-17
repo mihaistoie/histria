@@ -27,7 +27,7 @@ namespace Sikia.Db
             parameters.Clear();
         }
 
-        public DbCmdParameter Add(string name, DbType type)
+        public DbCmdParameter Add(string name, DataTypes type)
         {
             var p = new DbCmdParameter();
             p.Name = name;
@@ -35,7 +35,7 @@ namespace Sikia.Db
             parameters.Add(p);
             return p;
         }
-        public DbCmdParameter Add(string name, DbType type, int size)
+        public DbCmdParameter Add(string name, DataTypes type, int size)
         {
             var p = new DbCmdParameter();
             p.Name = name;
@@ -50,12 +50,12 @@ namespace Sikia.Db
             p.Value = value;
         }
         
-        public void AddWithValue(string name, DbType type, object value)
+        public void AddWithValue(string name, DataTypes type, object value)
         {
             var p = Add(name, type);
             p.Value = value;
         }
-        public void AddWithValue(string name, DbType type, object value, int size)
+        public void AddWithValue(string name, DataTypes type, object value, int size)
         {
             var p = Add(name, type, size);
             p.Value = value;

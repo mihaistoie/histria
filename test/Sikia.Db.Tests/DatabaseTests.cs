@@ -86,7 +86,7 @@ namespace Sikia.Db.Tests
             DropDB(dburl, ss);
 
         }
-        void checkColumn(DbTable table, string name, DbType dt, string dbtype, int size, int prec, int scale, bool nullable)
+        void checkColumn(DbTable table, string name, DataTypes dt, string dbtype, int size, int prec, int scale, bool nullable)
         {
             Assert.AreEqual(true, table.ContainsColumn(name), "Column exists");
             DbColumn column = table.ColumnByName(name);
@@ -146,23 +146,23 @@ namespace Sikia.Db.Tests
             DbTable table = ss.TableByName("SUPPORTEDTYPES");
             if (table != null)
             {
-                checkColumn(table, "a", DbType.Int, "int", 0, 0, 0, true);
-                checkColumn(table, "b", DbType.BigInt, "bigint", 0, 0, 0, true);
-                checkColumn(table, "c", DbType.Enum, "tinyint", 0, 0, 0, true);
-                checkColumn(table, "d", DbType.SmallInt, "smallint", 0, 0, 0, true);
-                checkColumn(table, "e", DbType.Number, "decimal", 0, 11, 4, true);
-                checkColumn(table, "f", DbType.Number, "decimal", 0, 13, 2, true);
-                checkColumn(table, "g", DbType.Currency, "money", 0, 0, 0, true);
-                checkColumn(table, "h", DbType.String, "varchar", 21, 0, 0, false);
-                checkColumn(table, "k", DbType.String, "nvarchar", 21, 0, 0, true);
-                checkColumn(table, "l", DbType.uuid, "uniqueidentifier", 0, 0, 0, true);
-                checkColumn(table, "m", DbType.DateTime, "datetime", 0, 0, 0, true);
-                checkColumn(table, "n", DbType.Date, "date", 0, 0, 0, true);
-                checkColumn(table, "p", DbType.Time, "time", 0, 0, 0, true);
-                checkColumn(table, "r", DbType.Memo, "varchar", -1, 0, 0, true);
-                checkColumn(table, "s", DbType.Bool, "bit", 0, 0, 0, true);
-                checkColumn(table, "t", DbType.Binary, "varbinary", -1, 0, 0, true);
-                checkColumn(table, "u", DbType.Memo, "varchar", -1, 0, 0, true);
+                checkColumn(table, "a", DataTypes.Int, "int", 0, 0, 0, true);
+                checkColumn(table, "b", DataTypes.BigInt, "bigint", 0, 0, 0, true);
+                checkColumn(table, "c", DataTypes.Enum, "tinyint", 0, 0, 0, true);
+                checkColumn(table, "d", DataTypes.SmallInt, "smallint", 0, 0, 0, true);
+                checkColumn(table, "e", DataTypes.Number, "decimal", 0, 11, 4, true);
+                checkColumn(table, "f", DataTypes.Number, "decimal", 0, 13, 2, true);
+                checkColumn(table, "g", DataTypes.Currency, "money", 0, 0, 0, true);
+                checkColumn(table, "h", DataTypes.String, "varchar", 21, 0, 0, false);
+                checkColumn(table, "k", DataTypes.String, "nvarchar", 21, 0, 0, true);
+                checkColumn(table, "l", DataTypes.uuid, "uniqueidentifier", 0, 0, 0, true);
+                checkColumn(table, "m", DataTypes.DateTime, "datetime", 0, 0, 0, true);
+                checkColumn(table, "n", DataTypes.Date, "date", 0, 0, 0, true);
+                checkColumn(table, "p", DataTypes.Time, "time", 0, 0, 0, true);
+                checkColumn(table, "r", DataTypes.Memo, "varchar", -1, 0, 0, true);
+                checkColumn(table, "s", DataTypes.Bool, "bit", 0, 0, 0, true);
+                checkColumn(table, "t", DataTypes.Binary, "varbinary", -1, 0, 0, true);
+                checkColumn(table, "u", DataTypes.Memo, "varchar", -1, 0, 0, true);
             }
             ss.CheckModel();
             var structure = ss.CreateSQL();
@@ -175,23 +175,23 @@ namespace Sikia.Db.Tests
             table = ss.TableByName("SUPPORTEDTYPES");
             if (table != null)
             {
-                checkColumn(table, "a", DbType.Int, "int", 0, 0, 0, true);
-                checkColumn(table, "b", DbType.BigInt, "bigint", 0, 0, 0, true);
-                checkColumn(table, "c", DbType.Enum, "tinyint", 0, 0, 0, true);
-                checkColumn(table, "d", DbType.SmallInt, "smallint", 0, 0, 0, true);
-                checkColumn(table, "e", DbType.Number, "decimal", 0, 11, 4, true);
-                checkColumn(table, "f", DbType.Number, "decimal", 0, 13, 2, true);
-                checkColumn(table, "g", DbType.Currency, "money", 0, 0, 0, true);
-                checkColumn(table, "h", DbType.String, "varchar", 21, 0, 0, false);
-                checkColumn(table, "k", DbType.String, "nvarchar", 21, 0, 0, true);
-                checkColumn(table, "l", DbType.uuid, "uniqueidentifier", 0, 0, 0, true);
-                checkColumn(table, "m", DbType.DateTime, "datetime", 0, 0, 0, true);
-                checkColumn(table, "n", DbType.Date, "date", 0, 0, 0, true);
-                checkColumn(table, "p", DbType.Time, "time", 0, 0, 0, true);
-                checkColumn(table, "r", DbType.Memo, "varchar", -1, 0, 0, true);
-                checkColumn(table, "s", DbType.Bool, "bit", 0, 0, 0, true);
-                checkColumn(table, "t", DbType.Binary, "varbinary", -1, 0, 0, true);
-                checkColumn(table, "u", DbType.Memo, "varchar", -1, 0, 0, true);
+                checkColumn(table, "a", DataTypes.Int, "int", 0, 0, 0, true);
+                checkColumn(table, "b", DataTypes.BigInt, "bigint", 0, 0, 0, true);
+                checkColumn(table, "c", DataTypes.Enum, "tinyint", 0, 0, 0, true);
+                checkColumn(table, "d", DataTypes.SmallInt, "smallint", 0, 0, 0, true);
+                checkColumn(table, "e", DataTypes.Number, "decimal", 0, 11, 4, true);
+                checkColumn(table, "f", DataTypes.Number, "decimal", 0, 13, 2, true);
+                checkColumn(table, "g", DataTypes.Currency, "money", 0, 0, 0, true);
+                checkColumn(table, "h", DataTypes.String, "varchar", 21, 0, 0, false);
+                checkColumn(table, "k", DataTypes.String, "nvarchar", 21, 0, 0, true);
+                checkColumn(table, "l", DataTypes.uuid, "uniqueidentifier", 0, 0, 0, true);
+                checkColumn(table, "m", DataTypes.DateTime, "datetime", 0, 0, 0, true);
+                checkColumn(table, "n", DataTypes.Date, "date", 0, 0, 0, true);
+                checkColumn(table, "p", DataTypes.Time, "time", 0, 0, 0, true);
+                checkColumn(table, "r", DataTypes.Memo, "varchar", -1, 0, 0, true);
+                checkColumn(table, "s", DataTypes.Bool, "bit", 0, 0, 0, true);
+                checkColumn(table, "t", DataTypes.Binary, "varbinary", -1, 0, 0, true);
+                checkColumn(table, "u", DataTypes.Memo, "varchar", -1, 0, 0, true);
             } 
             DropDB(dburl, ss);
 

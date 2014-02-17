@@ -26,7 +26,7 @@ namespace Sikia.Db
                 {
                     switch (Type)
                     {
-                        case DbType.String :
+                        case DataTypes.String :
                             size = MAX_VARCHAR_SIZE;
                             break;
                     }
@@ -45,12 +45,12 @@ namespace Sikia.Db
         ///<summary>
         /// Type of  parameter
         ///</summary>
-        public DbType Type { get; set; }
+        public DataTypes Type { get; set; }
         public DbCmdParameter()
         {
             Name = "";
             Size = 0;
-            Type = DbType.String;
+            Type = DataTypes.String;
             Value = null;
 
         }

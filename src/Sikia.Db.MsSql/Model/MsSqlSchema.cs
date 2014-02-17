@@ -33,56 +33,56 @@ namespace Sikia.Db.SqlServer.Model
             switch (dbtype)
             {
                 case "int":
-                    column.Type = DbType.Int;
+                    column.Type = DataTypes.Int;
                     break;
                 case "bit":
-                    column.Type = DbType.Bool;
+                    column.Type = DataTypes.Bool;
                     break;
                 case "bigint":
-                    column.Type = DbType.BigInt;
+                    column.Type = DataTypes.BigInt;
                     break;
                 case "smallint":
-                    column.Type = DbType.SmallInt;
+                    column.Type = DataTypes.SmallInt;
                     break;
                 case "tinyint":
-                    column.Type = DbType.Enum;
+                    column.Type = DataTypes.Enum;
                     break;
                 case "money":
-                    column.Type = DbType.Currency;
+                    column.Type = DataTypes.Currency;
                     break;
                 case "decimal":
-                    column.Type = DbType.Number;
+                    column.Type = DataTypes.Number;
                     break;
                 case "uniqueidentifier":
-                    column.Type = DbType.uuid;
+                    column.Type = DataTypes.uuid;
                     break;
                 case "varchar":
                     if (length == -1)
-                        column.Type = DbType.Memo;
+                        column.Type = DataTypes.Memo;
                     else
-                        column.Type = DbType.String;
+                        column.Type = DataTypes.String;
                     break;
                 case "nvarchar":
                     if (length == -1)
-                        column.Type = DbType.Memo;
+                        column.Type = DataTypes.Memo;
                     else
-                        column.Type = DbType.String;
+                        column.Type = DataTypes.String;
                     break;
                 case "datetime":
-                    column.Type = DbType.DateTime;
+                    column.Type = DataTypes.DateTime;
                     break;
                 case "date":
-                    column.Type = DbType.Date;
+                    column.Type = DataTypes.Date;
                     break;
                 case "time":
-                    column.Type = DbType.Time;
+                    column.Type = DataTypes.Time;
                     break;
                 case "varbinary":
-                    column.Type = DbType.Binary;
+                    column.Type = DataTypes.Binary;
                     break;
                 default:
                     Logger.Warning(Logger.DBMAP, StrUtils.TT(string.Format("{0}", dbtype)));
-                    column.Type = DbType.Unknown;
+                    column.Type = DataTypes.Unknown;
                     break;
             }
         }
@@ -97,8 +97,8 @@ namespace Sikia.Db.SqlServer.Model
         {
             cmd.Clear();
             cmd.Sql = "SELECT TABLE_NAME FROM  INFORMATION_SCHEMA.TABLES WHERE TABLE_CATALOG =@db and TABLE_SCHEMA = @schema and Table_Type='BASE TABLE' ORDER BY TABLE_NAME";
-            cmd.Parameters.AddWithValue("@db", DbType.String, uri.DatabaseName);
-            cmd.Parameters.AddWithValue("@schema", DbType.String, uri.Query["schema"]);
+            cmd.Parameters.AddWithValue("@db", DataTypes.String, uri.DatabaseName);
+            cmd.Parameters.AddWithValue("@schema", DataTypes.String, uri.Query["schema"]);
             using (DbDataReader rdr = cmd.ExecuteReader())
             {
                 while (rdr.Read())
@@ -128,8 +128,8 @@ namespace Sikia.Db.SqlServer.Model
             sql.AppendLine(" AND TABLE_SCHEMA = @schema");
             sql.AppendLine(" ORDER BY TABLE_NAME, COLUMN_NAME, ORDINAL_POSITION");
             cmd.Sql = sql.ToString();
-            cmd.Parameters.AddWithValue("@db", DbType.String, uri.DatabaseName);
-            cmd.Parameters.AddWithValue("@schema", DbType.String, uri.Query["schema"]);
+            cmd.Parameters.AddWithValue("@db", DataTypes.String, uri.DatabaseName);
+            cmd.Parameters.AddWithValue("@schema", DataTypes.String, uri.Query["schema"]);
             DbTable table = null;
             using (DbDataReader rdr = cmd.ExecuteReader())
             {
@@ -193,8 +193,8 @@ namespace Sikia.Db.SqlServer.Model
             sql.AppendLine(" AND TC.CONSTRAINT_TYPE = 'PRIMARY KEY'");
             sql.AppendLine(" ORDER BY CC.CONSTRAINT_NAME, CC.ORDINAL_POSITION");
             cmd.Sql = sql.ToString();
-            cmd.Parameters.AddWithValue("@db", DbType.String, uri.DatabaseName);
-            cmd.Parameters.AddWithValue("@schema", DbType.String, uri.Query["schema"]);
+            cmd.Parameters.AddWithValue("@db", DataTypes.String, uri.DatabaseName);
+            cmd.Parameters.AddWithValue("@schema", DataTypes.String, uri.Query["schema"]);
             DbTable table = null;
             using (DbDataReader rdr = cmd.ExecuteReader())
             {
@@ -245,7 +245,7 @@ namespace Sikia.Db.SqlServer.Model
             sql.AppendLine(" ORDER BY");
             sql.AppendLine(" t.name, ind.name, ic.key_ordinal");
             cmd.Sql = sql.ToString();
-            cmd.Parameters.AddWithValue("@schema", DbType.String, uri.Query["schema"]);
+            cmd.Parameters.AddWithValue("@schema", DataTypes.String, uri.Query["schema"]);
             DbTable table = null;
             DbIndex index = null;
             using (DbDataReader rdr = cmd.ExecuteReader())
@@ -325,8 +325,8 @@ namespace Sikia.Db.SqlServer.Model
 
 
             cmd.Sql = sql.ToString();
-            cmd.Parameters.AddWithValue("@db", DbType.String, uri.DatabaseName);
-            cmd.Parameters.AddWithValue("@schema", DbType.String, uri.Query["schema"]);
+            cmd.Parameters.AddWithValue("@db", DataTypes.String, uri.DatabaseName);
+            cmd.Parameters.AddWithValue("@schema", DataTypes.String, uri.Query["schema"]);
             DbTable rtable = null;
             DbTable utable = null;
             DbFk fk = null;

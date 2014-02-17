@@ -9,7 +9,7 @@ namespace Sikia.Db.Model
     {
         public string TableName { get; set; }
         public string ColumnName { get; set; }
-        public DbType Type { get; set; }
+        public DataTypes Type { get; set; }
         public string  DbType { get; set; }
         public int Size { get; set; }
         public int Precision { get; set; }

@@ -40,35 +40,35 @@ namespace Sikia.Db.SqlServer
                     cmd.Transaction = tran;
             }
         }
-        private static SqlDbType SqlType(DbType type)
+        private static SqlDbType SqlType(DataTypes type)
         {
             switch (type)
             {
-                case DbType.uuid:
+                case DataTypes.uuid:
                     return SqlDbType.UniqueIdentifier;
-                case DbType.Int:
+                case DataTypes.Int:
                     return SqlDbType.Int;
-                case DbType.BigInt:
+                case DataTypes.BigInt:
                     return SqlDbType.BigInt;
-                case DbType.Bool:
+                case DataTypes.Bool:
                     return SqlDbType.Bit;
-                case DbType.Enum:
+                case DataTypes.Enum:
                     return SqlDbType.SmallInt;
-                case DbType.String:
+                case DataTypes.String:
                     return SqlDbType.VarChar;
-                case DbType.Number:
+                case DataTypes.Number:
                     return SqlDbType.Decimal;
-                case DbType.Currency:
+                case DataTypes.Currency:
                     return SqlDbType.Money;
-                case DbType.Date:
+                case DataTypes.Date:
                     return SqlDbType.Date;
-                case DbType.Time:
+                case DataTypes.Time:
                     return SqlDbType.Time;
-                case DbType.DateTime:
+                case DataTypes.DateTime:
                     return SqlDbType.DateTime;
-                case DbType.Memo:
+                case DataTypes.Memo:
                     return SqlDbType.Text;
-                case DbType.Binary:
+                case DataTypes.Binary:
                     return SqlDbType.Binary;
                 default:
                     throw new NotImplementedException(StrUtils.TT("Invalid type"));

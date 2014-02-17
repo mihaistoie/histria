@@ -11,7 +11,7 @@ namespace Sikia.Db.Model
         /////<summary>
         ///// List of tables
         /////</summary>
-        //public DbTables Tables { get { return tables; } }
+        public DbTables Tables { get { return tables; } }
 
         ///<summary>
         /// Get Table By Name (case insensitive)
