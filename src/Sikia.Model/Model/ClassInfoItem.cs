@@ -478,6 +478,7 @@ namespace Sikia.Model
             Static = staticClass;
 
             LoadTitle();
+            LoadPersistence();
             LoadProperties();
             LoadMethodsAndRules();
             LoadPrimarykey();

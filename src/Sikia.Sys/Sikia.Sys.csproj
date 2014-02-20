@@ -47,7 +47,7 @@
     <Compile Include="Base\IRoleRef.cs" />
     <Compile Include="Base\ITranObject.cs" />
     <Compile Include="Base\Relation.cs" />
-    <Compile Include="DbType.cs" />
+    <Compile Include="DataTypes.cs" />
     <Compile Include="Base\IInterceptedObject.cs" />
     <Compile Include="Base\IModelClass.cs" />
     <Compile Include="Base\IModelPlugin.cs" />
