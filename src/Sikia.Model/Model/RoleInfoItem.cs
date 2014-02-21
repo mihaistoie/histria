@@ -46,6 +46,7 @@ namespace Sikia.Model
                 if (IsRef) fkFieldsExist = value;
             }
         }
+      
         ///<summary>
         /// Foreing key Fields
         ///</summary>  
@@ -60,6 +61,7 @@ namespace Sikia.Model
                 if (IsRef) fkFields = value;
             }
         }
+        
         ///<summary>
         /// Primary key fields used for this relationship. Can be different than primary key fields of remote class (InvRole.Classtype) 
         ///</summary>
@@ -74,6 +76,7 @@ namespace Sikia.Model
                 if (IsRef) pkFields = value;
             }
         }
+        
         ///<summary>
         /// Primary key fields used for this relationship = Primary key fields of remote class  (InvRole.Classtype)  
         ///</summary>

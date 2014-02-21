@@ -73,6 +73,9 @@ namespace Sikia.Model
             // notify parent  before add
             values.Add(item);
             // notify parent  after add
+            //AfterChange
+            //call changes rules on parent for relation
+                
         }
 
         public void AddRange(IEnumerable<T> collection)

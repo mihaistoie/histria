@@ -75,6 +75,11 @@ namespace Sikia.Model
         #region Rules
         public void ExecuteRules(Rule kind, Object target)
         {
+            if (rules.ContainsKey(kind))
+            {
+                rules[kind].Execute(target);
+            }
+
         }
 
         private bool _ruleExists(RuleItem ri, List<RuleItem> rl)
@@ -476,7 +481,6 @@ namespace Sikia.Model
             Name = CurrentType.Name;
             title = CurrentType.Name;
             Static = staticClass;
-
             LoadTitle();
             LoadPersistence();
             LoadProperties();
@@ -501,8 +505,6 @@ namespace Sikia.Model
             return item.Property;
         }
     }
-
-
 
 
 }

@@ -7,7 +7,7 @@ namespace Sikia.Model
 {
     public class HasOne<T> : Association<T>, IRoleRef where T : IInterceptedObject
     {
-
+        private IInterceptedObject value;
     }
 }
 

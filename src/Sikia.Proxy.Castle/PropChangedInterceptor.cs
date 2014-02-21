@@ -14,7 +14,6 @@ namespace Sikia.Proxy.Castle
         #region IInterceptor Implementation
         public void Intercept(IInvocation invocation)
         {
-
             if (invocation.InvocationTarget is IInterceptedObject)
             {
                 bool isSet = (invocation.Method.Name.StartsWith("set_"));
@@ -36,8 +35,6 @@ namespace Sikia.Proxy.Castle
                 }
             } 
             else invocation.Proceed(); 
-
-			
         }
         #endregion
     }

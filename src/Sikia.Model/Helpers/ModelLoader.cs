@@ -11,7 +11,10 @@ namespace Sikia.Model.Helpers
 
     internal static class ModelLoader
     {
-        //
+        ///<summary>
+        /// Load model. Load all classes described by cfg 
+        ///</summary>   
+        
         // cfg = {"types": ["Customer", "Address", "Country"]}  //list of classes to load
         // or 
         // cfg = {"nameSpaces": ["Model.CRM","Model.Library"]}  //list namespaces (segments of namespaces)  to scan
@@ -72,7 +75,6 @@ namespace Sikia.Model.Helpers
             }
 
         }
-
 
         #region Implementation details
 

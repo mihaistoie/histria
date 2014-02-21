@@ -28,6 +28,8 @@ namespace Sikia.Core
 
         private bool canExecuteRules()
         {
+            if ((state & ObjectState.Creating) == ObjectState.Disposing)
+                return false;
             if ((state & ObjectState.Disposing) == ObjectState.Disposing)
                 return false;
             if ((state & ObjectState.Frozen) == ObjectState.Frozen)
@@ -91,6 +93,16 @@ namespace Sikia.Core
         }
         private void AOPInitializeAssociations()
         {
+            for (int index = 0; index <  ClassInfo.Properties.Count; index++) 
+            {
+                PropinfoItem pp = ClassInfo.Properties[index];
+                if (pp.IsRole) 
+                {
+                  Type  tt = pp.PropInfo.GetType();
+                  //Object oo = ProxyFactory.Create<pp.PropInfo.GetType()>();
+                }
+            }
+            
         }
         #endregion
 

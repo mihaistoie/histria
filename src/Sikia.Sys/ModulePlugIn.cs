@@ -21,6 +21,7 @@ namespace Sikia.Sys
             ModulePlugIn plugIn = (ModulePlugIn)Activator.CreateInstance(type);
             plugIn.Register();
         }
+
         private static string AssemblyDirectory
         {
             get
@@ -28,6 +29,7 @@ namespace Sikia.Sys
                 return Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
             }
         }
+
         public static void Initialize()
         {
 
@@ -56,8 +58,7 @@ namespace Sikia.Sys
                 var fileName = Path.Combine(ModulePlugIn.AssemblyDirectory, module + ".dll");
                 if (File.Exists(fileName))
                 {
-                    var basePlugin = typeof(ModulePlugIn);
-                    var pluginDll = Assembly.LoadFile(fileName);
+                   Assembly.LoadFile(fileName);
                 }
             }
             catch (Exception ex)
