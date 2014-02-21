@@ -54,7 +54,7 @@
     <Compile Include="Attributes\PrimaryKeyAttribute.cs" />
     <Compile Include="Attributes\RuleAttribute.cs" />
     <Compile Include="Attributes\RulesForAttribute.cs" />
-    <Compile Include="Attributes\StringAttribute.cs" />
+    <Compile Include="Attributes\DtStringAttribute.cs" />
     <Compile Include="Attributes\TemplateAttribute.cs" />
     <Compile Include="ClassType.cs" />
     <Compile Include="Helpers\ModelLoader.cs" />

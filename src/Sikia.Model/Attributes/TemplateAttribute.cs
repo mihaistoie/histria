@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace Sikia.Model.Attributes
+namespace Sikia.Model
 {
-    class TemplateAttribute : System.Attribute
+    public class TemplateAttribute : System.Attribute
     {
 
     }

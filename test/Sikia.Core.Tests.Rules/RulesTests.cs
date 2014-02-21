@@ -17,6 +17,7 @@ namespace UnitTestModel
             JsonObject cfg = (JsonObject)JsonValue.Parse("{\"nameSpaces\": [\"Customers\"]}");
             ModelManager m = ModelManager.LoadModelFromConfig(cfg);
             ModulePlugIn.Load("Sikia.Proxy.Castle");
+            ModulePlugIn.Initialize();
         }
  
       
