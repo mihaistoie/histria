@@ -34,6 +34,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sikia.Proxy.Castle", "src\S
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sikia.Model.Db", "src\Sikia.Model.Db\Sikia.Model.Db.csproj", "{2161234C-D508-48CF-97F1-2D4B3EB95696}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sikia.Model.Models", "test\Sikia.Model.Models\Sikia.Model.Models.csproj", "{ACA4DFA4-EE8A-41C5-9846-F8151C98FDCE}"
+EndProject
 Global
 	GlobalSection(TestCaseManagementSettings) = postSolution
 		CategoryFile = Sikia.vsmdi
@@ -205,6 +207,18 @@ Global
 		{2161234C-D508-48CF-97F1-2D4B3EB95696}.Release|Mixed Platforms.Build.0 = Release|Any CPU
 		{2161234C-D508-48CF-97F1-2D4B3EB95696}.Release|x64.ActiveCfg = Release|Any CPU
 		{2161234C-D508-48CF-97F1-2D4B3EB95696}.Release|x86.ActiveCfg = Release|Any CPU
+		{ACA4DFA4-EE8A-41C5-9846-F8151C98FDCE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{ACA4DFA4-EE8A-41C5-9846-F8151C98FDCE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{ACA4DFA4-EE8A-41C5-9846-F8151C98FDCE}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{ACA4DFA4-EE8A-41C5-9846-F8151C98FDCE}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
+		{ACA4DFA4-EE8A-41C5-9846-F8151C98FDCE}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{ACA4DFA4-EE8A-41C5-9846-F8151C98FDCE}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{ACA4DFA4-EE8A-41C5-9846-F8151C98FDCE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{ACA4DFA4-EE8A-41C5-9846-F8151C98FDCE}.Release|Any CPU.Build.0 = Release|Any CPU
+		{ACA4DFA4-EE8A-41C5-9846-F8151C98FDCE}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{ACA4DFA4-EE8A-41C5-9846-F8151C98FDCE}.Release|Mixed Platforms.Build.0 = Release|Any CPU
+		{ACA4DFA4-EE8A-41C5-9846-F8151C98FDCE}.Release|x64.ActiveCfg = Release|Any CPU
+		{ACA4DFA4-EE8A-41C5-9846-F8151C98FDCE}.Release|x86.ActiveCfg = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -7,5 +7,6 @@ namespace Sikia.Model.Attributes
 {
     class TemplateAttribute : System.Attribute
     {
+
     }
 }
