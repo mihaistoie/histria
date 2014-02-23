@@ -5,7 +5,11 @@ using System.Text;
 
 namespace Sikia.Model
 {
-    public class BelongsTo<T> : Association<T>, IRoleRef, IRoleChild where T : IInterceptedObject
+    public class BelongsTo<T> : Association, IRoleRef, IRoleChild where T : IInterceptedObject
     {
+        public BelongsTo()
+        {
+        }
+        public virtual IInterceptedObject Value { get { return null; } } 
     }
 }

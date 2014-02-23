@@ -1,9 +1,9 @@
-﻿using Sikia.Core;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Sikia.Core;
 using Sikia.Model;
 
 namespace Sikia.Core.Tests.Associations

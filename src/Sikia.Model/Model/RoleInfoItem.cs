@@ -15,11 +15,20 @@ namespace Sikia.Model
         public Type ClassType { get; set; }
         public Relation Type { get; set; }
         public RoleInfoItem InvRole { get; set; }
-        public bool IsChild { get; set; }
         public bool IsList { get; set; }
         public bool IsRef { get { return !IsList; } }
         public string InvRoleName { get; set; }
         public string ForeingKey { get; set; }
+
+        ///<summary>
+        /// Is child (belongs to)
+        ///</summary>   
+        public bool IsChild{ get; set; }
+
+        ///<summary>
+        /// Is child (belongs to)
+        ///</summary>   
+        public bool IsParent { get { return  !IsChild && InvRole != null && InvRole.IsChild; } }
 
         ///<summary>
         /// UseUuid =  (PkFields[0] =='Uuid' && PkFields.Length == 1);
