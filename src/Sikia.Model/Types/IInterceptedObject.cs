@@ -39,6 +39,11 @@ namespace Sikia
         ///</summary>
         void AOPAfterCreate();
 
+        ///<summary>
+        /// An instance is marked as deleted
+        ///</summary>
+        void AOPDeleted();
+
         #endregion
     }
 }

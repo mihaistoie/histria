@@ -10,6 +10,6 @@ namespace Sikia.Model
         public BelongsTo()
         {
         }
-        public virtual IInterceptedObject Value { get { return null; } } 
+        public IInterceptedObject Value { get;  internal set; } 
     }
 }

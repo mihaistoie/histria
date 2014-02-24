@@ -22,7 +22,9 @@ namespace Sikia.Core.Tests.Associations
         public void AssociationsLoad()
         {
             HumanBody body = ProxyFactory.Create<HumanBody>();
+            body.Id = "body";
             Nose nose = ProxyFactory.Create<Nose>();
+            nose.Id = "nose";
             ModelManager mm = ModelProxy.Model();
             ClassInfoItem ci = mm.Class<HumanBody>();
             IInterceptedObject ii = nose as InterceptedObject;
@@ -52,6 +54,8 @@ namespace Sikia.Core.Tests.Associations
                 }
             }
             body.Nose.Value = nose;
+            Assert.AreEqual(nose.BodyId, body.Id, "test updete FKs");
+
             Assert.AreEqual(body.Nose.Value, nose, "test role");
             Assert.AreEqual(nose.Body.Value, body, "test role");
             

@@ -173,6 +173,13 @@ namespace Sikia.Core
         {
         }
 
+        ///<summary>
+        /// IInterceptedObject.AOPDeleted
+        ///</summary>
+        public void AOPDeleted()
+        {
+            state = ObjectState.Deleting;
+        }
         #endregion
 
         #region Memory

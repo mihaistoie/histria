@@ -13,24 +13,41 @@ namespace Sikia.Model
         ///<summary>
         /// Property info 
         ///</summary> 
-        public PropinfoItem PropInfo {get; set;}
+        public PropinfoItem PropInfo { get; set; }
         ///<summary>
         /// The instance that contains this association
         ///</summary> 
         public IInterceptedObject Instance { get; set; }
-        protected void UpdateForeignKeysAndState(RoleInfoItem role, object parent, object child)
+        protected void UpdateForeignKeysAndState(RoleInfoItem role, IInterceptedObject target, IInterceptedObject refObj, bool isComposition)
         {
-            if (role.IsList)
+            if (role.FkFieldsExist)
             {
-                RoleInfoItem inv = role.InvRole;
-                foreach (string field in role.InvRole.FkFields)
+                if (isComposition && refObj == null)
                 {
+                    target.AOPDeleted();
+                    //Don't set foreign keys null !!! 
                 }
-            }
-            else
-            {
+                else
+                {
+                    for (int index = 0; index < role.FkFields.Length; index++)
+                    {
+                        PropinfoItem pi = target.ClassInfo.PropertyByName(role.FkFields[index]);
+                        object value = null;
+                        if (refObj != null)
+                        {
+                            PropinfoItem pai = refObj.ClassInfo.PropertyByName(role.PkFields[index]);
+                            value = pai.PropInfo.GetValue(refObj, null);
+                        }
+                        pi.PropInfo.SetValue(target, value, null);
+                    }
+                }
+                if (isComposition)
+                {
+                    //PropinfoItem pi = 
+                }
 
             }
         }
-     }
+
+    }
 }

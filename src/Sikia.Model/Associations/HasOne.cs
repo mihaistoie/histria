@@ -21,7 +21,7 @@ namespace Sikia.Model
                     {
                         return;
                     }
-                    UpdateForeignKeysAndState(PropInfo.Role, null, value);
+                    UpdateForeignKeysAndState(PropInfo.Role.InvRole, value, null, true);
                     Instance.AOPAfterChangeChild(PropInfo.Name, value, RoleOperation.Remove);
                     
                 }
@@ -29,10 +29,9 @@ namespace Sikia.Model
                 {
                     return;
                 }
-                UpdateForeignKeysAndState(PropInfo.Role, Instance, iValue);
                 value = iValue;
+                UpdateForeignKeysAndState(PropInfo.Role.InvRole, iValue, Instance, true);
                 Instance.AOPAfterChangeChild(PropInfo.Name, value, RoleOperation.Add);
-
             }
             else
             {
@@ -41,8 +40,8 @@ namespace Sikia.Model
                 {
                     return;
                 }
-                UpdateForeignKeysAndState(PropInfo.Role, Instance, iValue);
                 value = iValue;
+                UpdateForeignKeysAndState(PropInfo.Role, Instance, iValue, false);
                 Instance.AOPAfterChangeChild(PropInfo.Name, value, RoleOperation.Update);
             }
             
