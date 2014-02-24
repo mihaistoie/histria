@@ -10,7 +10,7 @@ namespace Sikia.Sys
 
         public static string TT(string fmt, params object[] args)
         {
-            return TT(string.Format(fmt, args);
+            return TT(string.Format(fmt, args));
         }
 
         public static string UrlDecode(string value)
