@@ -40,19 +40,9 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Base\RoleOperation.cs" />
-    <Compile Include="Base\IAssociation.cs" />
-    <Compile Include="Base\IPersistentObj.cs" />
-    <Compile Include="Base\IRoleChild.cs" />
-    <Compile Include="Base\IRoleList.cs" />
-    <Compile Include="Base\IRoleRef.cs" />
-    <Compile Include="Base\ITranObject.cs" />
-    <Compile Include="Base\Relation.cs" />
+    <Compile Include="Types\IPersistentObj.cs" />
     <Compile Include="DataTypes.cs" />
-    <Compile Include="Base\IInterceptedObject.cs" />
-    <Compile Include="Base\IModelClass.cs" />
-    <Compile Include="Base\IModelPlugin.cs" />
-    <Compile Include="Base\IProxyFactory.cs" />
+    <Compile Include="Types\IProxyFactory.cs" />
     <Compile Include="Logger.cs" />
     <Compile Include="ModulePlugIn.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

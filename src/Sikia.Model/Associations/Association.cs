@@ -20,7 +20,17 @@ namespace Sikia.Model
         public IInterceptedObject Instance { get; set; }
         protected void UpdateForeignKeysAndState(RoleInfoItem role, object parent, object child)
         {
-            //role.FkFields.
+            if (role.IsList)
+            {
+                RoleInfoItem inv = role.InvRole;
+                foreach (string field in role.InvRole.FkFields)
+                {
+                }
+            }
+            else
+            {
+
+            }
         }
      }
 }

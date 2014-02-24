@@ -7,8 +7,7 @@ using System.Text;
 
 namespace Sikia.Model
 {
-
-
+ 
     public class HasMany<T> : Association, IEnumerable<T>, IRoleList where T : IInterceptedObject
     {
         #region Internal members
