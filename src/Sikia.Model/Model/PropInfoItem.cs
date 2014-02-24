@@ -101,6 +101,7 @@ namespace Sikia.Model
             if (description == "") description = title;
 
         }
+
         internal void AddRole(RoleInfoItem role)
         {
             if (dependOnMe == null)
@@ -234,6 +235,7 @@ namespace Sikia.Model
             }
 
         }
+
         #endregion
 
         #region Rules

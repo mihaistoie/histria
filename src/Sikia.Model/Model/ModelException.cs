@@ -18,7 +18,7 @@ namespace Sikia.Model
         public string PropName;
         #endregion
 
-        #region Construtors
+        #region Constructors
         public ModelException() : base() { }
         public ModelException(string message) : base(message) { }
         public ModelException(string message, string className)

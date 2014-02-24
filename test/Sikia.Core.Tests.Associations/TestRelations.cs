@@ -21,9 +21,14 @@ namespace Sikia.Core.Tests.Associations
         [TestMethod]
         public void AssociationsLoad()
         {
-            HumanBody cust = ProxyFactory.Create<HumanBody>();
+            HumanBody body = ProxyFactory.Create<HumanBody>();
+            Nose nose = ProxyFactory.Create<Nose>();
             ModelManager mm = ModelProxy.Model();
             ClassInfoItem ci = mm.Class<HumanBody>();
+            IInterceptedObject ii = nose as InterceptedObject;
+            Assert.AreEqual(ii, nose, "Is role");
+
+
             PropinfoItem pp = ci.PropertyByName("Nose");
             bool hasProp = pp != null;
             Assert.AreEqual(hasProp, true, "Property found");
@@ -48,6 +53,10 @@ namespace Sikia.Core.Tests.Associations
                     Assert.AreEqual(pp.Role.IsChild, true, "Is Child");
                 }
             }
+            body.Nose.Value = nose;
+            Assert.AreEqual(body.Nose.Value, nose, "test role");
+            Assert.AreEqual(nose.Body.Value, body, "test role");
+            
 
         }
     }

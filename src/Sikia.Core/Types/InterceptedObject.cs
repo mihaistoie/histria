@@ -3,6 +3,7 @@
 namespace Sikia.Core
 {
     using Sikia.Model;
+    using System.Reflection;
 
     public class InterceptedObject : IModelClass, IInterceptedObject
     {
@@ -28,10 +29,28 @@ namespace Sikia.Core
 
         private bool canExecuteRules()
         {
+            if ((state & ObjectState.Creating) == ObjectState.Disposing)
+                return false;
+            if ((state & ObjectState.Loading) == ObjectState.Disposing)
+                return false;
             if ((state & ObjectState.Disposing) == ObjectState.Disposing)
                 return false;
             if ((state & ObjectState.Frozen) == ObjectState.Frozen)
                 return false;
+            return true;
+        }
+
+        private bool canNotifyChanges()
+        {
+            if ((state & ObjectState.Creating) == ObjectState.Disposing)
+                return false;
+            if ((state & ObjectState.Loading) == ObjectState.Disposing)
+                return false;
+            if ((state & ObjectState.Disposing) == ObjectState.Disposing)
+                return false;
+            if ((state & ObjectState.Frozen) == ObjectState.Frozen)
+                return false;
+
             return true;
         }
         #endregion
@@ -89,8 +108,24 @@ namespace Sikia.Core
             ClassInfo.ExecuteRules(Rule.AfterCreate, this);
             state = ObjectState.Iddle;
         }
+
         private void AOPInitializeAssociations()
         {
+            MethodInfo method = typeof(ProxyFactory).GetMethod("Create");
+
+            for (int index = 0; index < ClassInfo.Properties.Count; index++)
+            {
+                PropinfoItem pp = ClassInfo.Properties[index];
+                if (pp.IsRole)
+                {
+                    Type tt = pp.PropInfo.PropertyType;
+                    MethodInfo genericMethod = method.MakeGenericMethod(tt);
+                    Association roleInstance = (Association)genericMethod.Invoke(null, null);
+                    roleInstance.PropInfo = pp;
+                    roleInstance.Instance = this;
+                    pp.PropInfo.SetValue(this, roleInstance, null);
+                }
+            }
         }
         #endregion
 
@@ -99,11 +134,11 @@ namespace Sikia.Core
         /// IInterceptedObject.AOPBeforeSetProperty
         ///</summary>
 
-        public bool AOPBeforeSetProperty(string propertyName, ref object value)
+        public bool AOPBeforeSetProperty(string propertyName, ref object value, ref object oldValue)
         {
             if (!canExecuteRules()) return true;
             PropinfoItem pi = ClassInfo.PropertyByName(propertyName);
-            object oldValue = pi.PropInfo.GetValue(this, null);
+            oldValue = pi.PropInfo.GetValue(this, null);
             pi.SchemaValidation(ref value);
             if (oldValue == value) return false;
             CheckInTransaction();
@@ -113,7 +148,7 @@ namespace Sikia.Core
         ///<summary>
         /// IInterceptedObject.AOPAfterSetProperty
         ///</summary>
-        public void AOPAfterSetProperty(string propertyName, object value)
+        public void AOPAfterSetProperty(string propertyName, object newValue, object oldValue)
         {
             if (!canExecuteRules()) return;
             PropinfoItem pi = ClassInfo.PropertyByName(propertyName);
@@ -124,6 +159,19 @@ namespace Sikia.Core
 
         }
 
+        ///<summary>
+        /// Before modifying a role (add/remove/update)
+        ///</summary>
+        public bool AOPBeforeChangeChild(string propertyName, IInterceptedObject child, RoleOperation operation)
+        {
+            return true;
+        }
+        ///<summary>
+        /// After modifying a role (add/remove/update)
+        ///</summary>
+        public void AOPAfterChangeChild(string propertyName, IInterceptedObject child, RoleOperation operation)
+        {
+        }
 
         #endregion
 

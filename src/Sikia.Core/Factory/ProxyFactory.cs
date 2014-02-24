@@ -47,7 +47,13 @@ namespace Sikia.Core
         {
             if (instance.Factory != null)
             {
-                return instance.Factory.Resolve<T>();
+                T value = instance.Factory.Resolve<T>();
+                if (value is IInterceptedObject) 
+                {
+                    (value as IInterceptedObject).AOPAfterCreate();
+                }
+                
+                return value;
             }
             return default(T);
            

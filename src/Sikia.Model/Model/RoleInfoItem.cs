@@ -15,11 +15,20 @@ namespace Sikia.Model
         public Type ClassType { get; set; }
         public Relation Type { get; set; }
         public RoleInfoItem InvRole { get; set; }
-        public bool IsChild { get; set; }
         public bool IsList { get; set; }
         public bool IsRef { get { return !IsList; } }
         public string InvRoleName { get; set; }
         public string ForeingKey { get; set; }
+
+        ///<summary>
+        /// Is child (belongs to)
+        ///</summary>   
+        public bool IsChild{ get; set; }
+
+        ///<summary>
+        /// Is child (belongs to)
+        ///</summary>   
+        public bool IsParent { get { return  !IsChild && InvRole != null && InvRole.IsChild; } }
 
         ///<summary>
         /// UseUuid =  (PkFields[0] =='Uuid' && PkFields.Length == 1);
@@ -46,6 +55,7 @@ namespace Sikia.Model
                 if (IsRef) fkFieldsExist = value;
             }
         }
+      
         ///<summary>
         /// Foreing key Fields
         ///</summary>  
@@ -60,6 +70,7 @@ namespace Sikia.Model
                 if (IsRef) fkFields = value;
             }
         }
+        
         ///<summary>
         /// Primary key fields used for this relationship. Can be different than primary key fields of remote class (InvRole.Classtype) 
         ///</summary>
@@ -74,6 +85,7 @@ namespace Sikia.Model
                 if (IsRef) pkFields = value;
             }
         }
+        
         ///<summary>
         /// Primary key fields used for this relationship = Primary key fields of remote class  (InvRole.Classtype)  
         ///</summary>

@@ -7,9 +7,8 @@ using System.Text;
 
 namespace Sikia.Model
 {
-
-
-    public class HasMany<T> : Association<T>, IEnumerable<T>, IRoleList where T : IInterceptedObject
+ 
+    public class HasMany<T> : Association, IEnumerable<T>, IRoleList where T : IInterceptedObject
     {
         #region Internal members
         private IInterceptedObject parent;
@@ -33,8 +32,8 @@ namespace Sikia.Model
         #region Construction
 
         private HasMany()
-        { 
-           
+        {
+
         }
 
         public HasMany(IInterceptedObject parent)
@@ -45,7 +44,7 @@ namespace Sikia.Model
         #endregion
 
         #region Notifications
-       
+
         #endregion
 
         #region IEnumerable<T> Members
@@ -67,33 +66,66 @@ namespace Sikia.Model
         #endregion
 
         #region Add/Remove
+        private void Remove(int index, T item)
+        {
+            IInterceptedObject child = item as IInterceptedObject;
+            if (child == null)
+            {
+                values.RemoveAt(index);
+                return;
+            }
+            if (PropInfo.Role.IsParent)
+            {
+                if (Instance.AOPBeforeChangeChild(PropInfo.Name, child, RoleOperation.Remove))
+                {
+                    values.RemoveAt(index);
+                    Instance.AOPAfterChangeChild(PropInfo.Name, child, RoleOperation.Remove);
+                }
+            }
+            else
+            {
+                values.RemoveAt(index);
+            }
+
+        }
 
         public void Add(T item)
         {
-            // notify parent  before add
-            values.Add(item);
-            // notify parent  after add
+            IInterceptedObject child = item as IInterceptedObject;
+            if (child == null)
+            {
+                values.Add(item);
+                return;
+            }
+            if (PropInfo.Role.IsParent)
+            {
+                if (Instance.AOPBeforeChangeChild(PropInfo.Name, child, RoleOperation.Add))
+                {
+                    values.Add(item);
+                    //Update for 
+                    Instance.AOPAfterChangeChild(PropInfo.Name, child, RoleOperation.Add);
+                }
+            }
+            else
+            {
+                values.Add(item);
+            }
+
         }
 
-        public void AddRange(IEnumerable<T> collection)
+        internal void Remove(T item)
         {
-            // notify parent  before add
-            values.AddRange(collection);
-            // notify parent  after add
-        }
-        
-        public void Remove(T item)
-        {
-            // notify parent  before remove
-            values.Remove(item);
-            // notify parent  after remove
+            int index = values.IndexOf(item);
+            if (index >= 0)
+            {
+                Remove(index, item);
+            }
         }
 
-        public void RemoveAt(int index)
+        internal void RemoveAt(int index)
         {
-            // notify parent  before remove
-            values.RemoveAt(index);
-            // notify parent  after remove
+            T item = values[index];
+            Remove(index, item);
         }
 
         #endregion

@@ -8,7 +8,7 @@ namespace Sikia.Core
     public enum ObjectState
     {
         Iddle = 0,
-        Creating = 1,
+        Creating = 1, 
         Loading = 2,
         Saving = 4,
         Deleting = 8,

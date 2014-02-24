@@ -6,6 +6,9 @@ using System.Text;
 
 namespace Sikia.Model
 {
+    ///<summary>
+    /// Used to register an attribute 
+    ///</summary>  
     public sealed class TemplateManager
     {
         #region Private Members
@@ -40,6 +43,7 @@ namespace Sikia.Model
             }
         }
         #endregion
+
         /*public static void Register(string templateName, TemplateAttribute template,  Type templateType)  
         {
 
