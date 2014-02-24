@@ -9,7 +9,7 @@ namespace Sikia.Proxy.Castle
 {
     public class ModuleCastle : ModulePlugIn
     {
-        public override void Register()
+        public override void Register(params object[] args)
         {
             CastleFactory.Install();
             ProxyFactory.Instance.Factory = CastleFactory.Instance as IProxyFactory;

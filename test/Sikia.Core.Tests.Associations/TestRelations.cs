@@ -15,7 +15,7 @@ namespace Sikia.Core.Tests.Associations
             JsonObject cfg = (JsonObject)JsonValue.Parse("{\"nameSpaces\": [\"Associations\"]}");
             ModelManager m = ModelManager.LoadModelFromConfig(cfg);
             ModulePlugIn.Load("Sikia.Proxy.Castle");
-            ModulePlugIn.Initialize();
+            ModulePlugIn.Initialize(m);
         }
 
         [TestMethod]
