@@ -26,9 +26,7 @@ namespace Sikia.Core.Tests.Associations
             ModelManager mm = ModelProxy.Model();
             ClassInfoItem ci = mm.Class<HumanBody>();
             IInterceptedObject ii = nose as InterceptedObject;
-            Assert.AreEqual(ii, nose, "Is role");
-
-
+            
             PropinfoItem pp = ci.PropertyByName("Nose");
             bool hasProp = pp != null;
             Assert.AreEqual(hasProp, true, "Property found");
