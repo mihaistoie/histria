@@ -8,6 +8,11 @@ namespace Sikia.Sys
             return value;
         }
 
+        public static string TT(string fmt, params object[] args)
+        {
+            return TT(string.Format(fmt, args));
+        }
+
         public static string UrlDecode(string value)
         {
             //return System.Net.WebUtility.UrlDecode(value);

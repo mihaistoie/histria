@@ -17,7 +17,7 @@ namespace Sikia.Db.Tests
         public static void Setup(TestContext testContext)
         {
             ModulePlugIn.Load("Sikia.Db.MsSql");
-            ModulePlugIn.Initialize();
+            ModulePlugIn.Initialize(null);
 
         }
 

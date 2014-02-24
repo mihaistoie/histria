@@ -5,11 +5,15 @@ using System.Text;
 
 namespace Sikia
 {
+    using Sikia.Model;
     ///<summary>
     /// Interceptable objects
     ///</summary>
     public interface IInterceptedObject: IModelClass
     {
+        #region Properties
+        ClassInfoItem ClassInfo { get; set; } 
+        #endregion
 
         #region Interceptors
         ///<summary>

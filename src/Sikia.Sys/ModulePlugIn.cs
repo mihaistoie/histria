@@ -9,17 +9,17 @@ namespace Sikia.Sys
 {
     public abstract class ModulePlugIn
     {
-        public abstract void Register();
+        public abstract void Register(params object[] args);
         private static bool isSystem(string name)
         {
             return name.StartsWith("System.") || name.StartsWith("Microsoft.")
                 || name.StartsWith("System,") || name.StartsWith("mscorlib,");
         }
 
-        private static void RegisterModule(Type type)
+        private static void RegisterModule(Type type, params object[] args)
         {
             ModulePlugIn plugIn = (ModulePlugIn)Activator.CreateInstance(type);
-            plugIn.Register();
+            plugIn.Register(args);
         }
 
         private static string AssemblyDirectory
@@ -30,7 +30,7 @@ namespace Sikia.Sys
             }
         }
 
-        public static void Initialize()
+        public static void Initialize(params object[] args)
         {
 
             Type basePlugin = typeof(ModulePlugIn);
@@ -44,7 +44,7 @@ namespace Sikia.Sys
                 {
                     if (type.IsSubclassOf(basePlugin))
                     {
-                        ModulePlugIn.RegisterModule(type);
+                        ModulePlugIn.RegisterModule(type, args);
                     }
                 }
             }
