@@ -12,7 +12,8 @@ namespace Sikia.Sys
         public static string DB = "DB";
         public static string SQL = "DB.SQL";
         public static string DBMAP = "DB.MAP";
-        public static string PLUGIN = "SYS.PLUGIN"; 
+        public static string PLUGIN = "SYS.PLUGIN";
+        public static string MODEL = "MODEL";
 
         public static void Error(string module, string message)
         {

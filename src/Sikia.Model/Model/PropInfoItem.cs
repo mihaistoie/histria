@@ -186,7 +186,7 @@ namespace Sikia.Model
                                 {
                                     throw new ModelException(String.Format(StrUtils.TT("Invalid role definition {0}.{1}. Invalid foreing key '{2}'."), ci.Name, PropInfo.Name, role.ForeignKey), ci.Name);
                                 }
-                                role.FkFields.Add(new ForeignKeyInfo() { Field = fk.Trim(), ReadOnly = readOnly });
+                                role.FkFields.Add(new ForeignKeyInfo() { Field = fk.Substring(0, pos).Trim(), ReadOnly = readOnly });
                                 role.PkFields[index] = fk.Substring(pos + (readOnly ? 2 : 1)).Trim();
                             }
 

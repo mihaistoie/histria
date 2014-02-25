@@ -54,10 +54,8 @@ namespace Sikia.Core.Tests.Associations
                 }
             }
             body.Nose.Value = nose;
-            Assert.AreEqual(nose.BodyId, body.Id, "test updete FKs");
-
-            Assert.AreEqual(body.Nose.Value, nose, "test role");
-            Assert.AreEqual(nose.Body.Value, body, "test role");
+            Assert.AreEqual(nose.BodyId, body.Id, "test update FKs");
+            Assert.AreEqual(nose.Body.Value, body, "test inv role");
             
 
         }
