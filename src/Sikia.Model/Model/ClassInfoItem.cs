@@ -34,7 +34,13 @@ namespace Sikia.Model
 
         public Type CurrentType { get; set; }
         public Type TargetType { get; set; }
-        
+
+        ///<summary>
+        /// Parent 
+        ///</summary>   	
+        public PropinfoItem Parent { get; set; }
+
+
         ///<summary>
         /// Use Uuid as primary key 
         ///</summary>   	
@@ -315,12 +321,18 @@ namespace Sikia.Model
                     }
                     else if (roleRefType.IsAssignableFrom(pi.PropertyType))
                     {
-                        role = new RoleInfoItem() { Min = ra.Min, Max = ra.Max, InvRoleName = ra.Inv, Type = ra.Type, ForeingKey = ra.ForeignKey, IsList = false, IsChild = false, ClassType = CurrentType };
+                        role = new RoleInfoItem() { Min = ra.Min, Max = ra.Max, InvRoleName = ra.Inv, Type = ra.Type, ForeignKey = ra.ForeignKey, IsList = false, IsChild = false, ClassType = CurrentType };
                         if (roleChild.IsAssignableFrom(pi.PropertyType))
                         {
                             if ((ra.Type != Relation.Embedded) || (ra.Type != Relation.Composition) || (ra.Type != Relation.Aggregation))
                             {
                                 role.IsChild = true;
+                                if (ra.Type != Relation.Aggregation)
+                                {
+                                    if (Parent != null)
+                                        throw new ModelException(String.Format(StrUtils.TT("Invalid model. Multiple parents : {0}.{1} - {2}.{1}.)"), item.Name, Name, Parent.Name), Name);
+                                    Parent = item;
+                                }
                             }
                             else
                             {
@@ -331,6 +343,7 @@ namespace Sikia.Model
   
                     }
                     item.Role = role;
+                    role.RoleProp = item;
 
                 }
                 propsMap.Add(item.Name, item.PropInfo);

@@ -5,20 +5,27 @@ using System.Text;
 
 namespace Sikia.Model
 {
+    public class ForeignKeyInfo
+    {
+        public string Field;
+        public bool ReadOnly = false;
+    } 
+
     public class RoleInfoItem
     {
-        private string[] fkFields;
+        private List<ForeignKeyInfo> fkFields;
         private bool fkFieldsExist = true;
         private string[] pkFields;
         public int Max { get; set; }
         public int Min { get; set; }
         public Type ClassType { get; set; }
         public Relation Type { get; set; }
+        public PropinfoItem RoleProp { get; set; }
         public RoleInfoItem InvRole { get; set; }
         public bool IsList { get; set; }
         public bool IsRef { get { return !IsList; } }
         public string InvRoleName { get; set; }
-        public string ForeingKey { get; set; }
+        public string ForeignKey { get; set; }
 
         ///<summary>
         /// Is child (belongs to)
@@ -42,7 +49,7 @@ namespace Sikia.Model
         }
 
         ///<summary>
-        /// Foreing key fields are declarated in the class ? 
+        /// Foreign key fields are declared in the class ? 
         ///</summary>   
         public bool FkFieldsExist
         {
@@ -57,9 +64,9 @@ namespace Sikia.Model
         }
       
         ///<summary>
-        /// Foreing key Fields
+        /// Foreign key Fields
         ///</summary>  
-        public string[] FkFields
+        public List<ForeignKeyInfo> FkFields
         {
             get
             {

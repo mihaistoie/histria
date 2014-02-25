@@ -151,12 +151,12 @@ namespace Sikia.Model
                 if (role.IsRef)
                 {
                     role.UsePk = false;
-                    if (!string.IsNullOrEmpty(role.ForeingKey))
+                    if (!string.IsNullOrEmpty(role.ForeignKey))
                     {
-                        string[] fks = role.ForeingKey.Split(',');
+                        string[] fks = role.ForeignKey.Split(',');
                         role.PkFields = new string[fks.Length];
-                        role.FkFields = new string[fks.Length];
-                        role.UsePk = role.ForeingKey.IndexOf("=") < 0;
+                        role.FkFields = new List<ForeignKeyInfo>(fks.Length);
+                        role.UsePk = role.ForeignKey.IndexOf("=") < 0;
                         if (role.UsePk && (fks.Length != remoteClass.Key.Count))
                         {
                             throw new ModelException(String.Format(StrUtils.TT("Invalid role definition {0}.{1}. Invalid inv role {2}.{3}."), ci.Name, PropInfo.Name, remoteClass.Name, role.InvRoleName), ci.Name);
@@ -166,19 +166,28 @@ namespace Sikia.Model
                         {
                             if (role.UsePk)
                             {
-                                role.FkFields[index] = fk.Trim();
+                                role.FkFields.Add(new ForeignKeyInfo() { Field = fk.Trim() });
                                 role.PkFields[index] = remoteClass.Key[index].Key;
                             }
                             else
                             {
                                 string ff = fk.Trim();
-                                int pos = ff.IndexOf("=");
+                                bool readOnly = false;
+                                int pos = ff.IndexOf("==");
                                 if (pos <= 0)
                                 {
-                                    throw new ModelException(String.Format(StrUtils.TT("Invalid role definition {0}.{1}. Invalid foreing key '{2}'."), ci.Name, PropInfo.Name, role.ForeingKey), ci.Name);
+                                    pos = ff.IndexOf("=");
                                 }
-                                role.FkFields[index] = fk.Substring(0, pos).Trim();
-                                role.PkFields[index] = fk.Substring(pos + 1).Trim();
+                                else
+                                {
+                                    readOnly = true;
+                                }
+                                if (pos <= 0)
+                                {
+                                    throw new ModelException(String.Format(StrUtils.TT("Invalid role definition {0}.{1}. Invalid foreing key '{2}'."), ci.Name, PropInfo.Name, role.ForeignKey), ci.Name);
+                                }
+                                role.FkFields.Add(new ForeignKeyInfo() { Field = fk.Trim(), ReadOnly = readOnly });
+                                role.PkFields[index] = fk.Substring(pos + (readOnly ? 2 : 1)).Trim();
                             }
 
                             index++;
@@ -190,7 +199,7 @@ namespace Sikia.Model
                         //Using Uuid
                         role.UsePk = remoteClass.UseUuidAsPk;
                         role.PkFields = new string[] { ModelConst.UUID };
-                        role.FkFields = new string[] { ModelConst.RefProperty(Name) };
+                        role.FkFields = new List<ForeignKeyInfo>() { new ForeignKeyInfo() { Field = ModelConst.RefProperty(Name) } };
                         role.FkFieldsExist = false;
 
                     }
@@ -214,10 +223,10 @@ namespace Sikia.Model
                         {
                             throw new ModelException(String.Format(StrUtils.TT("Invalid role definition {0}.{1}. Field not found '{2}.{3}'."), ci.Name, PropInfo.Name, remoteClass.Name, role.PkFields[i]), ci.Name);
                         }
-                        pp.AddRole(role);
+
                         if (role.FkFieldsExist)
                         {
-                            var fp = ci.PropertyByName(role.FkFields[i]);
+                            var fp = ci.PropertyByName(role.FkFields[i].Field);
                             if (fp == null)
                             {
                                 throw new ModelException(String.Format(StrUtils.TT("Invalid role definition {0}.{1}. Field not found '{2}.{3}'."), ci.Name, PropInfo.Name, ci.Name, role.FkFields[i]), ci.Name);
@@ -228,7 +237,9 @@ namespace Sikia.Model
                                     ci.Name, PropInfo.Name, fp.PropInfo.PropertyType.Name, ci.Name, fp.Name,
                                     pp.PropInfo.PropertyType.Name, remoteClass.Name, pp.Name), ci.Name);
                             }
+                            fp.AddRole(role);
                         }
+
                     }
                 }
 

@@ -7,5 +7,6 @@ namespace Sikia
 {
     public interface IRoleChild
     {
+        void SetParent(IInterceptedObject value);
     }
 }

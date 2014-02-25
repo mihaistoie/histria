@@ -29,21 +29,27 @@ namespace Sikia.Model
                 }
                 else
                 {
-                    for (int index = 0; index < role.FkFields.Length; index++)
+                    for (int index = 0; index < role.FkFields.Count; index++)
                     {
-                        PropinfoItem pi = target.ClassInfo.PropertyByName(role.FkFields[index]);
-                        object value = null;
-                        if (refObj != null)
+                        ForeignKeyInfo fki = role.FkFields[index];
+                        if (!fki.ReadOnly)
                         {
-                            PropinfoItem pai = refObj.ClassInfo.PropertyByName(role.PkFields[index]);
-                            value = pai.PropInfo.GetValue(refObj, null);
+                            PropinfoItem pi = target.ClassInfo.PropertyByName(fki.Field);
+                            object value = null;
+                            if (refObj != null)
+                            {
+                                PropinfoItem pai = refObj.ClassInfo.PropertyByName(role.PkFields[index]);
+                                value = pai.PropInfo.GetValue(refObj, null);
+                            }
+                            pi.PropInfo.SetValue(target, value, null);
                         }
-                        pi.PropInfo.SetValue(target, value, null);
                     }
                 }
                 if (isComposition)
                 {
-                    //PropinfoItem pi = 
+                   object roleValue = role.RoleProp.PropInfo.GetValue(target,null);
+                   IRoleChild child = roleValue as IRoleChild;
+                   child.SetParent(refObj);
                 }
 
             }

@@ -38,7 +38,6 @@ namespace Sikia.Model
                         }
                     }
                 }
-
                 return instance;
             }
         }
