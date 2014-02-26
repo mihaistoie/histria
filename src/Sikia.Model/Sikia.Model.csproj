@@ -55,7 +55,7 @@
     <Compile Include="Attributes\RuleAttribute.cs" />
     <Compile Include="Attributes\RulesForAttribute.cs" />
     <Compile Include="Attributes\DtStringAttribute.cs" />
-    <Compile Include="Attributes\TemplateAttribute.cs" />
+    <Compile Include="Attributes\TypeAttribute.cs" />
     <Compile Include="ClassType.cs" />
     <Compile Include="Helpers\ModelLoader.cs" />
     <Compile Include="ModelConst.cs" />

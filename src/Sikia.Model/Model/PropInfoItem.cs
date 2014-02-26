@@ -90,6 +90,12 @@ namespace Sikia.Model
         /// IsRole ?
         ///</summary>  
         public bool IsRole { get { return Role != null; } }
+
+        ///<summary>
+        /// Schema validation
+        ///</summary>   
+        internal TypeAttribute DtType;
+
         #endregion
 
         #region Loading
@@ -106,9 +112,16 @@ namespace Sikia.Model
                 title = da.Title;
                 description = da.Description;
             }
-            if (description == "") description = title;
+            if (string.IsNullOrEmpty(description))
+                description = title;
+
+            if (cPi.PropertyType == typeof(string))
+            {
+                DtType = PropInfo.GetCustomAttributes(typeof(DtStringAttribute), false).FirstOrDefault() as DtStringAttribute;
+            }
 
         }
+                
 
         internal void AddRole(RoleInfoItem role)
         {
@@ -257,6 +270,19 @@ namespace Sikia.Model
         }
 
         #endregion
+        #region  Validation
+        ///<summary>
+        /// Check value (range, length ....) 
+        ///</summary>   
+        public void SchemaValidation(ref object value)
+        {
+            if (DtType != null)
+            {
+
+            }
+        }
+
+        #endregion
 
         #region Rules
         ///<summary>
@@ -275,12 +301,6 @@ namespace Sikia.Model
                 rl = rules[ri.Kind];
             }
             rl.Add(ri);
-        }
-        ///<summary>
-        /// Check value (range, length ....) 
-        ///</summary>   
-        public void SchemaValidation(ref Object value)
-        {
         }
         ///<summary>
         /// Execute rules by type

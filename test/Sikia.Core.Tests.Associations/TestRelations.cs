@@ -12,14 +12,15 @@ namespace Sikia.Core.Tests.Associations
         [ClassInitialize]
         public static void Setup(TestContext testContext)
         {
-            JsonObject cfg = (JsonObject)JsonValue.Parse("{\"nameSpaces\": [\"Associations\"]}");
+            string scfg = @"{""nameSpaces"": [""Associations""]}";
+            JsonObject cfg = (JsonObject)JsonValue.Parse(scfg);
             ModelManager m = ModelManager.LoadModelFromConfig(cfg);
             ModulePlugIn.Load("Sikia.Proxy.Castle");
             ModulePlugIn.Initialize(m);
         }
 
         [TestMethod]
-        public void CompositionOneToOne()
+        public void CompositionOneToOneByCode()
         {
             HumanBody body = ProxyFactory.Create<HumanBody>();
             body.Id = "body";
@@ -31,11 +32,11 @@ namespace Sikia.Core.Tests.Associations
         }
 
         ///<summary>
-        /// Test compositions by code 
+        /// Test associations by code 
         /// The model is defined in AssociationsByCode.cs
         ///</summary> 
         [TestMethod]
-        public void CompositionOneToOneByCodes()
+        public void AssociationsByCodes()
         {
             
             // create two countries
