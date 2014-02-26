@@ -2,6 +2,7 @@
 using Castle.MicroKernel.SubSystems.Configuration;
 using Castle.Windsor;
 using Sikia.Model;
+using Sikia.Sys;
 using System;
 using System.Collections.Generic;
 
@@ -17,6 +18,8 @@ namespace Sikia.Proxy.Castle
         #region IWindsorInstaller Implementation
         public void Install(IWindsorContainer container, IConfigurationStore store)
         {
+
+            DateTime start = DateTime.Now;
             List<Type> frameworkTypes = new List<Type>() {
                 typeof(HasOne<>),
                 typeof(HasMany<>),
@@ -28,8 +31,11 @@ namespace Sikia.Proxy.Castle
             container.Register(Classes.From(model.Classes.Types).Pick().Configure(c => c.LifeStyle.Transient
                             .Interceptors(typeof(NotifyPropertyChangedInterceptor))));
             //Install framework types 
-container.Register(Classes.From(frameworkTypes.ToArray()).Pick().Configure(c => c.LifeStyle.Transient
-                                        .Interceptors(typeof(NotifyPropertyChangedInterceptor))));
+            container.Register(Classes.From(frameworkTypes.ToArray()).Pick().Configure(c => c.LifeStyle.Transient
+                                                    .Interceptors(typeof(NotifyPropertyChangedInterceptor))));
+            
+            TimeSpan interval = DateTime.Now - start;
+            Logger.Info(Logger.MODEL, StrUtils.TT("Install castle proxy ... done"), interval.TotalMilliseconds);
         }
         #endregion
     }

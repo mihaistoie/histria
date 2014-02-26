@@ -287,6 +287,7 @@ namespace Sikia.Model
             foreach (PropertyInfo pi in props)
             {
                 PropinfoItem item = new PropinfoItem(pi);
+                item.ClassInfo = this;
                 DefaultAttribute da = pi.GetCustomAttributes(typeof(DefaultAttribute), false).FirstOrDefault() as DefaultAttribute;
                 if (da != null)
                 {

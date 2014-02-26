@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Sikia.Sys;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -18,7 +19,7 @@ namespace Sikia.Model
         /// The instance that contains this association
         ///</summary> 
         public IInterceptedObject Instance { get; set; }
-        protected void UpdateForeignKeysAndState(RoleInfoItem role, IInterceptedObject target, IInterceptedObject refObj, bool isComposition)
+        internal void UpdateForeignKeysAndState(RoleInfoItem role, IInterceptedObject target, IInterceptedObject refObj, bool isComposition)
         {
             if (role.FkFieldsExist)
             {
@@ -34,22 +35,56 @@ namespace Sikia.Model
                         ForeignKeyInfo fki = role.FkFields[index];
                         if (!fki.ReadOnly)
                         {
-                            PropinfoItem pi = target.ClassInfo.PropertyByName(fki.Field);
                             object value = null;
                             if (refObj != null)
                             {
                                 PropinfoItem pai = refObj.ClassInfo.PropertyByName(role.PkFields[index]);
                                 value = pai.PropInfo.GetValue(refObj, null);
                             }
-                            pi.PropInfo.SetValue(target, value, null);
+                            fki.Prop.PropInfo.SetValue(target, value, null);
+                            if (fki.Prop.dependOnMe != null && (fki.Prop.dependOnMe.Count > 1))
+                            {
+                                foreach (RoleInfoItem r in fki.Prop.dependOnMe)
+                                {
+                                    if (r == role) continue;
+                                    if (r.HasReadOnlyField(fki.Field))
+                                    {
+                                        object rv = r.RoleProp.PropInfo.GetValue(target, null);
+                                        IRoleRef rr = rv as IRoleRef;
+                                        if (rr != null)
+                                        {
+                                            rr.SetValue(null);
+                                        }
+                                    }
+                              
+                                }
+                            }
                         }
+                        else
+                        {
+                            object value = null;
+                            if (refObj != null)
+                            {
+                                // Read only foreign key must be equal with values of primary key 
+                                PropinfoItem pai = refObj.ClassInfo.PropertyByName(role.PkFields[index]);
+                                value = pai.PropInfo.GetValue(refObj, null);
+                                object existingValue = fki.Prop.PropInfo.GetValue(target, null);
+                                if (value != existingValue)
+                                {
+                                   throw new RuleException(StrUtils.TT("Invalid value for {0}.{1}, excepted {2}, found {3}."), fki.Prop.ClassInfo.Name, fki.Field, value, existingValue);
+                                }
+                            }
+                            
+                        }
+
+                        
                     }
                 }
                 if (isComposition)
                 {
-                   object roleValue = role.RoleProp.PropInfo.GetValue(target,null);
-                   IRoleChild child = roleValue as IRoleChild;
-                   child.SetParent(refObj);
+                    object roleValue = role.RoleProp.PropInfo.GetValue(target, null);
+                    IRoleChild child = roleValue as IRoleChild;
+                    child.SetParent(refObj);
                 }
 
             }

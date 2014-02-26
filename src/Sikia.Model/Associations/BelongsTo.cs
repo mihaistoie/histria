@@ -9,13 +9,23 @@ namespace Sikia.Model
     {
         private IInterceptedObject _value;
         private Guid refuuid;
+        private void setParent(IInterceptedObject value) 
+        {
+             _value = value;
+        }
         public BelongsTo()
         {
         }
-        public void SetParent(IInterceptedObject value)
+
+        void IRoleChild.SetParent(IInterceptedObject value)
         {
-            _value = value;
+             setParent(value);
         }
-        public IInterceptedObject Value { get { return _value;  } internal set { SetParent(value); } }
+        void IRoleRef.SetValue(IInterceptedObject value)
+        {
+        }
+
+        public IInterceptedObject Value { get { return _value; } internal set { setParent(value); } }
+
     }
 }

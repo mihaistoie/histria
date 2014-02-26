@@ -21,12 +21,20 @@ namespace Sikia.Model
         private MethodInfo descriptionGet = null;
         // Rules by type
         private readonly Dictionary<Rule, RuleList> rules = new Dictionary<Rule, RuleList>();
-        // Roles that depend od this property
-        private List<RoleInfoItem> dependOnMe = null;
         #endregion
 
         #region Properties
         public PropertyInfo PropInfo;
+
+        ///<summary>
+        /// Roles which depend on this property
+        ///</summary>   
+        internal List<RoleInfoItem> dependOnMe = null;
+
+        ///<summary>
+        /// Class info 
+        ///</summary>   
+        internal ClassInfoItem ClassInfo = null;
 
         ///<summary>
         /// Name of property
@@ -76,7 +84,7 @@ namespace Sikia.Model
         ///<summary>
         /// Role detail
         ///</summary>   
-        public RoleInfoItem Role { get; set; }
+        internal RoleInfoItem Role { get; set; }
 
         ///<summary>
         /// IsRole ?
@@ -226,11 +234,12 @@ namespace Sikia.Model
 
                         if (role.FkFieldsExist)
                         {
-                            var fp = ci.PropertyByName(role.FkFields[i].Field);
+                            PropinfoItem fp = ci.PropertyByName(role.FkFields[i].Field);
                             if (fp == null)
                             {
                                 throw new ModelException(String.Format(StrUtils.TT("Invalid role definition {0}.{1}. Field not found '{2}.{3}'."), ci.Name, PropInfo.Name, ci.Name, role.FkFields[i]), ci.Name);
                             }
+                            role.FkFields[i].Prop = fp;
                             if (fp.PropInfo.PropertyType != pp.PropInfo.PropertyType)
                             {
                                 throw new ModelException(String.Format(StrUtils.TT("Invalid role definition {0}.{1}. Type mismatch '{2}({3}.{4}) != {5}({6}.{7})'."),

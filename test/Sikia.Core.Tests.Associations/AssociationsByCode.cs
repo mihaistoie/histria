@@ -32,7 +32,7 @@ namespace Sikia.Core.Tests.Associations
         [Association(Relation.Association, ForeignKey = "CountryCode=Code")]
         public virtual HasOne<Country> Country { get; set; }
         //Wow!! == ? What is this ?
-        [Association(Relation.Association, ForeignKey = "CountryCode==CountryCode,ZipCode=CityCode,ZipCode=ZipCode")]
+        [Association(Relation.Association, ForeignKey = "CountryCode==CountryCode,CityCode=CityCode,ZipCode=ZipCode")]
         public virtual HasOne<City> City { get; set; }
     }
 
