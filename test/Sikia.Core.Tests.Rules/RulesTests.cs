@@ -20,13 +20,12 @@ namespace UnitTestModel
             ModulePlugIn.Initialize(m);
         }
  
-      
-  
         [TestMethod]
         public void SimplePropagationRule()
         {
             Customer cust = ProxyFactory.Create<Customer>();
             cust.FirstName = "John";
+            cust.LastName = "Smith";
             cust.LastName = "Smith";
             Assert.AreEqual(2, cust.RCount, "Rule hits");
             Assert.AreEqual("John SMITH", cust.FullName, "Propagation rule not called");
