@@ -69,7 +69,7 @@ namespace Sikia.Model
         ///<summary>
         /// Default Value ?
         ///</summary>   
-        public string DefaultValue { get; set; }
+        public object DefaultValue { get; set; }
 
         ///<summary>
         /// Title of property
@@ -94,7 +94,13 @@ namespace Sikia.Model
         ///<summary>
         /// Schema validation
         ///</summary>   
-        internal TypeAttribute DtType;
+        internal TypeAttribute TypeValidation;
+
+        ///<summary>
+        /// Data type
+        ///</summary>   
+        internal DataTypes DtType = DataTypes.Unknown;
+
 
         #endregion
 
@@ -114,11 +120,49 @@ namespace Sikia.Model
             }
             if (string.IsNullOrEmpty(description))
                 description = title;
-
-            if (cPi.PropertyType == typeof(string))
+            DefaultAttribute dfa = PropInfo.GetCustomAttributes(typeof(DefaultAttribute), false).FirstOrDefault() as DefaultAttribute;
+            if (da != null)
             {
-                DtType = PropInfo.GetCustomAttributes(typeof(DtStringAttribute), false).FirstOrDefault() as DtStringAttribute;
+                IsDisabled = dfa.Disabled;
+                IsHidden = dfa.Hidden;
+                IsMandatory = dfa.Required;
+                DefaultValue = dfa.Value;
             }
+
+            if (cPi.PropertyType == typeof(string) || cPi.PropertyType == typeof(String))
+            {
+                DtType = DataTypes.String;
+                TypeValidation = PropInfo.GetCustomAttributes(typeof(DtStringAttribute), false).FirstOrDefault() as DtStringAttribute;
+            }
+
+            else if (cPi.PropertyType == typeof(Int64))
+            {
+                DtType = DataTypes.BigInt;
+            }
+            else if (cPi.PropertyType == typeof(int))
+            {
+                DtType = DataTypes.Int;
+            }
+            else if (cPi.PropertyType == typeof(bool) || cPi.PropertyType == typeof(Boolean))
+            {
+                DtType = DataTypes.Bool;
+            }
+            else if (cPi.PropertyType == typeof(short))
+            {
+                DtType = DataTypes.SmallInt;
+
+            }
+            else if (cPi.PropertyType.IsEnum)
+            {
+                DtType = DataTypes.Enum;
+
+            }
+            else if (cPi.PropertyType == typeof(decimal) || cPi.PropertyType == typeof(Decimal)
+             || cPi.PropertyType == typeof(double) || cPi.PropertyType == typeof(Double))
+            {
+                DtType = DataTypes.Number;
+            }
+
 
         }
                 
@@ -270,6 +314,7 @@ namespace Sikia.Model
         }
 
         #endregion
+
         #region  Validation
         ///<summary>
         /// Check value (range, length ....) 

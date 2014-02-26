@@ -288,14 +288,6 @@ namespace Sikia.Model
             {
                 PropinfoItem item = new PropinfoItem(pi);
                 item.ClassInfo = this;
-                DefaultAttribute da = pi.GetCustomAttributes(typeof(DefaultAttribute), false).FirstOrDefault() as DefaultAttribute;
-                if (da != null)
-                {
-                    item.IsDisabled = da.Disabled;
-                    item.IsHidden = da.Hidden;
-                    item.IsMandatory = da.Required;
-                    item.DefaultValue = da.Value;
-                }
                 item.IsPersistent = IsPersistent;
 
                 PersistentAttribute pa = pi.GetCustomAttributes(typeof(PersistentAttribute), false).FirstOrDefault() as PersistentAttribute;

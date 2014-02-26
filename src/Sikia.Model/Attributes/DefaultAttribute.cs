@@ -7,7 +7,7 @@
         public bool Required = false;
         public bool Hidden = false;
         public bool Disabled = false;
-        public string Value = string.Empty;
+        public object Value = null;
         public DefaultAttribute()
         {
         }
