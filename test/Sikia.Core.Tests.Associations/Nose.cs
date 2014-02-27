@@ -17,4 +17,6 @@ namespace Sikia.Core.Tests.Associations
         [Association(Relation.Composition, Inv = "Nose", ForeignKey = "BodyId")]
         public virtual BelongsTo<HumanBody> Body { get; set; }
     }
+
+    
 }

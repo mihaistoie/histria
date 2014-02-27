@@ -5,13 +5,14 @@ using System.Text;
 
 namespace Sikia.Model
 {
-    public class ForeignKeyInfo
+    class ForeignKeyInfo
     {
         public string Field;
         public bool ReadOnly = false;
+        public PropinfoItem Prop;
     } 
 
-    public class RoleInfoItem
+    class RoleInfoItem
     {
         private List<ForeignKeyInfo> fkFields;
         private bool fkFieldsExist = true;
@@ -28,12 +29,25 @@ namespace Sikia.Model
         public string ForeignKey { get; set; }
 
         ///<summary>
+        /// FkFields contains Field and is read only
+        ///</summary>   
+        public bool HasReadOnlyField(string field) 
+        {
+            if (fkFields != null)
+            {
+                return fkFields.Find((fk) => { return fk.ReadOnly && fk.Field == field; }) != null;
+            }
+            return false;
+
+        }
+
+        ///<summary>
         /// Is child (belongs to)
         ///</summary>   
         public bool IsChild{ get; set; }
 
         ///<summary>
-        /// Is child (belongs to)
+        /// Is Parent (the other side of relation is child)
         ///</summary>   
         public bool IsParent { get { return  !IsChild && InvRole != null && InvRole.IsChild; } }
 
@@ -47,7 +61,6 @@ namespace Sikia.Model
                 return (IsRef ? (PkFields != null && pkFields.Length == 1 && PkFields[0] == ModelConst.UUID) : true);
             }
         }
-
         ///<summary>
         /// Foreign key fields are declared in the class ? 
         ///</summary>   

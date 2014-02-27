@@ -21,12 +21,20 @@ namespace Sikia.Model
         private MethodInfo descriptionGet = null;
         // Rules by type
         private readonly Dictionary<Rule, RuleList> rules = new Dictionary<Rule, RuleList>();
-        // Roles that depend od this property
-        private List<RoleInfoItem> dependOnMe = null;
         #endregion
 
         #region Properties
         public PropertyInfo PropInfo;
+
+        ///<summary>
+        /// Roles which depend on this property
+        ///</summary>   
+        internal List<RoleInfoItem> dependOnMe = null;
+
+        ///<summary>
+        /// Class info 
+        ///</summary>   
+        internal ClassInfoItem ClassInfo = null;
 
         ///<summary>
         /// Name of property
@@ -61,7 +69,7 @@ namespace Sikia.Model
         ///<summary>
         /// Default Value ?
         ///</summary>   
-        public string DefaultValue { get; set; }
+        public object DefaultValue { get; set; }
 
         ///<summary>
         /// Title of property
@@ -76,12 +84,24 @@ namespace Sikia.Model
         ///<summary>
         /// Role detail
         ///</summary>   
-        public RoleInfoItem Role { get; set; }
+        internal RoleInfoItem Role { get; set; }
 
         ///<summary>
         /// IsRole ?
         ///</summary>  
         public bool IsRole { get { return Role != null; } }
+
+        ///<summary>
+        /// Schema validation
+        ///</summary>   
+        internal TypeAttribute TypeValidation;
+
+        ///<summary>
+        /// Data type
+        ///</summary>   
+        internal DataTypes DtType = DataTypes.Unknown;
+
+
         #endregion
 
         #region Loading
@@ -98,9 +118,54 @@ namespace Sikia.Model
                 title = da.Title;
                 description = da.Description;
             }
-            if (description == "") description = title;
+            if (string.IsNullOrEmpty(description))
+                description = title;
+            DefaultAttribute dfa = PropInfo.GetCustomAttributes(typeof(DefaultAttribute), false).FirstOrDefault() as DefaultAttribute;
+            if (da != null)
+            {
+                IsDisabled = dfa.Disabled;
+                IsHidden = dfa.Hidden;
+                IsMandatory = dfa.Required;
+                DefaultValue = dfa.Value;
+            }
+
+            if (cPi.PropertyType == typeof(string) || cPi.PropertyType == typeof(String))
+            {
+                DtType = DataTypes.String;
+                TypeValidation = PropInfo.GetCustomAttributes(typeof(DtStringAttribute), false).FirstOrDefault() as DtStringAttribute;
+            }
+
+            else if (cPi.PropertyType == typeof(Int64))
+            {
+                DtType = DataTypes.BigInt;
+            }
+            else if (cPi.PropertyType == typeof(int))
+            {
+                DtType = DataTypes.Int;
+            }
+            else if (cPi.PropertyType == typeof(bool) || cPi.PropertyType == typeof(Boolean))
+            {
+                DtType = DataTypes.Bool;
+            }
+            else if (cPi.PropertyType == typeof(short))
+            {
+                DtType = DataTypes.SmallInt;
+
+            }
+            else if (cPi.PropertyType.IsEnum)
+            {
+                DtType = DataTypes.Enum;
+
+            }
+            else if (cPi.PropertyType == typeof(decimal) || cPi.PropertyType == typeof(Decimal)
+             || cPi.PropertyType == typeof(double) || cPi.PropertyType == typeof(Double))
+            {
+                DtType = DataTypes.Number;
+            }
+
 
         }
+                
 
         internal void AddRole(RoleInfoItem role)
         {
@@ -226,11 +291,12 @@ namespace Sikia.Model
 
                         if (role.FkFieldsExist)
                         {
-                            var fp = ci.PropertyByName(role.FkFields[i].Field);
+                            PropinfoItem fp = ci.PropertyByName(role.FkFields[i].Field);
                             if (fp == null)
                             {
                                 throw new ModelException(String.Format(StrUtils.TT("Invalid role definition {0}.{1}. Field not found '{2}.{3}'."), ci.Name, PropInfo.Name, ci.Name, role.FkFields[i]), ci.Name);
                             }
+                            role.FkFields[i].Prop = fp;
                             if (fp.PropInfo.PropertyType != pp.PropInfo.PropertyType)
                             {
                                 throw new ModelException(String.Format(StrUtils.TT("Invalid role definition {0}.{1}. Type mismatch '{2}({3}.{4}) != {5}({6}.{7})'."),
@@ -245,6 +311,20 @@ namespace Sikia.Model
 
             }
 
+        }
+
+        #endregion
+
+        #region  Validation
+        ///<summary>
+        /// Check value (range, length ....) 
+        ///</summary>   
+        public void SchemaValidation(ref object value)
+        {
+            if (DtType != null)
+            {
+
+            }
         }
 
         #endregion
@@ -266,12 +346,6 @@ namespace Sikia.Model
                 rl = rules[ri.Kind];
             }
             rl.Add(ri);
-        }
-        ///<summary>
-        /// Check value (range, length ....) 
-        ///</summary>   
-        public void SchemaValidation(ref Object value)
-        {
         }
         ///<summary>
         /// Execute rules by type

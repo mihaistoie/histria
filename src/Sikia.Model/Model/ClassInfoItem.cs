@@ -287,14 +287,7 @@ namespace Sikia.Model
             foreach (PropertyInfo pi in props)
             {
                 PropinfoItem item = new PropinfoItem(pi);
-                DefaultAttribute da = pi.GetCustomAttributes(typeof(DefaultAttribute), false).FirstOrDefault() as DefaultAttribute;
-                if (da != null)
-                {
-                    item.IsDisabled = da.Disabled;
-                    item.IsHidden = da.Hidden;
-                    item.IsMandatory = da.Required;
-                    item.DefaultValue = da.Value;
-                }
+                item.ClassInfo = this;
                 item.IsPersistent = IsPersistent;
 
                 PersistentAttribute pa = pi.GetCustomAttributes(typeof(PersistentAttribute), false).FirstOrDefault() as PersistentAttribute;
