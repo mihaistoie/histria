@@ -36,7 +36,6 @@ namespace Sikia.Model.Tests
         [ExpectedException(typeof(ModelException))]
         public void DuplicatedRule()
         {
-            var a = Assembly.GetExecutingAssembly();
             JsonObject cfg = (JsonObject)JsonValue.Parse("{\"types\": [\"" + typeof(MR1).FullName + "\", \"" + typeof(MR2).FullName + "\"]}");
             ModelManager m = ModelManager.LoadModel(cfg);
 

@@ -115,7 +115,7 @@ namespace Sikia.Core
 
             for (int index = 0; index < ClassInfo.Properties.Count; index++)
             {
-                PropinfoItem pp = ClassInfo.Properties[index];
+                PropInfoItem pp = ClassInfo.Properties[index];
                 if (pp.IsRole)
                 {
                     Type tt = pp.PropInfo.PropertyType;
@@ -137,7 +137,7 @@ namespace Sikia.Core
         public bool AOPBeforeSetProperty(string propertyName, ref object value, ref object oldValue)
         {
             if (!canExecuteRules()) return true;
-            PropinfoItem pi = ClassInfo.PropertyByName(propertyName);
+            PropInfoItem pi = ClassInfo.PropertyByName(propertyName);
             oldValue = pi.PropInfo.GetValue(this, null);
             pi.SchemaValidation(ref value);
             if (oldValue == value) return false;
@@ -151,7 +151,7 @@ namespace Sikia.Core
         public void AOPAfterSetProperty(string propertyName, object newValue, object oldValue)
         {
             if (!canExecuteRules()) return;
-            PropinfoItem pi = ClassInfo.PropertyByName(propertyName);
+            PropInfoItem pi = ClassInfo.PropertyByName(propertyName);
             // Validate
             pi.ExecuteRules(Rule.Validation, this);
             // Propagate
