@@ -121,7 +121,7 @@ namespace Sikia.Model
             if (string.IsNullOrEmpty(description))
                 description = title;
             DefaultAttribute dfa = PropInfo.GetCustomAttributes(typeof(DefaultAttribute), false).FirstOrDefault() as DefaultAttribute;
-            if (da != null)
+            if (dfa != null)
             {
                 IsDisabled = dfa.Disabled;
                 IsHidden = dfa.Hidden;
