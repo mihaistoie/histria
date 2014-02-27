@@ -9,9 +9,8 @@ namespace Sikia.AOP
 {
     public interface IAdvice
     {
-        void DoBefore(IAspectInvocationContext invocationContext, IList<Exception> errors);
-        void DoAfter(IAspectInvocationContext invocationContext, IList<Exception> errors);
-        bool AllwaysExecuteAfter { get; }
-        IAspectInvocationContext CreateContext();
+        void DoBefore(AspectInvocationContext invocationContext, IList<Exception> errors);
+        void DoAfter(AspectInvocationContext invocationContext, IList<Exception> errors);
+        AspectInvocationContext CreateContext();
     }
 }

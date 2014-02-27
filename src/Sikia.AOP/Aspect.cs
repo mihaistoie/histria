@@ -12,7 +12,7 @@ namespace Sikia.AOP
         public IAdvice Advice { get; set; }
         public IList<IPointcut> Pointcuts { get; set; }
 
-        internal bool MustExecute(IAspectInvocationContext context)
+        internal bool MustExecute(AspectInvocationContext context)
         {
             if (this.Advice != null)
             {
@@ -31,9 +31,10 @@ namespace Sikia.AOP
             return false;
         }
 
-        internal void Execute(IAspectInvocationContext externContext, IList<Exception> errors, Action<IAspectInvocationContext, IList<Exception>> proceed)
+        internal void Execute(AspectInvocationContext externContext, IList<Exception> errors, Action<AspectInvocationContext, IList<Exception>> proceed)
         {
-            IAspectInvocationContext context = this.Advice.CreateContext();
+            AspectInvocationContext context = this.Advice.CreateContext();
+            context.ExecuteAfterIfError = externContext.ExecuteAfterIfError;
             context.Target = externContext.Target;
             context.Method = externContext.Method;
             context.Arguments = externContext.Arguments;
@@ -41,7 +42,7 @@ namespace Sikia.AOP
             context.Action = externContext.Action;
 
             ExecuteBefore(context, errors);
-            bool executeAfter = this.Advice.AllwaysExecuteAfter;
+            bool executeAfter = context.ExecuteAfterIfError;
             try
             {
                 proceed(context, errors);
@@ -63,7 +64,7 @@ namespace Sikia.AOP
             }
         }
 
-        private void ExecuteBefore(IAspectInvocationContext context, IList<Exception> errors)
+        private void ExecuteBefore(AspectInvocationContext context, IList<Exception> errors)
         {
             try
             {
@@ -75,7 +76,7 @@ namespace Sikia.AOP
             }
         }
 
-        private void ExecuteAfter(IAspectInvocationContext context, IList<Exception> errors)
+        private void ExecuteAfter(AspectInvocationContext context, IList<Exception> errors)
         {
             try
             {

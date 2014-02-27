@@ -14,22 +14,18 @@ namespace Sikia.AOP.Tests
             public bool AfterExecuted { get; set; }
             public bool ExecuteAfterIfExcept { get; set; }
 
-            public void DoBefore(IAspectInvocationContext invocationContext, IList<Exception> errors)
+            public void DoBefore(AspectInvocationContext invocationContext, IList<Exception> errors)
             {
+                invocationContext.ExecuteAfterIfError = this.ExecuteAfterIfExcept;
                 this.BeforeExecuted = true;
             }
 
-            public void DoAfter(IAspectInvocationContext invocationContext, System.Collections.Generic.IList<Exception> errors)
+            public void DoAfter(AspectInvocationContext invocationContext, System.Collections.Generic.IList<Exception> errors)
             {
                 this.AfterExecuted = true;
             }
 
-            public bool AllwaysExecuteAfter
-            {
-                get { return this.ExecuteAfterIfExcept; }
-            }
-
-            public IAspectInvocationContext CreateContext()
+            public AspectInvocationContext CreateContext()
             {
                 return new AspectInvocationContext();
             }
@@ -55,7 +51,7 @@ namespace Sikia.AOP.Tests
                 Aspect = aspect
             };
 
-            IAspectInvocationContext context = new AspectInvocationContext()
+            AspectInvocationContext context = new AspectInvocationContext()
             {
                 Action = c => c.ReturnValue = c.Method.Invoke(c.Target, c.Arguments),
                 Target = this,
@@ -80,7 +76,7 @@ namespace Sikia.AOP.Tests
             bool exceptionThrown = false;
             try
             {
-                IAspectInvocationContext context = new AspectInvocationContext()
+                AspectInvocationContext context = new AspectInvocationContext()
                 {
                     Action = c => c.ReturnValue = c.Method.Invoke(c.Target, c.Arguments),
                     Target = this,
@@ -111,7 +107,7 @@ namespace Sikia.AOP.Tests
             bool exceptionThrown = false;
             try
             {
-                IAspectInvocationContext context = new AspectInvocationContext()
+                AspectInvocationContext context = new AspectInvocationContext()
                 {
                     Action = c => c.ReturnValue = c.Method.Invoke(c.Target, c.Arguments),
                     Target = this,

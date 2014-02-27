@@ -8,6 +8,6 @@ namespace Sikia.AOP
 {
     public interface IPointcut
     {
-        bool Matches(IAspectInvocationContext context);
+        bool Matches(AspectInvocationContext context);
     }
 }

@@ -22,8 +22,9 @@ namespace Sikia.AOP.Tests
             public bool AddErrorBefore { get; set; }
             public bool AddErrorAfter { get; set; }
 
-            public void DoBefore(IAspectInvocationContext invocationContext, IList<Exception> errors)
+            public void DoBefore(AspectInvocationContext invocationContext, IList<Exception> errors)
             {
+                invocationContext.ExecuteAfterIfError = this.ExecuteAfterIfExcept;
                 Log.Add(Id + " Before");
                 this.BeforeExecuted = true;
                 if (this.ThrowBefore)
@@ -32,7 +33,7 @@ namespace Sikia.AOP.Tests
                 }
             }
 
-            public void DoAfter(IAspectInvocationContext invocationContext, IList<Exception> errors)
+            public void DoAfter(AspectInvocationContext invocationContext, IList<Exception> errors)
             {
                 Log.Add(Id + " After");
                 this.AfterExecuted = true;
@@ -42,21 +43,20 @@ namespace Sikia.AOP.Tests
                 }
             }
 
-            public bool AllwaysExecuteAfter
+            public AspectInvocationContext CreateContext()
             {
-                get { return this.ExecuteAfterIfExcept; }
-            }
-
-            public IAspectInvocationContext CreateContext()
-            {
-                return new AspectInvocationContext();
+                return new AspectInvocationContext()
+                {
+                    ExecuteAfterIfError = this.ExecuteAfterIfExcept
+                };
+                
             }
         }
 
         private class TrueFalsePointcut : IPointcut
         {
             public bool Match { get; set; }
-            public bool Matches(IAspectInvocationContext context)
+            public bool Matches(AspectInvocationContext context)
             {
                 return this.Match;
             }
@@ -116,7 +116,7 @@ namespace Sikia.AOP.Tests
                     new Aspect(){Pointcuts = pointcuts, Advice = advices[2]},
                 });
 
-            IAspectInvocationContext context = new AspectInvocationContext()
+            AspectInvocationContext context = new AspectInvocationContext()
             {
                 Action = c => c.ReturnValue = c.Method.Invoke(c.Target, c.Arguments),
                 Target = this,
@@ -173,7 +173,7 @@ namespace Sikia.AOP.Tests
             bool exceptionThrown;
             try
             {
-                IAspectInvocationContext context = new AspectInvocationContext()
+                AspectInvocationContext context = new AspectInvocationContext()
                 {
                     Action = c => c.ReturnValue = c.Method.Invoke(c.Target, c.Arguments),
                     Target = this,
@@ -237,7 +237,7 @@ namespace Sikia.AOP.Tests
             bool exceptionThrown;
             try
             {
-                IAspectInvocationContext context = new AspectInvocationContext()
+                AspectInvocationContext context = new AspectInvocationContext()
                 {
                     Action = c => c.ReturnValue = c.Method.Invoke(c.Target, c.Arguments),
                     Target = this,

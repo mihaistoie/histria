@@ -9,34 +9,34 @@ namespace Sikia.Proxy.Castle
 {
     internal class ChangePropertyRulesAspect : IAdvice, IPointcut
     {
-        public void DoBefore(IAspectInvocationContext invocationContext, IList<Exception> errors)
+        public void DoBefore(AspectInvocationContext invocationContext, IList<Exception> errors)
         {
             ChangePropertyRulesAspectContext context = GetContext(invocationContext);
             object value = context.Arguments[0];
             object oldValue = null;
-            if (context.InterceptedObject.AOPBeforeSetProperty(context.PropertyName, ref value, ref oldValue))
-                return;
+            if (!context.InterceptedObject.AOPBeforeSetProperty(context.PropertyName, ref value, ref oldValue))
+            {
+                context.DoNotExecuteAction();
+            }
             context.OldValue = oldValue;
             context.Arguments[0] = value;
         }
 
-        public void DoAfter(IAspectInvocationContext invocationContext, IList<Exception> errors)
+        public void DoAfter(AspectInvocationContext invocationContext, IList<Exception> errors)
         {
-            ChangePropertyRulesAspectContext context = GetContext(invocationContext);
-            context.InterceptedObject.AOPAfterSetProperty(context.PropertyName, context.Arguments[0], context.OldValue);
+            if (invocationContext.ExecuteAction && errors.Count == 0)
+            {
+                ChangePropertyRulesAspectContext context = GetContext(invocationContext);
+                context.InterceptedObject.AOPAfterSetProperty(context.PropertyName, context.Arguments[0], context.OldValue);
+            }
         }
 
-        public bool AllwaysExecuteAfter
-        {
-            get { return false; }
-        }
-
-        public IAspectInvocationContext CreateContext()
+        public AspectInvocationContext CreateContext()
         {
             return new ChangePropertyRulesAspectContext();
         }
 
-        public bool Matches(IAspectInvocationContext context)
+        public bool Matches(AspectInvocationContext context)
         {
             return (context.Target is IInterceptedObject) && IsSetPropMethod(context.Method);
         }
@@ -70,7 +70,7 @@ namespace Sikia.Proxy.Castle
             }
         }
 
-        private static ChangePropertyRulesAspectContext GetContext(IAspectInvocationContext invocationContext)
+        private static ChangePropertyRulesAspectContext GetContext(AspectInvocationContext invocationContext)
         {
             return (ChangePropertyRulesAspectContext)invocationContext;
         }

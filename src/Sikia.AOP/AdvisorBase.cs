@@ -10,7 +10,7 @@ namespace Sikia.AOP
     internal class AdvisorBase
     {
         public Aspect Aspect { get; set; }
-        public void Execute(IAspectInvocationContext context)
+        public void Execute(AspectInvocationContext context)
         {
             var errors = new List<Exception>();
             this.Execute(context, errors);
@@ -25,7 +25,7 @@ namespace Sikia.AOP
             }
         }
 
-        public void Execute(IAspectInvocationContext context, IList<Exception> errors)
+        public void Execute(AspectInvocationContext context, IList<Exception> errors)
         {
             bool executeAspect = MustExecuteAspect(context);
 
@@ -40,7 +40,7 @@ namespace Sikia.AOP
 
         }
 
-        private bool MustExecuteAspect(IAspectInvocationContext context)
+        private bool MustExecuteAspect(AspectInvocationContext context)
         {
             if (this.Aspect == null)
             {
@@ -49,14 +49,14 @@ namespace Sikia.AOP
             return this.Aspect.MustExecute(context);
         }
 
-        protected void ExecuteAspect(IAspectInvocationContext context, IList<Exception> errors)
+        protected void ExecuteAspect(AspectInvocationContext context, IList<Exception> errors)
         {
             this.Aspect.Execute(context, errors, this.Proceed);
         }
 
-        protected virtual void Proceed(IAspectInvocationContext context, IList<Exception> errors)
+        protected virtual void Proceed(AspectInvocationContext context, IList<Exception> errors)
         {
-            if (errors.Count == 0)
+            if (context.ExecuteAction && errors.Count == 0)
             {
                 context.Action(context);
             }

@@ -11,7 +11,7 @@ namespace Sikia.AOP
     {
         public AdvisorBase InnerAdvisor { get; set; }
 
-        protected override void Proceed(IAspectInvocationContext context, IList<Exception> errors)
+        protected override void Proceed(AspectInvocationContext context, IList<Exception> errors)
         {
             if (InnerAdvisor == null)
             {

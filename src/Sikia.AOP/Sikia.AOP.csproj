@@ -46,7 +46,6 @@
     <Compile Include="ComposedAdvisor.cs" />
     <Compile Include="Exceptions.cs" />
     <Compile Include="IAdvice.cs" />
-    <Compile Include="IAspectInvocationContext.cs" />
     <Compile Include="IPointcut.cs" />
     <Compile Include="Advisor.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

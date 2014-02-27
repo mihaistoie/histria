@@ -28,7 +28,7 @@ namespace Sikia.Proxy.Castle
         #region IInterceptor Implementation
         public void Intercept(IInvocation invocation)
         {
-            IAspectInvocationContext context = new AspectInvocationContext()
+            AspectInvocationContext context = new AspectInvocationContext()
             {
                 Action = c => invocation.Proceed(),
                 Target = invocation.InvocationTarget,

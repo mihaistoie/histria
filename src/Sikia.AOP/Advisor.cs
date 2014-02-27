@@ -14,7 +14,7 @@ namespace Sikia.AOP
             this.executor = this.GetExecutor(aspects);
         }
 
-        public void Execute(IAspectInvocationContext context)
+        public void Execute(AspectInvocationContext context)
         {
             this.executor.Execute(context);
         }
