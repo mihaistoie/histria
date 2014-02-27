@@ -9,17 +9,17 @@ using Sikia.Sys;
 namespace UnitTestModel
 {
     [TestClass]
-    public class RulesTests
+    public class Rules
     {
         [ClassInitialize]
         public static void Setup(TestContext testContext)
         {
-            JsonObject cfg = (JsonObject)JsonValue.Parse("{\"nameSpaces\": [\"Customers\"]}");
+            JsonObject cfg = (JsonObject)JsonValue.Parse(@"{""nameSpaces"": [""Customers""]}");
             ModelManager m = ModelManager.LoadModelFromConfig(cfg);
             ModulePlugIn.Load("Sikia.Proxy.Castle");
             ModulePlugIn.Initialize(m);
         }
- 
+
         [TestMethod]
         public void SimplePropagationRule()
         {

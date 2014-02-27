@@ -7,7 +7,7 @@ using Sikia.Sys;
 namespace Sikia.Core.Tests.Associations
 {
     [TestClass]
-    public class TestRelations
+    public class ModelRelationships
     {
         [ClassInitialize]
         public static void Setup(TestContext testContext)
