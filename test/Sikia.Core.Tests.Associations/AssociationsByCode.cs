@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace Sikia.Core.Tests.AssociationsByCode
+namespace Sikia.Core.Tests.Associations
 {
     [PrimaryKey("Code")]
     public class Country: InterceptedObject
@@ -12,7 +12,7 @@ namespace Sikia.Core.Tests.AssociationsByCode
         public virtual string Code { get; set; }
     }
 
-    [PrimaryKey("CountryCode,CountryCode,ZipCode")]
+    [PrimaryKey("CountryCode,CityCode,ZipCode")]
     public class City: InterceptedObject
     {
         public virtual string CountryCode { get; set; }
@@ -32,7 +32,7 @@ namespace Sikia.Core.Tests.AssociationsByCode
         [Association(Relation.Association, ForeignKey = "CountryCode=Code")]
         public virtual HasOne<Country> Country { get; set; }
         //Wow!! == ? What is this ?
-        [Association(Relation.Association, ForeignKey = "CountryCode==CountryCode,ZipCode=CityCode,ZipCode=ZipCode")]
+        [Association(Relation.Association, ForeignKey = "CountryCode==CountryCode,CityCode=CityCode,ZipCode=ZipCode")]
         public virtual HasOne<City> City { get; set; }
     }
 

@@ -9,24 +9,23 @@ using Sikia.Sys;
 namespace UnitTestModel
 {
     [TestClass]
-    public class RulesTests
+    public class Rules
     {
         [ClassInitialize]
         public static void Setup(TestContext testContext)
         {
-            JsonObject cfg = (JsonObject)JsonValue.Parse("{\"nameSpaces\": [\"Customers\"]}");
+            JsonObject cfg = (JsonObject)JsonValue.Parse(@"{""nameSpaces"": [""Customers""]}");
             ModelManager m = ModelManager.LoadModelFromConfig(cfg);
             ModulePlugIn.Load("Sikia.Proxy.Castle");
             ModulePlugIn.Initialize(m);
         }
- 
-      
-  
+
         [TestMethod]
         public void SimplePropagationRule()
         {
             Customer cust = ProxyFactory.Create<Customer>();
             cust.FirstName = "John";
+            cust.LastName = "Smith";
             cust.LastName = "Smith";
             Assert.AreEqual(2, cust.RCount, "Rule hits");
             Assert.AreEqual("John SMITH", cust.FullName, "Propagation rule not called");

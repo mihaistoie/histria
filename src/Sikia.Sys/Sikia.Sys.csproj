@@ -41,6 +41,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="MRWDictionary.cs" />
+    <Compile Include="StrUtils.cs" />
     <Compile Include="Types\IPersistentObj.cs" />
     <Compile Include="DataTypes.cs" />
     <Compile Include="Types\IProxyFactory.cs" />
@@ -48,7 +49,7 @@
     <Compile Include="ModulePlugIn.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="StringFormatType.cs" />
-    <Compile Include="StrUtils.cs" />
+    <Compile Include="L.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

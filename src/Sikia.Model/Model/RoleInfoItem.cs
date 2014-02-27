@@ -5,27 +5,51 @@ using System.Text;
 
 namespace Sikia.Model
 {
-    public class ForeignKeyInfo
+    class ForeignKeyInfo
     {
         public string Field;
         public bool ReadOnly = false;
+        public PropInfoItem Prop;
     } 
 
-    public class RoleInfoItem
+    class RoleInfoItem
     {
         private List<ForeignKeyInfo> fkFields;
         private bool fkFieldsExist = true;
         private string[] pkFields;
         public int Max { get; set; }
         public int Min { get; set; }
+        
         public Type ClassType { get; set; }
         public Relation Type { get; set; }
-        public PropinfoItem RoleProp { get; set; }
+        public PropInfoItem RoleProp { get; set; }
         public RoleInfoItem InvRole { get; set; }
         public bool IsList { get; set; }
         public bool IsRef { get { return !IsList; } }
         public string InvRoleName { get; set; }
         public string ForeignKey { get; set; }
+        private RoleInfoItem()
+        {
+
+        }
+        internal RoleInfoItem(PropInfoItem prop)
+        {
+            RoleProp = prop;
+            prop.Role = this;
+        }
+
+        ///<summary>
+        /// FkFields contains Field and is read only
+        ///</summary>   
+        public bool HasReadOnlyField(string field) 
+        {
+            if (fkFields != null)
+            {
+                return fkFields.Find((fk) => { return fk.ReadOnly && fk.Field == field; }) != null;
+            }
+            return false;
+
+        }
 
         ///<summary>
         /// Is child (belongs to)
@@ -33,7 +57,7 @@ namespace Sikia.Model
         public bool IsChild{ get; set; }
 
         ///<summary>
-        /// Is child (belongs to)
+        /// Is Parent (the other side of relation is child)
         ///</summary>   
         public bool IsParent { get { return  !IsChild && InvRole != null && InvRole.IsChild; } }
 
@@ -47,7 +71,6 @@ namespace Sikia.Model
                 return (IsRef ? (PkFields != null && pkFields.Length == 1 && PkFields[0] == ModelConst.UUID) : true);
             }
         }
-
         ///<summary>
         /// Foreign key fields are declared in the class ? 
         ///</summary>   

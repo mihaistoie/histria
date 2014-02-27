@@ -8,6 +8,11 @@ namespace Sikia.Model
     public class HasOne<T> : Association, IRoleRef where T : IInterceptedObject
     {
         private IInterceptedObject value;
+        void IRoleRef.SetValue(IInterceptedObject iValue)
+        {
+            internalSetValue(iValue);
+        }
+
         private void internalSetValue(IInterceptedObject iValue)
         {
             if (iValue == value) return;

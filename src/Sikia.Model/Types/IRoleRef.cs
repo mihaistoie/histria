@@ -7,5 +7,6 @@ namespace Sikia
 {
     public interface IRoleRef
     {
+        void SetValue(IInterceptedObject value);
     }
 }

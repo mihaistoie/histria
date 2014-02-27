@@ -49,6 +49,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="CastleFactory.cs" />
+    <Compile Include="ChangePropertyRulesAdvice.cs" />
     <Compile Include="InterceptorInstaller.cs" />
     <Compile Include="ModelInstaller.cs" />
     <Compile Include="ModuleCastle.cs" />
@@ -60,6 +61,10 @@
     <Content Include="ExternalLib\Castle.Windsor.dll" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\Sikia.AOP\Sikia.AOP.csproj">
+      <Project>{6450a271-ba8f-4f85-8eac-398fbd2cde3a}</Project>
+      <Name>Sikia.AOP</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Sikia.Core\Sikia.Core.csproj">
       <Project>{78ad75af-a56f-418f-bf38-56959c893dd3}</Project>
       <Name>Sikia.Core</Name>

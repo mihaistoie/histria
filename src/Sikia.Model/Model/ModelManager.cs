@@ -5,6 +5,7 @@ using System.Collections.ObjectModel;
 using System.Reflection;
 using Sikia.Json;
 using Sikia.Model.Helpers;
+using Sikia.Sys;
 
 
 namespace Sikia.Model
@@ -101,8 +102,11 @@ namespace Sikia.Model
 
         private void Load(JsonObject cfg)
         {
+            DateTime start = DateTime.Now;
             ModelLoader.LoadModel(cfg, this.LoadTypes);
             AfterLoad();
+            TimeSpan interval = DateTime.Now - start;
+            Logger.Info(Logger.MODEL, L.T("Model loading ... done"), interval.TotalMilliseconds);
 
         }
         private void AfterLoad()

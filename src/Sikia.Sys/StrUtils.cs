@@ -1,18 +1,12 @@
-﻿
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+
 namespace Sikia.Sys
 {
     public static class StrUtils
     {
-        public static string TT(string value)
-        {
-            return value;
-        }
-
-        public static string TT(string fmt, params object[] args)
-        {
-            return TT(string.Format(fmt, args));
-        }
-
         public static string UrlDecode(string value)
         {
             //return System.Net.WebUtility.UrlDecode(value);
@@ -25,5 +19,4 @@ namespace Sikia.Sys
             return value;
         }
     }
-   
 }

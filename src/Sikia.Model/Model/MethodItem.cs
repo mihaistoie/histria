@@ -28,7 +28,7 @@ namespace Sikia.Model
                 title = da.Title;
                 description = da.Description;
             }
-            if (description == "")
+            if (string.IsNullOrEmpty(description))
             {
                 description = title;
             }

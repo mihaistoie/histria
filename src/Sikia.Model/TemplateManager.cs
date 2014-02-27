@@ -12,7 +12,7 @@ namespace Sikia.Model
     public sealed class TemplateManager
     {
         #region Private Members
-        private readonly Dictionary<string, TemplateAttribute> templates;
+        private readonly Dictionary<string, TypeAttribute> templates;
         #endregion
 
         #region Singleton thread-safe pattern
@@ -20,7 +20,7 @@ namespace Sikia.Model
         private static object syncRoot = new Object();
         private TemplateManager()
         {
-            templates = new Dictionary<string, TemplateAttribute>();
+            templates = new Dictionary<string, TypeAttribute>();
         }
 
         public static TemplateManager Instance
@@ -43,9 +43,8 @@ namespace Sikia.Model
         }
         #endregion
 
-        /*public static void Register(string templateName, TemplateAttribute template,  Type templateType)  
+        public static void Register(string templateName, TypeAttribute template)  
         {
-
-        }*/
+        }
     }
 }
