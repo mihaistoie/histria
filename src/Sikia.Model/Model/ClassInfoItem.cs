@@ -97,7 +97,7 @@ namespace Sikia.Model
                 {
                     if (ri.IsOveriddenOf(rule))
                     {
-                        throw new ModelException(String.Format(StrUtils.TT("Rule \"{0}.{1}\": Duplicated rule ({2}.{3}). "), ri.DeclaringType.Name, ri.Name, ri.Kind, ri.Property), Name);
+                        throw new ModelException(String.Format(L.T("Rule \"{0}.{1}\": Duplicated rule ({2}.{3}). "), ri.DeclaringType.Name, ri.Name, ri.Kind, ri.Property), Name);
                     }
                 }
             }
@@ -137,7 +137,7 @@ namespace Sikia.Model
                     //checked if property exists  
                     PropInfoItem pi = PropertyByName(ri.Property);
                     if (pi == null)
-                        throw new ModelException(String.Format(StrUtils.TT("Rule \"{0}.{1}\": The class \"{2}\" has not the property \"{3}\". "), ri.DeclaringType.Name, ri.Name, ri.TargetType.Name, ri.Property), Name);
+                        throw new ModelException(String.Format(L.T("Rule \"{0}.{1}\": The class \"{2}\" has not the property \"{3}\". "), ri.DeclaringType.Name, ri.Name, ri.TargetType.Name, ri.Property), Name);
                     pi.AddRule(ri);
 
                 }
@@ -287,7 +287,7 @@ namespace Sikia.Model
                 properties.Add(item);
             }
         }
-
+        
         private void LoadMethodsAndRules()
         {
             BindingFlags bindingAttr = (Static ? (BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static)
@@ -306,11 +306,11 @@ namespace Sikia.Model
                     {
                         if (ra.Rule == Rule.Unknown)
                         {
-                            throw new ModelException(String.Format(StrUtils.TT("Invalid rule type for \"{0}\" in the class \"{1}\"."), mi.Name, Name), Name);
+                            throw new ModelException(String.Format(L.T("Invalid rule type for \"{0}\" in the class \"{1}\"."), mi.Name, Name), Name);
                         }
                         if (!ra.CheckProperty())
                         {
-                            throw new ModelException(String.Format(StrUtils.TT("Invalid rule property for \"{0}\" in the class \"{1}\"."), mi.Name, Name), Name);
+                            throw new ModelException(String.Format(L.T("Invalid rule property for \"{0}\" in the class \"{1}\"."), mi.Name, Name), Name);
                         }
                         RuleItem ri = new RuleItem(mi);
                         ri.Kind = ra.Rule;
@@ -321,7 +321,7 @@ namespace Sikia.Model
                                 ri.TargetType = TargetType;
                             if (ri == null)
                             {
-                                throw new ModelException(String.Format(StrUtils.TT("Invalid rule target for \"{0}\" in the class \"{1}\"."), mi.Name, Name), Name);
+                                throw new ModelException(String.Format(L.T("Invalid rule target for \"{0}\" in the class \"{1}\"."), mi.Name, Name), Name);
                             }
                         }
                         else
@@ -343,6 +343,7 @@ namespace Sikia.Model
             }
 
         }
+        
         private void LoadPersistence()
         {
             if (Static) return;
@@ -357,6 +358,7 @@ namespace Sikia.Model
 
 
         }
+        
         private void LoadPrimarykey()
         {
             if (Static) return;
@@ -367,7 +369,7 @@ namespace Sikia.Model
                 akeys = pk.Keys.Split(',');
                 if (akeys.Length == 0)
                 {
-                    throw new ModelException(String.Format(StrUtils.TT("Missing Primary key for {0}."), Name), Name);
+                    throw new ModelException(String.Format(L.T("Missing Primary key for {0}."), Name), Name);
                 }
                 UseUuidAsPk = ((akeys.Length == 0) && akeys[0] == ModelConst.UUID);
             }
@@ -382,7 +384,7 @@ namespace Sikia.Model
                 string skey = akey.Trim();
                 PropInfoItem pi = PropertyByName(skey);
                 if (pi == null)
-                    throw new ModelException(String.Format(StrUtils.TT("Invalid primary key declaration. Field not found '{0}.{1}'."), Name, skey), Name);
+                    throw new ModelException(String.Format(L.T("Invalid primary key declaration. Field not found '{0}.{1}'."), Name, skey), Name);
                 key.Add(new KeyItem(skey, pi.PropInfo));
             }
         }
@@ -399,8 +401,6 @@ namespace Sikia.Model
                 indexes.Add(ii);
             }
         }
-
-
         #endregion
 
         public PropertyInfo PropertyInfoByName(string propName)
@@ -410,6 +410,7 @@ namespace Sikia.Model
             return pi;
 
         }
+
         public PropInfoItem PropertyByName(string propName)
         {
             try

@@ -56,14 +56,14 @@ namespace Sikia.Model
                 string sfield = afields[0].Trim();
                 PropertyInfo pi = ci.PropertyInfoByName(sfield);
                 if (pi == null)
-                    throw new ModelException(String.Format(StrUtils.TT("Class {0}: Invalid property {1} for index {2}."), ci.Name, sfield, indexName), ci.Name);
+                    throw new ModelException(String.Format(L.T("Class {0}: Invalid property {1} for index {2}."), ci.Name, sfield, indexName), ci.Name);
                 PropInfoItem pp = ci.Properties[pi];
                 defIndexName += '_' + pp.PersistentName;
                 Items.Add(new IndexInfoItem(pi, sfield, desc));
             }
             if (Items.Count == 0)
             {
-                throw new ModelException(String.Format(StrUtils.TT("Class {0}: Invalid index definition {1} no fields found."), ci.Name, indexName), ci.Name);
+                throw new ModelException(String.Format(L.T("Class {0}: Invalid index definition {1} no fields found."), ci.Name, indexName), ci.Name);
             }
             if (String.IsNullOrEmpty(indexName))
                 IndexName = defIndexName;

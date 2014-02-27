@@ -7,7 +7,7 @@ namespace Sikia.Model
 {
     public class TypeAttribute : System.Attribute
     {
-        internal virtual bool Validate(object value, out string errors) 
+        internal virtual bool TryValidate(object value, out string errors) 
         {
             errors = null;
             return true;

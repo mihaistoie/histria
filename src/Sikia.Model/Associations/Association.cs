@@ -71,7 +71,7 @@ namespace Sikia.Model
                                 object existingValue = fki.Prop.PropInfo.GetValue(target, null);
                                 if (value != existingValue)
                                 {
-                                   throw new RuleException(StrUtils.TT("Invalid value for {0}.{1}, excepted {2}, found {3}."), fki.Prop.ClassInfo.Name, fki.Field, value, existingValue);
+                                   throw new RuleException(L.T("Invalid value for {0}.{1}, excepted {2}, found {3}."), fki.Prop.ClassInfo.Name, fki.Field, value, existingValue);
                                 }
                             }
                             

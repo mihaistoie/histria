@@ -162,7 +162,7 @@ namespace Sikia.Model
                 AssociationAttribute ra = PropInfo.GetCustomAttributes(typeof(AssociationAttribute), false).FirstOrDefault() as AssociationAttribute;
                 if (ra == null)
                 {
-                    throw new ModelException(String.Format(StrUtils.TT("Association attribute is missing.({0}.{1})"), Name, ClassInfo.Name), ClassInfo.Name);
+                    throw new ModelException(String.Format(L.T("Association attribute is missing.({0}.{1})"), Name, ClassInfo.Name), ClassInfo.Name);
                 }
                 RoleInfoItem role = null;
 
@@ -181,13 +181,13 @@ namespace Sikia.Model
                             if (ra.Type != Relation.Aggregation)
                             {
                                 if (ClassInfo.Parent != null)
-                                    throw new ModelException(String.Format(StrUtils.TT("Invalid model. Multiple parents : {0}.{1} - {2}.{1}.)"), Name, ClassInfo.Name, ClassInfo.Parent.Name), ClassInfo.Name);
+                                    throw new ModelException(String.Format(L.T("Invalid model. Multiple parents : {0}.{1} - {2}.{1}.)"), Name, ClassInfo.Name, ClassInfo.Parent.Name), ClassInfo.Name);
                                 ClassInfo.Parent = this;
                             }
                         }
                         else
                         {
-                            throw new ModelException(String.Format(StrUtils.TT("Invalid association type.({0}.{1}. Excepted composition or aggregation.)"), Name, ClassInfo.Name), ClassInfo.Name);
+                            throw new ModelException(String.Format(L.T("Invalid association type.({0}.{1}. Excepted composition or aggregation.)"), Name, ClassInfo.Name), ClassInfo.Name);
                         }
 
                     }
@@ -327,14 +327,14 @@ namespace Sikia.Model
                 RoleInfoItem role = Role;
                 if (role.IsList && string.IsNullOrEmpty(role.InvRoleName))
                 {
-                    throw new ModelException(String.Format(StrUtils.TT("Invalid role definition {0}.{1}. Missing 'Inv' attribute."), ci.Name, PropInfo.Name), ci.Name);
+                    throw new ModelException(String.Format(L.T("Invalid role definition {0}.{1}. Missing 'Inv' attribute."), ci.Name, PropInfo.Name), ci.Name);
                 }
                 Type invClassType = PropInfo.PropertyType.GetGenericArguments()[0];
 
                 ClassInfoItem remoteClass = model.ClassByType(invClassType);
                 if (remoteClass == null)
                 {
-                    throw new ModelException(String.Format(StrUtils.TT("Invalid role definition {0}.{1}. Remote class not found."), ci.Name, PropInfo.Name), ci.Name);
+                    throw new ModelException(String.Format(L.T("Invalid role definition {0}.{1}. Remote class not found."), ci.Name, PropInfo.Name), ci.Name);
                 }
 
                 if (!string.IsNullOrEmpty(role.InvRoleName))
@@ -345,7 +345,7 @@ namespace Sikia.Model
                         role.InvRole = pp.Role;
                     }
                     if (role.InvRole == null)
-                        throw new ModelException(String.Format(StrUtils.TT("Invalid role definition {0}.{1}. Invalid inv role {2}.{3}."), ci.Name, PropInfo.Name, remoteClass.Name, role.InvRoleName), ci.Name);
+                        throw new ModelException(String.Format(L.T("Invalid role definition {0}.{1}. Invalid inv role {2}.{3}."), ci.Name, PropInfo.Name, remoteClass.Name, role.InvRoleName), ci.Name);
                 }
                 if (role.InvRole != null)
                 {
@@ -366,7 +366,7 @@ namespace Sikia.Model
                         role.UsePk = role.ForeignKey.IndexOf("=") < 0;
                         if (role.UsePk && (fks.Length != remoteClass.Key.Count))
                         {
-                            throw new ModelException(String.Format(StrUtils.TT("Invalid role definition {0}.{1}. Invalid inv role {2}.{3}."), ci.Name, PropInfo.Name, remoteClass.Name, role.InvRoleName), ci.Name);
+                            throw new ModelException(String.Format(L.T("Invalid role definition {0}.{1}. Invalid inv role {2}.{3}."), ci.Name, PropInfo.Name, remoteClass.Name, role.InvRoleName), ci.Name);
                         }
                         int index = 0;
                         foreach (string fk in fks)
@@ -391,7 +391,7 @@ namespace Sikia.Model
                                 }
                                 if (pos <= 0)
                                 {
-                                    throw new ModelException(String.Format(StrUtils.TT("Invalid role definition {0}.{1}. Invalid foreing key '{2}'."), ci.Name, PropInfo.Name, role.ForeignKey), ci.Name);
+                                    throw new ModelException(String.Format(L.T("Invalid role definition {0}.{1}. Invalid foreing key '{2}'."), ci.Name, PropInfo.Name, role.ForeignKey), ci.Name);
                                 }
                                 role.FkFields.Add(new ForeignKeyInfo() { Field = fk.Substring(0, pos).Trim(), ReadOnly = readOnly });
                                 role.PkFields[index] = fk.Substring(pos + (readOnly ? 2 : 1)).Trim();
@@ -428,7 +428,7 @@ namespace Sikia.Model
                         PropInfoItem pp = remoteClass.PropertyByName(role.PkFields[i]);
                         if (pp == null)
                         {
-                            throw new ModelException(String.Format(StrUtils.TT("Invalid role definition {0}.{1}. Field not found '{2}.{3}'."), ci.Name, PropInfo.Name, remoteClass.Name, role.PkFields[i]), ci.Name);
+                            throw new ModelException(String.Format(L.T("Invalid role definition {0}.{1}. Field not found '{2}.{3}'."), ci.Name, PropInfo.Name, remoteClass.Name, role.PkFields[i]), ci.Name);
                         }
 
                         if (role.FkFieldsExist)
@@ -436,12 +436,12 @@ namespace Sikia.Model
                             PropInfoItem fp = ci.PropertyByName(role.FkFields[i].Field);
                             if (fp == null)
                             {
-                                throw new ModelException(String.Format(StrUtils.TT("Invalid role definition {0}.{1}. Field not found '{2}.{3}'."), ci.Name, PropInfo.Name, ci.Name, role.FkFields[i]), ci.Name);
+                                throw new ModelException(String.Format(L.T("Invalid role definition {0}.{1}. Field not found '{2}.{3}'."), ci.Name, PropInfo.Name, ci.Name, role.FkFields[i]), ci.Name);
                             }
                             role.FkFields[i].Prop = fp;
                             if (fp.PropInfo.PropertyType != pp.PropInfo.PropertyType)
                             {
-                                throw new ModelException(String.Format(StrUtils.TT("Invalid role definition {0}.{1}. Type mismatch '{2}({3}.{4}) != {5}({6}.{7})'."),
+                                throw new ModelException(String.Format(L.T("Invalid role definition {0}.{1}. Type mismatch '{2}({3}.{4}) != {5}({6}.{7})'."),
                                     ci.Name, PropInfo.Name, fp.PropInfo.PropertyType.Name, ci.Name, fp.Name,
                                     pp.PropInfo.PropertyType.Name, remoteClass.Name, pp.Name), ci.Name);
                             }
