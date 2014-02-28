@@ -364,7 +364,7 @@ namespace Sikia.Model
                         role.PkFields = new string[fks.Length];
                         role.FkFields = new List<ForeignKeyInfo>(fks.Length);
                         role.UsePk = role.ForeignKey.IndexOf("=") < 0;
-                        if (role.UsePk && (fks.Length != remoteClass.Key.Count))
+                        if (role.UsePk && (fks.Length != remoteClass.Key.Items.Count))
                         {
                             throw new ModelException(String.Format(L.T("Invalid role definition {0}.{1}. Invalid inv role {2}.{3}."), ci.Name, PropInfo.Name, remoteClass.Name, role.InvRoleName), ci.Name);
                         }
@@ -374,7 +374,7 @@ namespace Sikia.Model
                             if (role.UsePk)
                             {
                                 role.FkFields.Add(new ForeignKeyInfo() { Field = fk.Trim() });
-                                role.PkFields[index] = remoteClass.Key[index].Key;
+                                role.PkFields[index] = remoteClass.Key.Items[index].Key;
                             }
                             else
                             {
@@ -411,12 +411,12 @@ namespace Sikia.Model
 
                     }
 
-                    if (!role.UsePk && role.PkFields.Length == remoteClass.Key.Count)
+                    if (!role.UsePk && role.PkFields.Length == remoteClass.Key.Items.Count)
                     {
                         role.UsePk = true;
                         for (int i = 0; i < role.PkFields.Length; i++)
                         {
-                            if (string.Compare(role.PkFields[i], remoteClass.Key[i].Key, true) != 0)
+                            if (string.Compare(role.PkFields[i], remoteClass.Key.Items[i].Key, true) != 0)
                             {
                                 role.UsePk = false;
                             }

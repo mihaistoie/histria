@@ -65,6 +65,9 @@
     <Compile Include="ModelConst.cs" />
     <Compile Include="Model\ClassCollection.cs" />
     <Compile Include="Model\EnumCollection.cs" />
+    <Compile Include="Model\KeysCollection.cs" />
+    <Compile Include="Model\PrimaryKeyItem.cs" />
+    <Compile Include="Model\PropertiesCollection.cs" />
     <Compile Include="Model\RoleInfoItem.cs" />
     <Compile Include="Model\RulesCollection.cs" />
     <Compile Include="Rule.cs" />

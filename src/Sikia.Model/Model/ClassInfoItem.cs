@@ -20,7 +20,7 @@ namespace Sikia.Model
         private List<RuleItem> rulesList = new List<RuleItem>();
         private readonly List<MethodItem> methodsList = new List<MethodItem>();
         private readonly Dictionary<string, MethodItem> methods = new Dictionary<string, MethodItem>();
-        private readonly KeysCollection key = new KeysCollection();
+        private readonly PrimaryKeyItem key = new PrimaryKeyItem();
         private readonly List<IndexInfo> indexes = new List<IndexInfo>();
         // Rules by type
         private readonly Dictionary<Rule, RuleList> rules = new Dictionary<Rule, RuleList>();
@@ -36,7 +36,7 @@ namespace Sikia.Model
         public Type TargetType { get; set; }
 
         ///<summary>
-        /// Parent 
+        /// Property  "Parent"
         ///</summary>   	
         public PropInfoItem Parent { get; set; }
 
@@ -74,7 +74,7 @@ namespace Sikia.Model
         ///</summary>   		
         #region Properties/Primary Key/Indexes
         public PropertiesCollection Properties { get { return properties; } }
-        public KeysCollection Key { get { return key; } }
+        public PrimaryKeyItem Key { get { return key; } }
         public List<IndexInfo> Indexes { get { return indexes; } }
         #endregion
 
@@ -385,7 +385,7 @@ namespace Sikia.Model
                 PropInfoItem pi = PropertyByName(skey);
                 if (pi == null)
                     throw new ModelException(String.Format(L.T("Invalid primary key declaration. Field not found '{0}.{1}'."), Name, skey), Name);
-                key.Add(new KeyItem(skey, pi.PropInfo));
+                key.Items.Add(new KeyItem(skey, pi.PropInfo));
             }
         }
 
@@ -440,20 +440,6 @@ namespace Sikia.Model
 
         }
 
-    }
-    public class PropertiesCollection : KeyedCollection<PropertyInfo, PropInfoItem>
-    {
-        protected override PropertyInfo GetKeyForItem(PropInfoItem item)
-        {
-            return item.PropInfo;
-        }
-    }
-    public class KeysCollection : KeyedCollection<PropertyInfo, KeyItem>
-    {
-        protected override PropertyInfo GetKeyForItem(KeyItem item)
-        {
-            return item.Property;
-        }
     }
 
 
