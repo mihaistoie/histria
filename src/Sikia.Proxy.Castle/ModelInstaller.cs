@@ -6,8 +6,6 @@ using Sikia.Sys;
 using System;
 using System.Collections.Generic;
 
-
-
 namespace Sikia.Proxy.Castle
 {
     /// <summary>
