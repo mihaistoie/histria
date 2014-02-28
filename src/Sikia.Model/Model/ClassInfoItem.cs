@@ -30,11 +30,13 @@ namespace Sikia.Model
         private MethodItem gTitle = null;
         private MethodItem gDescription = null;
         #endregion
-        public ClassType ClassType = ClassType.Unknown;
 
+        #region Properties/Primary Key/Indexes
+        public ClassType ClassType = ClassType.Unknown;
         public Type CurrentType { get; set; }
         public Type TargetType { get; set; }
 
+        
         ///<summary>
         /// Property  "Parent"
         ///</summary>   	
@@ -55,30 +57,44 @@ namespace Sikia.Model
         /// The name of the class
         ///</summary>   		
         public string Name { get; set; }
+        
         ///<summary>
         /// The title of the class
         ///</summary>   		
         public string Title { get { return ModelHelper.GetStringValue(title, gTitle); } }
+        
         ///<summary>
         /// The Description of the class
         ///</summary>   		
         public string Description { get { return ModelHelper.GetStringValue(description, gDescription); } }
+        
         ///<summary>
         ///(Persistence) Name of table used to store this class
         ///</summary>   		
         public string DbName { get; set; }
-
-        public bool Static { get; set; }
+        
         ///<summary>
-        /// ModelManager
+        /// Is a static class ?
         ///</summary>   		
-        #region Properties/Primary Key/Indexes
+        public bool Static { get; set; }
+        
+        ///<summary>
+        /// List of properties
+        ///</summary>   		
         public PropertiesCollection Properties { get { return properties; } }
+        ///<summary>
+        /// Primary key
+        ///</summary>   		
         public PrimaryKeyItem Key { get { return key; } }
+
+        ///<summary>
+        ///List of indexes
+        ///</summary>   		
         public List<IndexInfo> Indexes { get { return indexes; } }
         #endregion
 
         #region Rules
+      
         public void ExecuteRules(Rule kind, Object target)
         {
             if (rules.ContainsKey(kind))
@@ -403,6 +419,7 @@ namespace Sikia.Model
         }
         #endregion
 
+        #region Properties Access by name/type
         public PropertyInfo PropertyInfoByName(string propName)
         {
             PropertyInfo pi = null;
@@ -410,7 +427,6 @@ namespace Sikia.Model
             return pi;
 
         }
-
         public PropInfoItem PropertyByName(string propName)
         {
             try
@@ -422,7 +438,9 @@ namespace Sikia.Model
                 return null;
             }
         }
+        #endregion
 
+        #region Constructor
         public ClassInfoItem(Type cType, bool staticClass)
         {
             CurrentType = cType;
@@ -439,6 +457,7 @@ namespace Sikia.Model
             LoadIndexes();
 
         }
+        #endregion
 
     }
 
