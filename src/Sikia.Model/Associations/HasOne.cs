@@ -7,7 +7,8 @@ namespace Sikia.Model
 {
     public class HasOne<T> : Association, IRoleRef where T : IInterceptedObject
     {
-        private IInterceptedObject value;
+        private IInterceptedObject _value;
+        private Guid refUid = Guid.Empty;
         void IRoleRef.SetValue(IInterceptedObject iValue)
         {
             internalSetValue(iValue);
@@ -15,28 +16,27 @@ namespace Sikia.Model
 
         private void internalSetValue(IInterceptedObject iValue)
         {
-            if (iValue == value) return;
-            IInterceptedObject oldValue = value;  
+            if (iValue == _value) return;
+            IInterceptedObject oldValue = _value;
             if (PropInfo.Role.IsList)
             {
-                // Composition 
-                if (value != null)
+                if (_value != null)
                 {
-                    if (!Instance.AOPBeforeChangeChild(PropInfo.Name, value, RoleOperation.Remove))
+                    if (!Instance.AOPBeforeChangeChild(PropInfo.Name, _value, RoleOperation.Remove))
                     {
                         return;
                     }
-                    UpdateForeignKeysAndState(PropInfo.Role.InvRole, value, null, true);
-                    Instance.AOPAfterChangeChild(PropInfo.Name, value, RoleOperation.Remove);
-                    
+                    UpdateForeignKeysAndState(PropInfo.Role.InvRole, _value, null, true);
+                    Instance.AOPAfterChangeChild(PropInfo.Name, _value, RoleOperation.Remove);
+
                 }
                 if (!Instance.AOPBeforeChangeChild(PropInfo.Name, iValue, RoleOperation.Add))
                 {
                     return;
                 }
-                value = iValue;
+                _value = iValue;
                 UpdateForeignKeysAndState(PropInfo.Role.InvRole, iValue, Instance, true);
-                Instance.AOPAfterChangeChild(PropInfo.Name, value, RoleOperation.Add);
+                Instance.AOPAfterChangeChild(PropInfo.Name, _value, RoleOperation.Add);
             }
             else
             {
@@ -45,18 +45,20 @@ namespace Sikia.Model
                 {
                     return;
                 }
-                value = iValue;
+                _value = iValue;
                 UpdateForeignKeysAndState(PropInfo.Role, Instance, iValue, false);
-                Instance.AOPAfterChangeChild(PropInfo.Name, value, RoleOperation.Update);
+                refUid = (_value != null) ? _value.Uuid : Guid.Empty;
+                Instance.AOPAfterChangeChild(PropInfo.Name, _value, RoleOperation.Update);
             }
-            
-           
+
+
         }
 
         public HasOne()
         {
         }
-        public IInterceptedObject Value { get { return value; } set { internalSetValue(value); } }
+        public Guid RefUid { get { return refUid; } }
+        public IInterceptedObject Value { get { return _value; } set { internalSetValue(value); } }
     }
 }
 

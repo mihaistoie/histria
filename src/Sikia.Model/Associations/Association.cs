@@ -21,15 +21,16 @@ namespace Sikia.Model
         public IInterceptedObject Instance { get; set; }
         internal void UpdateForeignKeysAndState(RoleInfoItem role, IInterceptedObject target, IInterceptedObject refObj, bool isComposition)
         {
-            if (role.FkFieldsExist)
+            if (isComposition && refObj == null)
             {
-                if (isComposition && refObj == null)
+                target.AOPDeleted();
+                //Don't set foreign keys null !!! 
+            }
+            else
+            {
+                if (role.FkFieldsExist)
                 {
-                    target.AOPDeleted();
-                    //Don't set foreign keys null !!! 
-                }
-                else
-                {
+                    //Update FK
                     for (int index = 0; index < role.FkFields.Count; index++)
                     {
                         ForeignKeyInfo fki = role.FkFields[index];
@@ -56,7 +57,7 @@ namespace Sikia.Model
                                             rr.SetValue(null);
                                         }
                                     }
-                              
+
                                 }
                             }
                         }
@@ -71,24 +72,25 @@ namespace Sikia.Model
                                 object existingValue = fki.Prop.PropInfo.GetValue(target, null);
                                 if (value != existingValue)
                                 {
-                                   throw new RuleException(L.T("Invalid value for {0}.{1}, excepted {2}, found {3}."), fki.Prop.ClassInfo.Name, fki.Field, value, existingValue);
+                                    throw new RuleException(L.T("Invalid value for {0}.{1}, excepted {2}, found {3}."), fki.Prop.ClassInfo.Name, fki.Field, value, existingValue);
                                 }
                             }
-                            
+
                         }
 
-                        
                     }
                 }
-                if (isComposition)
-                {
-                    object roleValue = role.RoleProp.PropInfo.GetValue(target, null);
-                    IRoleChild child = roleValue as IRoleChild;
-                    child.SetParent(refObj);
-                }
-
             }
+            if (isComposition)
+            {
+                object roleValue = role.RoleProp.PropInfo.GetValue(target, null);
+                IRoleChild child = roleValue as IRoleChild;
+                child.SetParent(refObj);
+            }
+
+
         }
+
 
     }
 }
