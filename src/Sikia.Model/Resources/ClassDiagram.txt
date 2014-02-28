@@ -1,10 +1,7 @@
 
 [ModelManager]++-Classes*>[ClassInfoItem]
 [ModelManager]++-Enums*>[EnumInfoItem]
-[ClassInfoItem]++-->Indexes*[IndexInfo]
-[ClassInfoItem]++-->Properties*[PropInfoItem]
-[ClassInfoItem]++-->Properties*[PropInfoItem]
-
+//
 [ClassInfoItem]++-->Key[PrimaryKeyInfo]
 [ClassInfoItem]++-->Indexes*[IndexInfo]
 [ClassInfoItem]++-->Properties*[PropInfoItem]
