@@ -7,7 +7,7 @@ using Sikia.Sys;
 namespace Sikia.Core.Tests.Associations
 {
     [TestClass]
-    public class TestRelations
+    public class ModelRelationships
     {
         [ClassInitialize]
         public static void Setup(TestContext testContext)
@@ -70,7 +70,7 @@ namespace Sikia.Core.Tests.Associations
             Assert.AreEqual(string.IsNullOrEmpty(infrance.ZipCode), true, "Code propagation");
 
 
-            // set city befor country 
+            // set city before country 
             Address a1 = ProxyFactory.Create<Address>();
             bool doFail = false;
             try
@@ -85,7 +85,7 @@ namespace Sikia.Core.Tests.Associations
             if (doFail)
                 Assert.AreEqual(false, true, "Set country before setting city");
             
-            // After country chnged  --> city is empty
+            // After country changed  --> city is empty
             Address a2 = ProxyFactory.Create<Address>();
             a2.Country.Value = c1;
             a2.City.Value = paris;
@@ -98,6 +98,29 @@ namespace Sikia.Core.Tests.Associations
             Assert.AreEqual(a2.CountryCode, c2.Code, "Code propagation");
             Assert.AreEqual(string.IsNullOrEmpty(a2.CityCode), true, "Code propagation");
             Assert.AreEqual(string.IsNullOrEmpty(a2.ZipCode), true, "Code propagation");
+
+        }
+
+        ///<summary>
+        /// Test  Compositions by uuids 
+        /// The model is defined in CompositionsByUids.cs
+        ///</summary> 
+        [TestMethod]
+        public void CompositionsByUuis()
+        {
+
+            // create two countries
+            Car car = ProxyFactory.Create<Car>();
+            car.Name = "Renault";
+            SteeringWheel wheel = ProxyFactory.Create<SteeringWheel>();
+            wheel.SerialNumber = "123456789";
+            car.SteeringWheel.Value = wheel;
+            // TODO
+            Assert.AreEqual(wheel.Car.Value, car, "test inv role");
+            // TODO
+            // Assert.AreEqual(wheel.Car.RefUid, car.uid, "test inv role"); ????
+            //
+            //
 
         }
 

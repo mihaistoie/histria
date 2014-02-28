@@ -9,7 +9,7 @@ namespace Sikia.Model
     {
         public string Field;
         public bool ReadOnly = false;
-        public PropinfoItem Prop;
+        public PropInfoItem Prop;
     } 
 
     class RoleInfoItem
@@ -19,14 +19,24 @@ namespace Sikia.Model
         private string[] pkFields;
         public int Max { get; set; }
         public int Min { get; set; }
+        
         public Type ClassType { get; set; }
         public Relation Type { get; set; }
-        public PropinfoItem RoleProp { get; set; }
+        public PropInfoItem RoleProp { get; set; }
         public RoleInfoItem InvRole { get; set; }
         public bool IsList { get; set; }
         public bool IsRef { get { return !IsList; } }
         public string InvRoleName { get; set; }
         public string ForeignKey { get; set; }
+        private RoleInfoItem()
+        {
+
+        }
+        internal RoleInfoItem(PropInfoItem prop)
+        {
+            RoleProp = prop;
+            prop.Role = this;
+        }
 
         ///<summary>
         /// FkFields contains Field and is read only

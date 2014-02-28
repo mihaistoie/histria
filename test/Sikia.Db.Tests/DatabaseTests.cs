@@ -267,6 +267,8 @@ namespace Sikia.Db.Tests
             Assert.AreEqual(false, ss.DatabaseExists(dburl), "DatabaseExists");
         }
 
+       
+
         [TestMethod]
         public void MsSqlIndexes()
         {

@@ -10,8 +10,194 @@ namespace Sikia.Model
     ///<summary>
     /// Provides access to  property metadata
     ///</summary>   
-    public class PropinfoItem
+    public class PropInfoItem
     {
+        #region Type initialization
+
+        private static void BigIntAction(PropInfoItem item)
+        {
+            item.DtType = DataTypes.BigInt;
+        }
+        private static void IntAction(PropInfoItem item)
+        {
+            item.DtType = DataTypes.Int;
+        }
+        private static void ShortAction(PropInfoItem item)
+        {
+            item.DtType = DataTypes.SmallInt;
+        }
+        private static void StringAction(PropInfoItem item)
+        {
+            item.DtType = DataTypes.String;
+            item.TypeValidation = item.PropInfo.GetCustomAttributes(typeof(DtStringAttribute), false).FirstOrDefault() as DtStringAttribute;
+        }
+        private static void BoolAction(PropInfoItem item)
+        {
+            item.DtType = DataTypes.Bool;
+        }
+
+        private static void NumberAction(PropInfoItem item)
+        {
+            item.DtType = DataTypes.Number;
+        }
+        private static void DateTimeAction(PropInfoItem item)
+        {
+            item.DtType = DataTypes.DateTime;
+        }
+        private static void EnumAction(PropInfoItem item)
+        {
+            item.DtType = DataTypes.Enum;
+        }
+        private static void UnknownAction(PropInfoItem item)
+        {
+            item.DtType = DataTypes.Unknown;
+        }
+
+        private static Dictionary<Type, Action<PropInfoItem>> handleAction =
+            new Dictionary<Type, Action<PropInfoItem>>() 
+            { 
+                { typeof(long), BigIntAction },
+                { typeof(ulong), BigIntAction },
+                { typeof(int), IntAction },
+                { typeof(uint), IntAction },
+                { typeof(short), ShortAction },
+                { typeof(ushort), ShortAction },
+                { typeof(sbyte), ShortAction },
+                { typeof(byte), ShortAction },
+                { typeof(char), ShortAction },
+                { typeof(string), StringAction },
+                { typeof(bool), BoolAction },
+                { typeof(decimal), NumberAction },
+                { typeof(double), NumberAction },
+                { typeof(float), NumberAction },
+                { typeof(DateTime), DateTimeAction }
+
+            };
+
+        private void InitializeType()
+        {
+            if (PropInfo.PropertyType.IsEnum)
+            {
+                EnumAction(this);
+            }
+            else
+            {
+                Action<PropInfoItem> action;
+                if (handleAction.TryGetValue(PropInfo.PropertyType, out action))
+                {
+                    action(this);
+                }
+                else
+                {
+                    UnknownAction(this);
+                }
+            }
+        }
+
+
+        #endregion
+
+        #region Title and description
+
+        private void InitializeTitleAndDescription()
+        {
+            title = Name;
+            DisplayAttribute da = PropInfo.GetCustomAttributes(typeof(DisplayAttribute), false).FirstOrDefault() as DisplayAttribute;
+            if (da != null)
+            {
+                title = da.Title;
+                description = da.Description;
+            }
+            if (string.IsNullOrEmpty(description))
+                description = title;
+        }
+
+        #endregion
+
+        #region Persistence initialization
+
+        private void InitializePersistence()
+        {
+            PersistentName = PropInfo.Name;
+            IsPersistent = ClassInfo.IsPersistent;
+            PersistentAttribute pa = PropInfo.GetCustomAttributes(typeof(PersistentAttribute), false).FirstOrDefault() as PersistentAttribute;
+            if (pa != null)
+            {
+                IsPersistent = pa.IsPersistent;
+                if (!string.IsNullOrEmpty(pa.PersistentName))
+                    PersistentName = pa.PersistentName;
+            }
+        }
+
+        #endregion
+
+        #region Default state initialization
+
+        private void InitializeDefaultState()
+        {
+            DefaultAttribute dfa = PropInfo.GetCustomAttributes(typeof(DefaultAttribute), false).FirstOrDefault() as DefaultAttribute;
+            if (dfa != null)
+            {
+                IsDisabled = dfa.Disabled;
+                IsHidden = dfa.Hidden;
+                IsMandatory = dfa.Required;
+                DefaultValue = dfa.Value;
+            }
+        }
+
+        #endregion
+
+        #region Initialize Role info
+
+        void InitializeRole()
+        {
+            Type associationType = typeof(IAssociation);
+            Type roleListType = typeof(IRoleList);
+            Type roleRefType = typeof(IRoleRef);
+            Type roleChild = typeof(IRoleChild);
+
+            //Association
+            if (associationType.IsAssignableFrom(PropInfo.PropertyType))
+            {
+                AssociationAttribute ra = PropInfo.GetCustomAttributes(typeof(AssociationAttribute), false).FirstOrDefault() as AssociationAttribute;
+                if (ra == null)
+                {
+                    throw new ModelException(String.Format(L.T("Association attribute is missing.({0}.{1})"), Name, ClassInfo.Name), ClassInfo.Name);
+                }
+                RoleInfoItem role = null;
+
+                if (roleListType.IsAssignableFrom(PropInfo.PropertyType))
+                {
+                    role = new RoleInfoItem(this) { Min = ra.Min, Max = ra.Max, InvRoleName = ra.Inv, Type = ra.Type, IsList = true, IsChild = false, ClassType = ClassInfo.CurrentType };
+                }
+                else if (roleRefType.IsAssignableFrom(PropInfo.PropertyType))
+                {
+                    role = new RoleInfoItem(this) { Min = ra.Min, Max = ra.Max, InvRoleName = ra.Inv, Type = ra.Type, ForeignKey = ra.ForeignKey, IsList = false, IsChild = false, ClassType = ClassInfo.CurrentType };
+                    if (roleChild.IsAssignableFrom(PropInfo.PropertyType))
+                    {
+                        if ((ra.Type != Relation.Embedded) || (ra.Type != Relation.Composition) || (ra.Type != Relation.Aggregation))
+                        {
+                            role.IsChild = true;
+                            if (ra.Type != Relation.Aggregation)
+                            {
+                                if (ClassInfo.Parent != null)
+                                    throw new ModelException(String.Format(L.T("Invalid model. Multiple parents : {0}.{1} - {2}.{1}.)"), Name, ClassInfo.Name, ClassInfo.Parent.Name), ClassInfo.Name);
+                                ClassInfo.Parent = this;
+                            }
+                        }
+                        else
+                        {
+                            throw new ModelException(String.Format(L.T("Invalid association type.({0}.{1}. Excepted composition or aggregation.)"), Name, ClassInfo.Name), ClassInfo.Name);
+                        }
+
+                    }
+
+                }
+            }
+        }
+
+        #endregion
+
         #region Internal fields
         // Static title and description
         private string title;
@@ -21,6 +207,9 @@ namespace Sikia.Model
         private MethodInfo descriptionGet = null;
         // Rules by type
         private readonly Dictionary<Rule, RuleList> rules = new Dictionary<Rule, RuleList>();
+
+        private PropInfoItem() { }
+
         #endregion
 
         #region Properties
@@ -105,67 +294,20 @@ namespace Sikia.Model
         #endregion
 
         #region Loading
-        public PropinfoItem(PropertyInfo cPi)
+        internal PropInfoItem(PropertyInfo cPi, ClassInfoItem ci)
         {
             PropInfo = cPi;
+            ClassInfo = ci;
             Name = PropInfo.Name;
-            PersistentName = PropInfo.Name;
-            title = Name;
-            DisplayAttribute da = PropInfo.GetCustomAttributes(typeof(DisplayAttribute), false).FirstOrDefault() as DisplayAttribute;
-            title = Name;
-            if (da != null)
-            {
-                title = da.Title;
-                description = da.Description;
-            }
-            if (string.IsNullOrEmpty(description))
-                description = title;
-            DefaultAttribute dfa = PropInfo.GetCustomAttributes(typeof(DefaultAttribute), false).FirstOrDefault() as DefaultAttribute;
-            if (dfa != null)
-            {
-                IsDisabled = dfa.Disabled;
-                IsHidden = dfa.Hidden;
-                IsMandatory = dfa.Required;
-                DefaultValue = dfa.Value;
-            }
 
-            if (cPi.PropertyType == typeof(string) || cPi.PropertyType == typeof(String))
-            {
-                DtType = DataTypes.String;
-                TypeValidation = PropInfo.GetCustomAttributes(typeof(DtStringAttribute), false).FirstOrDefault() as DtStringAttribute;
-            }
-
-            else if (cPi.PropertyType == typeof(Int64))
-            {
-                DtType = DataTypes.BigInt;
-            }
-            else if (cPi.PropertyType == typeof(int))
-            {
-                DtType = DataTypes.Int;
-            }
-            else if (cPi.PropertyType == typeof(bool) || cPi.PropertyType == typeof(Boolean))
-            {
-                DtType = DataTypes.Bool;
-            }
-            else if (cPi.PropertyType == typeof(short))
-            {
-                DtType = DataTypes.SmallInt;
-
-            }
-            else if (cPi.PropertyType.IsEnum)
-            {
-                DtType = DataTypes.Enum;
-
-            }
-            else if (cPi.PropertyType == typeof(decimal) || cPi.PropertyType == typeof(Decimal)
-             || cPi.PropertyType == typeof(double) || cPi.PropertyType == typeof(Double))
-            {
-                DtType = DataTypes.Number;
-            }
+            InitializeTitleAndDescription();
+            InitializeType();
+            InitializePersistence();
+            InitializeDefaultState();
+            InitializeRole();
 
 
         }
-                
 
         internal void AddRole(RoleInfoItem role)
         {
@@ -185,25 +327,25 @@ namespace Sikia.Model
                 RoleInfoItem role = Role;
                 if (role.IsList && string.IsNullOrEmpty(role.InvRoleName))
                 {
-                    throw new ModelException(String.Format(StrUtils.TT("Invalid role definition {0}.{1}. Missing 'Inv' attribute."), ci.Name, PropInfo.Name), ci.Name);
+                    throw new ModelException(String.Format(L.T("Invalid role definition {0}.{1}. Missing 'Inv' attribute."), ci.Name, PropInfo.Name), ci.Name);
                 }
                 Type invClassType = PropInfo.PropertyType.GetGenericArguments()[0];
 
                 ClassInfoItem remoteClass = model.ClassByType(invClassType);
                 if (remoteClass == null)
                 {
-                    throw new ModelException(String.Format(StrUtils.TT("Invalid role definition {0}.{1}. Remote class not found."), ci.Name, PropInfo.Name), ci.Name);
+                    throw new ModelException(String.Format(L.T("Invalid role definition {0}.{1}. Remote class not found."), ci.Name, PropInfo.Name), ci.Name);
                 }
 
                 if (!string.IsNullOrEmpty(role.InvRoleName))
                 {
-                    PropinfoItem pp = remoteClass.PropertyByName(role.InvRoleName);
+                    PropInfoItem pp = remoteClass.PropertyByName(role.InvRoleName);
                     if (pp != null)
                     {
                         role.InvRole = pp.Role;
                     }
                     if (role.InvRole == null)
-                        throw new ModelException(String.Format(StrUtils.TT("Invalid role definition {0}.{1}. Invalid inv role {2}.{3}."), ci.Name, PropInfo.Name, remoteClass.Name, role.InvRoleName), ci.Name);
+                        throw new ModelException(String.Format(L.T("Invalid role definition {0}.{1}. Invalid inv role {2}.{3}."), ci.Name, PropInfo.Name, remoteClass.Name, role.InvRoleName), ci.Name);
                 }
                 if (role.InvRole != null)
                 {
@@ -224,7 +366,7 @@ namespace Sikia.Model
                         role.UsePk = role.ForeignKey.IndexOf("=") < 0;
                         if (role.UsePk && (fks.Length != remoteClass.Key.Count))
                         {
-                            throw new ModelException(String.Format(StrUtils.TT("Invalid role definition {0}.{1}. Invalid inv role {2}.{3}."), ci.Name, PropInfo.Name, remoteClass.Name, role.InvRoleName), ci.Name);
+                            throw new ModelException(String.Format(L.T("Invalid role definition {0}.{1}. Invalid inv role {2}.{3}."), ci.Name, PropInfo.Name, remoteClass.Name, role.InvRoleName), ci.Name);
                         }
                         int index = 0;
                         foreach (string fk in fks)
@@ -249,7 +391,7 @@ namespace Sikia.Model
                                 }
                                 if (pos <= 0)
                                 {
-                                    throw new ModelException(String.Format(StrUtils.TT("Invalid role definition {0}.{1}. Invalid foreing key '{2}'."), ci.Name, PropInfo.Name, role.ForeignKey), ci.Name);
+                                    throw new ModelException(String.Format(L.T("Invalid role definition {0}.{1}. Invalid foreing key '{2}'."), ci.Name, PropInfo.Name, role.ForeignKey), ci.Name);
                                 }
                                 role.FkFields.Add(new ForeignKeyInfo() { Field = fk.Substring(0, pos).Trim(), ReadOnly = readOnly });
                                 role.PkFields[index] = fk.Substring(pos + (readOnly ? 2 : 1)).Trim();
@@ -283,23 +425,23 @@ namespace Sikia.Model
                     //Check if fields exists  
                     for (int i = 0; i < role.PkFields.Length; i++)
                     {
-                        PropinfoItem pp = remoteClass.PropertyByName(role.PkFields[i]);
+                        PropInfoItem pp = remoteClass.PropertyByName(role.PkFields[i]);
                         if (pp == null)
                         {
-                            throw new ModelException(String.Format(StrUtils.TT("Invalid role definition {0}.{1}. Field not found '{2}.{3}'."), ci.Name, PropInfo.Name, remoteClass.Name, role.PkFields[i]), ci.Name);
+                            throw new ModelException(String.Format(L.T("Invalid role definition {0}.{1}. Field not found '{2}.{3}'."), ci.Name, PropInfo.Name, remoteClass.Name, role.PkFields[i]), ci.Name);
                         }
 
                         if (role.FkFieldsExist)
                         {
-                            PropinfoItem fp = ci.PropertyByName(role.FkFields[i].Field);
+                            PropInfoItem fp = ci.PropertyByName(role.FkFields[i].Field);
                             if (fp == null)
                             {
-                                throw new ModelException(String.Format(StrUtils.TT("Invalid role definition {0}.{1}. Field not found '{2}.{3}'."), ci.Name, PropInfo.Name, ci.Name, role.FkFields[i]), ci.Name);
+                                throw new ModelException(String.Format(L.T("Invalid role definition {0}.{1}. Field not found '{2}.{3}'."), ci.Name, PropInfo.Name, ci.Name, role.FkFields[i]), ci.Name);
                             }
                             role.FkFields[i].Prop = fp;
                             if (fp.PropInfo.PropertyType != pp.PropInfo.PropertyType)
                             {
-                                throw new ModelException(String.Format(StrUtils.TT("Invalid role definition {0}.{1}. Type mismatch '{2}({3}.{4}) != {5}({6}.{7})'."),
+                                throw new ModelException(String.Format(L.T("Invalid role definition {0}.{1}. Type mismatch '{2}({3}.{4}) != {5}({6}.{7})'."),
                                     ci.Name, PropInfo.Name, fp.PropInfo.PropertyType.Name, ci.Name, fp.Name,
                                     pp.PropInfo.PropertyType.Name, remoteClass.Name, pp.Name), ci.Name);
                             }
@@ -321,10 +463,6 @@ namespace Sikia.Model
         ///</summary>   
         public void SchemaValidation(ref object value)
         {
-            if (DtType != null)
-            {
-
-            }
         }
 
         #endregion

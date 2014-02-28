@@ -33,7 +33,7 @@ namespace Sikia.Proxy.Castle
                                                     .Interceptors(typeof(NotifyPropertyChangedInterceptor))));
             
             TimeSpan interval = DateTime.Now - start;
-            Logger.Info(Logger.MODEL, StrUtils.TT("Install castle proxy ... done"), interval.TotalMilliseconds);
+            Logger.Info(Logger.MODEL, L.T("Install castle proxy ... done"), interval.TotalMilliseconds);
         }
         #endregion
     }

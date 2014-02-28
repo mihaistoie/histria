@@ -14,7 +14,7 @@ namespace Sikia.Model
         ///<summary>
         /// Property info 
         ///</summary> 
-        public PropinfoItem PropInfo { get; set; }
+        public PropInfoItem PropInfo { get; set; }
         ///<summary>
         /// The instance that contains this association
         ///</summary> 
@@ -38,7 +38,7 @@ namespace Sikia.Model
                             object value = null;
                             if (refObj != null)
                             {
-                                PropinfoItem pai = refObj.ClassInfo.PropertyByName(role.PkFields[index]);
+                                PropInfoItem pai = refObj.ClassInfo.PropertyByName(role.PkFields[index]);
                                 value = pai.PropInfo.GetValue(refObj, null);
                             }
                             fki.Prop.PropInfo.SetValue(target, value, null);
@@ -66,12 +66,12 @@ namespace Sikia.Model
                             if (refObj != null)
                             {
                                 // Read only foreign key must be equal with values of primary key 
-                                PropinfoItem pai = refObj.ClassInfo.PropertyByName(role.PkFields[index]);
+                                PropInfoItem pai = refObj.ClassInfo.PropertyByName(role.PkFields[index]);
                                 value = pai.PropInfo.GetValue(refObj, null);
                                 object existingValue = fki.Prop.PropInfo.GetValue(target, null);
                                 if (value != existingValue)
                                 {
-                                   throw new RuleException(StrUtils.TT("Invalid value for {0}.{1}, excepted {2}, found {3}."), fki.Prop.ClassInfo.Name, fki.Field, value, existingValue);
+                                   throw new RuleException(L.T("Invalid value for {0}.{1}, excepted {2}, found {3}."), fki.Prop.ClassInfo.Name, fki.Field, value, existingValue);
                                 }
                             }
                             

@@ -81,7 +81,7 @@ namespace Sikia.Db.SqlServer.Model
                     column.Type = DataTypes.Binary;
                     break;
                 default:
-                    Logger.Warning(Logger.DBMAP, StrUtils.TT(string.Format("{0}", dbtype)));
+                    Logger.Warning(Logger.DBMAP, L.T(string.Format("{0}", dbtype)));
                     column.Type = DataTypes.Unknown;
                     break;
             }

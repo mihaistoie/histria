@@ -71,7 +71,7 @@ namespace Sikia.Db.SqlServer
                 case DataTypes.Binary:
                     return SqlDbType.Binary;
                 default:
-                    throw new NotImplementedException(StrUtils.TT("Invalid type"));
+                    throw new NotImplementedException(L.T("Invalid type"));
             }
         }
 

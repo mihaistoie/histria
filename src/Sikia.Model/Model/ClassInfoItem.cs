@@ -38,7 +38,7 @@ namespace Sikia.Model
         ///<summary>
         /// Parent 
         ///</summary>   	
-        public PropinfoItem Parent { get; set; }
+        public PropInfoItem Parent { get; set; }
 
 
         ///<summary>
@@ -97,7 +97,7 @@ namespace Sikia.Model
                 {
                     if (ri.IsOveriddenOf(rule))
                     {
-                        throw new ModelException(String.Format(StrUtils.TT("Rule \"{0}.{1}\": Duplicated rule ({2}.{3}). "), ri.DeclaringType.Name, ri.Name, ri.Kind, ri.Property), Name);
+                        throw new ModelException(String.Format(L.T("Rule \"{0}.{1}\": Duplicated rule ({2}.{3}). "), ri.DeclaringType.Name, ri.Name, ri.Kind, ri.Property), Name);
                     }
                 }
             }
@@ -135,9 +135,9 @@ namespace Sikia.Model
                 if (!String.IsNullOrEmpty(ri.Property))
                 {
                     //checked if property exists  
-                    PropinfoItem pi = PropertyByName(ri.Property);
+                    PropInfoItem pi = PropertyByName(ri.Property);
                     if (pi == null)
-                        throw new ModelException(String.Format(StrUtils.TT("Rule \"{0}.{1}\": The class \"{2}\" has not the property \"{3}\". "), ri.DeclaringType.Name, ri.Name, ri.TargetType.Name, ri.Property), Name);
+                        throw new ModelException(String.Format(L.T("Rule \"{0}.{1}\": The class \"{2}\" has not the property \"{3}\". "), ri.DeclaringType.Name, ri.Name, ri.TargetType.Name, ri.Property), Name);
                     pi.AddRule(ri);
 
                 }
@@ -173,7 +173,7 @@ namespace Sikia.Model
         // validate class after load
         public void ValidateAndPrepare(ModelManager model)
         {
-            foreach (PropinfoItem pi in properties)
+            foreach (PropInfoItem pi in properties)
             {
                 pi.AfterLoad(model, this);
             }
@@ -263,7 +263,8 @@ namespace Sikia.Model
                 title = da.Title;
                 description = da.Description;
             }
-            if (description == "") description = title;
+            if (string.IsNullOrEmpty(description))
+                description = title;
             if (Static)
             {
                 RulesForAttribute rf = CurrentType.GetCustomAttributes(typeof(RulesForAttribute), false).FirstOrDefault() as RulesForAttribute;
@@ -278,73 +279,15 @@ namespace Sikia.Model
         private void LoadProperties()
         {
             if (Static) return;
-            Type associationType = typeof(IAssociation);
-            Type roleListType = typeof(IRoleList);
-            Type roleRefType = typeof(IRoleRef);
-            Type roleChild = typeof(IRoleChild);
-
             PropertyInfo[] props = CurrentType.GetProperties(BindingFlags.Public | BindingFlags.Instance);
             foreach (PropertyInfo pi in props)
             {
-                PropinfoItem item = new PropinfoItem(pi);
-                item.ClassInfo = this;
-                item.IsPersistent = IsPersistent;
-
-                PersistentAttribute pa = pi.GetCustomAttributes(typeof(PersistentAttribute), false).FirstOrDefault() as PersistentAttribute;
-                if (pa != null)
-                {
-                    item.IsPersistent = pa.IsPersistent;
-
-                    if (!string.IsNullOrEmpty(pa.PersistentName))
-                        item.PersistentName = pa.PersistentName;
-                }
-                //Association
-                if (associationType.IsAssignableFrom(pi.PropertyType))
-                {
-                    //is association
-                    AssociationAttribute ra = pi.GetCustomAttributes(typeof(AssociationAttribute), false).FirstOrDefault() as AssociationAttribute;
-                    if (ra == null)
-                    {
-                        throw new ModelException(String.Format(StrUtils.TT("Association attribute is missing.({0}.{1})"), item.Name, Name), Name);
-                    }
-                    RoleInfoItem role = null;
-                    if (roleListType.IsAssignableFrom(pi.PropertyType))
-                    {
-                        role = new RoleInfoItem() { Min = ra.Min, Max = ra.Max, InvRoleName = ra.Inv, Type = ra.Type, IsList = true, IsChild = false, ClassType = CurrentType };
-                    }
-                    else if (roleRefType.IsAssignableFrom(pi.PropertyType))
-                    {
-                        role = new RoleInfoItem() { Min = ra.Min, Max = ra.Max, InvRoleName = ra.Inv, Type = ra.Type, ForeignKey = ra.ForeignKey, IsList = false, IsChild = false, ClassType = CurrentType };
-                        if (roleChild.IsAssignableFrom(pi.PropertyType))
-                        {
-                            if ((ra.Type != Relation.Embedded) || (ra.Type != Relation.Composition) || (ra.Type != Relation.Aggregation))
-                            {
-                                role.IsChild = true;
-                                if (ra.Type != Relation.Aggregation)
-                                {
-                                    if (Parent != null)
-                                        throw new ModelException(String.Format(StrUtils.TT("Invalid model. Multiple parents : {0}.{1} - {2}.{1}.)"), item.Name, Name, Parent.Name), Name);
-                                    Parent = item;
-                                }
-                            }
-                            else
-                            {
-                                throw new ModelException(String.Format(StrUtils.TT("Invalid association type.({0}.{1}. Excepted composition or aggregation.)"), item.Name, Name), Name);
-                            }
-
-                        }
-  
-                    }
-                    item.Role = role;
-                    role.RoleProp = item;
-
-                }
+                PropInfoItem item = new PropInfoItem(pi, this);
                 propsMap.Add(item.Name, item.PropInfo);
                 properties.Add(item);
-
             }
         }
-
+        
         private void LoadMethodsAndRules()
         {
             BindingFlags bindingAttr = (Static ? (BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static)
@@ -363,11 +306,11 @@ namespace Sikia.Model
                     {
                         if (ra.Rule == Rule.Unknown)
                         {
-                            throw new ModelException(String.Format(StrUtils.TT("Invalid rule type for \"{0}\" in the class \"{1}\"."), mi.Name, Name), Name);
+                            throw new ModelException(String.Format(L.T("Invalid rule type for \"{0}\" in the class \"{1}\"."), mi.Name, Name), Name);
                         }
                         if (!ra.CheckProperty())
                         {
-                            throw new ModelException(String.Format(StrUtils.TT("Invalid rule property for \"{0}\" in the class \"{1}\"."), mi.Name, Name), Name);
+                            throw new ModelException(String.Format(L.T("Invalid rule property for \"{0}\" in the class \"{1}\"."), mi.Name, Name), Name);
                         }
                         RuleItem ri = new RuleItem(mi);
                         ri.Kind = ra.Rule;
@@ -378,7 +321,7 @@ namespace Sikia.Model
                                 ri.TargetType = TargetType;
                             if (ri == null)
                             {
-                                throw new ModelException(String.Format(StrUtils.TT("Invalid rule target for \"{0}\" in the class \"{1}\"."), mi.Name, Name), Name);
+                                throw new ModelException(String.Format(L.T("Invalid rule target for \"{0}\" in the class \"{1}\"."), mi.Name, Name), Name);
                             }
                         }
                         else
@@ -400,11 +343,12 @@ namespace Sikia.Model
             }
 
         }
+        
         private void LoadPersistence()
         {
             if (Static) return;
-            
-            if(typeof(IPersistentObj).IsAssignableFrom(CurrentType))
+
+            if (typeof(IPersistentObj).IsAssignableFrom(CurrentType))
             {
                 IsPersistent = true;
                 ClassType = ClassType.Model;
@@ -414,6 +358,7 @@ namespace Sikia.Model
 
 
         }
+        
         private void LoadPrimarykey()
         {
             if (Static) return;
@@ -424,7 +369,7 @@ namespace Sikia.Model
                 akeys = pk.Keys.Split(',');
                 if (akeys.Length == 0)
                 {
-                    throw new ModelException(String.Format(StrUtils.TT("Missing Primary key for {0}."), Name), Name);
+                    throw new ModelException(String.Format(L.T("Missing Primary key for {0}."), Name), Name);
                 }
                 UseUuidAsPk = ((akeys.Length == 0) && akeys[0] == ModelConst.UUID);
             }
@@ -437,9 +382,9 @@ namespace Sikia.Model
             foreach (string akey in akeys)
             {
                 string skey = akey.Trim();
-                PropinfoItem pi = PropertyByName(skey);
+                PropInfoItem pi = PropertyByName(skey);
                 if (pi == null)
-                    throw new ModelException(String.Format(StrUtils.TT("Invalid primary key declaration. Field not found '{0}.{1}'."), Name, skey), Name);
+                    throw new ModelException(String.Format(L.T("Invalid primary key declaration. Field not found '{0}.{1}'."), Name, skey), Name);
                 key.Add(new KeyItem(skey, pi.PropInfo));
             }
         }
@@ -456,8 +401,6 @@ namespace Sikia.Model
                 indexes.Add(ii);
             }
         }
-
-
         #endregion
 
         public PropertyInfo PropertyInfoByName(string propName)
@@ -467,7 +410,8 @@ namespace Sikia.Model
             return pi;
 
         }
-        public PropinfoItem PropertyByName(string propName)
+
+        public PropInfoItem PropertyByName(string propName)
         {
             try
             {
@@ -497,9 +441,9 @@ namespace Sikia.Model
         }
 
     }
-    public class PropertiesCollection : KeyedCollection<PropertyInfo, PropinfoItem>
+    public class PropertiesCollection : KeyedCollection<PropertyInfo, PropInfoItem>
     {
-        protected override PropertyInfo GetKeyForItem(PropinfoItem item)
+        protected override PropertyInfo GetKeyForItem(PropInfoItem item)
         {
             return item.PropInfo;
         }

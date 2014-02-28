@@ -18,6 +18,18 @@ namespace Sikia.Db.Model
         public List<string> PK { get { return pk; } }
 
         #region Columns
+
+        /////<summary>
+        ///// List of column
+        /////</summary>
+        public List<DbColumn> Columns
+        {
+            get
+            {
+                return columns.ToList<DbColumn>();
+            }
+        }
+
         /////<summary>
         ///// Table columns
         /////</summary>
@@ -27,12 +39,12 @@ namespace Sikia.Db.Model
         /// Column By Name
         ///</summary>
         public DbColumn ColumnByName(string columnName) { return columns[columnName.ToLower()]; }
-        
+
         ///<summary>
         /// Returns true if the table has columnName
         ///</summary>
         public bool ContainsColumn(string columnName) { return columns.Contains(columnName.ToLower()); }
-        
+
         ///<summary>
         /// Add an index
         ///</summary>

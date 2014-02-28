@@ -106,7 +106,7 @@ namespace Sikia.Model
             ModelLoader.LoadModel(cfg, this.LoadTypes);
             AfterLoad();
             TimeSpan interval = DateTime.Now - start;
-            Logger.Info(Logger.MODEL, StrUtils.TT("Model loading ... done"), interval.TotalMilliseconds);
+            Logger.Info(Logger.MODEL, L.T("Model loading ... done"), interval.TotalMilliseconds);
 
         }
         private void AfterLoad()

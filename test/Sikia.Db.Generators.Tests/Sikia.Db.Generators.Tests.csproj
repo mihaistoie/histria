@@ -3,11 +3,11 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{6C3852C5-D372-47EE-9FF0-B126308CDD72}</ProjectGuid>
+    <ProjectGuid>{8848AF6D-54C4-46E0-9C73-5874CBCAC37E}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Sikia.Core.Tests.Associations</RootNamespace>
-    <AssemblyName>Sikia.Core.Tests.Associations</AssemblyName>
+    <RootNamespace>Sikia.Db.Generators</RootNamespace>
+    <AssemblyName>Sikia.Db.Generators</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <ProjectTypeGuids>{3AC096D0-A1C2-E12C-1390-A8335801FDAB};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
@@ -51,29 +51,25 @@
     </Otherwise>
   </Choose>
   <ItemGroup>
-    <Compile Include="AssociationsByCode.cs" />
-    <Compile Include="CompositionsByUids.cs" />
-    <Compile Include="HumanBody.cs" />
-    <Compile Include="Nose.cs" />
-    <Compile Include="TestRelations.cs" />
+    <Compile Include="Generators.test.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\src\Sikia.Core\Sikia.Core.csproj">
-      <Project>{78ad75af-a56f-418f-bf38-56959c893dd3}</Project>
-      <Name>Sikia.Core</Name>
+    <ProjectReference Include="..\..\src\Sikia.Db.Generators\Sikia.Db.Generators.csproj">
+      <Project>{ed7fcc93-1e0e-4cab-a3f5-29d469b7dc72}</Project>
+      <Name>Sikia.Db.Generators</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\src\Sikia.Db.MsSql\Sikia.Db.MsSql.csproj">
+      <Project>{7c410682-0d61-4ac8-b4ca-8a7f53ee10dd}</Project>
+      <Name>Sikia.Db.MsSql</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\src\Sikia.Db\Sikia.Db.csproj">
+      <Project>{7989f2d8-575f-414a-9e6a-2923ae9df0fa}</Project>
+      <Name>Sikia.Db</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\src\Sikia.Json\Sikia.Json.csproj">
       <Project>{129e2aa1-5a70-42b0-9051-f84360105480}</Project>
       <Name>Sikia.Json</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\src\Sikia.Model\Sikia.Model.csproj">
-      <Project>{a546c0e7-972d-47cb-849a-617f16855977}</Project>
-      <Name>Sikia.Model</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\src\Sikia.Proxy.Castle\Sikia.Proxy.Castle.csproj">
-      <Project>{94e7363a-b458-4b2f-951d-de3fddd2d74d}</Project>
-      <Name>Sikia.Proxy.Castle</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\src\Sikia.Sys\Sikia.Sys.csproj">
       <Project>{7e07af0f-212d-42bf-b505-87018f6619bd}</Project>

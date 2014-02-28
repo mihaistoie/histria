@@ -47,6 +47,10 @@
     <Compile Include="Attributes\DbAttribute.cs" />
     <Compile Include="Attributes\DefaultAttribute.cs" />
     <Compile Include="Attributes\DisplayAttribute.cs" />
+    <Compile Include="Attributes\DtDateAttribute.cs" />
+    <Compile Include="Attributes\DtDateTimeAttribute.cs" />
+    <Compile Include="Attributes\DtNumber.cs" />
+    <Compile Include="Attributes\DtTimeAttribute.cs" />
     <Compile Include="Attributes\IndexAttribute.cs" />
     <Compile Include="Attributes\NoModelAttribute.cs" />
     <Compile Include="Attributes\PersistentAttribute.cs" />

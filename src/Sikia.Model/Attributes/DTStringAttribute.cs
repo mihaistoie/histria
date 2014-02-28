@@ -30,7 +30,7 @@ namespace Sikia.Model
             MaxLength = 0;
             MinLength = 0;
         }
-        internal override bool Validate(object value, out string errors)
+        internal override bool TryValidate(object value, out string errors)
         {
             errors = null;
             string val = (string)value;
@@ -38,16 +38,16 @@ namespace Sikia.Model
 
             if (MaxLength > 0 || MinLength > 0)
             {
-                int len = string.IsNullOrEmpty(val) ? 0 : val.Length;
+                int len = val.Length;
                 if (len > MaxLength && MaxLength > 0)
                 {
-                    errors = StrUtils.TT("Maximum {0} characters allowed.", MaxLength);
+                    errors = L.T("Maximum {0} characters allowed.", MaxLength);
                     return false;
                 }
                 if (len < MinLength && MinLength > 0)
                 {
                     
-                    errors =  StrUtils.TT("Minimum {0} characters required.", MinLength);
+                    errors =  L.T("Minimum {0} characters required.", MinLength);
                     return false;
                 }
 
@@ -60,7 +60,7 @@ namespace Sikia.Model
                 }
                 if (!regexPattern.IsMatch(val))
                 {
-                    errors = StrUtils.TT("Invalid format.");
+                    errors = L.T("Invalid format.");
                     return false;
                 }
 
