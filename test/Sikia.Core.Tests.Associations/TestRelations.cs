@@ -70,7 +70,7 @@ namespace Sikia.Core.Tests.Associations
             Assert.AreEqual(string.IsNullOrEmpty(infrance.ZipCode), true, "Code propagation");
 
 
-            // set city befor country 
+            // set city before country 
             Address a1 = ProxyFactory.Create<Address>();
             bool doFail = false;
             try
@@ -85,7 +85,7 @@ namespace Sikia.Core.Tests.Associations
             if (doFail)
                 Assert.AreEqual(false, true, "Set country before setting city");
             
-            // After country chnged  --> city is empty
+            // After country changed  --> city is empty
             Address a2 = ProxyFactory.Create<Address>();
             a2.Country.Value = c1;
             a2.City.Value = paris;
