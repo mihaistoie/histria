@@ -10,13 +10,14 @@ namespace Sikia.Model
     using Sikia.Sys;
 
     ///<summary>
-    /// 
+    /// Class structure  
     ///</summary>   
     public class ClassInfoItem
     {
         #region private members
         private readonly Dictionary<string, PropertyInfo> propsMap = new Dictionary<string, PropertyInfo>();
         private readonly PropertiesCollection properties = new PropertiesCollection();
+        private readonly PropertiesCollection roles = new PropertiesCollection();
         private List<RuleItem> rulesList = new List<RuleItem>();
         private readonly List<MethodItem> methodsList = new List<MethodItem>();
         private readonly Dictionary<string, MethodItem> methods = new Dictionary<string, MethodItem>();
@@ -80,8 +81,15 @@ namespace Sikia.Model
         
         ///<summary>
         /// List of properties
-        ///</summary>   		
+        ///</summary>   	
+        ///
         public PropertiesCollection Properties { get { return properties; } }
+
+        ///<summary>
+        /// List of roles (relationships)
+        ///</summary>   	
+        public PropertiesCollection Roles { get { return roles; } }
+        
         ///<summary>
         /// Primary key
         ///</summary>   		
@@ -301,6 +309,10 @@ namespace Sikia.Model
                 PropInfoItem item = new PropInfoItem(pi, this);
                 propsMap.Add(item.Name, item.PropInfo);
                 properties.Add(item);
+                if (item.IsRole)
+                {
+                    roles.Add(item); 
+                }
             }
         }
         

@@ -16,6 +16,7 @@ namespace Sikia.Model
         #region Private Members
         private readonly EnumCollection enums;
         private readonly ClassCollection classes;
+        private readonly ClassCollection views;
         #endregion
 
         #region Singleton thread-safe pattern
@@ -25,6 +26,7 @@ namespace Sikia.Model
         {
             enums = new EnumCollection();
             classes = new ClassCollection();
+            views = new ClassCollection();
         }
         //used only for tests
         public static ModelManager LoadModel(JsonObject config)
@@ -127,7 +129,6 @@ namespace Sikia.Model
         }
         #endregion
         
-
         #region Properties
         ///<summary>
         /// List of enums used by Application 
@@ -138,6 +139,13 @@ namespace Sikia.Model
         /// List of Model Classes used by Application 
         ///</summary>
         public ClassCollection Classes { get { return classes; } }
+
+        ///<summary>
+        /// List of View Model used by Application 
+        ///</summary>
+        public ClassCollection Views { get { return views; } }
+
+
         ///<summary>
         /// Class by type
         ///</summary>

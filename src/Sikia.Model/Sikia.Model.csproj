@@ -70,6 +70,7 @@
     <Compile Include="Model\PropertiesCollection.cs" />
     <Compile Include="Model\RoleInfoItem.cs" />
     <Compile Include="Model\RulesCollection.cs" />
+    <Compile Include="Model\ViewInfoItem.cs" />
     <Compile Include="Rule.cs" />
     <Compile Include="Model\ClassInfoItem.cs" />
     <Compile Include="Model\EnumInfoItem.cs" />
