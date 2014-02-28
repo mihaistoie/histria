@@ -52,6 +52,7 @@
   </Choose>
   <ItemGroup>
     <Compile Include="AssociationsByCode.cs" />
+    <Compile Include="CompositionsByUids.cs" />
     <Compile Include="HumanBody.cs" />
     <Compile Include="Nose.cs" />
     <Compile Include="TestRelations.cs" />

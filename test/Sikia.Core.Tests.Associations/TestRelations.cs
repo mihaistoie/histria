@@ -101,5 +101,28 @@ namespace Sikia.Core.Tests.Associations
 
         }
 
+        ///<summary>
+        /// Test  Compositions by uuids 
+        /// The model is defined in CompositionsByUids.cs
+        ///</summary> 
+        [TestMethod]
+        public void CompositionsByUuis()
+        {
+
+            // create two countries
+            Car car = ProxyFactory.Create<Car>();
+            car.Name = "Renault";
+            SteeringWheel wheel = ProxyFactory.Create<SteeringWheel>();
+            wheel.SerialNumber = "123456789";
+            car.SteeringWheel.Value = wheel;
+            // TODO
+            Assert.AreEqual(wheel.Car.Value, car, "test inv role");
+            // TODO
+            // Assert.AreEqual(wheel.Car.RefUid, car.uid, "test inv role"); ????
+            //
+            //
+
+        }
+
     }
 }
