@@ -113,18 +113,15 @@ namespace Sikia.Core
         {
             MethodInfo method = typeof(ProxyFactory).GetMethod("Create");
 
-            for (int index = 0; index < ClassInfo.Properties.Count; index++)
+            for (int index = 0; index < ClassInfo.Roles.Count; index++)
             {
-                PropInfoItem pp = ClassInfo.Properties[index];
-                if (pp.IsRole)
-                {
-                    Type tt = pp.PropInfo.PropertyType;
-                    MethodInfo genericMethod = method.MakeGenericMethod(tt);
-                    Association roleInstance = (Association)genericMethod.Invoke(null, null);
-                    roleInstance.PropInfo = pp;
-                    roleInstance.Instance = this;
-                    pp.PropInfo.SetValue(this, roleInstance, null);
-                }
+                PropInfoItem pp = ClassInfo.Roles[index];
+                Type tt = pp.PropInfo.PropertyType;
+                MethodInfo genericMethod = method.MakeGenericMethod(tt);
+                Association roleInstance = (Association)genericMethod.Invoke(null, null);
+                roleInstance.PropInfo = pp;
+                roleInstance.Instance = this;
+                pp.PropInfo.SetValue(this, roleInstance, null);
             }
         }
         #endregion
