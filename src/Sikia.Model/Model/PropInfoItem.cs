@@ -361,7 +361,7 @@ namespace Sikia.Model
                     if (!string.IsNullOrEmpty(role.ForeignKey))
                     {
                         string[] fks = role.ForeignKey.Split(',');
-                        role.PkFields = new string[fks.Length];
+                        role.PkFields = new List<PKeyInfo>(fks.Length);
                         role.FkFields = new List<ForeignKeyInfo>(fks.Length);
                         role.UsePk = role.ForeignKey.IndexOf("=") < 0;
                         if (role.UsePk && (fks.Length != remoteClass.Key.Items.Count))
@@ -374,7 +374,8 @@ namespace Sikia.Model
                             if (role.UsePk)
                             {
                                 role.FkFields.Add(new ForeignKeyInfo() { Field = fk.Trim() });
-                                role.PkFields[index] = remoteClass.Key.Items[index].Key;
+                                role.PkFields.Add(new PKeyInfo() { Field = remoteClass.Key.Items[index].Key });
+
                             }
                             else
                             {
@@ -394,7 +395,7 @@ namespace Sikia.Model
                                     throw new ModelException(String.Format(L.T("Invalid role definition {0}.{1}. Invalid foreing key '{2}'."), ci.Name, PropInfo.Name, role.ForeignKey), ci.Name);
                                 }
                                 role.FkFields.Add(new ForeignKeyInfo() { Field = fk.Substring(0, pos).Trim(), ReadOnly = readOnly });
-                                role.PkFields[index] = fk.Substring(pos + (readOnly ? 2 : 1)).Trim();
+                                role.PkFields.Add(new PKeyInfo() { Field = fk.Substring(pos + (readOnly ? 2 : 1)).Trim() });
                             }
 
                             index++;
@@ -405,31 +406,32 @@ namespace Sikia.Model
                     {
                         //Using Uuid
                         role.UsePk = remoteClass.UseUuidAsPk;
-                        role.PkFields = new string[] { ModelConst.UUID };
+                        role.PkFields = new List<PKeyInfo>() { new PKeyInfo() { Field =  ModelConst.UUID} }; 
                         role.FkFields = new List<ForeignKeyInfo>() { new ForeignKeyInfo() { Field = ModelConst.RefProperty(Name) } };
                         role.FkFieldsExist = false;
 
                     }
 
-                    if (!role.UsePk && role.PkFields.Length == remoteClass.Key.Items.Count)
+                    if (!role.UsePk && role.PkFields.Count == remoteClass.Key.Items.Count)
                     {
                         role.UsePk = true;
-                        for (int i = 0; i < role.PkFields.Length; i++)
+                        for (int i = 0; i < role.PkFields.Count; i++)
                         {
-                            if (string.Compare(role.PkFields[i], remoteClass.Key.Items[i].Key, true) != 0)
+                            if (string.Compare(role.PkFields[i].Field, remoteClass.Key.Items[i].Key, true) != 0)
                             {
                                 role.UsePk = false;
                             }
                         }
                     }
                     //Check if fields exists  
-                    for (int i = 0; i < role.PkFields.Length; i++)
+                    for (int i = 0, len = role.PkFields.Count; i < len; i++)
                     {
-                        PropInfoItem pp = remoteClass.PropertyByName(role.PkFields[i]);
+                        PropInfoItem pp = remoteClass.PropertyByName(role.PkFields[i].Field);
                         if (pp == null)
                         {
                             throw new ModelException(String.Format(L.T("Invalid role definition {0}.{1}. Field not found '{2}.{3}'."), ci.Name, PropInfo.Name, remoteClass.Name, role.PkFields[i]), ci.Name);
                         }
+                        role.PkFields[i].Prop = pp;
 
                         if (role.FkFieldsExist)
                         {

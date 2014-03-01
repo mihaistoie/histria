@@ -29,9 +29,9 @@ namespace Sikia.Core
 
         private bool canExecuteRules()
         {
-            if ((state & ObjectState.Creating) == ObjectState.Disposing)
+            if ((state & ObjectState.Creating) == ObjectState.Creating)
                 return false;
-            if ((state & ObjectState.Loading) == ObjectState.Disposing)
+            if ((state & ObjectState.Loading) == ObjectState.Loading)
                 return false;
             if ((state & ObjectState.Disposing) == ObjectState.Disposing)
                 return false;
@@ -42,9 +42,9 @@ namespace Sikia.Core
 
         private bool canNotifyChanges()
         {
-            if ((state & ObjectState.Creating) == ObjectState.Disposing)
+            if ((state & ObjectState.Creating) == ObjectState.Creating)
                 return false;
-            if ((state & ObjectState.Loading) == ObjectState.Disposing)
+            if ((state & ObjectState.Loading) == ObjectState.Loading)
                 return false;
             if ((state & ObjectState.Disposing) == ObjectState.Disposing)
                 return false;
@@ -56,15 +56,19 @@ namespace Sikia.Core
         #endregion
 
         #region Properties
-        private Guid uuid = default(Guid);
+        private Guid uuid = Guid.Empty;
         public Guid Uuid
         {
-            get { return uuid; }
+            get
+            {
+                AllocId();
+                return uuid;
+            }
             set { uuid = value; }
         }
         public void AllocId()
         {
-            if (uuid == default(Guid))
+            if (uuid == Guid.Empty)
                 uuid = Guid.NewGuid();
         }
         #endregion
@@ -101,7 +105,7 @@ namespace Sikia.Core
         ///<summary>
         /// IInterceptedObject.AOPAfterCreate
         ///</summary>
-        public void AOPAfterCreate()
+        void IInterceptedObject.AOPAfterCreate()
         {
             state = ObjectState.Creating;
             AOPInitializeAssociations();
@@ -111,20 +115,28 @@ namespace Sikia.Core
 
         private void AOPInitializeAssociations()
         {
-            MethodInfo method = typeof(ProxyFactory).GetMethod("Create");
+            
+            bool useFactory = false;
+            MethodInfo method = useFactory ? typeof(ProxyFactory).GetMethod("Create") : null;
 
-            for (int index = 0; index < ClassInfo.Properties.Count; index++)
+            for (int index = 0; index < ClassInfo.Roles.Count; index++)
             {
-                PropInfoItem pp = ClassInfo.Properties[index];
-                if (pp.IsRole)
+                PropInfoItem pp = ClassInfo.Roles[index];
+                Association roleInstance = null;
+                if (useFactory)
                 {
-                    Type tt = pp.PropInfo.PropertyType;
+                    Type tt = Association.AssociationType(pp, pp.PropInfo.PropertyType);
                     MethodInfo genericMethod = method.MakeGenericMethod(tt);
-                    Association roleInstance = (Association)genericMethod.Invoke(null, null);
-                    roleInstance.PropInfo = pp;
-                    roleInstance.Instance = this;
-                    pp.PropInfo.SetValue(this, roleInstance, null);
+                    roleInstance = (Association)genericMethod.Invoke(null, null);
                 }
+                else
+                {
+                    roleInstance = Association.AssociationFactory(pp, pp.PropInfo.PropertyType);
+                }
+                
+                roleInstance.PropInfo = pp;
+                roleInstance.Instance = this;
+                pp.PropInfo.SetValue(this, roleInstance, null);
             }
         }
         #endregion
@@ -134,7 +146,7 @@ namespace Sikia.Core
         /// IInterceptedObject.AOPBeforeSetProperty
         ///</summary>
 
-        public bool AOPBeforeSetProperty(string propertyName, ref object value, ref object oldValue)
+        bool IInterceptedObject.AOPBeforeSetProperty(string propertyName, ref object value, ref object oldValue)
         {
             if (!canExecuteRules()) return true;
             PropInfoItem pi = ClassInfo.PropertyByName(propertyName);
@@ -143,12 +155,12 @@ namespace Sikia.Core
             if (oldValue == value) return false;
             CheckInTransaction();
             return true;
-
         }
+
         ///<summary>
         /// IInterceptedObject.AOPAfterSetProperty
         ///</summary>
-        public void AOPAfterSetProperty(string propertyName, object newValue, object oldValue)
+        void IInterceptedObject.AOPAfterSetProperty(string propertyName, object newValue, object oldValue)
         {
             if (!canExecuteRules()) return;
             PropInfoItem pi = ClassInfo.PropertyByName(propertyName);
@@ -156,27 +168,26 @@ namespace Sikia.Core
             pi.ExecuteRules(Rule.Validation, this);
             // Propagate
             pi.ExecuteRules(Rule.Propagation, this);
-
         }
-
+   
         ///<summary>
         /// Before modifying a role (add/remove/update)
         ///</summary>
-        public bool AOPBeforeChangeChild(string propertyName, IInterceptedObject child, RoleOperation operation)
+        bool IInterceptedObject.AOPBeforeChangeChild(string propertyName, IInterceptedObject child, RoleOperation operation)
         {
             return true;
         }
         ///<summary>
         /// After modifying a role (add/remove/update)
         ///</summary>
-        public void AOPAfterChangeChild(string propertyName, IInterceptedObject child, RoleOperation operation)
+        void IInterceptedObject.AOPAfterChangeChild(string propertyName, IInterceptedObject child, RoleOperation operation)
         {
         }
 
         ///<summary>
         /// IInterceptedObject.AOPDeleted
         ///</summary>
-        public void AOPDeleted()
+        void IInterceptedObject.AOPDeleted()
         {
             state = ObjectState.Deleting;
         }

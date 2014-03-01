@@ -20,15 +20,62 @@ namespace Sikia.Core.Tests.Associations
         }
 
         [TestMethod]
-        public void CompositionOneToOneByCode()
+        public void OneToOneCompositionByCodes()
         {
+            //test body.Nose.Value = nose;
             HumanBody body = ProxyFactory.Create<HumanBody>();
             body.Id = "body";
             Nose nose = ProxyFactory.Create<Nose>();
             nose.Id = "nose";
             body.Nose.Value = nose;
+           
             Assert.AreEqual(nose.BodyId, body.Id, "test update FKs");
+            Assert.AreEqual(body.Nose.Value, nose, "test direct role");
             Assert.AreEqual(nose.Body.Value, body, "test inv role");
+            Assert.AreEqual(false, Guid.Empty == nose.Uuid, "has uuid");
+            Assert.AreEqual(nose.Body.RefUid, body.Uuid, "uid");
+            Assert.AreEqual(body.Nose.RefUid, nose.Uuid, "uid");
+            Assert.AreEqual(nose.Id, body.CurrentNoseId, "Rule prppagation");
+            Assert.AreEqual(body.Id, nose.CurrentBodyId, "Rule prppagation");
+
+
+            body.Nose.Value = null;
+            //nose is marked as deleted
+            Assert.AreEqual(nose.Body.RefUid, body.Uuid, "uid");
+            Assert.AreEqual(nose.BodyId, body.Id, "test update FKs");
+            Assert.AreEqual(body.Nose.RefUid, Guid.Empty, "uid");
+            Assert.AreEqual(body.Nose.Value, null, "test direct role");
+            Assert.AreEqual(nose.Body.Value, null, "test inv role");
+            Assert.AreEqual(true, string.IsNullOrEmpty(body.CurrentNoseId), "Rule prppagation");
+            //false !!!! nose is marked as deleted 
+            Assert.AreEqual(false, string.IsNullOrEmpty(nose.CurrentBodyId), "Rule prppagation");
+         
+            //test nose.Body.Value = body;
+            HumanBody body1 = ProxyFactory.Create<HumanBody>();
+            body1.Id = "body1";
+            Nose nose1 = ProxyFactory.Create<Nose>();
+            nose1.Id = "nose1";
+            nose1.Body.Value = body1;
+            Assert.AreEqual(nose1.BodyId, body1.Id, "test update FKs");
+            Assert.AreEqual(body1.Nose.Value, nose1, "test direct role");
+            Assert.AreEqual(nose1.Body.Value, body1, "test inv role");
+            Assert.AreEqual(false, Guid.Empty == nose1.Uuid, "has uuid");
+            Assert.AreEqual(nose1.Body.RefUid, body1.Uuid, "uid");
+            Assert.AreEqual(body1.Nose.RefUid, nose1.Uuid, "uid");
+            Assert.AreEqual(nose1.Id, body1.CurrentNoseId, "Rule prppagation");
+            Assert.AreEqual(body1.Id, nose1.CurrentBodyId, "Rule prppagation");
+
+            
+            nose1.Body.Value = null;
+            Assert.AreEqual(nose1.Body.RefUid, body1.Uuid, "uid");
+            Assert.AreEqual(nose1.BodyId, body1.Id, "test update FKs");
+            Assert.AreEqual(body1.Nose.RefUid, Guid.Empty, "uid");
+            Assert.AreEqual(body1.Nose.Value, null, "test direct role");
+            Assert.AreEqual(nose1.Body.Value, null, "test inv role");
+            Assert.AreEqual(true, string.IsNullOrEmpty(body1.CurrentNoseId), "Rule prppagation");
+            //false !!!! nose is marked as deleted 
+            Assert.AreEqual(false, string.IsNullOrEmpty(nose1.CurrentBodyId), "Rule prppagation");
+ 
         }
 
         ///<summary>
@@ -51,6 +98,7 @@ namespace Sikia.Core.Tests.Associations
             paris.CityCode = "Paris";
             paris.ZipCode = "75000";
             Assert.AreEqual(paris.CountryCode, c1.Code, "Code propagation");
+            Assert.AreEqual(c1.Uuid, paris.Country.RefUid, "uid");
 
             City boston = ProxyFactory.Create<City>();
             boston.CityCode = "Boston";
@@ -60,14 +108,21 @@ namespace Sikia.Core.Tests.Associations
 
             // create an address
             Address infrance = ProxyFactory.Create<Address>();
+            Assert.AreEqual(string.IsNullOrEmpty(infrance.CountryCity), true, "Code propagation");
             infrance.Country.Value = c1;
+            Assert.AreEqual(infrance.CountryCity, c1.Code + "-", "Refchange propagation");
             infrance.City.Value = paris;
+            Assert.AreEqual(infrance.CountryCity, c1.Code + "-" + paris.CityCode, "Refchange propagation");
+
             Assert.AreEqual(infrance.CountryCode, c1.Code, "Code propagation");
             Assert.AreEqual(infrance.CityCode, paris.CityCode, "Code propagation");
             Assert.AreEqual(infrance.ZipCode, paris.ZipCode, "Code propagation");
+            Assert.AreEqual(paris.Uuid, infrance.City.RefUid, "uid");
+
             infrance.City.Value = null;
-            Assert.AreEqual(string.IsNullOrEmpty(infrance.CityCode), true, "Code propagation");
-            Assert.AreEqual(string.IsNullOrEmpty(infrance.ZipCode), true, "Code propagation");
+            Assert.AreEqual(true, string.IsNullOrEmpty(infrance.CityCode), "Code propagation");
+            Assert.AreEqual(true, string.IsNullOrEmpty(infrance.ZipCode), "Code propagation");
+            Assert.AreEqual(Guid.Empty, infrance.City.RefUid, "uid");
 
 
             // set city before country 
@@ -101,12 +156,42 @@ namespace Sikia.Core.Tests.Associations
 
         }
 
+
+
+        ///<summary>
+        /// Test associations by uid's 
+        /// The model is defined in AssociationsByUids.cs
+        ///</summary> 
+        [TestMethod]
+        public void AssociationsByUids()
+        {
+
+            // create two countries
+            Account a1 = ProxyFactory.Create<Account>();
+            a1.Code = "101";
+            Account a2 = ProxyFactory.Create<Account>();
+            a1.Code = "102";
+            AccountingEntry e1 = ProxyFactory.Create<AccountingEntry>();
+            e1.Account.Value = a1;
+            Assert.AreEqual(a1.Uuid, e1.Account.RefUid, "uid");
+            Assert.AreEqual(a1.Code, e1.AccountCode, "Rule prop");
+            e1.Account.Value = a2;
+            Assert.AreEqual(a2.Uuid, e1.Account.RefUid, "uid");
+            Assert.AreEqual(a2.Code, e1.AccountCode, "Rule prop");
+            
+            e1.Account.Value = null;
+            Assert.AreEqual(Guid.Empty, e1.Account.RefUid, "uid"); 
+            Assert.AreEqual(true, string.IsNullOrEmpty(e1.AccountCode), "Rule prop");
+
+        }
+
+
         ///<summary>
         /// Test  Compositions by uuids 
         /// The model is defined in CompositionsByUids.cs
         ///</summary> 
         [TestMethod]
-        public void CompositionsByUuis()
+        public void OneToOneCompositionByUids()
         {
 
             // create two countries
@@ -115,13 +200,11 @@ namespace Sikia.Core.Tests.Associations
             SteeringWheel wheel = ProxyFactory.Create<SteeringWheel>();
             wheel.SerialNumber = "123456789";
             car.SteeringWheel.Value = wheel;
-            // TODO
+            
             Assert.AreEqual(wheel.Car.Value, car, "test inv role");
-            // TODO
-            // Assert.AreEqual(wheel.Car.RefUid, car.uid, "test inv role"); ????
-            //
-            //
-
+            Assert.AreNotEqual(wheel.Car.RefUid, Guid.Empty, "test inv role uid");
+            Assert.AreEqual(wheel.Car.RefUid, car.Uuid, "test inv role uid");    
+   
         }
 
     }

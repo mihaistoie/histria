@@ -31,15 +31,6 @@ namespace Sikia.Model
 
         #region Construction
 
-        private HasMany()
-        {
-
-        }
-
-        public HasMany(IInterceptedObject parent)
-        {
-            this.parent = parent;
-        }
 
         #endregion
 
@@ -79,6 +70,7 @@ namespace Sikia.Model
                 if (Instance.AOPBeforeChangeChild(PropInfo.Name, child, RoleOperation.Remove))
                 {
                     values.RemoveAt(index);
+                    //UpdateForeignKeysAndState(PropInfo.Role.InvRole, child, null, true);
                     Instance.AOPAfterChangeChild(PropInfo.Name, child, RoleOperation.Remove);
                 }
             }
@@ -102,7 +94,7 @@ namespace Sikia.Model
                 if (Instance.AOPBeforeChangeChild(PropInfo.Name, child, RoleOperation.Add))
                 {
                     values.Add(item);
-                    //Update for 
+                    //UpdateForeignKeysAndState(PropInfo.Role.InvRole, child, Instance, true);
                     Instance.AOPAfterChangeChild(PropInfo.Name, child, RoleOperation.Add);
                 }
             }
