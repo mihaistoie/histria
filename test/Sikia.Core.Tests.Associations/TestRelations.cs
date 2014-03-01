@@ -216,7 +216,7 @@ namespace Sikia.Core.Tests.Associations
             Assert.AreEqual(wheelf, ford.SteeringWheel.Value, "test inv role");
             Assert.AreNotEqual(Guid.Empty, wheelf.Car.RefUid, "test inv role uid");
             Assert.AreEqual(ford.Uuid, wheelf.Car.RefUid, "test inv role uid");
-            Assert.AreEqual(ford.SteeringWheel.RefUid, wheelf.Uuid, "test inv role uid");
+            Assert.AreEqual(wheelf.Uuid, ford.SteeringWheel.RefUid, "test inv role uid");
    
    
         }
@@ -231,11 +231,23 @@ namespace Sikia.Core.Tests.Associations
 
         ///<summary>
         /// Test  Compositions by uuids 
-        /// The model is defined in CompositionsByUids.cs
+        /// The model is defined in OneToManyCompositions.cs
         ///</summary> 
         [TestMethod]
         public void OneToManyCompositionByCodes()
         {
+            HBody body = ProxyFactory.Create<HBody>();
+            body.Id = "kirilov";
+            Hand leftHand = ProxyFactory.Create<Hand>();
+            leftHand.Id = "left";
+            body.Hands.Add(leftHand);
+            Hand rightHand = ProxyFactory.Create<Hand>();
+            rightHand.Id = "right";
+            rightHand.Body.Value = body;
+            Assert.AreEqual(body.Hands.Count, 2, "Kirilov has 2 hands");
+
+       
+
         }
 
     }
