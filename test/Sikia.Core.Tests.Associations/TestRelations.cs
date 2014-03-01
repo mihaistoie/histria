@@ -201,10 +201,41 @@ namespace Sikia.Core.Tests.Associations
             wheel.SerialNumber = "123456789";
             car.SteeringWheel.Value = wheel;
             
-            Assert.AreEqual(wheel.Car.Value, car, "test inv role");
+            Assert.AreEqual(car, wheel.Car.Value , "test inv role");
             Assert.AreNotEqual(wheel.Car.RefUid, Guid.Empty, "test inv role uid");
-            Assert.AreEqual(wheel.Car.RefUid, car.Uuid, "test inv role uid");    
+            Assert.AreEqual(wheel.Car.RefUid, car.Uuid, "test inv role uid");
+            Assert.AreEqual(car.SteeringWheel.RefUid, wheel.Uuid, "test inv role uid");
+
+            // create two countries
+            Car ford = ProxyFactory.Create<Car>();
+            ford.Name = "Ford";
+            SteeringWheel wheelf = ProxyFactory.Create<SteeringWheel>();
+            wheelf.SerialNumber = "123456789";
+            wheelf.Car.Value = ford;
+
+            Assert.AreEqual(wheelf, ford.SteeringWheel.Value, "test inv role");
+            Assert.AreNotEqual(Guid.Empty, wheelf.Car.RefUid, "test inv role uid");
+            Assert.AreEqual(ford.Uuid, wheelf.Car.RefUid, "test inv role uid");
+            Assert.AreEqual(ford.SteeringWheel.RefUid, wheelf.Uuid, "test inv role uid");
    
+   
+        }
+        ///<summary>
+        /// Test  Compositions by uuids 
+        /// The model is defined in CompositionsByUids.cs
+        ///</summary> 
+        [TestMethod]
+        public void OneToManyCompositionByUids()
+        {
+        }
+
+        ///<summary>
+        /// Test  Compositions by uuids 
+        /// The model is defined in CompositionsByUids.cs
+        ///</summary> 
+        [TestMethod]
+        public void OneToManyCompositionByCodes()
+        {
         }
 
     }
