@@ -33,7 +33,7 @@ namespace Sikia.Model
             if (ov != null)
             {
                 IInterceptedObject old = (ov as IInterceptedObject);
-                rc = PropInfo.Role.InvRole.RoleProp.PropInfo.GetValue(ov, null) as IRoleChild;
+                rc = inv.PropInfo.GetValue(ov, null) as IRoleChild;
                 if (!rc.SetParent(null, false))
                 {
                     return;
@@ -48,7 +48,7 @@ namespace Sikia.Model
             //Proceed
             if (nv != null)
             {
-                rc = PropInfo.Role.InvRole.RoleProp.PropInfo.GetValue(nv, null) as IRoleChild;
+                rc = inv.PropInfo.GetValue(nv, null) as IRoleChild;
                 if (!rc.SetParent(Instance, true))
                 {
                     return;

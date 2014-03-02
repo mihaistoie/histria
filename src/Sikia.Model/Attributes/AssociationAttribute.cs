@@ -7,7 +7,8 @@
         public Relation Type;
         public int Min = 0;
         public int Max = -1;
-        public string ForeignKey = "";  
+        public string ForeignKey;
+        public RoleOperation Operation = RoleOperation.None;  
         public AssociationAttribute(Relation type)
         {
         }

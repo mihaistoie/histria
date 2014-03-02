@@ -25,7 +25,7 @@ namespace Sikia.Model
                 return declaredType;
             }
             Type hasMany = typeof(HasMany<>);
-            cc = hasOne.MakeGenericType(generic);
+            cc = hasMany.MakeGenericType(generic);
             if (declaredType == cc)
             {
                 if (propInfo.Role.IsParent)
@@ -49,8 +49,20 @@ namespace Sikia.Model
                 {
                     return (Association)Activator.CreateInstance(typeof(HasOneComposition<>).MakeGenericType(generic));
                 }
+                return (Association)Activator.CreateInstance(declaredType);
             }
+            
+            Type hasMany = typeof(HasMany<>);
+            cc = hasMany.MakeGenericType(generic);
+            if (declaredType == cc)
+            {
+                if (propInfo.Role.IsParent)
+                {
+                   return (Association)Activator.CreateInstance(typeof(HasManyComposition<>).MakeGenericType(generic));
+                }
+             }
             return (Association)Activator.CreateInstance(declaredType);
+
         }
 
         ///<summary>

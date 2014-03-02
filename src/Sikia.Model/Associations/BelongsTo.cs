@@ -59,6 +59,10 @@ namespace Sikia.Model
                 {
                     (roleInvValue as IRoleRef).SetValue(Instance);
                 }
+                else
+                {
+
+                }
 
             }
 

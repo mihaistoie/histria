@@ -241,6 +241,13 @@ namespace Sikia.Core.Tests.Associations
             Hand leftHand = ProxyFactory.Create<Hand>();
             leftHand.Id = "left";
             body.Hands.Add(leftHand);
+            
+            Assert.AreEqual(body.Hands.Count, 1, "Kirilov has 2 hands");
+            Assert.AreEqual(leftHand.BodyId, body.Id, "test update FKs");
+            Assert.AreEqual(leftHand.Body.Value, body, "test direct role");
+            Assert.AreEqual(leftHand.Body.RefUid, body.Uuid, "uid");
+
+
             Hand rightHand = ProxyFactory.Create<Hand>();
             rightHand.Id = "right";
             rightHand.Body.Value = body;
