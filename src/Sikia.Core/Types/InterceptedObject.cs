@@ -37,6 +37,9 @@ namespace Sikia.Core
                 return false;
             if ((state & ObjectState.Frozen) == ObjectState.Frozen)
                 return false;
+            if ((state & ObjectState.Deleting) == ObjectState.Deleting)
+                return false;
+            
             return true;
         }
 
@@ -49,6 +52,8 @@ namespace Sikia.Core
             if ((state & ObjectState.Disposing) == ObjectState.Disposing)
                 return false;
             if ((state & ObjectState.Frozen) == ObjectState.Frozen)
+                return false;
+            if ((state & ObjectState.Deleting) == ObjectState.Deleting)
                 return false;
 
             return true;
@@ -165,9 +170,9 @@ namespace Sikia.Core
             if (!canExecuteRules()) return;
             PropInfoItem pi = ClassInfo.PropertyByName(propertyName);
             // Validate
-            pi.ExecuteRules(Rule.Validation, this);
+            pi.ExecuteRules(Rule.Validation, this, RoleOperation.None);
             // Propagate
-            pi.ExecuteRules(Rule.Propagation, this);
+            pi.ExecuteRules(Rule.Propagation, this, RoleOperation.None);
         }
    
         ///<summary>
@@ -182,6 +187,12 @@ namespace Sikia.Core
         ///</summary>
         void IInterceptedObject.AOPAfterChangeChild(string propertyName, IInterceptedObject child, RoleOperation operation)
         {
+            if (!canExecuteRules()) return;
+            PropInfoItem pi = ClassInfo.PropertyByName(propertyName);
+            // Validate
+            pi.ExecuteRules(Rule.Validation, this, operation);
+            // Propagate
+            pi.ExecuteRules(Rule.Propagation, this, operation);
         }
 
         ///<summary>

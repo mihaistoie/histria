@@ -476,25 +476,22 @@ namespace Sikia.Model
         internal void AddRule(RuleItem ri)
         {
             RuleList rl = null;
-            if (!rules.ContainsKey(ri.Kind))
+            if (!rules.TryGetValue(ri.Kind, out rl))
             {
                 rl = new RuleList();
-                rules[ri.Kind] = rl;
-            }
-            else
-            {
-                rl = rules[ri.Kind];
+                rules.Add(ri.Kind, rl);
             }
             rl.Add(ri);
         }
         ///<summary>
         /// Execute rules by type
         ///</summary>   
-        public void ExecuteRules(Rule kind, Object target)
+        public void ExecuteRules(Rule kind, Object target, RoleOperation operation)
         {
-            if (rules.ContainsKey(kind))
+            RuleList rl = null;
+            if (rules.TryGetValue(kind, out rl))
             {
-                rules[kind].Execute(target);
+                rl.Execute(target, operation);
             }
 
         }

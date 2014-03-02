@@ -22,7 +22,7 @@ namespace Sikia.Model
                return;
            }
            InternalAddValue(item, index);
-           Instance.AOPBeforeChangeChild(PropInfo.Name, child, RoleOperation.Add);
+           Instance.AOPAfterChangeChild(PropInfo.Name, child, RoleOperation.Add);
         }
 
         protected override void Remove(T item, int index)
@@ -41,9 +41,10 @@ namespace Sikia.Model
             {
                 return;
             }
-            InternalRemoveValue(item, index);
+            item.AOPDeleted();
 
-            Instance.AOPBeforeChangeChild(PropInfo.Name, child, RoleOperation.Remove);
+            InternalRemoveValue(item, index);
+            Instance.AOPAfterChangeChild(PropInfo.Name, child, RoleOperation.Remove);
 
         }
     }

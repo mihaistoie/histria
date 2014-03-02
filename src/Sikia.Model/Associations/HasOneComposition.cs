@@ -44,7 +44,7 @@ namespace Sikia.Model
             if (!Instance.AOPBeforeSetProperty(PropInfo.Name, ref nv, ref ov))
             {
                 return;
-            }
+            } 
             //Proceed
             if (nv != null)
             {

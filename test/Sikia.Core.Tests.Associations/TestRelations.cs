@@ -41,6 +41,7 @@ namespace Sikia.Core.Tests.Associations
 
             body.Nose.Value = null;
             //nose is marked as deleted
+            Assert.AreEqual(ObjectState.Deleting, nose.State & ObjectState.Deleting, "uid");
             Assert.AreEqual(nose.Body.RefUid, body.Uuid, "uid");
             Assert.AreEqual(nose.BodyId, body.Id, "test update FKs");
             Assert.AreEqual(body.Nose.RefUid, Guid.Empty, "uid");
@@ -67,6 +68,7 @@ namespace Sikia.Core.Tests.Associations
 
             
             nose1.Body.Value = null;
+            Assert.AreEqual(ObjectState.Deleting, nose1.State & ObjectState.Deleting, "uid");
             Assert.AreEqual(nose1.Body.RefUid, body1.Uuid, "uid");
             Assert.AreEqual(nose1.BodyId, body1.Id, "test update FKs");
             Assert.AreEqual(body1.Nose.RefUid, Guid.Empty, "uid");
@@ -220,14 +222,7 @@ namespace Sikia.Core.Tests.Associations
    
    
         }
-        ///<summary>
-        /// Test  Compositions by uuids 
-        /// The model is defined in CompositionsByUids.cs
-        ///</summary> 
-        [TestMethod]
-        public void OneToManyCompositionByUids()
-        {
-        }
+        
 
         ///<summary>
         /// Test  Compositions by uuids 
@@ -238,28 +233,69 @@ namespace Sikia.Core.Tests.Associations
         {
             HBody body = ProxyFactory.Create<HBody>();
             body.Id = "kirilov";
+            Assert.AreEqual(0, body.HandsCount, "Rule After create");
+
             Hand leftHand = ProxyFactory.Create<Hand>();
             leftHand.Id = "left";
+            Assert.AreEqual(null, leftHand.BodyName, "Initial value");
             body.Hands.Add(leftHand);
-            
-            Assert.AreEqual(body.Hands.Count, 1, "Kirilov has 2 hands");
-            Assert.AreEqual(leftHand.BodyId, body.Id, "test update FKs");
-            Assert.AreEqual(leftHand.Body.Value, body, "test direct role");
-            Assert.AreEqual(leftHand.Body.RefUid, body.Uuid, "uid");
+
+            Assert.AreEqual(1, body.Hands.Count, "Kirilov has 2 hands");
+            Assert.AreEqual(body.Id, leftHand.BodyId, "test update FKs");
+            Assert.AreEqual(body, leftHand.Body.Value, "test direct role");
+            Assert.AreEqual(body.Uuid, leftHand.Body.RefUid, "uid");
+            Assert.AreEqual(1, body.HandsCount, "Rule Add/rmv");
+            Assert.AreEqual(body.Id, leftHand.BodyName, "Rule Body Change");
+
 
 
             Hand rightHand = ProxyFactory.Create<Hand>();
             rightHand.Id = "right";
+            Assert.AreEqual(null, rightHand.BodyName, "Initial value");
             rightHand.Body.Value = body;
-            Assert.AreEqual(body.Hands.Count, 2, "Kirilov has 2 hands");
-            Assert.AreEqual(rightHand.Body.Value, body, "test direct role");
+           
+
+            Assert.AreEqual(true, body.Hands.Has(rightHand), "Kirilov has right hand ");
+            Assert.AreEqual(2, body.Hands.Count,  "Kirilov has 2 hands");
+            Assert.AreEqual(body.Id, rightHand.BodyId, "test update FKs");
+            Assert.AreEqual(body, rightHand.Body.Value, "test direct role");
             Assert.AreEqual(rightHand.Body.RefUid, body.Uuid, "uid");
+            Assert.AreEqual(2, body.HandsCount, "Rule Add/rmv");
+            Assert.AreEqual(body.Id, rightHand.BodyName, "Rule Body Change");
+            
+            //cut rihght hand  
+            rightHand.Body.Value = null;
+            Assert.AreEqual(ObjectState.Deleting, rightHand.State & ObjectState.Deleting, "deleted");
+            Assert.AreEqual(false, body.Hands.Has(rightHand), "Kirilov don't have the right hand");
+            Assert.AreEqual(body.Hands.Count, 1, "Kirilov has only 1 hands");
+            Assert.AreEqual(null, rightHand.Body.Value, "test direct role");
+            Assert.AreEqual(body.Uuid, rightHand.Body.RefUid, "uid");
+            Assert.AreEqual(1, body.HandsCount, "Rule Add/rmv");
+            Assert.AreEqual(body.Id, rightHand.BodyName, "Rule Body Change");
+            
+            
+            rightHand = ProxyFactory.Create<Hand>();
+            rightHand.Id = "right";
+            Assert.AreEqual(null, rightHand.BodyName, "Initial value");
+            rightHand.Body.Value = body;
+            Assert.AreEqual(2, body.Hands.Count, "Kirilov has 2 hands");
+            Assert.AreEqual(true, body.Hands.Has(rightHand), "Kirilov has right hand ");
+            Assert.AreEqual(body.Id, rightHand.BodyId, "test update FKs");
+            Assert.AreEqual(body, rightHand.Body.Value, "test direct role");
+            Assert.AreEqual(rightHand.Body.RefUid, body.Uuid, "uid");
+            Assert.AreEqual(2, body.HandsCount, "Rule Add/rmv");
+            Assert.AreEqual(body.Id, rightHand.BodyName, "Rule Body Change");
 
-
-
-
-       
-
+            //cut rihght hand  
+            body.Hands.Remove(rightHand);
+            Assert.AreEqual(ObjectState.Deleting, rightHand.State & ObjectState.Deleting, "deleted");
+            Assert.AreEqual(false, body.Hands.Has(rightHand), "Kirilov don't have the right hand");
+            Assert.AreEqual(body.Hands.Count, 1, "Kirilov has only 1 hands");
+            Assert.AreEqual(null, rightHand.Body.Value, "test direct role");
+            Assert.AreEqual(body.Uuid, rightHand.Body.RefUid, "uid");
+            Assert.AreEqual(1, body.HandsCount, "Rule Add/rmv");
+            Assert.AreEqual(body.Id, rightHand.BodyName, "Rule Body Change");
+  
         }
 
     }
