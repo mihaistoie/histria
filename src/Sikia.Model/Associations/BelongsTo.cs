@@ -39,35 +39,39 @@ namespace Sikia.Model
             object nv = value;
             object ov = _value;
             if (ov == nv) return;
+            PropInfoItem invProp = PropInfo.Role.InvRole.RoleProp;
             object roleInvValue;
             if (ov != null)
             {
-                roleInvValue = PropInfo.Role.InvRole.RoleProp.PropInfo.GetValue(ov, null);
+                if (nv != null)
+                {
+                    throw new RuleException(L.T("Can't change parent."));
+                }
+                roleInvValue = invProp.PropInfo.GetValue(ov, null);
                 if (roleInvValue is IRoleRef)
                 {
-                    if (nv != null)
-                    {
-                        throw new RuleException(L.T("Can't change parent."));
-                    }
                     (roleInvValue as IRoleRef).SetValue(null);
+                }
+                else if (roleInvValue is IRoleList)
+                {
+                    (roleInvValue as IRoleList).Remove(Instance);
                 }
             }
             else if (nv != null)
             {
-                roleInvValue = PropInfo.Role.InvRole.RoleProp.PropInfo.GetValue(nv, null);
-                if (roleInvValue is IRoleRef) 
+                roleInvValue = invProp.PropInfo.GetValue(nv, null);
+                if (roleInvValue is IRoleRef)
                 {
                     (roleInvValue as IRoleRef).SetValue(Instance);
                 }
-                else
+                else if (roleInvValue is IRoleList)
                 {
-
+                    (roleInvValue as IRoleList).AddOrInsert(Instance , -1);
                 }
 
             }
 
 
-            //throw new Exception("xxxx");
         }
 
         bool IRoleChild.SetParent(IInterceptedObject value, bool updateForeignKeys)

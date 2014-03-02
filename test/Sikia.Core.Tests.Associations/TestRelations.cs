@@ -252,6 +252,11 @@ namespace Sikia.Core.Tests.Associations
             rightHand.Id = "right";
             rightHand.Body.Value = body;
             Assert.AreEqual(body.Hands.Count, 2, "Kirilov has 2 hands");
+            Assert.AreEqual(rightHand.Body.Value, body, "test direct role");
+            Assert.AreEqual(rightHand.Body.RefUid, body.Uuid, "uid");
+
+
+
 
        
 

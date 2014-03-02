@@ -56,11 +56,21 @@ namespace Sikia.Model
         #endregion
 
         #region Add/Remove
+        public bool Has(T item)
+        {
+            return values.IndexOf(item) >= 0;
+        }
+
         protected virtual void Remove(T item, int index)
         {
             values.RemoveAt(index);
 
         }
+        protected void InternalRemoveValue(T item, int index)
+        {
+            values.RemoveAt(index);
+        }
+
         protected virtual void AddOrInsert(T item, int index)
         {
             InternalAddValue(item, index);

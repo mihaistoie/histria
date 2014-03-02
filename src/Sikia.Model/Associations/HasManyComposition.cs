@@ -27,25 +27,23 @@ namespace Sikia.Model
 
         protected override void Remove(T item, int index)
         {
+
+            IRoleChild rc = null;
+            PropInfoItem inv = PropInfo.Role.InvRole.RoleProp;
             IInterceptedObject child = item as IInterceptedObject;
-            if (child == null)
+            
+            if (!Instance.AOPBeforeChangeChild(PropInfo.Name, child, RoleOperation.Remove))
             {
-                values.RemoveAt(index);
                 return;
             }
-            if (PropInfo.Role.IsParent)
+            rc = inv.PropInfo.GetValue(item, null) as IRoleChild;
+            if (!rc.SetParent(null, false))
             {
-                if (Instance.AOPBeforeChangeChild(PropInfo.Name, child, RoleOperation.Remove))
-                {
-                    values.RemoveAt(index);
-                    //UpdateForeignKeysAndState(PropInfo.Role.InvRole, child, null, true);
-                    Instance.AOPAfterChangeChild(PropInfo.Name, child, RoleOperation.Remove);
-                }
+                return;
             }
-            else
-            {
-                values.RemoveAt(index);
-            }
+            InternalRemoveValue(item, index);
+
+            Instance.AOPBeforeChangeChild(PropInfo.Name, child, RoleOperation.Remove);
 
         }
     }
