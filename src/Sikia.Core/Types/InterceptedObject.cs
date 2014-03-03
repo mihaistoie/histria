@@ -99,11 +99,6 @@ namespace Sikia.Core
         }
         #endregion
 
-        #region Transaction
-        protected void CheckInTransaction()
-        {
-        }
-        #endregion
 
         #region Initialization
 
@@ -150,7 +145,6 @@ namespace Sikia.Core
         ///<summary>
         /// IInterceptedObject.AOPBeforeSetProperty
         ///</summary>
-
         bool IInterceptedObject.AOPBeforeSetProperty(string propertyName, ref object value, ref object oldValue)
         {
             if (!canExecuteRules()) return true;
@@ -158,7 +152,6 @@ namespace Sikia.Core
             oldValue = pi.PropInfo.GetValue(this, null);
             pi.SchemaValidation(ref value);
             if (oldValue == value) return false;
-            CheckInTransaction();
             return true;
         }
 

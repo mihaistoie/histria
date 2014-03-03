@@ -384,7 +384,6 @@ namespace Sikia.Model
                 DbName = (String.IsNullOrEmpty(db.TableName) ? Name : db.TableName);
             }
 
-
         }
         
         private void LoadPrimarykey()

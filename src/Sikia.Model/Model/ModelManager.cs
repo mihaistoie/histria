@@ -77,13 +77,19 @@ namespace Sikia.Model
         private void LoadTypes(List<Type> types)
         {
             Type ii = typeof(IModelClass);
+            Type iw = typeof(IModelView<>);
             Type ip = typeof(IModelPlugin);
+
             types.ForEach(delegate(Type iType)
             {
                 if (iType.IsEnum)
                 {
                     //load enums 
                     enums.Add(new EnumInfoItem(iType));
+                }
+                else if (iType.IsClass && iw.IsAssignableFrom(iType))
+                {
+                     views.Add(new ViewInfoItem(iType));
                 }
                 else if (iType.IsClass && ii.IsAssignableFrom(iType))
                 {
@@ -149,7 +155,7 @@ namespace Sikia.Model
         ///<summary>
         /// Class by type
         ///</summary>
-        public ClassInfoItem ClassByType(Type ct)
+        internal ClassInfoItem ClassByType(Type ct)
         {
             try
             {

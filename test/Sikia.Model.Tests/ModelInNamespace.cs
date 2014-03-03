@@ -9,4 +9,13 @@ namespace Sikia.Model.Tests.XXX
     public class ClassInXXX : BaseModel
     {
     }
+
+    public class Account : BaseModel
+    {
+    }
+
+    public class AccountView<Account> : BaseView<Account>
+    {
+    }
+
 }

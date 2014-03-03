@@ -61,6 +61,16 @@ namespace Sikia.Model.Tests
             Assert.AreEqual(ci.Description, "MR4.yyy", "Class dynamic title");
         }
 
+        [TestMethod]
+        public void Views()
+        {
+            JsonObject cfg = (JsonObject)JsonValue.Parse("{\"nameSpaces\": [\"XXX\"]}");
+            ModelManager m = ModelManager.LoadModel(cfg);
+            ClassInfoItem ci = m.Class<ClassInXXX>();
+            Assert.AreNotEqual(ci, null, "Class found");
+        }
+
+
 
     }
 }
