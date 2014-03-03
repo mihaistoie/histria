@@ -7,56 +7,59 @@ namespace Sikia.Model
 {
     public class HasOne<T> : Association, IRoleRef where T : IInterceptedObject
     {
-        private IInterceptedObject value;
-        void IRoleRef.SetValue(IInterceptedObject iValue)
+        protected T _value;
+        protected Guid refUid = Guid.Empty;
+
+   
+        void IRoleRef.SetValue(IInterceptedObject value)
         {
-            internalSetValue(iValue);
+            ExternalSetValue((T)value);
+        }
+        
+        
+        protected virtual T LazyLoading()
+        {
+            return _value;
         }
 
-        private void internalSetValue(IInterceptedObject iValue)
+
+        protected virtual void InternalSetValue(T value, bool updateForeignKeys)
         {
-            if (iValue == value) return;
-            IInterceptedObject oldValue = value;  
-            if (PropInfo.Role.IsList)
+            if (updateForeignKeys)
             {
-                // Composition 
-                if (value != null)
-                {
-                    if (!Instance.AOPBeforeChangeChild(PropInfo.Name, value, RoleOperation.Remove))
-                    {
-                        return;
-                    }
-                    UpdateForeignKeysAndState(PropInfo.Role.InvRole, value, null, true);
-                    Instance.AOPAfterChangeChild(PropInfo.Name, value, RoleOperation.Remove);
-                    
-                }
-                if (!Instance.AOPBeforeChangeChild(PropInfo.Name, iValue, RoleOperation.Add))
-                {
-                    return;
-                }
-                value = iValue;
-                UpdateForeignKeysAndState(PropInfo.Role.InvRole, iValue, Instance, true);
-                Instance.AOPAfterChangeChild(PropInfo.Name, value, RoleOperation.Add);
+                UpdateForeignKeys(PropInfo, Instance, value);
+                refUid = (value != null) ? value.Uuid : Guid.Empty;
             }
-            else
-            {
-                // Association
-                if (!Instance.AOPBeforeChangeChild(PropInfo.Name, iValue, RoleOperation.Update))
-                {
-                    return;
-                }
-                value = iValue;
-                UpdateForeignKeysAndState(PropInfo.Role, Instance, iValue, false);
-                Instance.AOPAfterChangeChild(PropInfo.Name, value, RoleOperation.Update);
-            }
-            
-           
+            _value = value;
         }
 
-        public HasOne()
+        protected virtual void ExternalSetValue(T value)
         {
+
+
+            object nv = value;
+            object ov = _value;
+            if (nv == ov) return;
+
+            if (!Instance.AOPBeforeSetProperty(PropInfo.Name, ref nv, ref ov))
+            {
+                return;
+            }
+            //Proceed
+            InternalSetValue((T)nv, true);
+
+            Instance.AOPAfterSetProperty(PropInfo.Name, nv, ov);
         }
-        public IInterceptedObject Value { get { return value; } set { internalSetValue(value); } }
+        public Guid RefUid { get { return refUid; } }
+        
+        public virtual T Value
+        {
+            get { return LazyLoading(); }
+            set
+            {
+                ExternalSetValue(value);
+            }
+        }
     }
 }
 

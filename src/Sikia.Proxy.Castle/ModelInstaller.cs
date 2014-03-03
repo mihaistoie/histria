@@ -21,9 +21,13 @@ namespace Sikia.Proxy.Castle
 
             DateTime start = DateTime.Now;
             List<Type> frameworkTypes = new List<Type>() {
-                typeof(HasOne<>),
+                /*
+               typeof(HasOne<>),
                 typeof(HasMany<>),
-                typeof(BelongsTo<>)
+                typeof(BelongsTo<>),
+                typeof(HasOneComposition<>),
+                typeof(HasManyComposition<>)
+                */
 
             };
             //register Classes from Models namespace and add interceptors

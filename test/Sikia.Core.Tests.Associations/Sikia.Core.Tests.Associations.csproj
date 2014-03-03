@@ -52,9 +52,11 @@
   </Choose>
   <ItemGroup>
     <Compile Include="AssociationsByCode.cs" />
+    <Compile Include="AssociationsByUids.cs" />
     <Compile Include="CompositionsByUids.cs" />
     <Compile Include="HumanBody.cs" />
     <Compile Include="Nose.cs" />
+    <Compile Include="OneToManyCompositions.cs" />
     <Compile Include="TestRelations.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

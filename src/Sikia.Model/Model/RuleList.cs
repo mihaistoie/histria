@@ -8,27 +8,30 @@ namespace Sikia.Model
 {
     public class RuleList : List<RuleItem>
     {
-        public void Execute(object target)
+        public void Execute(object target, RoleOperation operation)
         {
             foreach (RuleItem ri in this)
             {
-                try
+                if (ri.Operation == operation)
                 {
-                    if (ri.Method.IsStatic)
+                    try
                     {
-                        ri.Method.Invoke(null, new object[] { target });
-                    }
-                    else
-                    {
-                        ri.Method.Invoke(target, null);
-                    }
+                        if (ri.Method.IsStatic)
+                        {
+                            ri.Method.Invoke(null, new object[] { target });
+                        }
+                        else
+                        {
+                            ri.Method.Invoke(target, null);
+                        }
 
 
+                    }
+                    catch (TargetInvocationException ex)
+                    {
+                        throw ex.InnerException; // ex now stores the original exception
+                    }
                 }
-                catch (TargetInvocationException ex)
-                {
-                    throw ex.InnerException; // ex now stores the original exception
-                }                
             }
         }
     }

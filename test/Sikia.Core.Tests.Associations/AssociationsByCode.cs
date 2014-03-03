@@ -29,11 +29,21 @@ namespace Sikia.Core.Tests.Associations
         public virtual string CountryCode { get; set; }
         public virtual string CityCode { get; set; }
         public virtual string ZipCode { get; set; }
+        public virtual string CountryCity { get; set; }
         [Association(Relation.Association, ForeignKey = "CountryCode=Code")]
         public virtual HasOne<Country> Country { get; set; }
         //Wow!! == ? What is this ?
         [Association(Relation.Association, ForeignKey = "CountryCode==CountryCode,CityCode=CityCode,ZipCode=ZipCode")]
         public virtual HasOne<City> City { get; set; }
+
+        [Rule(Rule.Propagation, Property = "Country")]
+        [Rule(Rule.Propagation, Property = "City")]
+        public void PropagateCountryCity() 
+        {
+            CountryCity = ((Country.Value != null) ? Country.Value.Code : string.Empty) + "-" +
+                 ((City.Value != null) ? City.Value.CityCode : string.Empty); 
+
+        }
     }
 
 }

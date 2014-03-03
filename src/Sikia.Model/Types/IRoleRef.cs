@@ -5,7 +5,7 @@ using System.Text;
 
 namespace Sikia
 {
-    public interface IRoleRef
+    internal interface IRoleRef
     {
         void SetValue(IInterceptedObject value);
     }

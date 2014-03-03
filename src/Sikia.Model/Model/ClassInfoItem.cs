@@ -105,11 +105,12 @@ namespace Sikia.Model
       
         public void ExecuteRules(Rule kind, Object target)
         {
-            if (rules.ContainsKey(kind))
+            RuleList rl;
+            if (rules.TryGetValue(kind, out rl))
             {
-                rules[kind].Execute(target);
+                rl.Execute(target, RoleOperation.None);
             }
-
+      
         }
 
         private bool _ruleExists(RuleItem ri, List<RuleItem> rl)
@@ -133,17 +134,15 @@ namespace Sikia.Model
         ///</summary>   
         private void AddRule(RuleItem ri)
         {
+           
             RuleList rl = null;
-            if (!rules.ContainsKey(ri.Kind))
+            if (!rules.TryGetValue(ri.Kind, out rl))
             {
                 rl = new RuleList();
-                rules[ri.Kind] = rl;
-            }
-            else
-            {
-                rl = rules[ri.Kind];
+                rules.Add(ri.Kind, rl);
             }
             rl.Add(ri);
+
         }
         #endregion
 
@@ -343,6 +342,7 @@ namespace Sikia.Model
                         RuleItem ri = new RuleItem(mi);
                         ri.Kind = ra.Rule;
                         ri.Property = ra.Property;
+                        ri.Operation = ra.Operation;
                         if (Static)
                         {
                             if (ri.TargetType == null)

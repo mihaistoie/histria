@@ -11,12 +11,18 @@ namespace Sikia.Model
         public bool ReadOnly = false;
         public PropInfoItem Prop;
     } 
-
+    class PKeyInfo
+    {
+        public string Field;
+        public PropInfoItem Prop;
+    } 
+ 
     class RoleInfoItem
     {
         private List<ForeignKeyInfo> fkFields;
+        private List<PKeyInfo> pkFields;
         private bool fkFieldsExist = true;
-        private string[] pkFields;
+       
         public int Max { get; set; }
         public int Min { get; set; }
         
@@ -68,7 +74,7 @@ namespace Sikia.Model
         {
             get
             {
-                return (IsRef ? (PkFields != null && pkFields.Length == 1 && PkFields[0] == ModelConst.UUID) : true);
+                return (IsRef ? (PkFields != null && pkFields.Count == 1 && pkFields[0].Field == ModelConst.UUID) : true);
             }
         }
         ///<summary>
@@ -103,8 +109,8 @@ namespace Sikia.Model
         
         ///<summary>
         /// Primary key fields used for this relationship. Can be different than primary key fields of remote class (InvRole.Classtype) 
-        ///</summary>
-        public string[] PkFields
+        ///</List>
+        public List<PKeyInfo> PkFields
         {
             get
             {

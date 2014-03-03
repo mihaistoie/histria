@@ -17,6 +17,8 @@ namespace Sikia.Model
         public string Property { get; set; }
         public string Title { get { return title; } }
         public string Description { get { return description; } }
+        public RoleOperation Operation { get; set; }
+
         public bool Static = false;
         
         public bool IsOveriddenOf(RuleItem ri)

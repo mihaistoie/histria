@@ -5,8 +5,8 @@ using System.Text;
 
 namespace Sikia
 {
-    public interface IRoleChild
+    interface IRoleChild
     {
-        void SetParent(IInterceptedObject value);
+        bool SetParent(IInterceptedObject value, bool updateForeignKeys);
     }
 }
