@@ -52,7 +52,6 @@ namespace Sikia.Core.Tests.Rules.Customers
         {
             target.AfterFirstNameChanged = "AfterFirstNameChanged";
         }
-
     }
 
     [Display("Russian Customer", Description = "Russian Class Customer")]

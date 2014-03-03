@@ -18,7 +18,6 @@ namespace Sikia.Db.Tests
         {
             ModulePlugIn.Load("Sikia.Db.MsSql");
             ModulePlugIn.Initialize(null);
-
         }
 
         [TestMethod]
@@ -87,6 +86,7 @@ namespace Sikia.Db.Tests
             DropDB(dburl, ss);
 
         }
+
         void checkColumn(DbTable table, string name, DataTypes dt, string dbtype, int size, int prec, int scale, bool nullable)
         {
             Assert.AreEqual(true, table.ContainsColumn(name), "Column exists");

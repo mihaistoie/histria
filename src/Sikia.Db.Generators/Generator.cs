@@ -90,6 +90,8 @@ namespace Sikia.Db.Generators
             Indent();
             foreach (var col in table.Columns)
             {
+                //[Display("First Name", Description = "First Name of Customer")]
+                AppendLine(@"[Display(""{0}"", Description = ""{1}"")]", col.ColumnName, col.ColumnName);
                 AppendLine("public virtual {0} {1} {{ get; set; }}", col.Type, col.ColumnName);
             }
             UnIndent();
