@@ -16,14 +16,14 @@ namespace Sikia.Model
 
         protected override void InitializeView(ModelManager model)
         {
-            GenericClass = model.ClassByType(CurrentType.GetGenericArguments()[0]);
-            if (GenericClass == null)
+            ModelClass = model.ClassByType(CurrentType.GetGenericArguments()[0]);
+            if (ModelClass == null)
             {
                 throw new ModelException(String.Format(L.T("Invalid Model type \"{0}\" for the view \"{1}\"."), CurrentType.GetGenericArguments()[0], Name), Name);
             }
 
         }
-        internal ClassInfoItem GenericClass { get; set; }
+        internal ClassInfoItem ModelClass { get; set; }
         
 
         public ViewInfoItem(Type cType)

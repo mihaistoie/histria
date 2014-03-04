@@ -3,10 +3,10 @@
 namespace Sikia.Core
 {
     using Sikia.Core.Execution;
-using Sikia.Model;
-using System.Reflection;
+    using Sikia.Model;
+    using System.Reflection;
 
-	Public class InterceptedObject : IClassModel, IInterceptedObject, IObjectLifetime    {
+    public class InterceptedObject : IClassModel, IInterceptedObject, IObjectLifetime    {
         #region Warnings & Errors
         #endregion
 

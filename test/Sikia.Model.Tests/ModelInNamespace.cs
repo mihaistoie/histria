@@ -18,7 +18,7 @@ namespace Sikia.Model.Tests.XXX
         public virtual string Title { get; set; }
     }
 
-    public class AccountView : BaseView<Account>
+    public class AccountView : BaseView<Account>, IViewModel<Account>
     {
         public virtual  string Code { get; set; }
 
