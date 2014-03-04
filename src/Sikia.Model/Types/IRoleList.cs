@@ -5,7 +5,9 @@ using System.Text;
 
 namespace Sikia
 {
-    public interface IRoleList
+    internal interface IRoleList
     {
+        void AddOrInsert(IInterceptedObject value, int index);
+        void Remove(IInterceptedObject value);
     }
 }

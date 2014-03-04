@@ -49,18 +49,16 @@ namespace Sikia.Db.Test.Generators
                     cmd.Execute();
                 }
             }
-            
-            string d = Path.GetDirectoryName(Assembly.GetExecutingAssembly().CodeBase);
-            Uri u = new Uri(d);
-            // string dbURl = @"mssql://(local)\PC36290RC2/Sikia?schema=dbo";
+
+            string dir = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
+            Uri u = new Uri(dir);
             DbSchema dbs = DbDrivers.Instance.Schema(DbProtocol.mssql);
             dbs.Load(dburl);
-            //Generator g = new Generator(dbs, @"D:\dev\Classes", "Sikia.Db");
-            Generator g = new Generator(dbs, u.AbsolutePath, "Sikia.Db");
+            Generator g = new Generator(dbs, dir, "Sikia.Db");
             g.Generate();
 
-            Assert.IsTrue(File.Exists(u.AbsolutePath+@"\Pays.cs"));
-            Assert.IsTrue(File.Exists(u.AbsolutePath+@"\Continent.cs"));
+            Assert.IsTrue(File.Exists(dir + @"\Pays.cs"));
+            Assert.IsTrue(File.Exists(dir + @"\Continent.cs"));
             dbs.DropDatabase(dburl);
         }
     }

@@ -8,6 +8,11 @@ namespace Sikia
     public enum RoleOperation
     {
         ///<summary>
+        /// No role operation 
+        ///</summary>          
+        None,
+   
+        ///<summary>
         /// A new instance was added to role  
         ///</summary>          
         Add,
@@ -15,11 +20,6 @@ namespace Sikia
         ///<summary>
         /// An instance was removed from role  
         ///</summary> 
-        Remove,
-
-        ///<summary>
-        /// An instance was modified  
-        ///</summary> 
-        Update
+        Remove
     }
 }

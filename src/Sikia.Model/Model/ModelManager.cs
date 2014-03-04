@@ -16,6 +16,7 @@ namespace Sikia.Model
         #region Private Members
         private readonly EnumCollection enums;
         private readonly ClassCollection classes;
+        private readonly ClassCollection views;
         #endregion
 
         #region Singleton thread-safe pattern
@@ -25,6 +26,7 @@ namespace Sikia.Model
         {
             enums = new EnumCollection();
             classes = new ClassCollection();
+            views = new ClassCollection();
         }
         //used only for tests
         public static ModelManager LoadModel(JsonObject config)
@@ -75,13 +77,19 @@ namespace Sikia.Model
         private void LoadTypes(List<Type> types)
         {
             Type ii = typeof(IModelClass);
+            Type iw = typeof(IModelView<>);
             Type ip = typeof(IModelPlugin);
+
             types.ForEach(delegate(Type iType)
             {
                 if (iType.IsEnum)
                 {
                     //load enums 
                     enums.Add(new EnumInfoItem(iType));
+                }
+                else if (iType.IsClass && iw.IsAssignableFrom(iType))
+                {
+                     views.Add(new ViewInfoItem(iType));
                 }
                 else if (iType.IsClass && ii.IsAssignableFrom(iType))
                 {
@@ -127,7 +135,6 @@ namespace Sikia.Model
         }
         #endregion
         
-
         #region Properties
         ///<summary>
         /// List of enums used by Application 
@@ -138,10 +145,17 @@ namespace Sikia.Model
         /// List of Model Classes used by Application 
         ///</summary>
         public ClassCollection Classes { get { return classes; } }
+
+        ///<summary>
+        /// List of View Model used by Application 
+        ///</summary>
+        public ClassCollection Views { get { return views; } }
+
+
         ///<summary>
         /// Class by type
         ///</summary>
-        public ClassInfoItem ClassByType(Type ct)
+        internal ClassInfoItem ClassByType(Type ct)
         {
             try
             {

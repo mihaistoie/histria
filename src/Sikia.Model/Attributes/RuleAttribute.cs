@@ -11,6 +11,7 @@ namespace Sikia.Model
         public string Property = "";
         public Type TargetType = null;
         public Rule Rule = Rule.Unknown;
+        public RoleOperation Operation = RoleOperation.None; 
         public RuleAttribute(Rule ruleType)
         {
             Rule = ruleType;

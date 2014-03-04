@@ -7,16 +7,15 @@ using System.Text;
 
 namespace Sikia.Model
 {
- 
+
     public class HasMany<T> : Association, IEnumerable<T>, IRoleList where T : IInterceptedObject
     {
         #region Internal members
-        private IInterceptedObject parent;
         private List<T> _values = null;
         #endregion
 
         #region Lazy loading
-        private List<T> values
+        protected List<T> values
         {
             get
             {
@@ -29,17 +28,8 @@ namespace Sikia.Model
         }
         #endregion
 
-        #region Construction
-
-        private HasMany()
-        {
-
-        }
-
-        public HasMany(IInterceptedObject parent)
-        {
-            this.parent = parent;
-        }
+        #region Properties
+        public int Count { get { return values.Count; } }
 
         #endregion
 
@@ -66,68 +56,66 @@ namespace Sikia.Model
         #endregion
 
         #region Add/Remove
-        private void Remove(int index, T item)
+        public bool Has(T item)
         {
-            IInterceptedObject child = item as IInterceptedObject;
-            if (child == null)
-            {
-                values.RemoveAt(index);
-                return;
-            }
-            if (PropInfo.Role.IsParent)
-            {
-                if (Instance.AOPBeforeChangeChild(PropInfo.Name, child, RoleOperation.Remove))
-                {
-                    values.RemoveAt(index);
-                    Instance.AOPAfterChangeChild(PropInfo.Name, child, RoleOperation.Remove);
-                }
-            }
-            else
-            {
-                values.RemoveAt(index);
-            }
+            return values.IndexOf(item) >= 0;
+        }
 
+        protected virtual void Remove(T item, int index)
+        {
+            values.RemoveAt(index);
+
+        }
+        protected void InternalRemoveValue(T item, int index)
+        {
+            values.RemoveAt(index);
+        }
+
+        protected virtual void AddOrInsert(T item, int index)
+        {
+            InternalAddValue(item, index);
+
+        }
+        protected virtual void InternalAddValue(T item, int index)
+        {
+            if (index >= 0)
+                values.Insert(index, item);
+            else
+                values.Add(item);
         }
 
         public void Add(T item)
         {
-            IInterceptedObject child = item as IInterceptedObject;
-            if (child == null)
-            {
-                values.Add(item);
-                return;
-            }
-            if (PropInfo.Role.IsParent)
-            {
-                if (Instance.AOPBeforeChangeChild(PropInfo.Name, child, RoleOperation.Add))
-                {
-                    values.Add(item);
-                    //Update for 
-                    Instance.AOPAfterChangeChild(PropInfo.Name, child, RoleOperation.Add);
-                }
-            }
-            else
-            {
-                values.Add(item);
-            }
-
+            AddOrInsert(item, -1);
         }
 
-        internal void Remove(T item)
+        public void Remove(T item)
         {
             int index = values.IndexOf(item);
             if (index >= 0)
             {
-                Remove(index, item);
+                Remove(item, index);
             }
         }
 
-        internal void RemoveAt(int index)
+        public void RemoveAt(int index)
         {
             T item = values[index];
-            Remove(index, item);
+            Remove(item, index);
         }
 
+        #endregion
+
+        #region Interface IRoleList
+        void IRoleList.AddOrInsert(IInterceptedObject value, int index)
+        {
+            AddOrInsert((T)value, index);
+        }
+
+        void IRoleList.Remove(IInterceptedObject value)
+        {
+            Remove((T)value);
+        }
         #endregion
 
     }

@@ -22,11 +22,11 @@ namespace Sikia.Db.Model
         /////<summary>
         ///// List of column
         /////</summary>
-        public List<DbColumn> Columns
+        public DbColumns Columns
         {
             get
             {
-                return columns.ToList<DbColumn>();
+                return columns;
             }
         }
 

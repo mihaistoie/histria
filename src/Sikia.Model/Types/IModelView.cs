@@ -3,10 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace Sikia
+namespace Sikia.Model
 {
-    internal interface IRoleRef
+    public interface IModelView<T>: IModelClass
     {
-        void SetValue(IInterceptedObject value);
+        T Model { get; set; }  
     }
 }

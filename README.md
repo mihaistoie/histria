@@ -1,6 +1,6 @@
 Sikia
 =====
-Sikia a c# Rules Engine library.
+Sikia is a c# Rules Engine framework.
 
 
 See [Wiki] (https://github.com/mihaistoie/sikia/wiki) for more details.

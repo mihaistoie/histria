@@ -47,7 +47,7 @@ namespace Sikia.Core.Execution
             if (interceptedObject != null)
             {
                 interceptedObject.Container = this;
-                interceptedObject.AOPAfterCreate();
+                (interceptedObject as IInterceptedObject).AOPAfterCreate();
             }
             return instance;
         }

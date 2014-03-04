@@ -11,6 +11,60 @@ namespace Sikia.Model
     ///</summary> 
     public abstract class Association : IAssociation
     {
+        public static Type AssociationType(PropInfoItem propInfo, Type declaredType)
+        {
+            Type generic = declaredType.GetGenericArguments()[0];
+            Type hasOne = typeof(HasOne<>);
+            Type cc = hasOne.MakeGenericType(generic);
+            if (declaredType == cc)
+            {
+                if (propInfo.Role.IsList)
+                {
+                    return typeof(HasOneComposition<>).MakeGenericType(generic);
+                }
+                return declaredType;
+            }
+            Type hasMany = typeof(HasMany<>);
+            cc = hasMany.MakeGenericType(generic);
+            if (declaredType == cc)
+            {
+                if (propInfo.Role.IsParent)
+                {
+                    return typeof(HasManyComposition<>).MakeGenericType(generic);
+                }
+                return declaredType;
+            }
+
+            return declaredType;
+        }
+
+        public static Association AssociationFactory(PropInfoItem propInfo, Type declaredType)
+        {
+            Type generic = declaredType.GetGenericArguments()[0];
+            Type hasOne = typeof(HasOne<>);
+            Type cc = hasOne.MakeGenericType(generic);
+            if (declaredType == cc)
+            {
+                if (propInfo.Role.IsList)
+                {
+                    return (Association)Activator.CreateInstance(typeof(HasOneComposition<>).MakeGenericType(generic));
+                }
+                return (Association)Activator.CreateInstance(declaredType);
+            }
+            
+            Type hasMany = typeof(HasMany<>);
+            cc = hasMany.MakeGenericType(generic);
+            if (declaredType == cc)
+            {
+                if (propInfo.Role.IsParent)
+                {
+                   return (Association)Activator.CreateInstance(typeof(HasManyComposition<>).MakeGenericType(generic));
+                }
+             }
+            return (Association)Activator.CreateInstance(declaredType);
+
+        }
+
         ///<summary>
         /// Property info 
         ///</summary> 
@@ -19,76 +73,53 @@ namespace Sikia.Model
         /// The instance that contains this association
         ///</summary> 
         public IInterceptedObject Instance { get; set; }
-        internal void UpdateForeignKeysAndState(RoleInfoItem role, IInterceptedObject target, IInterceptedObject refObj, bool isComposition)
+
+        internal void UpdateForeignKeys(PropInfoItem Propinfo, IInterceptedObject target, IInterceptedObject refObj)
         {
+            //todo: test if target is in (db) loading  --> if (target.InLoading) return; -
+            RoleInfoItem role = Propinfo.Role;
             if (role.FkFieldsExist)
             {
-                if (isComposition && refObj == null)
+                for (int index = 0, len = role.FkFields.Count; index < len; index++)
                 {
-                    target.AOPDeleted();
-                    //Don't set foreign keys null !!! 
-                }
-                else
-                {
-                    for (int index = 0; index < role.FkFields.Count; index++)
-                    {
-                        ForeignKeyInfo fki = role.FkFields[index];
-                        if (!fki.ReadOnly)
-                        {
-                            object value = null;
-                            if (refObj != null)
-                            {
-                                PropInfoItem pai = refObj.ClassInfo.PropertyByName(role.PkFields[index]);
-                                value = pai.PropInfo.GetValue(refObj, null);
-                            }
-                            fki.Prop.PropInfo.SetValue(target, value, null);
-                            if (fki.Prop.dependOnMe != null && (fki.Prop.dependOnMe.Count > 1))
-                            {
-                                foreach (RoleInfoItem r in fki.Prop.dependOnMe)
-                                {
-                                    if (r == role) continue;
-                                    if (r.HasReadOnlyField(fki.Field))
-                                    {
-                                        object rv = r.RoleProp.PropInfo.GetValue(target, null);
-                                        IRoleRef rr = rv as IRoleRef;
-                                        if (rr != null)
-                                        {
-                                            rr.SetValue(null);
-                                        }
-                                    }
-                              
-                                }
-                            }
-                        }
-                        else
-                        {
-                            object value = null;
-                            if (refObj != null)
-                            {
-                                // Read only foreign key must be equal with values of primary key 
-                                PropInfoItem pai = refObj.ClassInfo.PropertyByName(role.PkFields[index]);
-                                value = pai.PropInfo.GetValue(refObj, null);
-                                object existingValue = fki.Prop.PropInfo.GetValue(target, null);
-                                if (value != existingValue)
-                                {
-                                   throw new RuleException(L.T("Invalid value for {0}.{1}, excepted {2}, found {3}."), fki.Prop.ClassInfo.Name, fki.Field, value, existingValue);
-                                }
-                            }
-                            
-                        }
+                    ForeignKeyInfo fki = role.FkFields[index];
+                    object value = (refObj == null) ? null : role.PkFields[index].Prop.PropInfo.GetValue(refObj, null);
 
-                        
+                    if (fki.ReadOnly)
+                    {
+                        if (refObj != null)
+                        {
+                            // Read only foreign key must be equal with values of primary key 
+                            object existingValue = fki.Prop.PropInfo.GetValue(target, null);
+                            if (value != existingValue)
+                            {
+                                throw new RuleException(L.T("Invalid value for {0}.{1}, excepted {2}, found {3}."), fki.Prop.ClassInfo.Name, fki.Field, value, existingValue);
+                            }
+                        }
+                    }
+                    else
+                    {
+                        fki.Prop.PropInfo.SetValue(target, value, null);
+                        if (fki.Prop.dependOnMe != null && (fki.Prop.dependOnMe.Count > 1))
+                        {
+                            foreach (RoleInfoItem r in fki.Prop.dependOnMe)
+                            {
+                                if (r == role) continue;
+                                if (r.HasReadOnlyField(fki.Field))
+                                {
+                                    object rv = r.RoleProp.PropInfo.GetValue(target, null);
+                                    IRoleRef rr = rv as IRoleRef;
+                                    if (rr != null)
+                                    {
+                                        rr.SetValue(null);
+                                    }
+                                }
+
+                            }
+                        }
                     }
                 }
-                if (isComposition)
-                {
-                    object roleValue = role.RoleProp.PropInfo.GetValue(target, null);
-                    IRoleChild child = roleValue as IRoleChild;
-                    child.SetParent(refObj);
-                }
-
             }
         }
-
     }
 }
