@@ -6,7 +6,7 @@ namespace Sikia.Core
 using Sikia.Model;
 using System.Reflection;
 
-    public class InterceptedObject : IModelClass, IInterceptedObject
+    public class InterceptedObject : IModelClass, IInterceptedObject, IObjectLifetime
     {
         #region Warnings & Errors
         #endregion
@@ -14,7 +14,7 @@ using System.Reflection;
         #region Errors
         #endregion
 
-        #region State
+        #region State & Notifications
         private ObjectState state = ObjectState.Iddle;
         public ObjectState State
         {
@@ -59,6 +59,7 @@ using System.Reflection;
 
             return true;
         }
+
         #endregion
 
         #region Properties
@@ -163,6 +164,7 @@ using System.Reflection;
         ///</summary>
         void IInterceptedObject.AOPAfterSetProperty(string propertyName, object newValue, object oldValue)
         {
+            (this as IObjectLifetime).Notify(ObjectLifetime.Changed, propertyName, oldValue, newValue);
             if (!canExecuteRules()) return;
             PropInfoItem pi = ClassInfo.PropertyByName(propertyName);
             // Validate
@@ -209,6 +211,11 @@ using System.Reflection;
 
         #endregion
 
+        void IObjectLifetime.Notify(ObjectLifetime objectLifetime, params object[] arguments)
+        {
+            //Nothing to do
+            //used by AOP interception
+        }
     }
 
 }

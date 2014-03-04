@@ -43,6 +43,7 @@
     <Compile Include="Execution\ChangePropertyRulesAspect.cs" />
     <Compile Include="Execution\Container.cs" />
     <Compile Include="Execution\ContainerSetup.cs" />
+    <Compile Include="Execution\InstancesList.cs" />
     <Compile Include="Execution\IProxyFactory.cs" />
     <Compile Include="Execution\IProxyFactoryGenerator.cs" />
     <Compile Include="Execution\TestContainerSetup.cs" />

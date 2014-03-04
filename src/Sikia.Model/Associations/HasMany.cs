@@ -74,8 +74,8 @@ namespace Sikia.Model
         protected virtual void AddOrInsert(T item, int index)
         {
             InternalAddValue(item, index);
-
         }
+
         protected virtual void InternalAddValue(T item, int index)
         {
             if (index >= 0)
