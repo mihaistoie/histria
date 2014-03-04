@@ -2,8 +2,9 @@
 
 namespace Sikia.Core
 {
-    using Sikia.Model;
-    using System.Reflection;
+    using Sikia.Core.Execution;
+using Sikia.Model;
+using System.Reflection;
 
     public class InterceptedObject : IModelClass, IInterceptedObject
     {
@@ -96,6 +97,8 @@ namespace Sikia.Core
         }
         #endregion
 
+        public Container Container { get; set; }
+
         #region Initialization
 
         ///<summary>
@@ -111,7 +114,7 @@ namespace Sikia.Core
 
         private void AOPInitializeAssociations()
         {
-            MethodInfo method = typeof(ProxyFactory).GetMethod("Create");
+            MethodInfo method = this.Container.GetType().GetMethod("Create");
 
             for (int index = 0; index < ClassInfo.Properties.Count; index++)
             {

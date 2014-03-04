@@ -12,7 +12,7 @@ namespace Sikia.Proxy.Castle
         public override void Register(params object[] args)
         {
             CastleFactory.Install();
-            ProxyFactory.Instance.Factory = CastleFactory.Instance as IProxyFactory;
+            //ProxyFactory.Instance.Factory = CastleFactory.Instance as IProxyFactory;
         }
     }
 }

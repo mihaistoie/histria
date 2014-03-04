@@ -5,25 +5,30 @@ using Sikia.Core.Tests.Rules.Customers;
 using Sikia.Json;
 using System;
 using Sikia.Sys;
+using Sikia.Core.Execution;
 
 namespace UnitTestModel
 {
     [TestClass]
     public class Rules
     {
+        private static ModelManager model;
+
         [ClassInitialize]
         public static void Setup(TestContext testContext)
         {
             JsonObject cfg = (JsonObject)JsonValue.Parse(@"{""nameSpaces"": [""Customers""]}");
-            ModelManager m = ModelManager.LoadModelFromConfig(cfg);
+            model = ModelManager.LoadModelFromConfig(cfg);
             ModulePlugIn.Load("Sikia.Proxy.Castle");
-            ModulePlugIn.Initialize(m);
+            ModulePlugIn.Initialize(model);
         }
 
         [TestMethod]
         public void SimplePropagationRule()
         {
-            Customer cust = ProxyFactory.Create<Customer>();
+            Container container = new Container(TestContainerSetup.GetSimpleContainerSetup(model));
+
+            Customer cust = container.Create<Customer>();
             cust.FirstName = "John";
             cust.LastName = "Smith";
             cust.LastName = "Smith";
@@ -34,7 +39,9 @@ namespace UnitTestModel
         [TestMethod]
         public void InheritedPropagationRule()
         {
-            RussianCustomer rcust = ProxyFactory.Create<RussianCustomer>();
+            Container container = new Container(TestContainerSetup.GetSimpleContainerSetup(model));
+
+            RussianCustomer rcust = container.Create<RussianCustomer>();
 
             rcust.FirstName = "Fiodor";
             rcust.LastName = "Dostoievski";

@@ -10,20 +10,15 @@ namespace Sikia.Proxy.Castle
     /// <summary>
     /// This interceptor is automatically applied to any Type in the "Models" namespace 
     /// </summary>
-    public class NotifyPropertyChangedInterceptor : IInterceptor
+    public class AOPInterceptor : IInterceptor
     {
-        //TODO Register aspects and remove 
-        private static Advisor Advisor = InitAdvisor();
 
-        private static Advisor InitAdvisor()
+        public AOPInterceptor(Advisor advisor)
         {
-            var rules = new ChangePropertyRulesAspect();
-            return new Advisor(
-                new Aspect[]
-                {
-                    new Aspect(){Pointcuts=new IPointcut[]{rules}, Advice=rules}
-                });
+            this.advisor = advisor;
         }
+
+        private readonly Advisor advisor;
 
         #region IInterceptor Implementation
         public void Intercept(IInvocation invocation)
@@ -36,7 +31,7 @@ namespace Sikia.Proxy.Castle
                 Arguments = invocation.Arguments
             };
 
-            Advisor.Execute(context);
+            this.advisor.Execute(context);
 
             //if (invocation.InvocationTarget is IInterceptedObject)
             //{

@@ -44,7 +44,6 @@
     <Compile Include="StrUtils.cs" />
     <Compile Include="Types\IPersistentObj.cs" />
     <Compile Include="DataTypes.cs" />
-    <Compile Include="Types\IProxyFactory.cs" />
     <Compile Include="Logger.cs" />
     <Compile Include="ModulePlugIn.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

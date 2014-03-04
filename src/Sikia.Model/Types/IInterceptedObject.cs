@@ -13,6 +13,7 @@ namespace Sikia
     {
         #region Properties
         ClassInfoItem ClassInfo { get; set; } 
+
         #endregion
 
         #region Interceptors

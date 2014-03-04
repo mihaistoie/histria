@@ -3,28 +3,33 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Sikia.Json;
 using Sikia.Model;
 using Sikia.Sys;
+using Sikia.Core.Execution;
 
 namespace Sikia.Core.Tests.Associations
 {
     [TestClass]
     public class ModelRelationships
     {
+        private static ModelManager model;
         [ClassInitialize]
         public static void Setup(TestContext testContext)
         {
             string scfg = @"{""nameSpaces"": [""Associations""]}";
             JsonObject cfg = (JsonObject)JsonValue.Parse(scfg);
-            ModelManager m = ModelManager.LoadModelFromConfig(cfg);
+            model = ModelManager.LoadModelFromConfig(cfg);
             ModulePlugIn.Load("Sikia.Proxy.Castle");
-            ModulePlugIn.Initialize(m);
+            ModulePlugIn.Initialize(model);
         }
 
         [TestMethod]
         public void CompositionOneToOneByCode()
         {
-            HumanBody body = ProxyFactory.Create<HumanBody>();
+            Container container = new Container(TestContainerSetup.GetSimpleContainerSetup(model));
+
+
+            HumanBody body = container.Create<HumanBody>();
             body.Id = "body";
-            Nose nose = ProxyFactory.Create<Nose>();
+            Nose nose = container.Create<Nose>();
             nose.Id = "nose";
             body.Nose.Value = nose;
             Assert.AreEqual(nose.BodyId, body.Id, "test update FKs");
@@ -38,28 +43,29 @@ namespace Sikia.Core.Tests.Associations
         [TestMethod]
         public void AssociationsByCodes()
         {
-            
+            Container container = new Container(TestContainerSetup.GetSimpleContainerSetup(model));
+           
             // create two countries
-            Country c1 = ProxyFactory.Create<Country>();
+            Country c1 = container.Create<Country>();
             c1.Code = "France";
-            Country c2 = ProxyFactory.Create<Country>();
+            Country c2 = container.Create<Country>();
             c2.Code = "USA";
 
             // create two cities
-            City paris = ProxyFactory.Create<City>();
+            City paris = container.Create<City>();
             paris.Country.Value = c1;
             paris.CityCode = "Paris";
             paris.ZipCode = "75000";
             Assert.AreEqual(paris.CountryCode, c1.Code, "Code propagation");
 
-            City boston = ProxyFactory.Create<City>();
+            City boston = container.Create<City>();
             boston.CityCode = "Boston";
             boston.ZipCode = "925254";
             boston.Country.Value = c2;
             Assert.AreEqual(boston.CountryCode, c2.Code, "Code propagation");
 
             // create an address
-            Address infrance = ProxyFactory.Create<Address>();
+            Address infrance = container.Create<Address>();
             infrance.Country.Value = c1;
             infrance.City.Value = paris;
             Assert.AreEqual(infrance.CountryCode, c1.Code, "Code propagation");
@@ -71,7 +77,7 @@ namespace Sikia.Core.Tests.Associations
 
 
             // set city before country 
-            Address a1 = ProxyFactory.Create<Address>();
+            Address a1 = container.Create<Address>();
             bool doFail = false;
             try
             {
@@ -86,7 +92,7 @@ namespace Sikia.Core.Tests.Associations
                 Assert.AreEqual(false, true, "Set country before setting city");
             
             // After country changed  --> city is empty
-            Address a2 = ProxyFactory.Create<Address>();
+            Address a2 = container.Create<Address>();
             a2.Country.Value = c1;
             a2.City.Value = paris;
             Assert.AreEqual(a2.CountryCode, c1.Code, "Code propagation");
@@ -108,11 +114,12 @@ namespace Sikia.Core.Tests.Associations
         [TestMethod]
         public void CompositionsByUuis()
         {
+            Container container = new Container(TestContainerSetup.GetSimpleContainerSetup(model));
 
             // create two countries
-            Car car = ProxyFactory.Create<Car>();
+            Car car = container.Create<Car>();
             car.Name = "Renault";
-            SteeringWheel wheel = ProxyFactory.Create<SteeringWheel>();
+            SteeringWheel wheel = container.Create<SteeringWheel>();
             wheel.SerialNumber = "123456789";
             car.SteeringWheel.Value = wheel;
             // TODO
