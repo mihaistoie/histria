@@ -272,7 +272,7 @@ namespace Sikia.Core.Tests.Associations
             Assert.AreEqual(2, body.HandsCount, "Rule Add/rmv");
             Assert.AreEqual(body.Id, rightHand.BodyName, "Rule Body Change");
 
-            //cut rihght hand  
+            //cut the right hand  
             rightHand.Body.Value = null;
             Assert.AreEqual(ObjectState.Deleting, rightHand.State & ObjectState.Deleting, "deleted");
             Assert.AreEqual(false, body.Hands.Has(rightHand), "Kirilov don't have the right hand");
@@ -295,7 +295,7 @@ namespace Sikia.Core.Tests.Associations
             Assert.AreEqual(2, body.HandsCount, "Rule Add/rmv");
             Assert.AreEqual(body.Id, rightHand.BodyName, "Rule Body Change");
 
-            //cut rihght hand  
+            //cut the right hand  
             body.Hands.Remove(rightHand);
             Assert.AreEqual(ObjectState.Deleting, rightHand.State & ObjectState.Deleting, "deleted");
             Assert.AreEqual(false, body.Hands.Has(rightHand), "Kirilov don't have the right hand");

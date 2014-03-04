@@ -5,14 +5,13 @@ using System.Text;
 
 namespace Sikia.Model.Tests
 {
-    public class BaseModel: IModelClass
+    public class BaseModel: IClassModel
     {
         public Guid Uuid { get; set; } 
     }
 
-    public class BaseView<T> : IModelView<T>
+    public class BaseView<T> : BaseModel, IViewModel<T>
     {
-        public Guid Uuid { get; set; }
         public T Model { get; set; }
     }
 

@@ -12,10 +12,21 @@ namespace Sikia.Model.Tests.XXX
 
     public class Account : BaseModel
     {
+        [Display("Account Code")]
+        public virtual string Code { get; set; }
+        [Display("Caption")]
+        public virtual string Title { get; set; }
     }
 
-    public class AccountView<Account> : BaseView<Account>
+    public class AccountView : BaseView<Account>
     {
+        public virtual  string Code { get; set; }
+
+        public virtual string AccountTitle
+        {
+            get { return Model.Title; }
+            set { Model.Title = value; }
+        }
     }
 
 }

@@ -10,11 +10,12 @@ using Sikia.Sys;
 
 namespace Sikia.Model
 {
-   
+
     public sealed class ModelManager
     {
         #region Private Members
         private readonly EnumCollection enums;
+        private readonly ClassCollection viewsandclasses;
         private readonly ClassCollection classes;
         private readonly ClassCollection views;
         #endregion
@@ -25,15 +26,16 @@ namespace Sikia.Model
         private ModelManager()
         {
             enums = new EnumCollection();
-            classes = new ClassCollection();
             views = new ClassCollection();
+            classes = new ClassCollection();
+            viewsandclasses = new ClassCollection();
         }
         //used only for tests
         public static ModelManager LoadModel(JsonObject config)
         {
             ModelManager model = new ModelManager();
             model.Load(config);
-            return model;       
+            return model;
         }
 
         public static ModelManager LoadModelFromConfig(JsonObject config)
@@ -71,17 +73,21 @@ namespace Sikia.Model
 
         }
         #endregion
-        
+
         #region Model Loading
 
         private void LoadTypes(List<Type> types)
         {
-            Type ii = typeof(IModelClass);
-            Type iw = typeof(IModelView<>);
+            Type ii = typeof(IClassModel);
+            Type iw = typeof(IViewModel<>);
             Type ip = typeof(IModelPlugin);
-
-            types.ForEach(delegate(Type iType)
+            for (int i = 0, len = types.Count; i < len; i++)
             {
+                Type iType = types[i];
+                ClassInfoItem ci;
+                NoModelAttribute nm = iType.GetCustomAttributes(typeof(NoModelAttribute), false).FirstOrDefault() as NoModelAttribute;
+                if (nm != null) continue;
+
                 if (iType.IsEnum)
                 {
                     //load enums 
@@ -89,22 +95,24 @@ namespace Sikia.Model
                 }
                 else if (iType.IsClass && iw.IsAssignableFrom(iType))
                 {
-                     views.Add(new ViewInfoItem(iType));
+                    ci = new ViewInfoItem(iType);
+                    views.Add(ci);
+                    viewsandclasses.Add(ci);
                 }
                 else if (iType.IsClass && ii.IsAssignableFrom(iType))
                 {
-                    NoModelAttribute nm = iType.GetCustomAttributes(typeof(NoModelAttribute), false).FirstOrDefault() as NoModelAttribute;
-                    if (nm == null)
-                    {
-                        classes.Add(new ClassInfoItem(iType, false));
-                    }
+                    ci = new ClassInfoItem(iType, false);
+                    classes.Add(ci);
+                    viewsandclasses.Add(ci);
                 }
                 else if (iType.IsClass && ip.IsAssignableFrom(iType))
                 {
-                    classes.Add(new ClassInfoItem(iType, true));
+                    ci = new ClassInfoItem(iType, true);
+                    classes.Add(ci);
+                    viewsandclasses.Add(ci);
                 }
 
-            });
+            }
 
         }
 
@@ -119,22 +127,22 @@ namespace Sikia.Model
         }
         private void AfterLoad()
         {
-            foreach (ClassInfoItem cc in classes)
+            foreach (ClassInfoItem cc in viewsandclasses)
             {
                 cc.ValidateAndPrepare(this);
             }
-            foreach (ClassInfoItem cc in classes)
+            foreach (ClassInfoItem cc in viewsandclasses)
             {
                 cc.ResolveInheritance(this);
             }
 
-            foreach (ClassInfoItem cc in classes)
+            foreach (ClassInfoItem cc in viewsandclasses)
             {
                 cc.Loaded(this);
             }
         }
         #endregion
-        
+
         #region Properties
         ///<summary>
         /// List of enums used by Application 
@@ -159,7 +167,7 @@ namespace Sikia.Model
         {
             try
             {
-                return classes[ct];
+                return viewsandclasses[ct];
             }
             catch
             {
@@ -173,10 +181,8 @@ namespace Sikia.Model
         {
             return ClassByType(typeof(T));
         }
-     
-     
         #endregion
     }
 
-   
+
 }

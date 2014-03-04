@@ -6,7 +6,7 @@ namespace Sikia.Core
 using Sikia.Model;
 using System.Reflection;
 
-    public class InterceptedObject : IModelClass, IInterceptedObject
+    public class InterceptedObject : IClassModel, IInterceptedObject
     {
         #region Warnings & Errors
         #endregion
