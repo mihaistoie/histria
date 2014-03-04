@@ -48,6 +48,7 @@ namespace Sikia.Core.Execution
             {
                 interceptedObject.Container = this;
                 (interceptedObject as IInterceptedObject).AOPAfterCreate();
+                (interceptedObject as IObjectLifetime).Notify(ObjectLifetime.Created);
             }
             return instance;
         }

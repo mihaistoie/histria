@@ -121,5 +121,10 @@ namespace Sikia.Model
                 }
             }
         }
+
+        public virtual void ChangeContent() 
+        { 
+            //Nothing to do, used for AOP interception
+        }
     }
 }

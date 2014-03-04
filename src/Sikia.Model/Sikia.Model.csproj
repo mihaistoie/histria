@@ -94,6 +94,7 @@
     <Compile Include="Types\IClassModel.cs" />
     <Compile Include="Types\IModelPlugin.cs" />
     <Compile Include="Types\IViewModel.cs" />
+    <Compile Include="Types\IObjectLifetime.cs" />
     <Compile Include="Types\IRoleChild.cs" />
     <Compile Include="Types\IRoleList.cs" />
     <Compile Include="Types\IRoleRef.cs" />
