@@ -9,7 +9,7 @@ namespace Sikia
     ///<summary>
     /// Interceptable objects
     ///</summary>
-    public interface IInterceptedObject: IModelClass
+    public interface IInterceptedObject: IClassModel
     {
         #region Properties
         ClassInfoItem ClassInfo { get; set; } 

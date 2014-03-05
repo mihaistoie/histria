@@ -50,9 +50,6 @@
   <ItemGroup>
     <Compile Include="CastleFactory.cs" />
     <Compile Include="CastleProxyFactory.cs" />
-    <Compile Include="ChangePropertyRulesAdvice.cs" />
-    <Compile Include="InterceptorInstaller.cs" />
-    <Compile Include="ModelInstaller.cs" />
     <Compile Include="ModuleCastle.cs" />
     <Compile Include="AOPInterceptor.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

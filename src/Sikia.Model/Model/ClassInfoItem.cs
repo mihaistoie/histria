@@ -41,23 +41,23 @@ namespace Sikia.Model
         ///<summary>
         /// Property  "Parent"
         ///</summary>   	
-        public PropInfoItem Parent { get; set; }
+        public PropInfoItem Parent { get; internal set; }
 
 
         ///<summary>
         /// Use Uuid as primary key 
         ///</summary>   	
-        public bool UseUuidAsPk { get; set; }
+        public bool UseUuidAsPk { get; internal set; }
 
         ///<summary>
         /// Is persistent ?
         ///</summary>   		
-        public bool IsPersistent { get; set; }
+        public bool IsPersistent { get; internal set; }
 
         ///<summary>
         /// The name of the class
         ///</summary>   		
-        public string Name { get; set; }
+        public string Name { get; internal set; }
         
         ///<summary>
         /// The title of the class
@@ -72,12 +72,12 @@ namespace Sikia.Model
         ///<summary>
         ///(Persistence) Name of table used to store this class
         ///</summary>   		
-        public string DbName { get; set; }
+        public string DbName { get; internal set; }
         
         ///<summary>
         /// Is a static class ?
         ///</summary>   		
-        public bool Static { get; set; }
+        public bool Static { get; internal set; }
         
         ///<summary>
         /// List of properties
@@ -99,6 +99,12 @@ namespace Sikia.Model
         ///List of indexes
         ///</summary>   		
         public List<IndexInfo> Indexes { get { return indexes; } }
+
+        ///<summary>
+        /// Is View ?
+        ///</summary>   	
+        internal virtual bool IsView { get { return false; } }
+
         #endregion
 
         #region Rules
@@ -193,9 +199,13 @@ namespace Sikia.Model
         #endregion
 
         #region Loading
-        // validate class after load
-        public void ValidateAndPrepare(ModelManager model)
+        protected virtual void InitializeView(ModelManager model) 
         {
+        }
+        // validate class after load
+        internal void ValidateAndPrepare(ModelManager model)
+        {
+            InitializeView(model);
             foreach (PropInfoItem pi in properties)
             {
                 pi.AfterLoad(model, this);
@@ -227,7 +237,7 @@ namespace Sikia.Model
 
 
         }
-        public MethodItem ExtractMethod(string value)
+        internal MethodItem ExtractMethod(string value)
         {
             if (string.IsNullOrEmpty(value))
                 return null;
@@ -242,7 +252,7 @@ namespace Sikia.Model
         ///<summary>
         /// Prepare memory strutures for faster executing
         ///</summary>
-        public void ResolveInheritance(ModelManager model)
+        internal void ResolveInheritance(ModelManager model)
         {
             if (Static) return;
             if (inherianceResolved) return;
@@ -273,7 +283,7 @@ namespace Sikia.Model
         ///<summary>
         /// Prepare memory structures for faster executing
         ///</summary>
-        public void Loaded(ModelManager model)
+        internal void Loaded(ModelManager model)
         {
             CheckMehodsAndSetRules();
         }

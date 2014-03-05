@@ -5,7 +5,10 @@ using System.Text;
 
 namespace Sikia.Model
 {
-    public interface IModelView<T>: IModelClass
+    ///<summary>
+    /// View model
+    ///</summary>   
+    public interface IViewModel<T> : IClassModel
     {
         T Model { get; set; }  
     }

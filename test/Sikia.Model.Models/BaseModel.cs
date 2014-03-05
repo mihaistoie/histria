@@ -5,7 +5,7 @@ using System.Text;
 
 namespace Sikia.Model.Models
 {
-    public class BaseModel: IModelClass
+    public class BaseModel: IClassModel
     {
         public Guid Uuid { get; set; } 
     }

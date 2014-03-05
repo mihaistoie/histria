@@ -67,10 +67,24 @@ namespace Sikia.Model.Tests
             JsonObject cfg = (JsonObject)JsonValue.Parse("{\"nameSpaces\": [\"XXX\"]}");
             ModelManager m = ModelManager.LoadModel(cfg);
             ClassInfoItem ci = m.Class<ClassInXXX>();
-            Assert.AreNotEqual(ci, null, "Class found");
+            Assert.AreNotEqual(null, ci, "Class found");
+            ci = m.Class<Account>();
+            Assert.AreNotEqual(null, ci, "Class found");
+            ClassInfoItem vi = m.Class<AccountView>();
+            Assert.AreNotEqual(null, vi, "Class found");
+            if (ci != null && vi != null)
+            {
+                PropInfoItem cpi = ci.PropertyByName("Code");
+                PropInfoItem vpi = vi.PropertyByName("Code");
+                Assert.AreNotEqual(cpi, null, "Property found");
+                Assert.AreNotEqual(vpi, null, "Property  found");
+                if (cpi != null && vpi != null)
+                {
+                    Assert.AreEqual(cpi.Title, vpi.Title, "Property title");
+                }
+            }
+
         }
-
-
 
     }
 }

@@ -213,7 +213,13 @@ namespace Sikia.Model
         #endregion
 
         #region Properties
-        public PropertyInfo PropInfo;
+        public PropertyInfo PropInfo { get; internal set; }
+
+        ///<summary>
+        /// Property info of model
+        ///</summary>   
+        public PropInfoItem ModelPropInfo { get; internal set; }
+        
 
         ///<summary>
         /// Roles which depend on this property
@@ -263,12 +269,36 @@ namespace Sikia.Model
         ///<summary>
         /// Title of property
         ///</summary>   
-        public string Title { get { return titleGet == null ? title : (string)titleGet.Invoke(this, null); } }
+        public string Title
+        {
+            get
+            {
+                if (titleGet != null)
+                    return (string)titleGet.Invoke(this, null);
+                if ((title == Name) && ModelPropInfo != null)
+                {
+                    return ModelPropInfo.Title;
+                }
+                return title;
+            }
+        }
 
         ///<summary>
         /// A short description of property 
         ///</summary>   
-        public string Description { get { return descriptionGet == null ? description : (string)descriptionGet.Invoke(this, null); } }
+        public string Description
+        {
+            get
+            {
+                if (descriptionGet != null)
+                    return (string)descriptionGet.Invoke(this, null);
+                if ((description == Name) && ModelPropInfo != null)
+                {
+                    return ModelPropInfo.Description;
+                }
+                return description;
+            }
+        }
 
         ///<summary>
         /// Role detail
@@ -299,14 +329,11 @@ namespace Sikia.Model
             PropInfo = cPi;
             ClassInfo = ci;
             Name = PropInfo.Name;
-
             InitializeTitleAndDescription();
             InitializeType();
             InitializePersistence();
             InitializeDefaultState();
             InitializeRole();
-
-
         }
 
         internal void AddRole(RoleInfoItem role)
@@ -318,8 +345,18 @@ namespace Sikia.Model
             dependOnMe.Add(role);
         }
 
+        public void InitializeView(ModelManager model, ClassInfoItem ci)
+        {
+            if (ci.IsView)
+            {
+                ViewInfoItem vi = (ViewInfoItem)ci;
+                ModelPropInfo = vi.ModelClass.PropertyByName(Name);
+            }
+        }
+
         internal void AfterLoad(ModelManager model, ClassInfoItem ci)
         {
+            InitializeView(model, ci);
             if (IsRole)
             {
                 // Check role && Load role dependencies
@@ -406,7 +443,7 @@ namespace Sikia.Model
                     {
                         //Using Uuid
                         role.UsePk = remoteClass.UseUuidAsPk;
-                        role.PkFields = new List<PKeyInfo>() { new PKeyInfo() { Field =  ModelConst.UUID} }; 
+                        role.PkFields = new List<PKeyInfo>() { new PKeyInfo() { Field = ModelConst.UUID } };
                         role.FkFields = new List<ForeignKeyInfo>() { new ForeignKeyInfo() { Field = ModelConst.RefProperty(Name) } };
                         role.FkFieldsExist = false;
 
