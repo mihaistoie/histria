@@ -12,8 +12,8 @@ namespace Sikia
     public interface IInterceptedObject: IClassModel
     {
         #region Properties
-        ClassInfoItem ClassInfo { get; set; } 
-
+        ClassInfoItem ClassInfo { get; set; }
+        bool CanExecuteRules { get; } 
         #endregion
 
         #region Interceptors
@@ -48,7 +48,7 @@ namespace Sikia
         ///<summary>
         /// An instance is marked as deleted
         ///</summary>
-        void AOPDeleted();
+        void AOPDeleted(bool notifyParent);
 
         #endregion
     }

@@ -56,6 +56,7 @@ namespace Sikia.Core
             if (uuid == Guid.Empty)
                 uuid = Guid.NewGuid();
         }
+        bool IInterceptedObject.CanExecuteRules { get { return canExecuteRules(); } }
         #endregion
 
         #region Model
@@ -123,25 +124,10 @@ namespace Sikia.Core
 
         private void AOPInitializeAssociations()
         {
-
-            bool useFactory = false;
-            MethodInfo method = useFactory ? this.Container.GetType().GetMethod("Create") : null;
-
             for (int index = 0; index < ClassInfo.Roles.Count; index++)
             {
                 PropInfoItem pp = ClassInfo.Roles[index];
-                Association roleInstance = null;
-                if (useFactory)
-                {
-                    Type tt = Association.AssociationType(pp, pp.PropInfo.PropertyType);
-                    MethodInfo genericMethod = method.MakeGenericMethod(tt);
-                    roleInstance = (Association)genericMethod.Invoke(null, null);
-                }
-                else
-                {
-                    roleInstance = Association.AssociationFactory(pp, pp.PropInfo.PropertyType);
-                }
-
+                Association roleInstance = Association.AssociationFactory(pp, pp.PropInfo.PropertyType);
                 roleInstance.PropInfo = pp;
                 roleInstance.Instance = this;
                 pp.PropInfo.SetValue(this, roleInstance, null);
@@ -200,8 +186,16 @@ namespace Sikia.Core
         ///<summary>
         /// IInterceptedObject.AOPDeleted
         ///</summary>
-        void IInterceptedObject.AOPDeleted()
+        void IInterceptedObject.AOPDeleted(bool notifyParent)
         {
+            if (canExecuteRules())
+            {
+                ClassInfo.ExecuteRules(Rule.BeforeDelete, this);
+            }
+            //Delete children  
+            Association.RemoveChildren(this as IInterceptedObject);
+
+            ((IObjectLifetime)this).Notify(ObjectLifetime.Deleted);
             state = ObjectState.Deleting;
         }
         #endregion

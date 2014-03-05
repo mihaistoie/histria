@@ -11,32 +11,32 @@ namespace Sikia.Model
     ///</summary> 
     public abstract class Association : IAssociation
     {
-        public static Type AssociationType(PropInfoItem propInfo, Type declaredType)
-        {
-            Type generic = declaredType.GetGenericArguments()[0];
-            Type hasOne = typeof(HasOne<>);
-            Type cc = hasOne.MakeGenericType(generic);
-            if (declaredType == cc)
-            {
-                if (propInfo.Role.IsList)
-                {
-                    return typeof(HasOneComposition<>).MakeGenericType(generic);
-                }
-                return declaredType;
-            }
-            Type hasMany = typeof(HasMany<>);
-            cc = hasMany.MakeGenericType(generic);
-            if (declaredType == cc)
-            {
-                if (propInfo.Role.IsParent)
-                {
-                    return typeof(HasManyComposition<>).MakeGenericType(generic);
-                }
-                return declaredType;
-            }
+        //public static Type AssociationType(PropInfoItem propInfo, Type declaredType)
+        //{
+        //    Type generic = declaredType.GetGenericArguments()[0];
+        //    Type hasOne = typeof(HasOne<>);
+        //    Type cc = hasOne.MakeGenericType(generic);
+        //    if (declaredType == cc)
+        //    {
+        //        if (propInfo.Role.IsList)
+        //        {
+        //            return typeof(HasOneComposition<>).MakeGenericType(generic);
+        //        }
+        //        return declaredType;
+        //    }
+        //    Type hasMany = typeof(HasMany<>);
+        //    cc = hasMany.MakeGenericType(generic);
+        //    if (declaredType == cc)
+        //    {
+        //        if (propInfo.Role.IsParent)
+        //        {
+        //            return typeof(HasManyComposition<>).MakeGenericType(generic);
+        //        }
+        //        return declaredType;
+        //    }
 
-            return declaredType;
-        }
+        //    return declaredType;
+        //}
 
         public static Association AssociationFactory(PropInfoItem propInfo, Type declaredType)
         {
@@ -69,11 +69,15 @@ namespace Sikia.Model
         /// Property info 
         ///</summary> 
         public PropInfoItem PropInfo { get; set; }
+        
         ///<summary>
         /// The instance that contains this association
         ///</summary> 
         public IInterceptedObject Instance { get; set; }
 
+        ///<summary>
+        /// Update foreign Keys when a relation changed
+        ///</summary> 
         internal void UpdateForeignKeys(PropInfoItem Propinfo, IInterceptedObject target, IInterceptedObject refObj)
         {
             //todo: test if target is in (db) loading  --> if (target.InLoading) return; -
@@ -122,6 +126,13 @@ namespace Sikia.Model
             }
         }
 
+
+        ///<summary>
+        /// Update foreign Keys when a relation changed
+        ///</summary> 
+        public static void RemoveChildren(IInterceptedObject instance )
+        {
+        }
         public virtual void ChangeContent() 
         { 
             //Nothing to do, used for AOP interception

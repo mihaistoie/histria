@@ -12,7 +12,7 @@ namespace Sikia.Model
         {
             _value = default(T);
         }
-        
+
         protected override void InternalSetValue(T value, bool updateForeignKeys)
         {
             if (updateForeignKeys)
@@ -34,17 +34,16 @@ namespace Sikia.Model
             {
                 IInterceptedObject old = (ov as IInterceptedObject);
                 rc = inv.PropInfo.GetValue(ov, null) as IRoleChild;
+                old.AOPDeleted(false);
                 if (!rc.SetParent(null, false))
                 {
                     return;
                 }
-                old.AOPDeleted();
-
             }
             if (!Instance.AOPBeforeSetProperty(PropInfo.Name, ref nv, ref ov))
             {
                 return;
-            } 
+            }
             //Proceed
             if (nv != null)
             {

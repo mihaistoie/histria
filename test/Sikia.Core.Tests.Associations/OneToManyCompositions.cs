@@ -18,6 +18,7 @@ namespace Sikia.Core.Tests.Associations
         public int  HandsCount  { get; set; }
         
         [Rule(Rule.AfterCreate)]
+        [Rule(Rule.AfterLoad)]
         public void CalculateHands()
         {
             HandsCount = 0;

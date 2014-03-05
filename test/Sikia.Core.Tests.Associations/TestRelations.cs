@@ -79,9 +79,9 @@ namespace Sikia.Core.Tests.Associations
             Assert.AreEqual(body1.Nose.RefUid, Guid.Empty, "uid");
             Assert.AreEqual(body1.Nose.Value, null, "test direct role");
             Assert.AreEqual(nose1.Body.Value, null, "test inv role");
-            Assert.AreEqual(true, string.IsNullOrEmpty(body1.CurrentNoseId), "Rule prppagation");
+            Assert.AreEqual(true, string.IsNullOrEmpty(body1.CurrentNoseId), "Rule propagation");
             //false !!!! nose is marked as deleted 
-            Assert.AreEqual(false, string.IsNullOrEmpty(nose1.CurrentBodyId), "Rule prppagation");
+            Assert.AreEqual(false, string.IsNullOrEmpty(nose1.CurrentBodyId), "Rule propagation");
 
         }
 

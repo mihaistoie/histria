@@ -10,8 +10,34 @@ namespace Sikia.Model
     ///</summary>   
     public enum Rule
     {
-        Unknown = 0, Validation = 2, Propagation = 4, AfterCreate = 8,
-        AfterLoad = 16, BeforeSave = 32, Correction = 64,
-        Required = 128
+        Unknown,
+        ///<summary>
+        /// Called after set property and before save
+        ///</summary>   
+        Validation,
+        ///<summary>
+        /// Called after set property
+        ///</summary>   
+        Propagation,
+        ///<summary>
+        /// Called after an instance is created
+        ///</summary>   
+        AfterCreate,
+        ///<summary>
+        /// Called after an  is loaded from db ...
+        ///</summary>   
+        AfterLoad,
+        ///<summary>
+        /// Validations before delete
+        ///</summary>   
+        BeforeDelete,
+        ///<summary>
+        /// Validations before save
+        ///</summary>   
+        BeforeSave,
+        ///<summary>
+        /// Corrections before set proerty
+        ///</summary>   
+        Correction
     };
 }

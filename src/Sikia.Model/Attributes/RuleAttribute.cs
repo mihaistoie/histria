@@ -18,7 +18,7 @@ namespace Sikia.Model
         }
         public bool CheckProperty()
         {
-            if (String.IsNullOrEmpty(Property) && ((Rule & (Rule.Validation | Rule.Propagation)) != 0)) {
+            if (string.IsNullOrEmpty(Property) && (Rule == Rule.Validation || Rule == Rule.Propagation)) {
                 return false;
             }
             return true;
