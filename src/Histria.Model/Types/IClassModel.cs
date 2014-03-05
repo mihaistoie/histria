@@ -1,0 +1,17 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+
+namespace Histria
+{
+    ///<summary>
+    /// The classes (Model) that support this interface will be loaded by the model manager
+    ///</summary>
+    public interface IClassModel
+    {
+        #region Properties
+        Guid Uuid { get; set; }
+        #endregion
+    }
+}

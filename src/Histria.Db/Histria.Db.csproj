@@ -1,0 +1,90 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{7989F2D8-575F-414A-9E6A-2923AE9DF0FA}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>Histria.Db</RootNamespace>
+    <AssemblyName>Histria.Db</AssemblyName>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <TargetFrameworkProfile />
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <Prefer32Bit>false</Prefer32Bit>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <Prefer32Bit>false</Prefer32Bit>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="DbDrivers.cs" />
+    <Compile Include="Model\DbColumn.cs" />
+    <Compile Include="Model\DbColumns.cs" />
+    <Compile Include="Model\DbFk.cs" />
+    <Compile Include="Model\DbFkColumns.cs" />
+    <Compile Include="Model\DbFkItem.cs" />
+    <Compile Include="Model\DbIndex.cs" />
+    <Compile Include="Model\DbIndexColumns.cs" />
+    <Compile Include="Model\DbIndexes.cs" />
+    <Compile Include="Model\DbSchema.cs" />
+    <Compile Include="DbTranslator.cs" />
+    <Compile Include="DbConnectionInfo.cs" />
+    <Compile Include="DbConnectionManger.cs" />
+    <Compile Include="DbDefs.cs" />
+    <Compile Include="DbCmd.cs" />
+    <Compile Include="DbCmdParameter.cs" />
+    <Compile Include="DbCmdParameters.cs" />
+    <Compile Include="DbServices.cs" />
+    <Compile Include="DbSession.cs" />
+    <Compile Include="DbTran.cs" />
+    <Compile Include="Model\DbTable.cs" />
+    <Compile Include="DbUri.cs" />
+    <Compile Include="Model\DbIndexItem.cs" />
+    <Compile Include="Model\DbTables.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Histria.Sys\Histria.Sys.csproj">
+      <Project>{7e07af0f-212d-42bf-b505-87018f6619bd}</Project>
+      <Name>Histria.Sys</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Histria.Json\Histria.Json.csproj">
+      <Project>{129e2aa1-5a70-42b0-9051-f84360105480}</Project>
+      <Name>Histria.Json</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup />
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>
