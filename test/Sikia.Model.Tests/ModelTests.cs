@@ -70,6 +70,7 @@ namespace Sikia.Model.Tests
             Assert.AreNotEqual(null, ci, "Class found");
             ci = m.Class<Account>();
             Assert.AreNotEqual(null, ci, "Class found");
+            
             ClassInfoItem vi = m.Class<AccountView>();
             Assert.AreNotEqual(null, vi, "Class found");
             if (ci != null && vi != null)
@@ -83,6 +84,10 @@ namespace Sikia.Model.Tests
                     Assert.AreEqual(cpi.Title, vpi.Title, "Property title");
                 }
             }
+
+            ci = m.Class<Us>();
+            Assert.AreNotEqual(null, ci, "Class found");
+
 
         }
 

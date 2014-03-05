@@ -79,7 +79,7 @@ namespace Sikia.Model
         private void LoadTypes(List<Type> types)
         {
             Type ii = typeof(IClassModel);
-            Type iw = typeof(IViewModel<>);
+            Type iw = typeof(IViewModel);
             Type ip = typeof(IPluginModel);
             for (int i = 0, len = types.Count; i < len; i++)
             {
@@ -97,20 +97,19 @@ namespace Sikia.Model
                 }
                 else if (iType.IsClass)
                 {
-                    Type[] interfaces = iType.GetInterfaces();
-                    if (interfaces.Any(x => x.IsGenericType && x.GetGenericTypeDefinition() == iw))
+                    if (iw.IsAssignableFrom(iType))
                     {
                         ci = new ViewInfoItem(iType);
                         views.Add(ci);
                         viewsandclasses.Add(ci);
                     }
-                    else if (interfaces.Contains(ii))
+                    else if (ii.IsAssignableFrom(iType))
                     {
                         ci = new ClassInfoItem(iType, false);
                         classes.Add(ci);
                         viewsandclasses.Add(ci);
                     }
-                    else if (interfaces.Contains(ip))
+                    else if (ip.IsAssignableFrom(iType))
                     {
                         ci = new ClassInfoItem(iType, true);
                         classes.Add(ci);

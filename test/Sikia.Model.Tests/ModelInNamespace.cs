@@ -50,7 +50,7 @@ namespace Sikia.Model.Tests.XXX
     public class UserViewList : BaseView<User>
     {
         ///<summary>
-        /// Properties edxosed from User
+        /// Properties exposed from User
         ///</summary>  
         public virtual string FirstName { get; set; }
         public virtual string LastName { get; set; }
@@ -71,6 +71,18 @@ namespace Sikia.Model.Tests.XXX
             FullName = FirstName + " " + LastName.ToUpper();
         }
     }
+
+    ///<summary>
+    /// A standalone view
+    ///</summary>  
+    public class UserReportSelctions : BaseView
+    {
+        [Display("Start First Name")]
+        public virtual string StartFirstName { get; set; }
+        [Display("End First Name")]
+        public virtual string EndLastName { get; set; }
+    }
+
     
 
 }

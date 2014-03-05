@@ -19,10 +19,13 @@ namespace Sikia.Model
 
             Type iw = typeof(IViewModel<>);
             Type imv = CurrentType.GetInterfaces().First(x => (x.IsGenericType && x.GetGenericTypeDefinition() == iw));
-            ModelClass = model.ClassByType(imv.GetGenericArguments()[0]);
-            if (ModelClass == null)
+            if (imv != null)
             {
-                throw new ModelException(String.Format(L.T("Invalid Model type \"{0}\" for the view \"{1}\"."), CurrentType.GetGenericArguments()[0], Name), Name);
+                ModelClass = model.ClassByType(imv.GetGenericArguments()[0]);
+                if (ModelClass == null)
+                {
+                    throw new ModelException(String.Format(L.T("Invalid Model type \"{0}\" for the view \"{1}\"."), CurrentType.GetGenericArguments()[0], Name), Name);
+                }
             }
 
         }

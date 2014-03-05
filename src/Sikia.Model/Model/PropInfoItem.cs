@@ -350,7 +350,8 @@ namespace Sikia.Model
             if (ci.IsView)
             {
                 ViewInfoItem vi = (ViewInfoItem)ci;
-                ModelPropInfo = vi.ModelClass.PropertyByName(Name);
+                if (vi.ModelClass != null)
+                    ModelPropInfo = vi.ModelClass.PropertyByName(Name);
             }
         }
 

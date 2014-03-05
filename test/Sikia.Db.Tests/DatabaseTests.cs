@@ -13,6 +13,8 @@ namespace Sikia.Db.Tests
     [TestClass]
     public class DatabaseTests
     {
+        static string sqlServerInstance = "(local)\\SQLEXPRESS";
+        
         [ClassInitialize]
         public static void Setup(TestContext testContext)
         {
@@ -23,9 +25,9 @@ namespace Sikia.Db.Tests
         [TestMethod]
         public void MsSqlUrlParser()   
         {
-            string dburl = "mssql://(local)\\SQLEXPRESS/master?schema=dbo";
+            string dburl = string.Format("mssql://{0}/master?schema=dbo", sqlServerInstance);
             DbConnectionInfo ci = DbDrivers.Instance.Connection(dburl);
-            Assert.AreEqual("(local)\\SQLEXPRESS", ci.ServerAddress, "Parse Server part");
+            Assert.AreEqual(sqlServerInstance, ci.ServerAddress, "Parse Server part");
             Assert.AreEqual("master", ci.DatabaseName, "Parse Database part");
             MsSqlConnectionInfo ms = (MsSqlConnectionInfo)ci;
             Assert.AreEqual("dbo", ms.Schema, "Parse schema part");
@@ -34,7 +36,7 @@ namespace Sikia.Db.Tests
         [TestMethod]
         public void MsSqlConnection()
         {
-            string dburl = "mssql://(local)\\SQLEXPRESS/master?schema=dbo";
+            string dburl = string.Format("mssql://{0}/master?schema=dbo", sqlServerInstance);
             using (DbSession ss = DbDrivers.Instance.Session(dburl))
             {
                 DbCmd cmd = ss.Command("select 1");
@@ -46,7 +48,7 @@ namespace Sikia.Db.Tests
         [TestMethod]
         public void MsSqlDatabases()
         {
-            string dburl = "mssql://(local)\\SQLEXPRESS/xyzgrls?schema=dbo";
+            string dburl = string.Format("mssql://{0}/xyzgrls?schema=dbo", sqlServerInstance);
             DbSchema ss = DbDrivers.Instance.Schema(DbServices.Url2Protocol(dburl));
             if (ss.DatabaseExists(dburl))
             {
@@ -59,7 +61,7 @@ namespace Sikia.Db.Tests
         [TestMethod]
         public void MsSqlTables()
         {
-            string dburl = "mssql://(local)\\SQLEXPRESS/msergrls?schema=dbo";
+            string dburl = string.Format("mssql://{0}/msergrls?schema=dbo", sqlServerInstance);
             DbSchema ss = CreateDB(dburl);
             using (DbSession session = DbDrivers.Instance.Session(dburl))
             {
@@ -111,7 +113,7 @@ namespace Sikia.Db.Tests
         [TestMethod]
         public void MsSqlColumns()
         {
-            string dburl = "mssql://(local)\\SQLEXPRESS/slergrls?schema=dbo";
+            string dburl = string.Format("mssql://{0}/slergrls?schema=dbo", sqlServerInstance);
             DbSchema ss = CreateDB(dburl);
             using (DbSession session = DbDrivers.Instance.Session(dburl))
             {
@@ -201,7 +203,8 @@ namespace Sikia.Db.Tests
         [TestMethod]
         public void MsSqlPrimarykeys()
         {
-            string dburl = "mssql://(local)\\SQLEXPRESS/slfsrgrls?schema=dbo";
+            
+            string dburl = string.Format("mssql://{0}/slfsergrls?schema=dbo", sqlServerInstance);
             DbSchema ss = CreateDB(dburl);
             using (DbSession session = DbDrivers.Instance.Session(dburl))
             {
@@ -272,7 +275,7 @@ namespace Sikia.Db.Tests
         [TestMethod]
         public void MsSqlIndexes()
         {
-            string dburl = "mssql://(local)\\SQLEXPRESS/slfsrgrls?schema=dbo";
+            string dburl = string.Format("mssql://{0}/slfsrgroyls?schema=dbo", sqlServerInstance);
             DbSchema ss = CreateDB(dburl);
             using (DbSession session = DbDrivers.Instance.Session(dburl))
             {
@@ -413,7 +416,7 @@ namespace Sikia.Db.Tests
         [TestMethod]
         public void MsSqlForeignkeysUsingPk()
         {
-            string dburl = "mssql://(local)\\SQLEXPRESS/zqmsrgrls?schema=dbo";
+            string dburl = string.Format("mssql://{0}/zqmsrgrls?schema=dbo", sqlServerInstance);
             DbSchema ss = CreateDB(dburl);
             using (DbSession session = DbDrivers.Instance.Session(dburl))
             {
@@ -541,7 +544,7 @@ namespace Sikia.Db.Tests
         [TestMethod]
         public void MsSqlFKNotUsingPk()
         {
-            string dburl = "mssql://(local)\\SQLEXPRESS/zqmsrwgrls?schema=dbo";
+            string dburl = string.Format("mssql://{0}/zqmserwgrls?schema=dbo", sqlServerInstance);
             DbSchema ss = CreateDB(dburl);
             using (DbSession session = DbDrivers.Instance.Session(dburl))
             {
@@ -649,7 +652,7 @@ namespace Sikia.Db.Tests
         [TestMethod]
         public void LoadComplexDB()
         {
-            string dburl = "mssql://(local)\\SQLEXPRESS/SFR?schema=dbo";
+            string dburl = string.Format("mssql://{0}/SFR?schema=dbo", sqlServerInstance);
             DbSchema ss = DbDrivers.Instance.Schema(DbServices.Url2Protocol(dburl));
             if (ss.DatabaseExists(dburl))
             {

@@ -10,6 +10,10 @@ namespace Sikia.Model.Tests
         public Guid Uuid { get; set; } 
     }
 
+    public class BaseView : BaseModel, IViewModel
+    {
+    }
+
     public class BaseView<T> : BaseModel, IViewModel<T>
     {
         public T Model { get; set; }
