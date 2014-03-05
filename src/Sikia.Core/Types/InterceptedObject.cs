@@ -6,7 +6,8 @@ namespace Sikia.Core
     using Sikia.Model;
     using System.Reflection;
 
-    public class InterceptedObject : IClassModel, IInterceptedObject, IObjectLifetime    {
+    public class InterceptedObject : IClassModel, IInterceptedObject, IObjectLifetime
+    {
         #region Warnings & Errors
         #endregion
 
@@ -29,34 +30,12 @@ namespace Sikia.Core
 
         private bool canExecuteRules()
         {
-            if ((state & ObjectState.Creating) == ObjectState.Creating)
-                return false;
-            if ((state & ObjectState.Loading) == ObjectState.Loading)
-                return false;
-            if ((state & ObjectState.Disposing) == ObjectState.Disposing)
-                return false;
-            if ((state & ObjectState.Frozen) == ObjectState.Frozen)
-                return false;
-            if ((state & ObjectState.Deleting) == ObjectState.Deleting)
-                return false;
-            
-            return true;
+            return (state & ObjectState.Iddle) == ObjectState.Iddle;
         }
 
         private bool canNotifyChanges()
         {
-            if ((state & ObjectState.Creating) == ObjectState.Creating)
-                return false;
-            if ((state & ObjectState.Loading) == ObjectState.Loading)
-                return false;
-            if ((state & ObjectState.Disposing) == ObjectState.Disposing)
-                return false;
-            if ((state & ObjectState.Frozen) == ObjectState.Frozen)
-                return false;
-            if ((state & ObjectState.Deleting) == ObjectState.Deleting)
-                return false;
-
-            return true;
+            return (state & ObjectState.Iddle) == ObjectState.Iddle;
         }
 
         #endregion
@@ -144,7 +123,7 @@ namespace Sikia.Core
 
         private void AOPInitializeAssociations()
         {
-            
+
             bool useFactory = false;
             MethodInfo method = useFactory ? this.Container.GetType().GetMethod("Create") : null;
 
@@ -162,12 +141,12 @@ namespace Sikia.Core
                 {
                     roleInstance = Association.AssociationFactory(pp, pp.PropInfo.PropertyType);
                 }
-                
-                    roleInstance.PropInfo = pp;
-                    roleInstance.Instance = this;
-                    pp.PropInfo.SetValue(this, roleInstance, null);
-                }
+
+                roleInstance.PropInfo = pp;
+                roleInstance.Instance = this;
+                pp.PropInfo.SetValue(this, roleInstance, null);
             }
+        }
         #endregion
 
         #region Interceptors
@@ -197,7 +176,7 @@ namespace Sikia.Core
             // Propagate
             pi.ExecuteRules(Rule.Propagation, this, RoleOperation.None);
         }
-   
+
         ///<summary>
         /// Before modifying a role (add/remove/update)
         ///</summary>
