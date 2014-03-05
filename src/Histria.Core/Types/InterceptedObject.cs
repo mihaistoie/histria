@@ -80,7 +80,6 @@ namespace Histria.Core
         }
         #endregion
 
-
         public Container Container { get; set; }
 
         #region Initialization
@@ -100,7 +99,8 @@ namespace Histria.Core
                 state = ObjectState.Iddle;
             }
             ((IObjectLifetime)this).Notify(ObjectLifetime.Created);
-            ClassInfo.ExecuteRules(Rule.AfterCreate, this);
+            if (this.canExecuteRules())
+                ClassInfo.ExecuteRules(Rule.AfterCreate, this);
         }
 
         ///<summary>
@@ -119,7 +119,8 @@ namespace Histria.Core
                 state = ObjectState.Iddle;
             }
             ((IObjectLifetime)this).Notify(ObjectLifetime.Loaded);
-            ClassInfo.ExecuteRules(Rule.AfterLoad, this);
+            if (this.canExecuteRules())
+                ClassInfo.ExecuteRules(Rule.AfterLoad, this);
         }
 
         private void AOPInitializeAssociations()
@@ -145,6 +146,7 @@ namespace Histria.Core
             PropInfoItem pi = ClassInfo.PropertyByName(propertyName);
             oldValue = pi.PropInfo.GetValue(this, null);
             pi.SchemaValidation(ref value);
+            pi.ExecuteCheckValueRules(this, ref value);
             if (oldValue == value) return false;
             return true;
         }

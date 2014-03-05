@@ -219,7 +219,7 @@ namespace Histria.Model
         /// Property info of model
         ///</summary>   
         public PropInfoItem ModelPropInfo { get; internal set; }
-        
+
 
         ///<summary>
         /// Roles which depend on this property
@@ -524,7 +524,7 @@ namespace Histria.Model
         ///<summary>
         /// Execute rules by type
         ///</summary>   
-        public void ExecuteRules(Rule kind, Object target, RoleOperation operation)
+        public void ExecuteRules(Rule kind, object target, RoleOperation operation)
         {
             RuleList rl = null;
             if (rules.TryGetValue(kind, out rl))
@@ -533,6 +533,15 @@ namespace Histria.Model
             }
 
         }
+        public void ExecuteCheckValueRules(object target, ref object value)
+        {
+            RuleList rl = null;
+            if (rules.TryGetValue(Rule.Correction, out rl))
+            {
+                rl.ExecuteCheckValueRules(target, ref value);
+            }
+        }
+
         #endregion
     }
 }
