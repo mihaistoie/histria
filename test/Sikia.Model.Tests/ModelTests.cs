@@ -85,10 +85,6 @@ namespace Sikia.Model.Tests
                 }
             }
 
-            ci = m.Class<Us>();
-            Assert.AreNotEqual(null, ci, "Class found");
-
-
         }
 
     }

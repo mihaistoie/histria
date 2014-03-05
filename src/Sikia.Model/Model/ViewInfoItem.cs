@@ -18,7 +18,7 @@ namespace Sikia.Model
         {
 
             Type iw = typeof(IViewModel<>);
-            Type imv = CurrentType.GetInterfaces().First(x => (x.IsGenericType && x.GetGenericTypeDefinition() == iw));
+            Type imv = CurrentType.GetInterfaces().FirstOrDefault(x => (x.IsGenericType && x.GetGenericTypeDefinition() == iw));
             if (imv != null)
             {
                 ModelClass = model.ClassByType(imv.GetGenericArguments()[0]);

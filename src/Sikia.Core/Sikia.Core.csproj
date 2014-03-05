@@ -61,6 +61,7 @@
     <Compile Include="Factory\ProxyFactory.cs" />
     <Compile Include="Types\RulePluginObject.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Types\ViewObject.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Sikia.AOP\Sikia.AOP.csproj">
