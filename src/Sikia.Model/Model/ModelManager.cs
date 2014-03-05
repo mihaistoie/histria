@@ -80,7 +80,7 @@ namespace Sikia.Model
         {
             Type ii = typeof(IClassModel);
             Type iw = typeof(IViewModel<>);
-            Type ip = typeof(IModelPlugin);
+            Type ip = typeof(IPluginModel);
             for (int i = 0, len = types.Count; i < len; i++)
             {
                 Type iType = types[i];
@@ -88,28 +88,34 @@ namespace Sikia.Model
                 NoModelAttribute nm = iType.GetCustomAttributes(typeof(NoModelAttribute), false).FirstOrDefault() as NoModelAttribute;
                 if (nm != null) continue;
 
+
+                
                 if (iType.IsEnum)
                 {
                     //load enums 
                     enums.Add(new EnumInfoItem(iType));
                 }
-                else if (iType.IsClass && iw.IsAssignableFrom(iType))
+                else if (iType.IsClass)
                 {
-                    ci = new ViewInfoItem(iType);
-                    views.Add(ci);
-                    viewsandclasses.Add(ci);
-                }
-                else if (iType.IsClass && ii.IsAssignableFrom(iType))
-                {
-                    ci = new ClassInfoItem(iType, false);
-                    classes.Add(ci);
-                    viewsandclasses.Add(ci);
-                }
-                else if (iType.IsClass && ip.IsAssignableFrom(iType))
-                {
-                    ci = new ClassInfoItem(iType, true);
-                    classes.Add(ci);
-                    viewsandclasses.Add(ci);
+                    Type[] interfaces = iType.GetInterfaces();
+                    if (interfaces.Any(x => x.IsGenericType && x.GetGenericTypeDefinition() == iw))
+                    {
+                        ci = new ViewInfoItem(iType);
+                        views.Add(ci);
+                        viewsandclasses.Add(ci);
+                    }
+                    else if (interfaces.Contains(ii))
+                    {
+                        ci = new ClassInfoItem(iType, false);
+                        classes.Add(ci);
+                        viewsandclasses.Add(ci);
+                    }
+                    else if (interfaces.Contains(ip))
+                    {
+                        ci = new ClassInfoItem(iType, true);
+                        classes.Add(ci);
+                        viewsandclasses.Add(ci);
+                    }
                 }
 
             }

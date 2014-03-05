@@ -81,7 +81,6 @@ namespace Sikia.Model.Tests
                 if (cpi != null && vpi != null)
                 {
                     Assert.AreEqual(cpi.Title, vpi.Title, "Property title");
-                    Assert.AreEqual(cpi.Title, null, "Property title");
                 }
             }
 

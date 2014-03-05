@@ -3,13 +3,12 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace Sikia.Model
+namespace Sikia
 {
     ///<summary>
-    /// View model
+    /// Allow to define rules or methods for a model or a View
     ///</summary>   
-    public interface IViewModel<T> : IClassModel
+    public interface IPluginModel
     {
-        T Model { get; set; }  
     }
 }

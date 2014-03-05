@@ -275,7 +275,7 @@ namespace Sikia.Model
             {
                 if (titleGet != null)
                     return (string)titleGet.Invoke(this, null);
-                if (string.IsNullOrEmpty(title) && ModelPropInfo != null)
+                if ((title == Name) && ModelPropInfo != null)
                 {
                     return ModelPropInfo.Title;
                 }
@@ -292,7 +292,7 @@ namespace Sikia.Model
             {
                 if (descriptionGet != null)
                     return (string)descriptionGet.Invoke(this, null);
-                if (string.IsNullOrEmpty(description) && ModelPropInfo != null)
+                if ((description == Name) && ModelPropInfo != null)
                 {
                     return ModelPropInfo.Description;
                 }
@@ -356,6 +356,7 @@ namespace Sikia.Model
 
         internal void AfterLoad(ModelManager model, ClassInfoItem ci)
         {
+            InitializeView(model, ci);
             if (IsRole)
             {
                 // Check role && Load role dependencies
