@@ -1,6 +1,7 @@
-Sikia
+Histria
 =====
-Sikia is a c# Rules Engine framework.
+
+Histria is a c# Rules Engine framework.
 
 
 See [Wiki] (https://github.com/mihaistoie/sikia/wiki) for more details.
