@@ -8,6 +8,7 @@ namespace Sikia.Model
     public enum ObjectLifetime
     {
         Created,
+        Loaded,
         Changed,
         AssociationsChanged,
         Deleted,

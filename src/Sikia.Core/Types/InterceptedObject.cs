@@ -109,12 +109,38 @@ using System.Reflection;
         ///<summary>
         /// IInterceptedObject.AOPAfterCreate
         ///</summary>
-        void IInterceptedObject.AOPAfterCreate()
+        void IInterceptedObject.AOPCreate()
         {
             state = ObjectState.Creating;
-            AOPInitializeAssociations();
+            try
+            {
+                AOPInitializeAssociations();
+            }
+            finally
+            {
+                state = ObjectState.Iddle;
+            }
+            ((IObjectLifetime)this).Notify(ObjectLifetime.Created);
             ClassInfo.ExecuteRules(Rule.AfterCreate, this);
-            state = ObjectState.Iddle;
+        }
+
+        ///<summary>
+        /// IInterceptedObject.AOPAfterLoad
+        ///</summary>
+        void IInterceptedObject.AOPLoad<T>(Action<T> loadAction)
+        {
+            state = ObjectState.Loading;
+            try
+            {
+                AOPInitializeAssociations();
+                loadAction(this as T);
+            }
+            finally
+            {
+                state = ObjectState.Iddle;
+            }
+            ((IObjectLifetime)this).Notify(ObjectLifetime.Loaded);
+            ClassInfo.ExecuteRules(Rule.AfterLoad, this);
         }
 
         private void AOPInitializeAssociations()

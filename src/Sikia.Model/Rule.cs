@@ -11,7 +11,7 @@ namespace Sikia.Model
     public enum Rule
     {
         Unknown = 0, Validation = 2, Propagation = 4, AfterCreate = 8,
-        AfterLoaded = 16, BeforeSave = 32, Correction = 64,
+        AfterLoad = 16, BeforeSave = 32, Correction = 64,
         Required = 128
     };
 }

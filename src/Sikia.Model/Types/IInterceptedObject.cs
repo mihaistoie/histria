@@ -38,8 +38,13 @@ namespace Sikia
         ///<summary>
         /// After an instance is created
         ///</summary>
-        void AOPAfterCreate();
+        void AOPCreate();
 
+        ///<summary>
+        /// After an instance is loaded
+        ///</summary>
+        void AOPLoad<T>(Action<T> loadAction) where T: class;
+        
         ///<summary>
         /// An instance is marked as deleted
         ///</summary>

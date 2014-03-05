@@ -40,15 +40,35 @@ namespace Sikia.Core.Execution
         private readonly IProxyFactory proxyFactory;
         private IProxyFactory ProxyFactory { get { return proxyFactory; } }
 
-        public T Create<T>() where T:class
+        private T CreateInstance<T>() where T : class
         {
             T instance = this.proxyFactory.Create<T>();
             var interceptedObject = instance as InterceptedObject;
             if (interceptedObject != null)
             {
                 interceptedObject.Container = this;
-                (interceptedObject as IInterceptedObject).AOPAfterCreate();
-                (interceptedObject as IObjectLifetime).Notify(ObjectLifetime.Created);
+            }
+            return instance;
+        }
+
+        public T Load<T>(Action<T> loadAction) where T:class
+        {
+            T instance = this.CreateInstance<T>();
+            var interceptedObject = instance as InterceptedObject;
+            if (interceptedObject != null)
+            {
+                (interceptedObject as IInterceptedObject).AOPLoad(loadAction);
+            }
+            return instance;
+        }
+
+        public T Create<T>() where T : class
+        {
+            T instance = CreateInstance<T>();
+            var interceptedObject = instance as InterceptedObject;
+            if (interceptedObject != null)
+            {
+                (interceptedObject as IInterceptedObject).AOPCreate();
             }
             return instance;
         }

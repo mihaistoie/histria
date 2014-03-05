@@ -40,6 +40,10 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Changes\ChangeRecord.cs" />
+    <Compile Include="Changes\ChangeRecorder.cs" />
+    <Compile Include="Changes\ObjectChange.cs" />
+    <Compile Include="Changes\PropertyChange.cs" />
     <Compile Include="Execution\ChangePropertyRulesAspect.cs" />
     <Compile Include="Execution\Container.cs" />
     <Compile Include="Execution\ContainerSetup.cs" />
@@ -72,6 +76,7 @@
       <Name>Sikia.Sys</Name>
     </ProjectReference>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
