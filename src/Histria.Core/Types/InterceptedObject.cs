@@ -28,7 +28,7 @@ namespace Histria.Core
             }
         }
 
-        private bool canExecuteRules()
+        private bool canExecuteRules(Rule ruleType)
         {
             return (state & ObjectState.Iddle) == ObjectState.Iddle;
         }
@@ -56,7 +56,6 @@ namespace Histria.Core
             if (uuid == Guid.Empty)
                 uuid = Guid.NewGuid();
         }
-        bool IInterceptedObject.CanExecuteRules { get { return canExecuteRules(); } }
         #endregion
 
         #region Model
@@ -99,7 +98,7 @@ namespace Histria.Core
                 state = ObjectState.Iddle;
             }
             ((IObjectLifetime)this).Notify(ObjectLifetime.Created);
-            if (this.canExecuteRules())
+            if (this.canExecuteRules(Rule.AfterCreate))
                 ClassInfo.ExecuteRules(Rule.AfterCreate, this);
         }
 
@@ -119,7 +118,7 @@ namespace Histria.Core
                 state = ObjectState.Iddle;
             }
             ((IObjectLifetime)this).Notify(ObjectLifetime.Loaded);
-            if (this.canExecuteRules())
+            if (this.canExecuteRules(Rule.AfterLoad))
                 ClassInfo.ExecuteRules(Rule.AfterLoad, this);
         }
 
@@ -142,10 +141,10 @@ namespace Histria.Core
         ///</summary>
         bool IInterceptedObject.AOPBeforeSetProperty(string propertyName, ref object value, ref object oldValue)
         {
-            if (!canExecuteRules()) return true;
             PropInfoItem pi = ClassInfo.PropertyByName(propertyName);
             oldValue = pi.PropInfo.GetValue(this, null);
             pi.SchemaValidation(ref value);
+            if (canExecuteRules(Rule.Correction)) return true;
             pi.ExecuteCheckValueRules(this, ref value);
             if (oldValue == value) return false;
             return true;
@@ -157,12 +156,13 @@ namespace Histria.Core
         void IInterceptedObject.AOPAfterSetProperty(string propertyName, object newValue, object oldValue)
         {
             (this as IObjectLifetime).Notify(ObjectLifetime.Changed, propertyName, oldValue, newValue);
-            if (!canExecuteRules()) return;
             PropInfoItem pi = ClassInfo.PropertyByName(propertyName);
             // Validate
-            pi.ExecuteRules(Rule.Validation, this, RoleOperation.None);
+            if (canExecuteRules(Rule.Validation))
+                pi.ExecuteRules(Rule.Validation, this, RoleOperation.None);
             // Propagate
-            pi.ExecuteRules(Rule.Propagation, this, RoleOperation.None);
+            if (canExecuteRules(Rule.Propagation))
+                pi.ExecuteRules(Rule.Propagation, this, RoleOperation.None);
         }
 
         ///<summary>
@@ -177,12 +177,13 @@ namespace Histria.Core
         ///</summary>
         void IInterceptedObject.AOPAfterChangeChild(string propertyName, IInterceptedObject child, RoleOperation operation)
         {
-            if (!canExecuteRules()) return;
             PropInfoItem pi = ClassInfo.PropertyByName(propertyName);
             // Validate
-            pi.ExecuteRules(Rule.Validation, this, operation);
+            if (canExecuteRules(Rule.Validation))
+                pi.ExecuteRules(Rule.Validation, this, operation);
             // Propagate
-            pi.ExecuteRules(Rule.Propagation, this, operation);
+            if (canExecuteRules(Rule.Propagation))
+                pi.ExecuteRules(Rule.Propagation, this, operation);
         }
 
         ///<summary>
@@ -190,13 +191,23 @@ namespace Histria.Core
         ///</summary>
         void IInterceptedObject.AOPDeleted(bool notifyParent)
         {
-            if (canExecuteRules())
+            if (canExecuteRules(Rule.BeforeDelete))
             {
                 ClassInfo.ExecuteRules(Rule.BeforeDelete, this);
             }
             //Delete children  
             Association.RemoveChildren(this as IInterceptedObject);
+            if (canExecuteRules(Rule.AfterDelete))
+            {
+                try
+                {
+                    ClassInfo.ExecuteRules(Rule.AfterDelete, this);
+                }
+                catch
+                {
 
+                }
+            }
             ((IObjectLifetime)this).Notify(ObjectLifetime.Deleted);
             state = ObjectState.Deleting;
         }

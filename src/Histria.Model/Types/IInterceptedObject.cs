@@ -13,7 +13,6 @@ namespace Histria
     {
         #region Properties
         ClassInfoItem ClassInfo { get; set; }
-        bool CanExecuteRules { get; } 
         #endregion
 
         #region Interceptors

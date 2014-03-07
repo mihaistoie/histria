@@ -22,18 +22,26 @@ namespace Histria.Model
                 {
                     return (Association)Activator.CreateInstance(typeof(HasOneComposition<>).MakeGenericType(generic));
                 }
+                else if (propInfo.Role.Type == Relation.Aggregation)
+                {
+                    return (Association)Activator.CreateInstance(typeof(HasOneAggregation<>).MakeGenericType(generic));
+                }
                 return (Association)Activator.CreateInstance(declaredType);
             }
-            
+
             Type hasMany = typeof(HasMany<>);
             cc = hasMany.MakeGenericType(generic);
             if (declaredType == cc)
             {
                 if (propInfo.Role.IsParent)
                 {
-                   return (Association)Activator.CreateInstance(typeof(HasManyComposition<>).MakeGenericType(generic));
+                    return (Association)Activator.CreateInstance(typeof(HasManyComposition<>).MakeGenericType(generic));
                 }
-             }
+                else if (propInfo.Role.Type == Relation.Aggregation)
+                {
+                    return (Association)Activator.CreateInstance(typeof(HasManyAggregation<>).MakeGenericType(generic));
+                }
+            }
             return (Association)Activator.CreateInstance(declaredType);
 
         }
@@ -42,7 +50,7 @@ namespace Histria.Model
         /// Property info 
         ///</summary> 
         public PropInfoItem PropInfo { get; set; }
-        
+
         ///<summary>
         /// The instance that contains this association
         ///</summary> 
@@ -101,11 +109,19 @@ namespace Histria.Model
 
 
         ///<summary>
-        /// Update foreign Keys when a relation changed
+        /// Remove childrens
         ///</summary> 
-        public static void RemoveChildren(IInterceptedObject instance )
+        public static void RemoveChildren(IInterceptedObject instance)
         {
-
+            ClassInfoItem ci = instance.ClassInfo;
+            for (int index = 0, len = ci.Roles.Count; index < len; index++ ) 
+            {
+                PropInfoItem pi = ci.Roles[index];
+                if (pi.Role.IsParent) 
+                {
+                    //
+                }
+            }
         }
     }
 }
