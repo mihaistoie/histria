@@ -11,33 +11,6 @@ namespace Histria.Model
     ///</summary> 
     public abstract class Association : IAssociation
     {
-        //public static Type AssociationType(PropInfoItem propInfo, Type declaredType)
-        //{
-        //    Type generic = declaredType.GetGenericArguments()[0];
-        //    Type hasOne = typeof(HasOne<>);
-        //    Type cc = hasOne.MakeGenericType(generic);
-        //    if (declaredType == cc)
-        //    {
-        //        if (propInfo.Role.IsList)
-        //        {
-        //            return typeof(HasOneComposition<>).MakeGenericType(generic);
-        //        }
-        //        return declaredType;
-        //    }
-        //    Type hasMany = typeof(HasMany<>);
-        //    cc = hasMany.MakeGenericType(generic);
-        //    if (declaredType == cc)
-        //    {
-        //        if (propInfo.Role.IsParent)
-        //        {
-        //            return typeof(HasManyComposition<>).MakeGenericType(generic);
-        //        }
-        //        return declaredType;
-        //    }
-
-        //    return declaredType;
-        //}
-
         public static Association AssociationFactory(PropInfoItem propInfo, Type declaredType)
         {
             Type generic = declaredType.GetGenericArguments()[0];
@@ -132,10 +105,7 @@ namespace Histria.Model
         ///</summary> 
         public static void RemoveChildren(IInterceptedObject instance )
         {
-        }
-        public virtual void ChangeContent() 
-        { 
-            //Nothing to do, used for AOP interception
+
         }
     }
 }

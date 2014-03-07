@@ -22,6 +22,7 @@ namespace Histria.Model
                 return;
             }
             InternalAddValue(item, index);
+            (Instance as IObjectLifetime).Notify(ObjectLifetime.AssociationsChanged, PropInfo.Name, this);
             Instance.AOPAfterChangeChild(PropInfo.Name, child, RoleOperation.Add);
         }
 
@@ -43,6 +44,7 @@ namespace Histria.Model
                 return;
             }
             InternalRemoveValue(item, index);
+            (Instance as IObjectLifetime).Notify(ObjectLifetime.AssociationsChanged, PropInfo.Name, this);
             Instance.AOPAfterChangeChild(PropInfo.Name, child, RoleOperation.Remove);
 
         }
