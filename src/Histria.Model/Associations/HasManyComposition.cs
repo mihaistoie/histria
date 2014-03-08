@@ -38,7 +38,7 @@ namespace Histria.Model
                 return;
             }
             rc = inv.PropInfo.GetValue(item, null) as IRoleChild;
-            item.AOPDeleted(false);
+            item.AOPDelete(false);
             if (!rc.SetParent(null, false))
             {
                 return;

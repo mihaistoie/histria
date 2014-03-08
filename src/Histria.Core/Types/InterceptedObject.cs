@@ -4,6 +4,8 @@ namespace Histria.Core
 {
     using Histria.Core.Execution;
     using Histria.Model;
+    using Histria.Sys;
+    using System.Collections.Generic;
     using System.Reflection;
 
     public class InterceptedObject : IClassModel, IInterceptedObject, IObjectLifetime
@@ -15,7 +17,7 @@ namespace Histria.Core
         #endregion
 
         #region State & Notifications
-        private ObjectState state = ObjectState.Iddle;
+        private ObjectState state = ObjectState.None;
         public ObjectState State
         {
             get
@@ -28,9 +30,23 @@ namespace Histria.Core
             }
         }
 
-        private bool canExecuteRules(Rule ruleType)
+        private bool CanExecuteRules(Rule ruleType)
         {
             return (state & ObjectState.Iddle) == ObjectState.Iddle;
+        }
+        private void AddState(ObjectState value)
+        {
+            state = state | value;
+        }
+
+        private bool HasState(ObjectState value)
+        {
+            return ((state | value) == value);
+        }
+
+        private void RmvState(ObjectState value)
+        {
+            state = state & ~value;
         }
 
         private bool canNotifyChanges()
@@ -88,17 +104,18 @@ namespace Histria.Core
         ///</summary>
         void IInterceptedObject.AOPCreate()
         {
-            state = ObjectState.Creating;
+            AddState(ObjectState.InCreating);
             try
             {
                 AOPInitializeAssociations();
             }
             finally
             {
-                state = ObjectState.Iddle;
+                RmvState(ObjectState.InCreating);
+                AddState(ObjectState.Created | ObjectState.Iddle);
             }
             ((IObjectLifetime)this).Notify(ObjectLifetime.Created);
-            if (this.canExecuteRules(Rule.AfterCreate))
+            if (this.CanExecuteRules(Rule.AfterCreate))
                 ClassInfo.ExecuteRules(Rule.AfterCreate, this);
         }
 
@@ -107,7 +124,7 @@ namespace Histria.Core
         ///</summary>
         void IInterceptedObject.AOPLoad<T>(Action<T> loadAction)
         {
-            state = ObjectState.Loading;
+            AddState(ObjectState.InLoading);
             try
             {
                 AOPInitializeAssociations();
@@ -115,10 +132,11 @@ namespace Histria.Core
             }
             finally
             {
-                state = ObjectState.Iddle;
+                RmvState(ObjectState.InCreating);
+                AddState(ObjectState.Loaded | ObjectState.Iddle);
             }
             ((IObjectLifetime)this).Notify(ObjectLifetime.Loaded);
-            if (this.canExecuteRules(Rule.AfterLoad))
+            if (this.CanExecuteRules(Rule.AfterLoad))
                 ClassInfo.ExecuteRules(Rule.AfterLoad, this);
         }
 
@@ -144,8 +162,8 @@ namespace Histria.Core
             PropInfoItem pi = ClassInfo.PropertyByName(propertyName);
             oldValue = pi.PropInfo.GetValue(this, null);
             pi.SchemaValidation(ref value);
-            if (canExecuteRules(Rule.Correction)) return true;
-            pi.ExecuteCheckValueRules(this, ref value);
+            if (CanExecuteRules(Rule.Correction))
+                pi.ExecuteCheckValueRules(this, ref value);
             if (oldValue == value) return false;
             return true;
         }
@@ -158,10 +176,10 @@ namespace Histria.Core
             (this as IObjectLifetime).Notify(ObjectLifetime.Changed, propertyName, oldValue, newValue);
             PropInfoItem pi = ClassInfo.PropertyByName(propertyName);
             // Validate
-            if (canExecuteRules(Rule.Validation))
+            if (CanExecuteRules(Rule.Validation))
                 pi.ExecuteRules(Rule.Validation, this, RoleOperation.None);
             // Propagate
-            if (canExecuteRules(Rule.Propagation))
+            if (CanExecuteRules(Rule.Propagation))
                 pi.ExecuteRules(Rule.Propagation, this, RoleOperation.None);
         }
 
@@ -179,37 +197,78 @@ namespace Histria.Core
         {
             PropInfoItem pi = ClassInfo.PropertyByName(propertyName);
             // Validate
-            if (canExecuteRules(Rule.Validation))
+            if (CanExecuteRules(Rule.Validation))
                 pi.ExecuteRules(Rule.Validation, this, operation);
             // Propagate
-            if (canExecuteRules(Rule.Propagation))
+            if (CanExecuteRules(Rule.Propagation))
                 pi.ExecuteRules(Rule.Propagation, this, operation);
         }
 
         ///<summary>
-        /// IInterceptedObject.AOPDeleted
+        /// IInterceptedObject.AOPDelete
         ///</summary>
-        void IInterceptedObject.AOPDeleted(bool notifyParent)
+        void IInterceptedObject.AOPDelete(bool notifyParent)
         {
-            if (canExecuteRules(Rule.BeforeDelete))
-            {
-                ClassInfo.ExecuteRules(Rule.BeforeDelete, this);
-            }
-            //Delete children  
-            Association.RemoveChildren(this as IInterceptedObject);
-            if (canExecuteRules(Rule.AfterDelete))
-            {
-                try
-                {
-                    ClassInfo.ExecuteRules(Rule.AfterDelete, this);
-                }
-                catch
-                {
+            List<InterceptedObject> toDelete = new List<InterceptedObject>() { this };
+            Association.EnumChildren(this as IInterceptedObject, true, (x) => { toDelete.Add((InterceptedObject)x); });
 
-                }
+            //Execute before
+            toDelete.ForEach((x) =>
+            {
+                x.AddState(ObjectState.InDeleting);
+                x.RmvState(ObjectState.Iddle);
+            });
+            try
+            {
+                toDelete.ForEach((x) =>
+                {
+                    if (!x.HasState(ObjectState.Created))
+                    {
+                        Association.CkeckConstraints(x as IInterceptedObject);
+                    }
+
+                    if (x.CanExecuteRules(Rule.BeforeDelete))
+                    {
+                        x.ClassInfo.ExecuteRules(Rule.BeforeDelete, x);
+                    }
+                });
+
             }
-            ((IObjectLifetime)this).Notify(ObjectLifetime.Deleted);
-            state = ObjectState.Deleting;
+            catch
+            {
+                toDelete.ForEach((x) =>
+                {
+                    x.RmvState(ObjectState.InDeleting);
+                    x.AddState(ObjectState.Iddle);
+                });
+                throw;
+            }
+            Association.RemoveChildrens(this as IInterceptedObject);
+
+            
+            //Rules After delete 
+            try
+            {
+                toDelete.ForEach((x) =>
+                {
+                    if (x.CanExecuteRules(Rule.AfterDelete))
+                    {
+                        x.ClassInfo.ExecuteRules(Rule.AfterDelete, x);
+                    }
+                });
+            }
+            catch (Exception e)
+            {
+                Logger.Error(Logger.RULES, e);
+            }
+            //Set state deleted
+            toDelete.ForEach((x) =>
+            {
+                x.RmvState(ObjectState.InDeleting);
+                x.AddState(ObjectState.Deleted);
+                ((IObjectLifetime)x).Notify(ObjectLifetime.Deleted);
+            });
+
         }
         #endregion
 

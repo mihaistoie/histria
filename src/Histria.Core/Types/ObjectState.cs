@@ -5,14 +5,21 @@ using System.Text;
 
 namespace Histria.Core
 {
-    public enum ObjectState
+    [Flags]
+    public enum ObjectState : int
     {
-        Creating = 0,
+        None = 0,
         Iddle = 1,
-        Loading = 2,
-        Saving = 4,
-        Deleting = 8,
-        Disposing = 16,
-        Frozen = 32
+        InCreating = 2,
+        Created = 4,
+        InLoading = 8,
+        Loaded = 16,
+        InDeleting = 32,
+        Deleted = 64,
+        InSaving = 128,
+        Saved = 256,
+        Frozen = 512,
+        Disposing = 1024,
+        
     }
 }

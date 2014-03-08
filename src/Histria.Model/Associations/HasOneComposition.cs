@@ -34,7 +34,7 @@ namespace Histria.Model
             {
                 IInterceptedObject old = (ov as IInterceptedObject);
                 rc = inv.PropInfo.GetValue(ov, null) as IRoleChild;
-                old.AOPDeleted(false);
+                old.AOPDelete(false);
                 if (!rc.SetParent(null, false))
                 {
                     return;

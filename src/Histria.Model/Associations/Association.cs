@@ -106,12 +106,38 @@ namespace Histria.Model
                 }
             }
         }
+        ///<summary>
+        /// Ckeck Constraints(FK) before delete 
+        ///</summary>
+        public static void CkeckConstraints(IInterceptedObject instance)
+        {
+            //TODO check if this instance can be deleted 
+        }
 
+
+        public static void RemoveChildrens(IInterceptedObject instance)
+        {
+            ClassInfoItem ci = instance.ClassInfo;
+            for (int index = 0, len = ci.Roles.Count; index < len; index++)
+            {
+                PropInfoItem pi = ci.Roles[index];
+                if (pi.Role.IsParent)
+                {
+                    Association value = (Association)pi.PropInfo.GetValue(instance, null);
+                    IEnumerable<IInterceptedObject> collection = (value as IEnumerable<IInterceptedObject>);
+                    foreach (IInterceptedObject ii in collection)
+                    {
+                   
+                    }
+
+                }
+            }
+        }
 
         ///<summary>
-        /// Remove childrens
+        /// EnumChildren
         ///</summary> 
-        public static void RemoveChildren(IInterceptedObject instance)
+        public static void EnumChildren(IInterceptedObject instance, bool childrenBefore, Action<IInterceptedObject> callBack)
         {
             ClassInfoItem ci = instance.ClassInfo;
             for (int index = 0, len = ci.Roles.Count; index < len; index++ ) 
@@ -119,7 +145,23 @@ namespace Histria.Model
                 PropInfoItem pi = ci.Roles[index];
                 if (pi.Role.IsParent) 
                 {
-                    //
+                    Association value = (Association)pi.PropInfo.GetValue(instance, null);
+                    IEnumerable<IInterceptedObject> collection = (value as IEnumerable<IInterceptedObject>);
+                    foreach(IInterceptedObject ii  in collection) 
+                    {
+                        if (childrenBefore)
+                        {
+                            EnumChildren(ii, childrenBefore, callBack);
+                            callBack(ii);
+                        }
+                        else
+                        {
+                            callBack(ii);
+                            EnumChildren(ii, childrenBefore, callBack);
+                        }
+                      
+                    }
+
                 }
             }
         }

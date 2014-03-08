@@ -46,7 +46,7 @@ namespace Histria.Core.Tests.Associations
 
             body.Nose.Value = null;
             //nose is marked as deleted
-            Assert.AreEqual(ObjectState.Deleting, nose.State & ObjectState.Deleting, "uid");
+            Assert.AreEqual(ObjectState.Deleted, nose.State & ObjectState.Deleted, "uid");
             Assert.AreEqual(nose.Body.RefUid, body.Uuid, "uid");
             Assert.AreEqual(nose.BodyId, body.Id, "test update FKs");
             Assert.AreEqual(body.Nose.RefUid, Guid.Empty, "uid");
@@ -73,7 +73,7 @@ namespace Histria.Core.Tests.Associations
 
 
             nose1.Body.Value = null;
-            Assert.AreEqual(ObjectState.Deleting, nose1.State & ObjectState.Deleting, "uid");
+            Assert.AreEqual(ObjectState.Deleted, nose1.State & ObjectState.Deleted, "uid");
             Assert.AreEqual(nose1.Body.RefUid, body1.Uuid, "uid");
             Assert.AreEqual(nose1.BodyId, body1.Id, "test update FKs");
             Assert.AreEqual(body1.Nose.RefUid, Guid.Empty, "uid");
@@ -274,7 +274,7 @@ namespace Histria.Core.Tests.Associations
 
             //cut the right hand  
             rightHand.Body.Value = null;
-            Assert.AreEqual(ObjectState.Deleting, rightHand.State & ObjectState.Deleting, "deleted");
+            Assert.AreEqual(ObjectState.Deleted, rightHand.State & ObjectState.Deleted, "deleted");
             Assert.AreEqual(false, body.Hands.Has(rightHand), "Kirilov don't have the right hand");
             Assert.AreEqual(body.Hands.Count, 1, "Kirilov has only 1 hands");
             Assert.AreEqual(null, rightHand.Body.Value, "test direct role");
@@ -297,7 +297,7 @@ namespace Histria.Core.Tests.Associations
 
             //cut the right hand  
             body.Hands.Remove(rightHand);
-            Assert.AreEqual(ObjectState.Deleting, rightHand.State & ObjectState.Deleting, "deleted");
+            Assert.AreEqual(ObjectState.Deleted, rightHand.State & ObjectState.Deleted, "deleted");
             Assert.AreEqual(false, body.Hands.Has(rightHand), "Kirilov don't have the right hand");
             Assert.AreEqual(body.Hands.Count, 1, "Kirilov has only 1 hands");
             Assert.AreEqual(null, rightHand.Body.Value, "test direct role");
