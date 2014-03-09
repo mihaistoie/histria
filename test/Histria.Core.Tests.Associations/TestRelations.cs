@@ -313,5 +313,62 @@ namespace Histria.Core.Tests.Associations
 
         }
 
+        ///<summary>
+        /// Test  Delete
+        /// The model is defined in OneToManyCompositions.cs
+        ///</summary> 
+        [TestMethod]
+        public void DeleteInCascadeForOneToMany()
+        {
+            Container container = new Container(TestContainerSetup.GetSimpleContainerSetup(model));
+            HBody body = container.Create<HBody>();
+            body.Id = "kirilov";
+            Hand left = container.Create<Hand>();
+            left.Id = "left";
+            Hand right = container.Create<Hand>();
+            right.Id = "right";
+            left.Body.Value = body;
+            right.Body.Value = body;
+            Finger f1 = container.Create<Finger>();
+            f1.Id = "f1";
+            Finger f2 = container.Create<Finger>();
+            f2.Id = "f2";
+            Finger f3 = container.Create<Finger>();
+            f3.Id = "f3";
+            right.Fingers.Add(f1);
+            right.Fingers.Add(f2);
+            right.Fingers.Add(f3);
+            Assert.AreEqual(3, right.Fingers.Count, "right has 3 fingers");
+            Assert.AreEqual(right, f1.Hand.Value, "right has 3 fingers");
+            body.Hands.Remove(right);
+            Assert.AreEqual(0, right.Fingers.Count, "right has 3 fingers");
+            Assert.AreEqual(null, f1.Hand.Value, "right has 3 fingers");
+            Assert.AreEqual(ObjectState.Deleted, right.State & ObjectState.Deleted, "deleted");
+            Assert.AreEqual(ObjectState.Deleted, f1.State & ObjectState.Deleted, "deleted");
+     
+        }
+
+        ///<summary>
+        /// Test  Delete
+        /// The model is defined in OneToManyCompositions.cs
+        ///</summary> 
+        [TestMethod]
+        public void DeleteInCascadeForOneToOne()
+        {
+            Container container = new Container(TestContainerSetup.GetSimpleContainerSetup(model));
+            HumanBody body = container.Create<HumanBody>();
+            body.Id = "body";
+            Nose nose = container.Create<Nose>();
+            nose.Id = "nose";
+            body.Nose.Value = nose;
+            body.Delete();
+
+            Assert.AreEqual(null, body.Nose.Value, "null references");
+            Assert.AreEqual(null, nose.Body.Value, "null references");
+            Assert.AreEqual(ObjectState.Deleted, body.State & ObjectState.Deleted, "deleted");
+            Assert.AreEqual(ObjectState.Deleted, nose.State & ObjectState.Deleted, "deleted");
+        }
+
+
     }
 }

@@ -273,7 +273,17 @@ namespace Histria.Core
             });
 
         }
+
+        ///<summary>
+        /// Remove 
+        ///</summary>
+        public void Delete()
+        {
+            (this as IInterceptedObject).AOPDelete(true);
+        }
+
         #endregion
+
 
         #region Memory
 

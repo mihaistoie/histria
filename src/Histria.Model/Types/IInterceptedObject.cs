@@ -53,9 +53,7 @@ namespace Histria
         void AOPLoad<T>(Action<T> loadAction) where T: class;
         #endregion
 
-
         #region Delete;
-
         ///<summary>
         /// Try to delete an instance
         ///</summary>

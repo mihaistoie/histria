@@ -45,6 +45,10 @@ namespace Histria.Core.Tests.Associations
         /* belongs to Body */
         [Association(Relation.Composition, Inv = "Hands", ForeignKey = "BodyId")]
         public virtual BelongsTo<HBody> Body { get; set; }
+       
+        /* Fingers */
+        [Association(Relation.Composition, Inv = "Hand")]
+        public virtual HasMany<Finger> Fingers { get; set; }
 
         public virtual string BodyName { get; set; }
         public virtual string Name { get; set; }
@@ -62,6 +66,20 @@ namespace Histria.Core.Tests.Associations
             NameToUpper = Name.ToUpper();
         }
     }
+
+    [PrimaryKey("Id")]
+    public class Finger : InterceptedObject
+    {
+        /* primary key */
+        public virtual string Id { get; set; }
+        /* foreign key */
+        public virtual string HandId { get; set; }
+        /* belongs to Body */
+        [Association(Relation.Composition, Inv = "Fingers", ForeignKey = "HandId")]
+        public virtual BelongsTo<Hand> Hand { get; set; }
+
+    }
+
 
 
 }
