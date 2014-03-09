@@ -15,8 +15,8 @@ namespace Histria.Core.Tests.Associations
         [Association(Relation.Composition, Inv = "Body", Min = 0, Max = 2)]
         public virtual HasMany<Hand> Hands { get; set; }
 
-        public int  HandsCount  { get; set; }
-        
+        public int HandsCount { get; set; }
+
         [Rule(Rule.AfterCreate)]
         [Rule(Rule.AfterLoad)]
         public void CalculateHands()
@@ -46,11 +46,20 @@ namespace Histria.Core.Tests.Associations
         [Association(Relation.Composition, Inv = "Hands", ForeignKey = "BodyId")]
         public virtual BelongsTo<HBody> Body { get; set; }
 
-        public string BodyName { get; set; }
+        public virtual string BodyName { get; set; }
+        public virtual string Name { get; set; }
+        public virtual string NameToUpper { get; set; }
+
         [Rule(Rule.Propagation, Property = "Body")]
         public void PropagateBodyId()
         {
             BodyName = Body.Value == null ? null : Body.Value.Id;
+        }
+
+        [Rule(Rule.Propagation, Property = "Name")]
+        public void PropagateName()
+        {
+            NameToUpper = Name.ToUpper();
         }
     }
 

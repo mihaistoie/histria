@@ -115,8 +115,9 @@ namespace Histria.Model
         }
 
 
-        public static void RemoveChildrens(IInterceptedObject instance)
+        public static void RemoveChildren(IInterceptedObject instance)
         {
+            
             ClassInfoItem ci = instance.ClassInfo;
             for (int index = 0, len = ci.Roles.Count; index < len; index++)
             {
@@ -127,9 +128,11 @@ namespace Histria.Model
                     IEnumerable<IInterceptedObject> collection = (value as IEnumerable<IInterceptedObject>);
                     foreach (IInterceptedObject ii in collection)
                     {
-                   
+                        RemoveChildren(ii);
                     }
-
+                    IRoleParent pp = value as IRoleParent;
+                    pp.RemoveAllChildren();
+  
                 }
             }
         }

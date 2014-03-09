@@ -160,7 +160,8 @@ namespace Histria.Core
         bool IInterceptedObject.AOPBeforeSetProperty(string propertyName, ref object value, ref object oldValue)
         {
             PropInfoItem pi = ClassInfo.PropertyByName(propertyName);
-            oldValue = pi.PropInfo.GetValue(this, null);
+            if (pi.CanGetValueByReflection)
+                oldValue = pi.PropInfo.GetValue(this, null);
             pi.SchemaValidation(ref value);
             if (CanExecuteRules(Rule.Correction))
                 pi.ExecuteCheckValueRules(this, ref value);
@@ -209,6 +210,8 @@ namespace Histria.Core
         ///</summary>
         void IInterceptedObject.AOPDelete(bool notifyParent)
         {
+            if (HasState(ObjectState.InDeleting) || HasState(ObjectState.Deleted))
+                return; 
             List<InterceptedObject> toDelete = new List<InterceptedObject>() { this };
             Association.EnumChildren(this as IInterceptedObject, true, (x) => { toDelete.Add((InterceptedObject)x); });
 
@@ -243,7 +246,7 @@ namespace Histria.Core
                 });
                 throw;
             }
-            Association.RemoveChildrens(this as IInterceptedObject);
+            Association.RemoveChildren(this as IInterceptedObject);
 
             
             //Rules After delete 

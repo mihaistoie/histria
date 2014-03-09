@@ -246,6 +246,8 @@ namespace Histria.Core.Tests.Associations
 
             Hand leftHand = container.Create<Hand>();
             leftHand.Id = "left";
+            leftHand.Name = "left hand";
+            
             Assert.AreEqual(null, leftHand.BodyName, "Initial value");
             body.Hands.Add(leftHand);
 
@@ -271,6 +273,8 @@ namespace Histria.Core.Tests.Associations
             Assert.AreEqual(rightHand.Body.RefUid, body.Uuid, "uid");
             Assert.AreEqual(2, body.HandsCount, "Rule Add/rmv");
             Assert.AreEqual(body.Id, rightHand.BodyName, "Rule Body Change");
+            rightHand.Name = "aaa";
+            Assert.AreEqual("AAA", rightHand.NameToUpper, "Rule");
 
             //cut the right hand  
             rightHand.Body.Value = null;
@@ -281,6 +285,8 @@ namespace Histria.Core.Tests.Associations
             Assert.AreEqual(body.Uuid, rightHand.Body.RefUid, "uid");
             Assert.AreEqual(1, body.HandsCount, "Rule Add/rmv");
             Assert.AreEqual(body.Id, rightHand.BodyName, "Rule Body Change");
+            rightHand.Name = "bbb";
+            Assert.AreEqual("AAA", rightHand.NameToUpper, "Rule not called because is deleted"); 
 
 
             rightHand = container.Create<Hand>();

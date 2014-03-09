@@ -95,6 +95,7 @@
     <Compile Include="Types\IInterceptedObject.cs" />
     <Compile Include="Types\IClassModel.cs" />
     <Compile Include="Types\IPluginModel.cs" />
+    <Compile Include="Types\IRoleParent.cs" />
     <Compile Include="Types\IViewModel.cs" />
     <Compile Include="Types\IObjectLifetime.cs" />
     <Compile Include="Types\IRoleChild.cs" />

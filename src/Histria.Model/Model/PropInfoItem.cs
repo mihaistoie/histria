@@ -220,6 +220,11 @@ namespace Histria.Model
         ///</summary>   
         public PropInfoItem ModelPropInfo { get; internal set; }
 
+        ///<summary>
+        /// Use reflection to get value ?
+        ///</summary>   
+        public bool CanGetValueByReflection { get { return !IsRole; } }
+
 
         ///<summary>
         /// Roles which depend on this property
