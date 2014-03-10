@@ -34,6 +34,13 @@ namespace Histria.Core
         {
             return (state & ObjectState.Iddle) == ObjectState.Iddle;
         }
+
+        private bool InterceptSet()
+        {
+            return (state & ObjectState.Iddle) == ObjectState.Iddle;
+        }
+
+
         private void AddState(ObjectState value)
         {
             state = state | value;
@@ -132,7 +139,7 @@ namespace Histria.Core
             }
             finally
             {
-                RmvState(ObjectState.InCreating);
+                RmvState(ObjectState.InLoading);
                 AddState(ObjectState.Loaded | ObjectState.Iddle);
             }
             ((IObjectLifetime)this).Notify(ObjectLifetime.Loaded);
@@ -159,13 +166,16 @@ namespace Histria.Core
         ///</summary>
         bool IInterceptedObject.AOPBeforeSetProperty(string propertyName, ref object value, ref object oldValue)
         {
-            PropInfoItem pi = ClassInfo.PropertyByName(propertyName);
-            if (pi.CanGetValueByReflection)
-                oldValue = pi.PropInfo.GetValue(this, null);
-            pi.SchemaValidation(ref value);
-            if (CanExecuteRules(Rule.Correction))
-                pi.ExecuteCheckValueRules(this, ref value);
-            if (oldValue == value) return false;
+            if (InterceptSet())
+            {
+                PropInfoItem pi = ClassInfo.PropertyByName(propertyName);
+                if (pi.CanGetValueByReflection)
+                    oldValue = pi.PropInfo.GetValue(this, null);
+                pi.SchemaValidation(ref value);
+                if (CanExecuteRules(Rule.Correction))
+                    pi.ExecuteCheckValueRules(this, ref value);
+                if (oldValue == value) return false;
+            }
             return true;
         }
 
@@ -174,15 +184,19 @@ namespace Histria.Core
         ///</summary>
         void IInterceptedObject.AOPAfterSetProperty(string propertyName, object newValue, object oldValue)
         {
-            (this as IObjectLifetime).Notify(ObjectLifetime.Changed, propertyName, oldValue, newValue);
-            PropInfoItem pi = ClassInfo.PropertyByName(propertyName);
-            // Validate
-            if (CanExecuteRules(Rule.Validation))
-                pi.ExecuteRules(Rule.Validation, this, RoleOperation.None);
-            // Propagate
-            if (CanExecuteRules(Rule.Propagation))
-                pi.ExecuteRules(Rule.Propagation, this, RoleOperation.None);
+            if (InterceptSet())
+            {
+                (this as IObjectLifetime).Notify(ObjectLifetime.Changed, propertyName, oldValue, newValue);
+                PropInfoItem pi = ClassInfo.PropertyByName(propertyName);
+                // Validate
+                if (CanExecuteRules(Rule.Validation))
+                    pi.ExecuteRules(Rule.Validation, this, RoleOperation.None);
+                // Propagate
+                if (CanExecuteRules(Rule.Propagation))
+                    pi.ExecuteRules(Rule.Propagation, this, RoleOperation.None);
+            }
         }
+
 
         ///<summary>
         /// Before modifying a role (add/remove/update)
