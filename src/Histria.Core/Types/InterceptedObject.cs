@@ -211,7 +211,14 @@ namespace Histria.Core
         void IInterceptedObject.AOPDelete(bool notifyParent)
         {
             if (HasState(ObjectState.InDeleting) || HasState(ObjectState.Deleted))
-                return; 
+                return;
+            if (notifyParent)
+            {
+                if (Association.RemoveMeFromParent(this))
+                {
+                    return;
+                }
+            }
             List<InterceptedObject> toDelete = new List<InterceptedObject>() { this };
             Association.EnumChildren(this as IInterceptedObject, true, (x) => { toDelete.Add((InterceptedObject)x); });
 
@@ -248,7 +255,7 @@ namespace Histria.Core
             }
             Association.RemoveChildren(this as IInterceptedObject);
 
-            
+
             //Rules After delete 
             try
             {

@@ -114,6 +114,36 @@ namespace Histria.Model
             //TODO check if this instance can be deleted 
         }
 
+        public static bool RemoveMeFromParent(IInterceptedObject instance)
+        {
+
+            ClassInfoItem ci = instance.ClassInfo;
+            for (int index = 0, len = ci.Roles.Count; index < len; index++)
+            {
+                PropInfoItem pi = ci.Roles[index];
+                if (pi.Role.IsChild && pi.Role.IsRef)
+                {
+                    Association role = (Association)pi.PropInfo.GetValue(instance, null);
+                    IInterceptedObject parent = (role as IRoleRef).GetValue();
+                    if (parent != null)
+                    {
+                        object roleInvValue = pi.Role.InvRole.RoleProp.PropInfo.GetValue(parent, null);
+                        if (roleInvValue is IRoleRef)
+                        {
+                            (roleInvValue as IRoleRef).SetValue(null);
+                            return true;
+                        }
+                        else if (roleInvValue is IRoleList)
+                        {
+                            (roleInvValue as IRoleList).Remove(instance);
+                            return true;
+                        }
+                    }
+                    break;
+                }
+            }
+            return false;
+        }
 
         public static void RemoveChildren(IInterceptedObject instance)
         {

@@ -46,6 +46,11 @@ namespace Histria.Model
         {
             ExternalSetValue((T)value);
         }
+
+        IInterceptedObject IRoleRef.GetValue()
+        {
+            return _value as IInterceptedObject;
+        }
         #endregion
 
 

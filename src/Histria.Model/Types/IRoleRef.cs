@@ -8,5 +8,6 @@ namespace Histria
     internal interface IRoleRef
     {
         void SetValue(IInterceptedObject value);
+        IInterceptedObject GetValue();
     }
 }
