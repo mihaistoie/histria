@@ -247,7 +247,7 @@ namespace Histria.Core.Tests.Associations
             Hand leftHand = container.Create<Hand>();
             leftHand.Id = "left";
             leftHand.Name = "left hand";
-            
+
             Assert.AreEqual(null, leftHand.BodyName, "Initial value");
             body.Hands.Add(leftHand);
 
@@ -286,7 +286,7 @@ namespace Histria.Core.Tests.Associations
             Assert.AreEqual(1, body.HandsCount, "Rule Add/rmv");
             Assert.AreEqual(body.Id, rightHand.BodyName, "Rule Body Change");
             rightHand.Name = "bbb";
-            Assert.AreEqual("AAA", rightHand.NameToUpper, "Rule not called because is deleted"); 
+            Assert.AreEqual("AAA", rightHand.NameToUpper, "Rule not called because is deleted");
 
 
             rightHand = container.Create<Hand>();
@@ -345,7 +345,7 @@ namespace Histria.Core.Tests.Associations
             Assert.AreEqual(null, f1.Hand.Value, "right has 3 fingers");
             Assert.AreEqual(ObjectState.Deleted, right.State & ObjectState.Deleted, "deleted");
             Assert.AreEqual(ObjectState.Deleted, f1.State & ObjectState.Deleted, "deleted");
-     
+
         }
 
         ///<summary>
@@ -367,6 +367,66 @@ namespace Histria.Core.Tests.Associations
             Assert.AreEqual(null, nose.Body.Value, "null references");
             Assert.AreEqual(ObjectState.Deleted, body.State & ObjectState.Deleted, "deleted");
             Assert.AreEqual(ObjectState.Deleted, nose.State & ObjectState.Deleted, "deleted");
+        }
+
+
+
+        [TestMethod]
+        public void DeleteInCascadeNotifyParentNotNull()
+        {
+            Container container = new Container(TestContainerSetup.GetSimpleContainerSetup(model));
+            HBody body = container.Create<HBody>();
+            body.Id = "kirilov";
+            Hand left = container.Create<Hand>();
+            left.Id = "left";
+            Hand right = container.Create<Hand>();
+            right.Id = "right";
+            left.Body.Value = body;
+            right.Body.Value = body;
+            Finger f1 = container.Create<Finger>();
+            f1.Id = "f1";
+            Finger f2 = container.Create<Finger>();
+            f2.Id = "f2";
+            Finger f3 = container.Create<Finger>();
+            f3.Id = "f3";
+            right.Fingers.Add(f1);
+            right.Fingers.Add(f2);
+            right.Fingers.Add(f3);
+            Assert.AreEqual(3, right.Fingers.Count, "right has 3 fingers");
+            Assert.AreEqual(right, f1.Hand.Value, "right has 3 fingers");
+            right.Delete();
+            Assert.AreEqual(0, right.Fingers.Count, "right has 3 fingers");
+            Assert.AreEqual(null, f1.Hand.Value, "right has 3 fingers");
+            Assert.AreEqual(ObjectState.Deleted, right.State & ObjectState.Deleted, "deleted");
+            Assert.AreEqual(ObjectState.Deleted, f1.State & ObjectState.Deleted, "deleted");
+
+        }
+
+        [TestMethod]
+        public void DeleteInCascadeWithParentNull()
+        {
+            Container container = new Container(TestContainerSetup.GetSimpleContainerSetup(model));
+       
+            Hand right = container.Create<Hand>();
+            right.Id = "right";
+       
+            Finger f1 = container.Create<Finger>();
+            f1.Id = "f1";
+            Finger f2 = container.Create<Finger>();
+            f2.Id = "f2";
+            Finger f3 = container.Create<Finger>();
+            f3.Id = "f3";
+            right.Fingers.Add(f1);
+            right.Fingers.Add(f2);
+            right.Fingers.Add(f3);
+            Assert.AreEqual(3, right.Fingers.Count, "right has 3 fingers");
+            Assert.AreEqual(right, f1.Hand.Value, "right has 3 fingers");
+            right.Delete();
+            Assert.AreEqual(0, right.Fingers.Count, "right has 3 fingers");
+            Assert.AreEqual(null, f1.Hand.Value, "right has 3 fingers");
+            Assert.AreEqual(ObjectState.Deleted, right.State & ObjectState.Deleted, "deleted");
+            Assert.AreEqual(ObjectState.Deleted, f1.State & ObjectState.Deleted, "deleted");
+
         }
 
 
