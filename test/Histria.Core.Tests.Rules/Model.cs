@@ -45,7 +45,7 @@ namespace Histria.Core.Tests.Rules.Customers
     }
 
     [RulesFor(typeof(Customer))]
-    public class PlugInCustomer : RulePluginObject
+    public class PlugInCustomer : IPluginModel
     {
         [Rule(Rule.Propagation, Property = "FirstName")]
         public static void Test(Customer target)

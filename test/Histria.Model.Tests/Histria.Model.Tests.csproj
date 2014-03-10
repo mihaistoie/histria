@@ -52,6 +52,7 @@
   </Choose>
   <ItemGroup>
     <Compile Include="BaseModel.cs" />
+    <Compile Include="LoadRules.cs" />
     <Compile Include="Model.cs" />
     <Compile Include="ModelInNamespace.cs" />
     <Compile Include="ModelTests.cs" />

@@ -87,5 +87,15 @@ namespace Histria.Model.Tests
 
         }
 
+        [TestMethod]
+        public void LoadCorrecionRules()
+        {
+            JsonObject cfg = (JsonObject)JsonValue.Parse("{\"types\": [\"" + typeof(HumanBody).FullName + "\", \"" + typeof(HumanBodyRules).FullName + "\"]}");
+            ModelManager m = ModelManager.LoadModel(cfg);
+            ClassInfoItem ci = m.Class<HumanBody>();
+            PropInfoItem pi = ci.PropertyByName("Name");
+        }
+
+
     }
 }

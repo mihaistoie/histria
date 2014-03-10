@@ -40,14 +40,22 @@ namespace UnitTestModel
         public void InheritedPropagationRule()
         {
             Container container = new Container(TestContainerSetup.GetSimpleContainerSetup(model));
-
             RussianCustomer rcust = container.Create<RussianCustomer>();
-
             rcust.FirstName = "Fiodor";
             rcust.LastName = "Dostoievski";
             rcust.MiddleName = "A.";
             Assert.AreEqual(0, rcust.RCount, "Rule hits");
             Assert.AreEqual("DOSTOIEVSKI A. Fiodor", rcust.FullName, "Propagation rule not called");
         }
+       
+        [TestMethod]
+        public void CorrectionRule()
+        {
+            Container container = new Container(TestContainerSetup.GetSimpleContainerSetup(model));
+            HumanBody b = container.Create<HumanBody>();
+            b.Name = "name";
+            Assert.AreEqual("NAME", b.Name, "Correction rule");
+        }
+
     }
 }
