@@ -9,7 +9,7 @@ namespace Histria.Model
     public class PersistentAttribute : System.Attribute
     {
         public bool IsPersistent = true;
-        public string PersistentName = "";
+        public string PersistentName;
         public PersistentAttribute(bool value) 
         {
             IsPersistent = value;

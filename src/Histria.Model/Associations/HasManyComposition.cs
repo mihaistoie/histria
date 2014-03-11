@@ -5,7 +5,7 @@ using System.Text;
 
 namespace Histria.Model
 {
-    public class HasManyComposition<T> : HasMany<T>, IRoleParent where T : IInterceptedObject
+    internal class HasManyComposition<T> : HasMany<T>, IRoleParent where T : IInterceptedObject
     {
 
         #region Interface IRoleParent

@@ -5,7 +5,7 @@ using System.Text;
 
 namespace Histria.Model
 {
-    public class HasOneAggregation<T> : HasOne<T> where T : IInterceptedObject
+    internal class HasOneAggregation<T> : HasOne<T> where T : IInterceptedObject
     {
 
         public HasOneAggregation()

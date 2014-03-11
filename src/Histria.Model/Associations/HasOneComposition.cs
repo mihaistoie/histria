@@ -5,7 +5,7 @@ using System.Text;
 
 namespace Histria.Model
 {
-    public class HasOneComposition<T> : HasOne<T>, IRoleParent where T : IInterceptedObject
+    internal class HasOneComposition<T> : HasOne<T>, IRoleParent where T : IInterceptedObject
     {
 
         public HasOneComposition()

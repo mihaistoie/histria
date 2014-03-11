@@ -5,7 +5,7 @@ namespace Histria.Model
     /// <summary>
     /// State attribute for a method
     /// </summary>
-    [System.AttributeUsage(System.AttributeTargets.All, AllowMultiple = true)]
+    [System.AttributeUsage(System.AttributeTargets.Method, AllowMultiple = true)]
     public class StateAttribute : RuleAttribute
     {
         public StateAttribute(Rule ruleType)

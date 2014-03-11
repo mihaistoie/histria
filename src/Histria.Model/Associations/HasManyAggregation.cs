@@ -5,7 +5,7 @@ using System.Text;
 
 namespace Histria.Model
 {
-    public class HasManyAggregation<T> : HasMany<T> where T : IInterceptedObject
+    internal class HasManyAggregation<T> : HasMany<T> where T : IInterceptedObject
     {
     }
 }
