@@ -19,12 +19,15 @@ namespace Histria.Model
         private readonly PropertiesCollection properties = new PropertiesCollection();
         private readonly PropertiesCollection roles = new PropertiesCollection();
         private List<RuleItem> rulesList = new List<RuleItem>();
+        private List<RuleItem> stateRulesList = new List<RuleItem>();
         private readonly List<MethodItem> methodsList = new List<MethodItem>();
         private readonly Dictionary<string, MethodItem> methods = new Dictionary<string, MethodItem>();
         private readonly PrimaryKeyItem key = new PrimaryKeyItem();
         private readonly List<IndexInfo> indexes = new List<IndexInfo>();
         // Rules by type
         private readonly Dictionary<Rule, RuleList> rules = new Dictionary<Rule, RuleList>();
+        // State rules by type
+        private readonly Dictionary<Rule, RuleList> stateRules = new Dictionary<Rule, RuleList>();
         private bool inherianceResolved = false;
         private string title;
         private string description;
@@ -108,16 +111,23 @@ namespace Histria.Model
         #endregion
 
         #region Rules
-      
+        
+        ///<summary>
+        /// Execute rules by type
+        ///</summary>  
         public void ExecuteRules(Rule kind, Object target)
         {
-            RuleList rl;
-            if (rules.TryGetValue(kind, out rl))
-            {
-                rl.Execute(target, RoleOperation.None);
-            }
-      
+            RuleHelper.ExecuteRules(rules, kind, target, RoleOperation.None);
         }
+
+        ///<summary>
+        /// Execute rules by type
+        ///</summary>  
+        public void ExecuteStateRules(Rule kind, Object target)
+        {
+            RuleHelper.ExecuteRules(stateRules, kind, target, RoleOperation.None);
+        }
+
 
         private bool _ruleExists(RuleItem ri, List<RuleItem> rl)
         {
@@ -135,19 +145,23 @@ namespace Histria.Model
             return false;
         }
 
+        
+
         ///<summary>
         /// Associate a rule to this class
         ///</summary>   
         private void AddRule(RuleItem ri)
         {
-           
-            RuleList rl = null;
-            if (!rules.TryGetValue(ri.Kind, out rl))
-            {
-                rl = new RuleList();
-                rules.Add(ri.Kind, rl);
-            }
-            rl.Add(ri);
+            RuleHelper.AddRule(rules, ri);
+
+        }
+
+        ///<summary>
+        /// Associate a state rule to this class
+        ///</summary>   
+        private void AddStateRule(RuleItem ri)
+        {
+            RuleHelper.AddRule(stateRules, ri);
 
         }
         #endregion

@@ -63,6 +63,7 @@
     <Compile Include="Attributes\RuleAttribute.cs" />
     <Compile Include="Attributes\RulesForAttribute.cs" />
     <Compile Include="Attributes\DtStringAttribute.cs" />
+    <Compile Include="Attributes\StateAttribute.cs" />
     <Compile Include="Attributes\TypeAttribute.cs" />
     <Compile Include="ClassType.cs" />
     <Compile Include="Helpers\ModelLoader.cs" />
@@ -73,6 +74,7 @@
     <Compile Include="Model\PrimaryKeyItem.cs" />
     <Compile Include="Model\PropertiesCollection.cs" />
     <Compile Include="Model\RoleInfoItem.cs" />
+    <Compile Include="Model\RuleHelper.cs" />
     <Compile Include="Model\RulesCollection.cs" />
     <Compile Include="Model\ViewInfoItem.cs" />
     <Compile Include="Rule.cs" />
@@ -117,6 +119,9 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="Resources\ClassDiagram.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="State\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
