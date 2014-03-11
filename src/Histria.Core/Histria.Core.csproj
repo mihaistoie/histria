@@ -55,6 +55,7 @@
     <Compile Include="Transactions\InstancesByClass.cs" />
     <Compile Include="Transactions\Instances.cs" />
     <Compile Include="Transactions\TranContext.cs" />
+    <Compile Include="Types\ExecutionException.cs" />
     <Compile Include="Types\TranObject.cs" />
     <Compile Include="Types\ObjectState.cs" />
     <Compile Include="Types\InterceptedObject.cs" />

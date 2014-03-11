@@ -399,10 +399,11 @@ namespace Histria.Model
                 if (mi.Name.StartsWith("get_") || mi.Name.StartsWith("set_") || mi.Name.StartsWith("AOP")) continue;
 
                 RuleAttribute[] ras = mi.GetCustomAttributes(typeof(RuleAttribute), false) as RuleAttribute[];
-                if ((ras != null) && (ras.Length > 0))
+                if (ras != null)
                 {
-                    foreach (RuleAttribute ra in ras)
+                    for (int index = 0, len = ras.Length; index < len; index++)
                     {
+                        RuleAttribute ra = ras[index];
                         if (ra.Rule == Rule.Unknown)
                         {
                             throw new ModelException(String.Format(L.T("Invalid rule type for \"{0}\" in the class \"{1}\"."), mi.Name, Name), Name);
@@ -429,7 +430,10 @@ namespace Histria.Model
                             ri.TargetType = CurrentType;
                         }
                         ri.DeclaringType = CurrentType;
-                        rulesList.Add(ri);
+                        if (ra is StateAttribute)
+                            stateRulesList.Add(ri);
+                        else
+                            rulesList.Add(ri);
                     }
                 }
                 //Add methods

@@ -34,12 +34,33 @@ namespace Histria.Model.Tests
 
         [TestMethod]
         [ExpectedException(typeof(ModelException))]
+        public void InvalidStateRuleDefinition()
+        {
+            JsonObject cfg = (JsonObject)JsonValue.Parse("{\"types\": [\"" + typeof(MStateRuleOnValidation).FullName + "\"]}");
+            ModelManager m = ModelManager.LoadModel(cfg);
+
+        }
+
+
+
+        [TestMethod]
+        [ExpectedException(typeof(ModelException))]
         public void DuplicatedRule()
         {
             JsonObject cfg = (JsonObject)JsonValue.Parse("{\"types\": [\"" + typeof(MR1).FullName + "\", \"" + typeof(MR2).FullName + "\"]}");
             ModelManager m = ModelManager.LoadModel(cfg);
 
         }
+
+        [TestMethod]
+        [ExpectedException(typeof(ModelException))]
+        public void DuplicatedStateRule()
+        {
+            JsonObject cfg = (JsonObject)JsonValue.Parse("{\"types\": [\"" + typeof(MSR1).FullName + "\", \"" + typeof(MSR2).FullName + "\"]}");
+            ModelManager m = ModelManager.LoadModel(cfg);
+
+        }
+
 
         [TestMethod]
         public void StaticClassTitle()

@@ -6,23 +6,25 @@ namespace Histria.Model
     /// State attribute for a method
     /// </summary>
     [System.AttributeUsage(System.AttributeTargets.All, AllowMultiple = true)]
-    public class StateAttribute : System.Attribute  
+    public class StateAttribute : RuleAttribute
     {
-        public string Property;
-        public Type TargetType = null;
-        public Rule Rule = Rule.Unknown;
-        public RoleOperation Operation = RoleOperation.None;
         public StateAttribute(Rule ruleType)
+            : base(ruleType)
         {
             Rule = ruleType;
         }
-        public bool CheckProperty()
+
+        public override bool CheckProperty()
         {
-            if (string.IsNullOrEmpty(Property) && (Rule == Rule.Validation || Rule == Rule.Propagation)) {
+            if (
+                (Rule == Rule.Validation) ||
+                (Rule == Rule.Correction)
+               )
+            {
                 return false;
             }
             return true;
         }
-   
+
     }
 }

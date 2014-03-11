@@ -37,6 +37,10 @@ namespace Histria.Core
 
         private bool InterceptSet()
         {
+            if ((state & ObjectState.Frozen) == ObjectState.Frozen)
+            {
+                throw new ExecutionException(L.T("You can't change the object in a state rule."));
+            }
             return (state & ObjectState.Iddle) == ObjectState.Iddle;
         }
 
@@ -59,6 +63,19 @@ namespace Histria.Core
         private bool canNotifyChanges()
         {
             return (state & ObjectState.Iddle) == ObjectState.Iddle;
+        }
+        private void  Frozen(Action action) 
+        {
+            AddState(ObjectState.Frozen);
+            try 
+            {
+                action();
+            } 
+            finally 
+            {
+                RmvState(ObjectState.Frozen);
+            }
+
         }
 
         #endregion
@@ -190,10 +207,15 @@ namespace Histria.Core
                 PropInfoItem pi = ClassInfo.PropertyByName(propertyName);
                 // Validate
                 if (CanExecuteRules(Rule.Validation))
-                    pi.ExecuteRules(Rule.Validation, this, RoleOperation.None);
+                {   
+                    Frozen(()=>{pi.ExecuteRules(Rule.Validation, this, RoleOperation.None);});
+                }
                 // Propagate
                 if (CanExecuteRules(Rule.Propagation))
+                {
+                    Frozen(() => { pi.ExecuteStateRules(Rule.Propagation, this, RoleOperation.None); });
                     pi.ExecuteRules(Rule.Propagation, this, RoleOperation.None);
+                }
             }
         }
 
@@ -203,6 +225,10 @@ namespace Histria.Core
         ///</summary>
         bool IInterceptedObject.AOPBeforeChangeChild(string propertyName, IInterceptedObject child, RoleOperation operation)
         {
+            if (InterceptSet())
+            {
+                return true;
+            }
             return true;
         }
         ///<summary>
@@ -210,13 +236,21 @@ namespace Histria.Core
         ///</summary>
         void IInterceptedObject.AOPAfterChangeChild(string propertyName, IInterceptedObject child, RoleOperation operation)
         {
-            PropInfoItem pi = ClassInfo.PropertyByName(propertyName);
-            // Validate
-            if (CanExecuteRules(Rule.Validation))
-                pi.ExecuteRules(Rule.Validation, this, operation);
-            // Propagate
-            if (CanExecuteRules(Rule.Propagation))
-                pi.ExecuteRules(Rule.Propagation, this, operation);
+            if (InterceptSet())
+            {
+                PropInfoItem pi = ClassInfo.PropertyByName(propertyName);
+                // Validate
+                if (CanExecuteRules(Rule.Validation))
+                {
+                    Frozen(() => { pi.ExecuteRules(Rule.Validation, this, operation); });
+                }
+                // Propagate
+                if (CanExecuteRules(Rule.Propagation))
+                {
+                    Frozen(() => { pi.ExecuteStateRules(Rule.Propagation, this, operation); });
+                    pi.ExecuteRules(Rule.Propagation, this, operation);
+                }
+            }
         }
 
         ///<summary>

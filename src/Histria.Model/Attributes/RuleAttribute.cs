@@ -16,7 +16,7 @@ namespace Histria.Model
         {
             Rule = ruleType;
         }
-        public bool CheckProperty()
+        public virtual bool CheckProperty()
         {
             if (string.IsNullOrEmpty(Property) && (Rule == Rule.Validation || Rule == Rule.Propagation)) {
                 return false;
