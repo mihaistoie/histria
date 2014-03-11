@@ -5,7 +5,7 @@ using System.Text;
 
 namespace Histria.Model
 {
-    public class BaseItemState
+    public class PropertyState
     {
         #region Private Members
         private List<string> errors;
@@ -27,6 +27,18 @@ namespace Histria.Model
         public virtual bool IsHidden { get; set; }
         public virtual bool IsDisabled { get; set; }
         public virtual bool IsMandatory { get; set; }
+        #endregion
+
+        #region Properties  && Constructor
+        private PropInfoItem piInfo;
+        public PropInfoItem PiInfo { get { return piInfo;  } }
+        public PropertyState(PropInfoItem pi)
+        {
+            piInfo = pi;
+            IsDisabled = pi.IsDisabled;
+            IsHidden = pi.IsHidden;
+            IsMandatory = pi.IsMandatory; 
+        }
         #endregion
 
         #region Errors and Warnings

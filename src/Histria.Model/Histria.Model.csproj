@@ -93,6 +93,7 @@
     <Compile Include="Model\RuleList.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="RuleException.cs" />
+    <Compile Include="State\PropertiesStateBase.cs" />
     <Compile Include="State\PropertiesState.cs" />
     <Compile Include="TemplateManager.cs" />
     <Compile Include="Types\IAssociation.cs" />
@@ -108,7 +109,7 @@
     <Compile Include="Types\ITranObject.cs" />
     <Compile Include="Types\Relation.cs" />
     <Compile Include="Types\RoleOperation.cs" />
-    <Compile Include="State\BaseItemState.cs" />
+    <Compile Include="State\PropertyState.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Histria.Json\Histria.Json.csproj">

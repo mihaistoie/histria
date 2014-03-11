@@ -1,35 +1,24 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
 namespace Histria.Model
 {
-    public class PropertiesState
+    public class PropertiesState : PropertiesStateBase
     {
-        protected virtual BaseItemState GetItemByName(string key) 
+        private Dictionary<string, PropertyState> props = new Dictionary<string, PropertyState>();
+        protected override PropertyState GetItemByName(string key) { return props[key]; }
+        public override IEnumerator<PropertyState> GetEnumerator()
         {
-            return null;
+            return props.Values.GetEnumerator();
         }
-
-        protected virtual BaseItemState GetItemByIndex(int index)
+        public override void Init(ClassInfoItem ci)
         {
-            return null;
-        }
-
-        public  BaseItemState this[string key]
-        {
-            get
+            for (int idx = 0, len = ci.Properties.Count; idx < len; idx++)
             {
-                return GetItemByName(key);
-            }
-        }
 
-        public  BaseItemState this[int index]
-        {
-            get
-            {
-                return GetItemByIndex(index);
             }
         }
     }
