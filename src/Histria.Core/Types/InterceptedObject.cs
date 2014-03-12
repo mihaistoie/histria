@@ -155,7 +155,10 @@ namespace Histria.Core
             }
             ((IObjectLifetime)this).Notify(ObjectLifetime.Created);
             if (this.CanExecuteRules(Rule.AfterCreate))
+            {
                 ClassInfo.ExecuteRules(Rule.AfterCreate, this);
+                Frozen(() => { ClassInfo.ExecuteStateRules(Rule.AfterCreate, this); });
+            }
         }
 
         ///<summary>
@@ -176,7 +179,10 @@ namespace Histria.Core
             }
             ((IObjectLifetime)this).Notify(ObjectLifetime.Loaded);
             if (this.CanExecuteRules(Rule.AfterLoad))
+            {
                 ClassInfo.ExecuteRules(Rule.AfterLoad, this);
+                Frozen(() => { ClassInfo.ExecuteStateRules(Rule.AfterLoad, this); });
+            }
         }
 
         private void AOPInitializeAssociations()

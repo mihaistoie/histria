@@ -11,27 +11,27 @@ namespace Histria.Core.PropertiesState.Tests
     {
         /* primary key */
         public virtual string Id { get; set; }
-        /* has two hands */
+        /* body has two hands */
         [Association(Relation.Composition, Inv = "Body", Min = 0, Max = 2)]
         public virtual HasMany<Hand> Hands { get; set; }
 
-        [Default(Required = true)]
+        [Default(Required = true, Hidden=true)]
         public virtual string Name { get; set; }
+
+        public int RuleHits { get; set; }
         
-        
-
-
-
         [State(Rule.AfterCreate)]
         [State(Rule.AfterLoad)]
         [State(Rule.Propagation, Property = "Hands", Operation = RoleOperation.Remove)]
         [State(Rule.Propagation, Property = "Hands", Operation = RoleOperation.Add)]
         public void Idstate() 
         {
+            RuleHits++;
             Properties["Name"].IsDisabled = (Hands.Count > 0);  
         }
-
     }
+
+
     [PrimaryKey("Id")]
     public class Hand : InterceptedObject
     {

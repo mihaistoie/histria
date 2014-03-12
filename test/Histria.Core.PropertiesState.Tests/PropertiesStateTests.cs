@@ -34,6 +34,9 @@ namespace Histria.Core.PropertiesState.Tests
             Assert.AreEqual(true, body.Properties["Name"].IsDisabled, "State rule");
             left.Body.Value = null;
             Assert.AreEqual(false, body.Properties["Name"].IsDisabled, "State rule");
+
+            Assert.AreEqual(3, body.RuleHits, "State rule was called 3 times");
+            
         }
     }
 }
