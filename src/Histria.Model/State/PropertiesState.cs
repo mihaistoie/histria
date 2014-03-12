@@ -6,20 +6,23 @@ using System.Text;
 
 namespace Histria.Model
 {
-    public class PropertiesState : PropertiesStateBase
+    public abstract class PropertiesState : IEnumerable<PropertyState>
     {
-        private Dictionary<string, PropertyState> props = new Dictionary<string, PropertyState>();
-        protected override PropertyState GetItemByName(string key) { return props[key]; }
-        public override IEnumerator<PropertyState> GetEnumerator()
+        protected abstract PropertyState GetItemByName(string key);
+        public  PropertyState this[string key]
         {
-            return props.Values.GetEnumerator();
-        }
-        public override void Init(ClassInfoItem ci)
-        {
-            for (int idx = 0, len = ci.Properties.Count; idx < len; idx++)
+            get
             {
-
+                return GetItemByName(key);
             }
         }
+        public abstract IEnumerator<PropertyState> GetEnumerator();
+        
+        IEnumerator IEnumerable.GetEnumerator()
+        {
+            return this.GetEnumerator();
+        }
+        public abstract void Init(ClassInfoItem ci);
+
     }
 }

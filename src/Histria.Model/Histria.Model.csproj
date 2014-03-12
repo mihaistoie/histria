@@ -93,8 +93,8 @@
     <Compile Include="Model\RuleList.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="RuleException.cs" />
-    <Compile Include="State\PropertiesStateBase.cs" />
     <Compile Include="State\PropertiesState.cs" />
+    <Compile Include="State\DefaultPropertiesState.cs" />
     <Compile Include="TemplateManager.cs" />
     <Compile Include="Types\IAssociation.cs" />
     <Compile Include="Types\IInterceptedObject.cs" />
