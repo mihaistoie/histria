@@ -525,6 +525,9 @@ namespace Histria.Model
                 return null;
             }
         }
+
+        public Type StateClassType { get { return typeof(DefaultPropertiesState); } }
+
         #endregion
 
         #region Constructor
