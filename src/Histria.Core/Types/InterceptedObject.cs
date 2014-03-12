@@ -17,63 +17,78 @@ namespace Histria.Core
         #endregion
 
         #region State & Notifications
-        private ObjectState state = ObjectState.None;
-        public ObjectState State
+        private ObjectStatus status = ObjectStatus.None;
+        
+        ///<summary>
+        /// Object is deleted ?
+        ///</summary>
+        public bool IsDeleted 
+        {
+            get { return (status & ObjectStatus.Deleted) == ObjectStatus.Deleted; }
+        }
+        public bool IsNewObject
+        {
+            get { return (status & ObjectStatus.Created) == ObjectStatus.Created; }
+        }
+
+        private PropertiesState propsState;
+        public PropertiesState Properties
         {
             get
             {
-                return state;
-            }
-            set
-            {
-                state = value;
+                if (propsState == null  && ClassInfo != null)
+                {
+                   propsState = (PropertiesState)Activator.CreateInstance(ClassInfo.StateClassType);
+                   propsState.Init(ClassInfo);
+                }
+                return propsState;
             }
         }
 
         private bool CanExecuteRules(Rule ruleType)
         {
-            return (state & ObjectState.Iddle) == ObjectState.Iddle;
+            return (status & ObjectStatus.Active) == ObjectStatus.Active;
         }
 
         private bool InterceptSet()
         {
-            if ((state & ObjectState.Frozen) == ObjectState.Frozen)
+            if ((status & ObjectStatus.Frozen) == ObjectStatus.Frozen)
             {
                 throw new ExecutionException(L.T("You can't change the object in a state rule."));
             }
-            return (state & ObjectState.Iddle) == ObjectState.Iddle;
+            return (status & ObjectStatus.Active) == ObjectStatus.Active;
         }
 
 
-        private void AddState(ObjectState value)
+        private void AddState(ObjectStatus value)
         {
-            state = state | value;
+            status = status | value;
         }
 
-        private bool HasState(ObjectState value)
+        private bool HasState(ObjectStatus value)
         {
-            return ((state | value) == value);
+            return ((status | value) == value);
         }
 
-        private void RmvState(ObjectState value)
+        private void RmvState(ObjectStatus value)
         {
-            state = state & ~value;
+            status = status & ~value;
         }
 
         private bool canNotifyChanges()
         {
-            return (state & ObjectState.Iddle) == ObjectState.Iddle;
+            return (status & ObjectStatus.Active) == ObjectStatus.Active;
         }
         private void  Frozen(Action action) 
         {
-            AddState(ObjectState.Frozen);
+            AddState(ObjectStatus.Frozen);
             try 
             {
                 action();
             } 
             finally 
             {
-                RmvState(ObjectState.Frozen);
+                RmvState(ObjectStatus.Frozen);
             }
 
         }
@@ -128,15 +143,15 @@ namespace Histria.Core
         ///</summary>
         void IInterceptedObject.AOPCreate()
         {
-            AddState(ObjectState.InCreating);
+            AddState(ObjectStatus.InCreating);
             try
             {
                 AOPInitializeAssociations();
             }
             finally
             {
-                RmvState(ObjectState.InCreating);
-                AddState(ObjectState.Created | ObjectState.Iddle);
+                RmvState(ObjectStatus.InCreating);
+                AddState(ObjectStatus.Created | ObjectStatus.Active);
             }
             ((IObjectLifetime)this).Notify(ObjectLifetime.Created);
             if (this.CanExecuteRules(Rule.AfterCreate))
@@ -148,7 +163,7 @@ namespace Histria.Core
         ///</summary>
         void IInterceptedObject.AOPLoad<T>(Action<T> loadAction)
         {
-            AddState(ObjectState.InLoading);
+            AddState(ObjectStatus.InLoading);
             try
             {
                 AOPInitializeAssociations();
@@ -156,8 +171,8 @@ namespace Histria.Core
             }
             finally
             {
-                RmvState(ObjectState.InLoading);
-                AddState(ObjectState.Loaded | ObjectState.Iddle);
+                RmvState(ObjectStatus.InLoading);
+                AddState(ObjectStatus.Loaded | ObjectStatus.Active);
             }
             ((IObjectLifetime)this).Notify(ObjectLifetime.Loaded);
             if (this.CanExecuteRules(Rule.AfterLoad))
@@ -258,7 +273,7 @@ namespace Histria.Core
         ///</summary>
         void IInterceptedObject.AOPDelete(bool notifyParent)
         {
-            if (HasState(ObjectState.InDeleting) || HasState(ObjectState.Deleted))
+            if (HasState(ObjectStatus.InDeleting) || HasState(ObjectStatus.Deleted))
                 return;
             if (notifyParent)
             {
@@ -273,14 +288,14 @@ namespace Histria.Core
             //Execute before
             toDelete.ForEach((x) =>
             {
-                x.AddState(ObjectState.InDeleting);
-                x.RmvState(ObjectState.Iddle);
+                x.AddState(ObjectStatus.InDeleting);
+                x.RmvState(ObjectStatus.Active);
             });
             try
             {
                 toDelete.ForEach((x) =>
                 {
-                    if (!x.HasState(ObjectState.Created))
+                    if (!x.HasState(ObjectStatus.Created))
                     {
                         Association.CkeckConstraints(x as IInterceptedObject);
                     }
@@ -296,8 +311,8 @@ namespace Histria.Core
             {
                 toDelete.ForEach((x) =>
                 {
-                    x.RmvState(ObjectState.InDeleting);
-                    x.AddState(ObjectState.Iddle);
+                    x.RmvState(ObjectStatus.InDeleting);
+                    x.AddState(ObjectStatus.Active);
                 });
                 throw;
             }
@@ -322,8 +337,8 @@ namespace Histria.Core
             //Set state deleted
             toDelete.ForEach((x) =>
             {
-                x.RmvState(ObjectState.InDeleting);
-                x.AddState(ObjectState.Deleted);
+                x.RmvState(ObjectStatus.InDeleting);
+                x.AddState(ObjectStatus.Deleted);
                 ((IObjectLifetime)x).Notify(ObjectLifetime.Deleted);
             });
 
@@ -344,7 +359,7 @@ namespace Histria.Core
 
         public void CleanObject()
         {
-            state = ObjectState.Disposing;
+            status = ObjectStatus.Disposing;
         }
 
         #endregion

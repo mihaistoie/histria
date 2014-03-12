@@ -67,7 +67,17 @@ namespace Histria.Model.Helpers
                 {
                     ns.Value.ForEach(delegate(string nameSpace)
                     {
-                        lt(ns.Key.GetTypes().Where(t => String.Equals(t.Namespace, nameSpace, StringComparison.Ordinal)).ToList<Type>());
+                        lt(ns.Key.GetTypes().Where(t => {
+                            bool res = String.Equals(t.Namespace, nameSpace, StringComparison.Ordinal);
+                            if (!res)
+                            {
+                                if (t.Namespace.IndexOf(nameSpace + ".") == 0)
+                                {
+                                    return true;
+                                }
+                            }
+                            return res;
+                        }).ToList<Type>());
                     });
 
                 }

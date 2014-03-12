@@ -6,10 +6,10 @@ using System.Text;
 namespace Histria.Core
 {
     [Flags]
-    public enum ObjectState : int
+    internal enum ObjectStatus : int
     {
         None = 0,
-        Iddle = 1,
+        Active = 1,
         InCreating = 2,
         Created = 4,
         InLoading = 8,

@@ -40,21 +40,21 @@ namespace Histria.Core.Tests.Associations
             Assert.AreEqual(false, Guid.Empty == nose.Uuid, "has uuid");
             Assert.AreEqual(nose.Body.RefUid, body.Uuid, "uid");
             Assert.AreEqual(body.Nose.RefUid, nose.Uuid, "uid");
-            Assert.AreEqual(nose.Id, body.CurrentNoseId, "Rule prppagation");
-            Assert.AreEqual(body.Id, nose.CurrentBodyId, "Rule prppagation");
+            Assert.AreEqual(nose.Id, body.CurrentNoseId, "Rule propagation");
+            Assert.AreEqual(body.Id, nose.CurrentBodyId, "Rule propagation");
 
 
             body.Nose.Value = null;
             //nose is marked as deleted
-            Assert.AreEqual(ObjectState.Deleted, nose.State & ObjectState.Deleted, "uid");
-            Assert.AreEqual(nose.Body.RefUid, body.Uuid, "uid");
-            Assert.AreEqual(nose.BodyId, body.Id, "test update FKs");
-            Assert.AreEqual(body.Nose.RefUid, Guid.Empty, "uid");
-            Assert.AreEqual(body.Nose.Value, null, "test direct role");
-            Assert.AreEqual(nose.Body.Value, null, "test inv role");
-            Assert.AreEqual(true, string.IsNullOrEmpty(body.CurrentNoseId), "Rule prppagation");
+            Assert.AreEqual(true, nose.IsDeleted, "uid");
+            Assert.AreEqual(body.Uuid, nose.Body.RefUid, "uid");
+            Assert.AreEqual(body.Id, nose.BodyId, "test update FKs");
+            Assert.AreEqual(Guid.Empty, body.Nose.RefUid, "uid");
+            Assert.AreEqual(null, body.Nose.Value, "test direct role");
+            Assert.AreEqual(null, nose.Body.Value, "test inv role");
+            Assert.AreEqual(true, string.IsNullOrEmpty(body.CurrentNoseId), "Rule propagation");
             //false !!!! nose is marked as deleted 
-            Assert.AreEqual(false, string.IsNullOrEmpty(nose.CurrentBodyId), "Rule prppagation");
+            Assert.AreEqual(false, string.IsNullOrEmpty(nose.CurrentBodyId), "Rule propagation");
 
             //test nose.Body.Value = body;
             HumanBody body1 = container.Create<HumanBody>();
@@ -73,7 +73,7 @@ namespace Histria.Core.Tests.Associations
 
 
             nose1.Body.Value = null;
-            Assert.AreEqual(ObjectState.Deleted, nose1.State & ObjectState.Deleted, "uid");
+            Assert.AreEqual(true, nose1.IsDeleted, "uid");
             Assert.AreEqual(nose1.Body.RefUid, body1.Uuid, "uid");
             Assert.AreEqual(nose1.BodyId, body1.Id, "test update FKs");
             Assert.AreEqual(body1.Nose.RefUid, Guid.Empty, "uid");
@@ -278,7 +278,7 @@ namespace Histria.Core.Tests.Associations
 
             //cut the right hand  
             rightHand.Body.Value = null;
-            Assert.AreEqual(ObjectState.Deleted, rightHand.State & ObjectState.Deleted, "deleted");
+            Assert.AreEqual(true, rightHand.IsDeleted, "deleted");
             Assert.AreEqual(false, body.Hands.Has(rightHand), "Kirilov don't have the right hand");
             Assert.AreEqual(body.Hands.Count, 1, "Kirilov has only 1 hands");
             Assert.AreEqual(null, rightHand.Body.Value, "test direct role");
@@ -303,7 +303,7 @@ namespace Histria.Core.Tests.Associations
 
             //cut the right hand  
             body.Hands.Remove(rightHand);
-            Assert.AreEqual(ObjectState.Deleted, rightHand.State & ObjectState.Deleted, "deleted");
+            Assert.AreEqual(true, rightHand.IsDeleted, "deleted");
             Assert.AreEqual(false, body.Hands.Has(rightHand), "Kirilov don't have the right hand");
             Assert.AreEqual(body.Hands.Count, 1, "Kirilov has only 1 hands");
             Assert.AreEqual(null, rightHand.Body.Value, "test direct role");
@@ -341,10 +341,10 @@ namespace Histria.Core.Tests.Associations
             Assert.AreEqual(3, right.Fingers.Count, "right has 3 fingers");
             Assert.AreEqual(right, f1.Hand.Value, "right has 3 fingers");
             body.Hands.Remove(right);
-            Assert.AreEqual(0, right.Fingers.Count, "right has 3 fingers");
-            Assert.AreEqual(null, f1.Hand.Value, "right has 3 fingers");
-            Assert.AreEqual(ObjectState.Deleted, right.State & ObjectState.Deleted, "deleted");
-            Assert.AreEqual(ObjectState.Deleted, f1.State & ObjectState.Deleted, "deleted");
+            Assert.AreEqual(0, right.Fingers.Count, "right has not fingers");
+            Assert.AreEqual(null, f1.Hand.Value, "right hasnot fingers");
+            Assert.AreEqual(true, right.IsDeleted, "deleted");
+            Assert.AreEqual(true, f1.IsDeleted, "deleted");
 
         }
 
@@ -365,8 +365,8 @@ namespace Histria.Core.Tests.Associations
 
             Assert.AreEqual(null, body.Nose.Value, "null references");
             Assert.AreEqual(null, nose.Body.Value, "null references");
-            Assert.AreEqual(ObjectState.Deleted, body.State & ObjectState.Deleted, "deleted");
-            Assert.AreEqual(ObjectState.Deleted, nose.State & ObjectState.Deleted, "deleted");
+            Assert.AreEqual(true, body.IsDeleted, "deleted");
+            Assert.AreEqual(true, nose.IsDeleted, "deleted");
         }
 
 
@@ -395,10 +395,10 @@ namespace Histria.Core.Tests.Associations
             Assert.AreEqual(3, right.Fingers.Count, "right has 3 fingers");
             Assert.AreEqual(right, f1.Hand.Value, "right has 3 fingers");
             right.Delete();
-            Assert.AreEqual(0, right.Fingers.Count, "right has 3 fingers");
-            Assert.AreEqual(null, f1.Hand.Value, "right has 3 fingers");
-            Assert.AreEqual(ObjectState.Deleted, right.State & ObjectState.Deleted, "deleted");
-            Assert.AreEqual(ObjectState.Deleted, f1.State & ObjectState.Deleted, "deleted");
+            Assert.AreEqual(0, right.Fingers.Count, "right has not fingers");
+            Assert.AreEqual(null, f1.Hand.Value, "right has not fingers");
+            Assert.AreEqual(true, right.IsDeleted, "deleted");
+            Assert.AreEqual(true, f1.IsDeleted, "deleted");
 
         }
 
@@ -422,10 +422,10 @@ namespace Histria.Core.Tests.Associations
             Assert.AreEqual(3, right.Fingers.Count, "right has 3 fingers");
             Assert.AreEqual(right, f1.Hand.Value, "right has 3 fingers");
             right.Delete();
-            Assert.AreEqual(0, right.Fingers.Count, "right has 3 fingers");
-            Assert.AreEqual(null, f1.Hand.Value, "right has 3 fingers");
-            Assert.AreEqual(ObjectState.Deleted, right.State & ObjectState.Deleted, "deleted");
-            Assert.AreEqual(ObjectState.Deleted, f1.State & ObjectState.Deleted, "deleted");
+            Assert.AreEqual(0, right.Fingers.Count, "right has not fingers");
+            Assert.AreEqual(null, f1.Hand.Value, "right has not fingers");
+            Assert.AreEqual(true, right.IsDeleted, "deleted");
+            Assert.AreEqual(true, f1.IsDeleted, "deleted");
 
         }
 
