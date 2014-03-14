@@ -24,7 +24,6 @@ namespace Histria.Core.Tests.Rules.Customers
         [Association(Relation.Composition, Inv = "Lines")]
         public virtual BelongsTo<SalesOrder> Order { get; set; }
     }
-<<<<<<< HEAD
 
     [RulesFor(typeof(OrderLine))]
     public class RulesForOrderLine : IPluginModel
@@ -41,9 +40,8 @@ namespace Histria.Core.Tests.Rules.Customers
     [RulesFor(typeof(OrderLine))]
     public class StateRulesForOrderLine : IPluginModel
     {
-        [Rule(Rule.AfterCreate)]
+        [State(Rule.AfterCreate)]
         [State(Rule.Propagation, Property = "Product")]
-        [Display("Calculate Sales Line Price")]
         public static void EnableControls(OrderLine target)
         {
             bool isDisabled = string.IsNullOrEmpty(target.Product);
@@ -51,8 +49,12 @@ namespace Histria.Core.Tests.Rules.Customers
             target.Properties["DecQty"].IsDisabled = isDisabled;
             target.Properties["Price"].IsDisabled = isDisabled; 
         }
+        [State(Rule.AfterCreate)]
+        [State(Rule.AfterLoad)]
+        public static void EnableProduct(OrderLine target)
+        {
+        }
+
     }
 
-=======
->>>>>>> 9c261e53c412db3517b2595b7f656adba13165be
 }
