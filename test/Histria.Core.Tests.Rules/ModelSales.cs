@@ -24,6 +24,7 @@ namespace Histria.Core.Tests.Rules.Customers
         [Association(Relation.Composition, Inv = "Lines")]
         public virtual BelongsTo<SalesOrder> Order { get; set; }
     }
+<<<<<<< HEAD
 
     [RulesFor(typeof(OrderLine))]
     public class RulesForOrderLine : IPluginModel
@@ -52,4 +53,6 @@ namespace Histria.Core.Tests.Rules.Customers
         }
     }
 
+=======
+>>>>>>> 9c261e53c412db3517b2595b7f656adba13165be
 }
