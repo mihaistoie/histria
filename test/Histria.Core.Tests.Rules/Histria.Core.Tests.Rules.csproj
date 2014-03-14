@@ -53,6 +53,7 @@
   <ItemGroup>
     <Compile Include="Model.cs" />
     <Compile Include="ModelRules.cs" />
+    <Compile Include="ModelSales.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="RulesTests.cs" />
   </ItemGroup>
