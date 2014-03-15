@@ -51,6 +51,7 @@
     <Compile Include="Execution\IProxyFactory.cs" />
     <Compile Include="Execution\IProxyFactoryGenerator.cs" />
     <Compile Include="Execution\TestContainerSetup.cs" />
+    <Compile Include="Rules\RulesCallStack.cs" />
     <Compile Include="Transactions\InstanceList.cs" />
     <Compile Include="Transactions\InstancesByClass.cs" />
     <Compile Include="Transactions\Instances.cs" />
