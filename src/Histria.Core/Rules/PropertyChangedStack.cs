@@ -9,19 +9,20 @@ namespace Histria.Core
 {
     public class PropertyChangedStack : BaseStack
     {
-        public void Push(IInterceptedObject io, string propName)
+        internal void Push(IInterceptedObject io, string propName)
         {
             DoPush(string.Format("{0}.{1}", io.ObjectPath(), propName));
         }
 
-        public void Pop()
+        internal void Pop()
         {
             DoPop();
         }
 
-        public void Clear()
+        internal void Clear()
         {
             DoClear();
         }
+
     }
 }
