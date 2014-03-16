@@ -369,6 +369,36 @@ namespace Histria.Core.Tests.Associations
             Assert.AreEqual(true, nose.IsDeleted, "deleted");
         }
 
+        //<summary>
+        /// Test  Property changed Stack 
+        /// The model is defined in OneToManyCompositions.cs
+        ///</summary> 
+        [TestMethod]
+        public void PropertyChangedStack()
+        {
+            Container container = new Container(TestContainerSetup.GetSimpleContainerSetup(model));
+            HBody body = container.Create<HBody>();
+            body.Id = "kirilov";
+            Hand left = container.Create<Hand>();
+            left.Id = "left";
+            Hand right = container.Create<Hand>();
+            right.Id = "right";
+            left.Body.Value = body;
+            right.Body.Value = body;
+            Finger f1 = container.Create<Finger>();
+            f1.Id = "f1";
+            Finger f2 = container.Create<Finger>();
+            f2.Id = "f2";
+            Finger f3 = container.Create<Finger>();
+            f3.Id = "f3";
+            right.Fingers.Add(f1);
+            right.Fingers.Add(f2);
+            right.Fingers.Add(f3);
+            Assert.AreEqual(string.Format("{0}.Hands.{1}.Fingers.{2}",
+                body.Uuid.ToString("N"), right.Uuid.ToString("N"), f3.Uuid.ToString("N")), (f3 as IInterceptedObject).ObjectPath(), "Object pathh");
+
+        }
+
 
 
         [TestMethod]

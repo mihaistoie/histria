@@ -11,13 +11,14 @@ namespace Histria.Core
     {
         public void Push(IInterceptedObject io, string propName)
         {
-            DoPush(Association.ExpandPath(io, propName));
+            DoPush(string.Format("{0}.{1}", io.ObjectPath(), propName));
         }
 
         public void Pop()
         {
             DoPop();
         }
+
         public void Clear()
         {
             DoClear();

@@ -13,6 +13,7 @@ namespace Histria
     {
         #region Properties
         ClassInfoItem ClassInfo { get; set; }
+        string ObjectPath();
         #endregion
 
         #region Interceptors
@@ -53,7 +54,7 @@ namespace Histria
         void AOPLoad<T>(Action<T> loadAction) where T: class;
         #endregion
 
-        #region Delete;
+        #region Delete
         ///<summary>
         /// Try to delete an instance
         ///</summary>

@@ -199,6 +199,27 @@ namespace Histria.Core
         #endregion
 
         #region Interceptors
+
+
+        ///<summary>
+        /// IInterceptedObject.ObjectPath
+        ///  ///</summary>
+        private string objectPath;
+        string IInterceptedObject.ObjectPath()
+        {
+            if (string.IsNullOrEmpty(objectPath))
+            {
+                bool canBeCached = false;
+                string s = Association.ObjectPath(this, ref canBeCached);
+                if (canBeCached)
+                    objectPath = s;
+                else
+                    return s;
+
+            }
+            return objectPath;
+        }
+
         ///<summary>
         /// IInterceptedObject.AOPBeforeSetProperty
         ///</summary>

@@ -45,21 +45,24 @@ namespace Histria.Model
             return (Association)Activator.CreateInstance(declaredType);
 
         }
-        public static string ExpandPath(IInterceptedObject value, string propName)
+        public static string ObjectPath(IInterceptedObject value, ref bool canBeCached)
         {
-            List<string> path = new List<string>() { propName, value.Uuid.ToString("N") };
+            canBeCached = true;
+            List<string> path = new List<string>() {value.Uuid.ToString("N") };
             PropInfoItem pi = value.ClassInfo.Parent;
-            while (true)
+            while (pi != null)
             {
                 object role = pi.PropInfo.GetValue(value, null);
                 value = (role as IRoleRef).GetValue();
                 if (value == null)
                 {
+                    canBeCached = false;
                     break;
                 }
                 pi = pi.Role.InvRole.RoleProp;
                 path.Add(pi.Name);
                 path.Add(value.Uuid.ToString("N"));
+                pi = value.ClassInfo.Parent;
             }
             StringBuilder sb = new StringBuilder();
             for (int i = path.Count -1; i > 0; i--)
