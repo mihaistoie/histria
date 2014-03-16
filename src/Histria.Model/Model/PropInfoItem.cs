@@ -497,7 +497,7 @@ namespace Histria.Model
 
                     }
                 }
-
+ 
             }
 
         }
@@ -522,7 +522,7 @@ namespace Histria.Model
         {
             RuleHelper.AddRule(rules, ri);
         }
-        
+
         ///<summary>
         /// Associate a state rule to this property
         ///</summary>   

@@ -18,11 +18,11 @@ namespace Histria.Core
 
         #region State & Notifications
         private ObjectStatus status = ObjectStatus.None;
-        
+
         ///<summary>
         /// Object is deleted ?
         ///</summary>
-        public bool IsDeleted 
+        public bool IsDeleted
         {
             get { return (status & ObjectStatus.Deleted) == ObjectStatus.Deleted; }
         }
@@ -36,10 +36,10 @@ namespace Histria.Core
         {
             get
             {
-                if (propsState == null  && ClassInfo != null)
+                if (propsState == null && ClassInfo != null)
                 {
-                   propsState = (PropertiesState)Activator.CreateInstance(ClassInfo.StateClassType);
-                   propsState.Init(ClassInfo);
+                    propsState = (PropertiesState)Activator.CreateInstance(ClassInfo.StateClassType);
+                    propsState.Init(ClassInfo);
                 }
                 return propsState;
             }
@@ -79,14 +79,14 @@ namespace Histria.Core
         {
             return (status & ObjectStatus.Active) == ObjectStatus.Active;
         }
-        private void  Frozen(Action action) 
+        private void Frozen(Action action)
         {
             AddState(ObjectStatus.Frozen);
-            try 
+            try
             {
                 action();
-            } 
-            finally 
+            }
+            finally
             {
                 RmvState(ObjectStatus.Frozen);
             }
@@ -228,14 +228,22 @@ namespace Histria.Core
                 PropInfoItem pi = ClassInfo.PropertyByName(propertyName);
                 // Validate
                 if (CanExecuteRules(Rule.Validation))
-                {   
-                    Frozen(()=>{pi.ExecuteRules(Rule.Validation, this, RoleOperation.None);});
+                {
+                    Frozen(() => { pi.ExecuteRules(Rule.Validation, this, RoleOperation.None); });
                 }
                 // Propagate
                 if (CanExecuteRules(Rule.Propagation))
                 {
-                    Frozen(() => { pi.ExecuteStateRules(Rule.Propagation, this, RoleOperation.None); });
-                    pi.ExecuteRules(Rule.Propagation, this, RoleOperation.None);
+                    this.Container.PropertyChangedStack.Push(this, propertyName);
+                    try
+                    {
+                        Frozen(() => { pi.ExecuteStateRules(Rule.Propagation, this, RoleOperation.None); });
+                        pi.ExecuteRules(Rule.Propagation, this, RoleOperation.None);
+                    }
+                    finally
+                    {
+                        this.Container.PropertyChangedStack.Pop();
+                    }
                 }
             }
         }
@@ -268,8 +276,16 @@ namespace Histria.Core
                 // Propagate
                 if (CanExecuteRules(Rule.Propagation))
                 {
-                    Frozen(() => { pi.ExecuteStateRules(Rule.Propagation, this, operation); });
-                    pi.ExecuteRules(Rule.Propagation, this, operation);
+                    this.Container.PropertyChangedStack.Push(this, propertyName);
+                    try
+                    {
+                        Frozen(() => { pi.ExecuteStateRules(Rule.Propagation, this, operation); });
+                        pi.ExecuteRules(Rule.Propagation, this, operation);
+                    }
+                    finally
+                    {
+                        this.Container.PropertyChangedStack.Pop();
+                    }
                 }
             }
         }

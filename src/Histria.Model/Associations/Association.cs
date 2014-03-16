@@ -45,6 +45,32 @@ namespace Histria.Model
             return (Association)Activator.CreateInstance(declaredType);
 
         }
+        public static string ExpandPath(IInterceptedObject value, string propName)
+        {
+            List<string> path = new List<string>() { propName, value.Uuid.ToString("N") };
+            PropInfoItem pi = value.ClassInfo.Parent;
+            while (true)
+            {
+                object role = pi.PropInfo.GetValue(value, null);
+                value = (role as IRoleRef).GetValue();
+                if (value == null)
+                {
+                    break;
+                }
+                pi = pi.Role.InvRole.RoleProp;
+                path.Add(pi.Name);
+                path.Add(value.Uuid.ToString("N"));
+            }
+            StringBuilder sb = new StringBuilder();
+            for (int i = path.Count -1; i > 0; i--)
+            {
+                sb.Append(path[i]);
+                sb.Append(".");
+            }
+            sb.Append(path[0]);
+            return sb.ToString();
+        }
+        
 
         ///<summary>
         /// Property info 
@@ -117,29 +143,24 @@ namespace Histria.Model
         public static bool RemoveMeFromParent(IInterceptedObject instance)
         {
 
-            ClassInfoItem ci = instance.ClassInfo;
-            for (int index = 0, len = ci.Roles.Count; index < len; index++)
+            PropInfoItem pi = instance.ClassInfo.Parent;
+            if (pi != null)
             {
-                PropInfoItem pi = ci.Roles[index];
-                if (pi.Role.IsChild && pi.Role.IsRef)
+                Association role = (Association)pi.PropInfo.GetValue(instance, null);
+                IInterceptedObject parent = (role as IRoleRef).GetValue();
+                if (parent != null)
                 {
-                    Association role = (Association)pi.PropInfo.GetValue(instance, null);
-                    IInterceptedObject parent = (role as IRoleRef).GetValue();
-                    if (parent != null)
+                    object roleInvValue = pi.Role.InvRole.RoleProp.PropInfo.GetValue(parent, null);
+                    if (roleInvValue is IRoleRef)
                     {
-                        object roleInvValue = pi.Role.InvRole.RoleProp.PropInfo.GetValue(parent, null);
-                        if (roleInvValue is IRoleRef)
-                        {
-                            (roleInvValue as IRoleRef).SetValue(null);
-                            return true;
-                        }
-                        else if (roleInvValue is IRoleList)
-                        {
-                            (roleInvValue as IRoleList).Remove(instance);
-                            return true;
-                        }
+                        (roleInvValue as IRoleRef).SetValue(null);
+                        return true;
                     }
-                    break;
+                    else if (roleInvValue is IRoleList)
+                    {
+                        (roleInvValue as IRoleList).Remove(instance);
+                        return true;
+                    }
                 }
             }
             return false;
@@ -147,7 +168,7 @@ namespace Histria.Model
 
         public static void RemoveChildren(IInterceptedObject instance)
         {
-            
+
             ClassInfoItem ci = instance.ClassInfo;
             for (int index = 0, len = ci.Roles.Count; index < len; index++)
             {
@@ -162,7 +183,7 @@ namespace Histria.Model
                     }
                     IRoleParent pp = value as IRoleParent;
                     pp.RemoveAllChildren();
-  
+
                 }
             }
         }
@@ -173,14 +194,14 @@ namespace Histria.Model
         public static void EnumChildren(IInterceptedObject instance, bool childrenBefore, Action<IInterceptedObject> callBack)
         {
             ClassInfoItem ci = instance.ClassInfo;
-            for (int index = 0, len = ci.Roles.Count; index < len; index++ ) 
+            for (int index = 0, len = ci.Roles.Count; index < len; index++)
             {
                 PropInfoItem pi = ci.Roles[index];
-                if (pi.Role.IsParent) 
+                if (pi.Role.IsParent)
                 {
                     Association value = (Association)pi.PropInfo.GetValue(instance, null);
                     IEnumerable<IInterceptedObject> collection = (value as IEnumerable<IInterceptedObject>);
-                    foreach(IInterceptedObject ii  in collection) 
+                    foreach (IInterceptedObject ii in collection)
                     {
                         if (childrenBefore)
                         {
@@ -192,7 +213,7 @@ namespace Histria.Model
                             callBack(ii);
                             EnumChildren(ii, childrenBefore, callBack);
                         }
-                      
+
                     }
 
                 }

@@ -40,6 +40,10 @@ namespace Histria.Core.Execution
         private readonly IProxyFactory proxyFactory;
         private IProxyFactory ProxyFactory { get { return proxyFactory; } }
 
+        private readonly PropertyChangedStack pstack = new PropertyChangedStack();
+        public PropertyChangedStack PropertyChangedStack { get { return this.pstack; } }
+
+
         private T CreateInstance<T>() where T : class
         {
             T instance = this.proxyFactory.Create<T>();
