@@ -45,6 +45,25 @@ namespace Histria.Model
             return (Association)Activator.CreateInstance(declaredType);
 
         }
+		public static string ExpandSearchPath(IInterceptedObject value, string path) 
+		{
+            /*
+			string[] segments = path.Split('.');
+			for (string segment in  segments) 
+			{
+				if (string.IsNullOrEmpty(segment)) 
+				{
+					throw new Exception(L.T("Invalid search path '{0}'. Empty segments.", path))
+				}
+			}
+			if (segments.length == 1) 
+			{
+				return string.Format("{0}.{1}", value.ObjectPath(), path) ;
+			}
+			*/
+			
+			return path;
+		}
         public static string ObjectPath(IInterceptedObject value, ref bool canBeCached)
         {
             canBeCached = true;
