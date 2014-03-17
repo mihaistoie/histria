@@ -23,6 +23,13 @@ namespace Histria.Core
         {
             DoClear();
         }
+        ///<summary>
+        /// Which property changed called me?
+        ///</summary>
+        public bool IsComingFrom(IInterceptedObject io, string property)
+        {
 
+            return false;
+        }
     }
 }
