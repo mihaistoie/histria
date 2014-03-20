@@ -20,9 +20,6 @@ namespace Histria.Model
         private readonly ClassCollection views;
         #endregion
 
-        #region Singleton thread-safe pattern
-        private static volatile ModelManager instance = null;
-        private static object syncRoot = new Object();
         private ModelManager()
         {
             enums = new EnumCollection();
@@ -37,42 +34,6 @@ namespace Histria.Model
             model.Load(config);
             return model;
         }
-
-        public static ModelManager LoadModelFromConfig(JsonObject config)
-        {
-            if (instance == null)
-            {
-                lock (syncRoot)
-                {
-                    if (instance == null)
-                    {
-                        ModelManager model = new ModelManager();
-                        model.Load(config);
-                        instance = model;
-                    }
-                }
-            }
-
-            return instance;
-        }
-
-        public static ModelManager Instance
-        {
-            get
-            {
-                return LoadModelFromConfig(null);
-            }
-        }
-
-        public static void CleanUp()
-        {
-            lock (syncRoot)
-            {
-                instance = null;
-            }
-
-        }
-        #endregion
 
         #region Model Loading
 
@@ -128,6 +89,7 @@ namespace Histria.Model
             Logger.Info(Logger.MODEL, L.T("Model loading ... done"), interval.TotalMilliseconds);
 
         }
+        
         private void AfterLoad()
         {
             foreach (ClassInfoItem cc in viewsandclasses)
@@ -144,6 +106,7 @@ namespace Histria.Model
                 cc.Loaded(this);
             }
         }
+        
         #endregion
 
         #region Properties

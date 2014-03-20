@@ -87,7 +87,6 @@
     <Compile Include="Model\ModelException.cs" />
     <Compile Include="Model\ModelHelper.cs" />
     <Compile Include="Model\ModelManager.cs" />
-    <Compile Include="Model\ModelProxy.cs" />
     <Compile Include="Model\PropInfoItem.cs" />
     <Compile Include="Model\RuleItem.cs" />
     <Compile Include="Model\RuleList.cs" />

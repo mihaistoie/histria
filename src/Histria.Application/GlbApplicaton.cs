@@ -20,7 +20,7 @@ namespace Histria.Application
             // Load application settings  
             GlobalSettings settings = GlobalSettings.Instance;
             // Load current model
-            ModelManager model = ModelManager.LoadModelFromConfig(settings.Model()); 
+            ModelManager model = ModelManager.LoadModel(settings.Model()); 
         }
 
     }

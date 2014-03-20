@@ -17,7 +17,7 @@ namespace Histria.Core.PropertiesState.Tests
         {
             string scfg = @"{""nameSpaces"": [""PropertiesState""]}";
             JsonObject cfg = (JsonObject)JsonValue.Parse(scfg);
-            model = ModelManager.LoadModelFromConfig(cfg);
+            model = ModelManager.LoadModel(cfg);
             ModulePlugIn.Load("Histria.Proxy.Castle");
             ModulePlugIn.Initialize(model);
         }

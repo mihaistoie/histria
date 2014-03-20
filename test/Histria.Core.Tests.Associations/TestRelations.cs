@@ -16,7 +16,7 @@ namespace Histria.Core.Tests.Associations
         {
             string scfg = @"{""nameSpaces"": [""Associations""]}";
             JsonObject cfg = (JsonObject)JsonValue.Parse(scfg);
-            model = ModelManager.LoadModelFromConfig(cfg);
+            model = ModelManager.LoadModel(cfg);
             ModulePlugIn.Load("Histria.Proxy.Castle");
             ModulePlugIn.Initialize(model);
         }

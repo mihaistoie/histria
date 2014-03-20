@@ -18,7 +18,7 @@ namespace UnitTestModel
         public static void Setup(TestContext testContext)
         {
             JsonObject cfg = (JsonObject)JsonValue.Parse(@"{""nameSpaces"": [""Customers""]}");
-            model = ModelManager.LoadModelFromConfig(cfg);
+            model = ModelManager.LoadModel(cfg);
             ModulePlugIn.Load("Histria.Proxy.Castle");
             ModulePlugIn.Initialize(model);
         }

@@ -122,7 +122,7 @@ namespace Histria.Core
                 if (ci == null)
                 {
                     Type tt = this.GetType();
-                    ModelManager model = ModelProxy.Model();
+                    ModelManager model = this.Container.ModelManager;
                     ci = model.Classes[tt.BaseType];
                 }
                 return ci;

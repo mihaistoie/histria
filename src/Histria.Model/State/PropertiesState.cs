@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace Histria.Model
 {
-    public abstract class PropertiesState : IEnumerable<PropertyState>
+    public abstract class PropertiesState :  IEnumerable<PropertyState>
     {
         protected abstract PropertyState GetItemByName(string key);
         public  PropertyState this[string key]
