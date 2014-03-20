@@ -8,13 +8,17 @@ namespace Histria.Model
     public class PropertyState
     {
         #region Private Members
+        
         private List<string> errors;
+        
         private List<string> warnings;
+        
         private void CheckErrors()
         {
             if (errors == null)
                 errors = new List<string>();
         }
+        
         private void CheckWarnings()
         {
             if (warnings == null)
@@ -24,21 +28,31 @@ namespace Histria.Model
         #endregion
 
         #region State Properties
+        
         public virtual bool IsHidden { get; set; }
+        
         public virtual bool IsDisabled { get; set; }
+        
         public virtual bool IsMandatory { get; set; }
+        
         #endregion
 
         #region Properties  && Constructor
-        private PropInfoItem piInfo;
-        public PropInfoItem PiInfo { get { return piInfo;  } }
-        public PropertyState(PropInfoItem pi)
+        
+        public IInterceptedObject Owner { get; private set; }
+        
+        public PropInfoItem PiInfo { get; private set; }
+
+        public PropertyState(IInterceptedObject owner, PropInfoItem pi)
         {
-            piInfo = pi;
+            this.Owner = owner;
+            this.PiInfo = pi;
+
             IsDisabled = pi.IsDisabled;
             IsHidden = pi.IsHidden;
             IsMandatory = pi.IsMandatory; 
         }
+
         #endregion
 
         #region Errors and Warnings

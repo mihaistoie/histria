@@ -38,7 +38,7 @@ namespace Histria.Model
         public ClassType ClassType = ClassType.Unknown;
         public Type CurrentType { get; set; }
         public Type TargetType { get; set; }
-
+        public Type StateClassType { get; private set; }
 
         ///<summary>
         /// Property  "Parent"
@@ -503,6 +503,30 @@ namespace Histria.Model
                 indexes.Add(ii);
             }
         }
+
+        private Type GetPropertiesStateType(Type type)
+        {
+            BindingFlags bindingFlags = BindingFlags.Instance | BindingFlags.Public;
+            var propertiesState = (from prop in type.GetProperties(bindingFlags)
+                                   where prop.Name == "Properties" && typeof(IDictionary<string, PropertyState>).IsAssignableFrom(prop.PropertyType) && prop.PropertyType.IsClass
+                                   select prop).ToList();
+            switch(propertiesState.Count)
+            {
+                case 0: 
+                    return typeof(DefaultPropertiesState);
+                case 1: 
+                    break;
+                default:
+                    propertiesState.Sort((p1, p2) =>
+                    {
+                        return p1.DeclaringType.IsAssignableFrom(p2.DeclaringType) ? 1 : -1;
+                    });
+                    break;
+            }
+            return propertiesState[0].PropertyType;
+        }
+
+
         #endregion
 
         #region Properties Access by name/type
@@ -525,8 +549,6 @@ namespace Histria.Model
             }
         }
 
-        public Type StateClassType { get { return typeof(DefaultPropertiesState); } }
-
         #endregion
 
         #region Constructor
@@ -534,6 +556,7 @@ namespace Histria.Model
         {
             CurrentType = cType;
             TargetType = (staticClass ? null : CurrentType);
+            StateClassType = GetPropertiesStateType(CurrentType);
 
             Name = CurrentType.Name;
             title = CurrentType.Name;
@@ -547,9 +570,6 @@ namespace Histria.Model
 
         }
         #endregion
-
     }
-
-
 }
 

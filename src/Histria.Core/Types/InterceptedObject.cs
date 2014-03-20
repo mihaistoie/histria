@@ -31,15 +31,20 @@ namespace Histria.Core
             get { return (status & ObjectStatus.Created) == ObjectStatus.Created; }
         }
 
-        private PropertiesState propsState;
-        public PropertiesState Properties
+        private IDictionary<string, PropertyState> propsState;
+        public IDictionary<string, PropertyState> Properties
         {
             get
             {
                 if (propsState == null && ClassInfo != null)
                 {
-                    propsState = (PropertiesState)Activator.CreateInstance(ClassInfo.StateClassType);
-                    propsState.Init(ClassInfo);
+                    propsState = (IDictionary<string, PropertyState>) Activator.CreateInstance(ClassInfo.StateClassType);
+                    for (int idx = 0, len = ci.Properties.Count; idx < len; idx++)
+                    {
+                        PropInfoItem pi = ci.Properties[idx];
+                        PropertyState ps = new PropertyState((IInterceptedObject)this, pi);
+                        propsState.Add(pi.Name, ps);
+                    }
                 }
                 return propsState;
             }
