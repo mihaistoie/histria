@@ -53,7 +53,7 @@ namespace Histria.Model
                 return;
             }
             InternalAddValue(item, index);
-            (Instance as IObjectLifetime).Notify(ObjectLifetime.AssociationsChanged, PropInfo.Name, this);
+            (Instance as IObjectLifetime).Notify(ObjectLifetimeEvent.AssociationsChanged, PropInfo.Name, this);
             Instance.AOPAfterChangeChild(PropInfo.Name, child, RoleOperation.Add);
         }
 
@@ -68,7 +68,7 @@ namespace Histria.Model
             }
             item.AOPDelete(false);
             (this as IRoleParent).RemoveChildAt(item, index);
-            (Instance as IObjectLifetime).Notify(ObjectLifetime.AssociationsChanged, PropInfo.Name, this);
+            (Instance as IObjectLifetime).Notify(ObjectLifetimeEvent.AssociationsChanged, PropInfo.Name, this);
             Instance.AOPAfterChangeChild(PropInfo.Name, child, RoleOperation.Remove);
 
         }

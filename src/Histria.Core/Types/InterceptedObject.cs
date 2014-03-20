@@ -153,7 +153,7 @@ namespace Histria.Core
                 RmvState(ObjectStatus.InCreating);
                 AddState(ObjectStatus.Created | ObjectStatus.Active);
             }
-            ((IObjectLifetime)this).Notify(ObjectLifetime.Created);
+            ((IObjectLifetime)this).Notify(ObjectLifetimeEvent.Created);
             if (this.CanExecuteRules(Rule.AfterCreate))
             {
                 ClassInfo.ExecuteRules(Rule.AfterCreate, this);
@@ -177,7 +177,7 @@ namespace Histria.Core
                 RmvState(ObjectStatus.InLoading);
                 AddState(ObjectStatus.Loaded | ObjectStatus.Active);
             }
-            ((IObjectLifetime)this).Notify(ObjectLifetime.Loaded);
+            ((IObjectLifetime)this).Notify(ObjectLifetimeEvent.Loaded);
             if (this.CanExecuteRules(Rule.AfterLoad))
             {
                 ClassInfo.ExecuteRules(Rule.AfterLoad, this);
@@ -245,7 +245,7 @@ namespace Histria.Core
         {
             if (InterceptSet())
             {
-                (this as IObjectLifetime).Notify(ObjectLifetime.Changed, propertyName, oldValue, newValue);
+                (this as IObjectLifetime).Notify(ObjectLifetimeEvent.Changed, propertyName, oldValue, newValue);
                 PropInfoItem pi = ClassInfo.PropertyByName(propertyName);
                 // Validate
                 if (CanExecuteRules(Rule.Validation))
@@ -382,7 +382,7 @@ namespace Histria.Core
             {
                 x.RmvState(ObjectStatus.InDeleting);
                 x.AddState(ObjectStatus.Deleted);
-                ((IObjectLifetime)x).Notify(ObjectLifetime.Deleted);
+                ((IObjectLifetime)x).Notify(ObjectLifetimeEvent.Deleted);
             });
 
         }
@@ -407,7 +407,7 @@ namespace Histria.Core
 
         #endregion
 
-        void IObjectLifetime.Notify(ObjectLifetime objectLifetime, params object[] arguments)
+        void IObjectLifetime.Notify(ObjectLifetimeEvent objectLifetime, params object[] arguments)
         {
             //Nothing to do
             //used by AOP interception

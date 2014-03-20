@@ -59,6 +59,10 @@
       <Project>{7c410682-0d61-4ac8-b4ca-8a7f53ee10dd}</Project>
       <Name>Histria.Db.MsSql</Name>
     </ProjectReference>
+    <ProjectReference Include="..\..\src\Histria.Db\Histria.Db.csproj">
+      <Project>{7989f2d8-575f-414a-9e6a-2923ae9df0fa}</Project>
+      <Name>Histria.Db</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\src\Histria.Sys\Histria.Sys.csproj">
       <Project>{7e07af0f-212d-42bf-b505-87018f6619bd}</Project>
       <Name>Histria.Sys</Name>
@@ -66,10 +70,6 @@
     <ProjectReference Include="..\..\src\Histria.Json\Histria.Json.csproj">
       <Project>{129e2aa1-5a70-42b0-9051-f84360105480}</Project>
       <Name>Histria.Json</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\src\Histria.Db\Histria.Db.csproj">
-      <Project>{7989f2d8-575f-414a-9e6a-2923ae9df0fa}</Project>
-      <Name>Histria.Db</Name>
     </ProjectReference>
   </ItemGroup>
   <Choose>
