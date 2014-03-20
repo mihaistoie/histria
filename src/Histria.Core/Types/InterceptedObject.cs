@@ -4,6 +4,8 @@ namespace Histria.Core
 {
     using Histria.Core.Execution;
     using Histria.Model;
+    using Histria.Sys;
+    using System.Collections.Generic;
     using System.Reflection;
 
     public class InterceptedObject : IClassModel, IInterceptedObject, IObjectLifetime
@@ -15,27 +17,80 @@ namespace Histria.Core
         #endregion
 
         #region State & Notifications
-        private ObjectState state = ObjectState.Iddle;
-        public ObjectState State
+        private ObjectStatus status = ObjectStatus.None;
+
+        ///<summary>
+        /// Object is deleted ?
+        ///</summary>
+        public bool IsDeleted
+        {
+            get { return (status & ObjectStatus.Deleted) == ObjectStatus.Deleted; }
+        }
+        public bool IsNewObject
+        {
+            get { return (status & ObjectStatus.Created) == ObjectStatus.Created; }
+        }
+
+        private PropertiesState propsState;
+        public PropertiesState Properties
         {
             get
             {
-                return state;
-            }
-            set
-            {
-                state = value;
+                if (propsState == null && ClassInfo != null)
+                {
+                    propsState = (PropertiesState)Activator.CreateInstance(ClassInfo.StateClassType);
+                    propsState.Init(ClassInfo);
+                }
+                return propsState;
             }
         }
 
-        private bool canExecuteRules()
+        private bool CanExecuteRules(Rule ruleType)
         {
-            return (state & ObjectState.Iddle) == ObjectState.Iddle;
+            return (status & ObjectStatus.Active) == ObjectStatus.Active;
+        }
+
+        private bool InterceptSet()
+        {
+            if ((status & ObjectStatus.Frozen) == ObjectStatus.Frozen)
+            {
+                throw new ExecutionException(L.T("You can't change the object in a state rule."));
+            }
+            return (status & ObjectStatus.Active) == ObjectStatus.Active;
+        }
+
+
+        private void AddState(ObjectStatus value)
+        {
+            status = status | value;
+        }
+
+        private bool HasState(ObjectStatus value)
+        {
+            return ((status | value) == value);
+        }
+
+        private void RmvState(ObjectStatus value)
+        {
+            status = status & ~value;
         }
 
         private bool canNotifyChanges()
         {
-            return (state & ObjectState.Iddle) == ObjectState.Iddle;
+            return (status & ObjectStatus.Active) == ObjectStatus.Active;
+        }
+        private void Frozen(Action action)
+        {
+            AddState(ObjectStatus.Frozen);
+            try
+            {
+                action();
+            }
+            finally
+            {
+                RmvState(ObjectStatus.Frozen);
+            }
+
         }
 
         #endregion
@@ -56,7 +111,6 @@ namespace Histria.Core
             if (uuid == Guid.Empty)
                 uuid = Guid.NewGuid();
         }
-        bool IInterceptedObject.CanExecuteRules { get { return canExecuteRules(); } }
         #endregion
 
         #region Model
@@ -89,18 +143,22 @@ namespace Histria.Core
         ///</summary>
         void IInterceptedObject.AOPCreate()
         {
-            state = ObjectState.Creating;
+            AddState(ObjectStatus.InCreating);
             try
             {
                 AOPInitializeAssociations();
             }
             finally
             {
-                state = ObjectState.Iddle;
+                RmvState(ObjectStatus.InCreating);
+                AddState(ObjectStatus.Created | ObjectStatus.Active);
             }
-            ((IObjectLifetime)this).Notify(ObjectLifetimeEvent.Created);
-            if (this.canExecuteRules())
+            ((IObjectLifetime)this).Notify(ObjectLifetime.Created);
+            if (this.CanExecuteRules(Rule.AfterCreate))
+            {
                 ClassInfo.ExecuteRules(Rule.AfterCreate, this);
+                Frozen(() => { ClassInfo.ExecuteStateRules(Rule.AfterCreate, this); });
+            }
         }
 
         ///<summary>
@@ -108,7 +166,7 @@ namespace Histria.Core
         ///</summary>
         void IInterceptedObject.AOPLoad<T>(Action<T> loadAction)
         {
-            state = ObjectState.Loading;
+            AddState(ObjectStatus.InLoading);
             try
             {
                 AOPInitializeAssociations();
@@ -116,11 +174,15 @@ namespace Histria.Core
             }
             finally
             {
-                state = ObjectState.Iddle;
+                RmvState(ObjectStatus.InLoading);
+                AddState(ObjectStatus.Loaded | ObjectStatus.Active);
             }
-            ((IObjectLifetime)this).Notify(ObjectLifetimeEvent.Loaded);
-            if (this.canExecuteRules())
+            ((IObjectLifetime)this).Notify(ObjectLifetime.Loaded);
+            if (this.CanExecuteRules(Rule.AfterLoad))
+            {
                 ClassInfo.ExecuteRules(Rule.AfterLoad, this);
+                Frozen(() => { ClassInfo.ExecuteStateRules(Rule.AfterLoad, this); });
+            }
         }
 
         private void AOPInitializeAssociations()
@@ -137,17 +199,42 @@ namespace Histria.Core
         #endregion
 
         #region Interceptors
+
+
+        ///<summary>
+        /// IInterceptedObject.ObjectPath
+        ///  ///</summary>
+        private string objectPath;
+        string IInterceptedObject.ObjectPath()
+        {
+            if (string.IsNullOrEmpty(objectPath))
+            {
+                bool canBeCached = false;
+                string s = Association.ObjectPath(this, ref canBeCached);
+                if (canBeCached)
+                    objectPath = s;
+                else
+                    return s;
+
+            }
+            return objectPath;
+        }
+
         ///<summary>
         /// IInterceptedObject.AOPBeforeSetProperty
         ///</summary>
         bool IInterceptedObject.AOPBeforeSetProperty(string propertyName, ref object value, ref object oldValue)
         {
-            if (!canExecuteRules()) return true;
-            PropInfoItem pi = ClassInfo.PropertyByName(propertyName);
-            oldValue = pi.PropInfo.GetValue(this, null);
-            pi.SchemaValidation(ref value);
-            pi.ExecuteCheckValueRules(this, ref value);
-            if (oldValue == value) return false;
+            if (InterceptSet())
+            {
+                PropInfoItem pi = ClassInfo.PropertyByName(propertyName);
+                if (pi.CanGetValueByReflection)
+                    oldValue = pi.PropInfo.GetValue(this, null);
+                pi.SchemaValidation(ref value);
+                if (CanExecuteRules(Rule.Correction))
+                    pi.ExecuteCheckValueRules(this, ref value);
+                if (oldValue == value) return false;
+            }
             return true;
         }
 
@@ -156,20 +243,42 @@ namespace Histria.Core
         ///</summary>
         void IInterceptedObject.AOPAfterSetProperty(string propertyName, object newValue, object oldValue)
         {
-            (this as IObjectLifetime).Notify(ObjectLifetimeEvent.Changed, propertyName, oldValue, newValue);
-            if (!canExecuteRules()) return;
-            PropInfoItem pi = ClassInfo.PropertyByName(propertyName);
-            // Validate
-            pi.ExecuteRules(Rule.Validation, this, RoleOperation.None);
-            // Propagate
-            pi.ExecuteRules(Rule.Propagation, this, RoleOperation.None);
+            if (InterceptSet())
+            {
+                (this as IObjectLifetime).Notify(ObjectLifetime.Changed, propertyName, oldValue, newValue);
+                PropInfoItem pi = ClassInfo.PropertyByName(propertyName);
+                // Validate
+                if (CanExecuteRules(Rule.Validation))
+                {
+                    Frozen(() => { pi.ExecuteRules(Rule.Validation, this, RoleOperation.None); });
+                }
+                // Propagate
+                if (CanExecuteRules(Rule.Propagation))
+                {
+                    this.Container.PropertyChangedStack.Push(this, propertyName);
+                    try
+                    {
+                        Frozen(() => { pi.ExecuteStateRules(Rule.Propagation, this, RoleOperation.None); });
+                        pi.ExecuteRules(Rule.Propagation, this, RoleOperation.None);
+                    }
+                    finally
+                    {
+                        this.Container.PropertyChangedStack.Pop();
+                    }
+                }
+            }
         }
+
 
         ///<summary>
         /// Before modifying a role (add/remove/update)
         ///</summary>
         bool IInterceptedObject.AOPBeforeChangeChild(string propertyName, IInterceptedObject child, RoleOperation operation)
         {
+            if (InterceptSet())
+            {
+                return true;
+            }
             return true;
         }
         ///<summary>
@@ -177,41 +286,128 @@ namespace Histria.Core
         ///</summary>
         void IInterceptedObject.AOPAfterChangeChild(string propertyName, IInterceptedObject child, RoleOperation operation)
         {
-            if (!canExecuteRules()) return;
-            PropInfoItem pi = ClassInfo.PropertyByName(propertyName);
-            // Validate
-            pi.ExecuteRules(Rule.Validation, this, operation);
-            // Propagate
-            pi.ExecuteRules(Rule.Propagation, this, operation);
+            if (InterceptSet())
+            {
+                PropInfoItem pi = ClassInfo.PropertyByName(propertyName);
+                // Validate
+                if (CanExecuteRules(Rule.Validation))
+                {
+                    Frozen(() => { pi.ExecuteRules(Rule.Validation, this, operation); });
+                }
+                // Propagate
+                if (CanExecuteRules(Rule.Propagation))
+                {
+                    this.Container.PropertyChangedStack.Push(this, propertyName);
+                    try
+                    {
+                        Frozen(() => { pi.ExecuteStateRules(Rule.Propagation, this, operation); });
+                        pi.ExecuteRules(Rule.Propagation, this, operation);
+                    }
+                    finally
+                    {
+                        this.Container.PropertyChangedStack.Pop();
+                    }
+                }
+            }
         }
 
         ///<summary>
-        /// IInterceptedObject.AOPDeleted
+        /// IInterceptedObject.AOPDelete
         ///</summary>
-        void IInterceptedObject.AOPDeleted(bool notifyParent)
+        void IInterceptedObject.AOPDelete(bool notifyParent)
         {
-            if (canExecuteRules())
+            if (HasState(ObjectStatus.InDeleting) || HasState(ObjectStatus.Deleted))
+                return;
+            if (notifyParent)
             {
-                ClassInfo.ExecuteRules(Rule.BeforeDelete, this);
+                if (Association.RemoveMeFromParent(this))
+                {
+                    return;
+                }
             }
-            //Delete children  
+            List<InterceptedObject> toDelete = new List<InterceptedObject>() { this };
+            Association.EnumChildren(this as IInterceptedObject, true, (x) => { toDelete.Add((InterceptedObject)x); });
+
+            //Execute before
+            toDelete.ForEach((x) =>
+            {
+                x.AddState(ObjectStatus.InDeleting);
+                x.RmvState(ObjectStatus.Active);
+            });
+            try
+            {
+                toDelete.ForEach((x) =>
+                {
+                    if (!x.HasState(ObjectStatus.Created))
+                    {
+                        Association.CkeckConstraints(x as IInterceptedObject);
+                    }
+
+                    if (x.CanExecuteRules(Rule.BeforeDelete))
+                    {
+                        x.ClassInfo.ExecuteRules(Rule.BeforeDelete, x);
+                    }
+                });
+
+            }
+            catch
+            {
+                toDelete.ForEach((x) =>
+                {
+                    x.RmvState(ObjectStatus.InDeleting);
+                    x.AddState(ObjectStatus.Active);
+                });
+                throw;
+            }
             Association.RemoveChildren(this as IInterceptedObject);
 
-            ((IObjectLifetime)this).Notify(ObjectLifetimeEvent.Deleted);
-            state = ObjectState.Deleting;
+
+            //Rules After delete 
+            try
+            {
+                toDelete.ForEach((x) =>
+                {
+                    if (x.CanExecuteRules(Rule.AfterDelete))
+                    {
+                        x.ClassInfo.ExecuteRules(Rule.AfterDelete, x);
+                    }
+                });
+            }
+            catch (Exception e)
+            {
+                Logger.Error(Logger.RULES, e);
+            }
+            //Set state deleted
+            toDelete.ForEach((x) =>
+            {
+                x.RmvState(ObjectStatus.InDeleting);
+                x.AddState(ObjectStatus.Deleted);
+                ((IObjectLifetime)x).Notify(ObjectLifetime.Deleted);
+            });
+
         }
+
+        ///<summary>
+        /// Remove 
+        ///</summary>
+        public void Delete()
+        {
+            (this as IInterceptedObject).AOPDelete(true);
+        }
+
         #endregion
+
 
         #region Memory
 
         public void CleanObject()
         {
-            state = ObjectState.Disposing;
+            status = ObjectStatus.Disposing;
         }
 
         #endregion
 
-        void IObjectLifetime.Notify(ObjectLifetimeEvent lifetimeEvent, params object[] arguments)
+        void IObjectLifetime.Notify(ObjectLifetime objectLifetime, params object[] arguments)
         {
             //Nothing to do
             //used by AOP interception

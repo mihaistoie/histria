@@ -79,9 +79,15 @@ namespace Histria.Model
             return InternalSetValue((T)value, updateForeignKeys);
         }
 
+        #region IRoleRef
         void IRoleRef.SetValue(IInterceptedObject value)
         {
         }
+        IInterceptedObject IRoleRef.GetValue()
+        {
+            return _value as IInterceptedObject;
+        }
+        #endregion
 
         public Guid RefUid { get { return refUid; } }
         public T Value { get { return _value; } set { ExternSetParent(value); } }

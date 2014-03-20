@@ -5,13 +5,41 @@ using System.Text;
 
 namespace Histria.Model
 {
-    public class HasOneComposition<T> : HasOne<T> where T : IInterceptedObject
+    internal class HasOneComposition<T> : HasOne<T>, IRoleParent where T : IInterceptedObject
     {
 
         public HasOneComposition()
         {
             _value = default(T);
         }
+
+
+        #region Interface IRoleParent
+        bool IRoleParent.RemoveChildAt(IInterceptedObject child, int index)
+        {
+            if (child == null)
+            {
+                child = _value;
+                if (child == null) return true;
+            }
+
+            PropInfoItem inv = PropInfo.Role.InvRole.RoleProp;
+            IRoleChild rc = inv.PropInfo.GetValue(child, null) as IRoleChild;
+            if (!rc.SetParent(null, false))
+            {
+                return false;
+            }
+            InternalSetValue(default(T), true);
+            return true;
+        }
+       
+        bool IRoleParent.RemoveAllChildren()
+        {
+            return (this as IRoleParent).RemoveChildAt(null, -1);
+
+        }
+        #endregion
+
 
         protected override void InternalSetValue(T value, bool updateForeignKeys)
         {
@@ -29,20 +57,20 @@ namespace Histria.Model
             object ov = _value;
             if (nv == ov) return;
 
+            if (!Instance.AOPBeforeSetProperty(PropInfo.Name, ref nv, ref ov))
+            {
+                return;
+            }
             PropInfoItem inv = PropInfo.Role.InvRole.RoleProp;
             if (ov != null)
             {
                 IInterceptedObject old = (ov as IInterceptedObject);
                 rc = inv.PropInfo.GetValue(ov, null) as IRoleChild;
-                old.AOPDeleted(false);
+                old.AOPDelete(false);
                 if (!rc.SetParent(null, false))
                 {
                     return;
                 }
-            }
-            if (!Instance.AOPBeforeSetProperty(PropInfo.Name, ref nv, ref ov))
-            {
-                return;
             }
             //Proceed
             if (nv != null)

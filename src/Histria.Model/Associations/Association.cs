@@ -11,33 +11,6 @@ namespace Histria.Model
     ///</summary> 
     public abstract class Association : IAssociation
     {
-        //public static Type AssociationType(PropInfoItem propInfo, Type declaredType)
-        //{
-        //    Type generic = declaredType.GetGenericArguments()[0];
-        //    Type hasOne = typeof(HasOne<>);
-        //    Type cc = hasOne.MakeGenericType(generic);
-        //    if (declaredType == cc)
-        //    {
-        //        if (propInfo.Role.IsList)
-        //        {
-        //            return typeof(HasOneComposition<>).MakeGenericType(generic);
-        //        }
-        //        return declaredType;
-        //    }
-        //    Type hasMany = typeof(HasMany<>);
-        //    cc = hasMany.MakeGenericType(generic);
-        //    if (declaredType == cc)
-        //    {
-        //        if (propInfo.Role.IsParent)
-        //        {
-        //            return typeof(HasManyComposition<>).MakeGenericType(generic);
-        //        }
-        //        return declaredType;
-        //    }
-
-        //    return declaredType;
-        //}
-
         public static Association AssociationFactory(PropInfoItem propInfo, Type declaredType)
         {
             Type generic = declaredType.GetGenericArguments()[0];
@@ -49,27 +22,83 @@ namespace Histria.Model
                 {
                     return (Association)Activator.CreateInstance(typeof(HasOneComposition<>).MakeGenericType(generic));
                 }
+                else if (propInfo.Role.Type == Relation.Aggregation)
+                {
+                    return (Association)Activator.CreateInstance(typeof(HasOneAggregation<>).MakeGenericType(generic));
+                }
                 return (Association)Activator.CreateInstance(declaredType);
             }
-            
+
             Type hasMany = typeof(HasMany<>);
             cc = hasMany.MakeGenericType(generic);
             if (declaredType == cc)
             {
                 if (propInfo.Role.IsParent)
                 {
-                   return (Association)Activator.CreateInstance(typeof(HasManyComposition<>).MakeGenericType(generic));
+                    return (Association)Activator.CreateInstance(typeof(HasManyComposition<>).MakeGenericType(generic));
                 }
-             }
+                else if (propInfo.Role.Type == Relation.Aggregation)
+                {
+                    return (Association)Activator.CreateInstance(typeof(HasManyAggregation<>).MakeGenericType(generic));
+                }
+            }
             return (Association)Activator.CreateInstance(declaredType);
 
         }
+		public static string ExpandSearchPath(IInterceptedObject value, string path) 
+		{
+            /*
+			string[] segments = path.Split('.');
+			for (string segment in  segments) 
+			{
+				if (string.IsNullOrEmpty(segment)) 
+				{
+					throw new Exception(L.T("Invalid search path '{0}'. Empty segments.", path))
+				}
+			}
+			if (segments.length == 1) 
+			{
+				return string.Format("{0}.{1}", value.ObjectPath(), path) ;
+			}
+			*/
+			
+			return path;
+		}
+        public static string ObjectPath(IInterceptedObject value, ref bool canBeCached)
+        {
+            canBeCached = true;
+            List<string> path = new List<string>() {value.Uuid.ToString("N") };
+            PropInfoItem pi = value.ClassInfo.Parent;
+            while (pi != null)
+            {
+                object role = pi.PropInfo.GetValue(value, null);
+                value = (role as IRoleRef).GetValue();
+                if (value == null)
+                {
+                    canBeCached = false;
+                    break;
+                }
+                pi = pi.Role.InvRole.RoleProp;
+                path.Add(pi.Name);
+                path.Add(value.Uuid.ToString("N"));
+                pi = value.ClassInfo.Parent;
+            }
+            StringBuilder sb = new StringBuilder();
+            for (int i = path.Count -1; i > 0; i--)
+            {
+                sb.Append(path[i]);
+                sb.Append(".");
+            }
+            sb.Append(path[0]);
+            return sb.ToString();
+        }
+        
 
         ///<summary>
         /// Property info 
         ///</summary> 
         public PropInfoItem PropInfo { get; set; }
-        
+
         ///<summary>
         /// The instance that contains this association
         ///</summary> 
@@ -125,17 +154,92 @@ namespace Histria.Model
                 }
             }
         }
+        ///<summary>
+        /// Ckeck Constraints(FK) before delete 
+        ///</summary>
+        public static void CkeckConstraints(IInterceptedObject instance)
+        {
+            //TODO check if this instance can be deleted 
+        }
 
+        public static bool RemoveMeFromParent(IInterceptedObject instance)
+        {
+
+            PropInfoItem pi = instance.ClassInfo.Parent;
+            if (pi != null)
+            {
+                Association role = (Association)pi.PropInfo.GetValue(instance, null);
+                IInterceptedObject parent = (role as IRoleRef).GetValue();
+                if (parent != null)
+                {
+                    object roleInvValue = pi.Role.InvRole.RoleProp.PropInfo.GetValue(parent, null);
+                    if (roleInvValue is IRoleRef)
+                    {
+                        (roleInvValue as IRoleRef).SetValue(null);
+                        return true;
+                    }
+                    else if (roleInvValue is IRoleList)
+                    {
+                        (roleInvValue as IRoleList).Remove(instance);
+                        return true;
+                    }
+                }
+            }
+            return false;
+        }
+
+        public static void RemoveChildren(IInterceptedObject instance)
+        {
+
+            ClassInfoItem ci = instance.ClassInfo;
+            for (int index = 0, len = ci.Roles.Count; index < len; index++)
+            {
+                PropInfoItem pi = ci.Roles[index];
+                if (pi.Role.IsParent)
+                {
+                    Association value = (Association)pi.PropInfo.GetValue(instance, null);
+                    IEnumerable<IInterceptedObject> collection = (value as IEnumerable<IInterceptedObject>);
+                    foreach (IInterceptedObject ii in collection)
+                    {
+                        RemoveChildren(ii);
+                    }
+                    IRoleParent pp = value as IRoleParent;
+                    pp.RemoveAllChildren();
+
+                }
+            }
+        }
 
         ///<summary>
-        /// Update foreign Keys when a relation changed
+        /// EnumChildren
         ///</summary> 
-        public static void RemoveChildren(IInterceptedObject instance )
+        public static void EnumChildren(IInterceptedObject instance, bool childrenBefore, Action<IInterceptedObject> callBack)
         {
-        }
-        public virtual void ChangeContent() 
-        { 
-            //Nothing to do, used for AOP interception
+            ClassInfoItem ci = instance.ClassInfo;
+            for (int index = 0, len = ci.Roles.Count; index < len; index++)
+            {
+                PropInfoItem pi = ci.Roles[index];
+                if (pi.Role.IsParent)
+                {
+                    Association value = (Association)pi.PropInfo.GetValue(instance, null);
+                    IEnumerable<IInterceptedObject> collection = (value as IEnumerable<IInterceptedObject>);
+                    foreach (IInterceptedObject ii in collection)
+                    {
+                        if (childrenBefore)
+                        {
+                            EnumChildren(ii, childrenBefore, callBack);
+                            callBack(ii);
+                        }
+                        else
+                        {
+                            callBack(ii);
+                            EnumChildren(ii, childrenBefore, callBack);
+                        }
+
+                    }
+
+                }
+            }
         }
     }
 }

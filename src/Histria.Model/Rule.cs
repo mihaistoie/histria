@@ -32,6 +32,10 @@ namespace Histria.Model
         ///</summary>   
         BeforeDelete,
         ///<summary>
+        /// Actions to do after delete
+        ///</summary>   
+        AfterDelete,
+        ///<summary>
         /// Validations before save
         ///</summary>   
         BeforeSave,

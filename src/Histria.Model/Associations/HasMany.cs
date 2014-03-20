@@ -41,7 +41,7 @@ namespace Histria.Model
 
         public IEnumerator<T> GetEnumerator()
         {
-            return _values.GetEnumerator();
+            return values.GetEnumerator();
         }
 
         #endregion

@@ -207,6 +207,8 @@ namespace Histria.Model
         private MethodInfo descriptionGet = null;
         // Rules by type
         private readonly Dictionary<Rule, RuleList> rules = new Dictionary<Rule, RuleList>();
+        // State Rules by type
+        private readonly Dictionary<Rule, RuleList> statesRules = new Dictionary<Rule, RuleList>();
 
         private PropInfoItem() { }
 
@@ -219,6 +221,11 @@ namespace Histria.Model
         /// Property info of model
         ///</summary>   
         public PropInfoItem ModelPropInfo { get; internal set; }
+
+        ///<summary>
+        /// Use reflection to get value ?
+        ///</summary>   
+        public bool CanGetValueByReflection { get { return !IsRole; } }
 
 
         ///<summary>
@@ -490,7 +497,7 @@ namespace Histria.Model
 
                     }
                 }
-
+ 
             }
 
         }
@@ -509,30 +516,36 @@ namespace Histria.Model
 
         #region Rules
         ///<summary>
-        /// Associate a rule at this property
+        /// Associate a rule to this property
         ///</summary>   
         internal void AddRule(RuleItem ri)
         {
-            RuleList rl = null;
-            if (!rules.TryGetValue(ri.Kind, out rl))
-            {
-                rl = new RuleList();
-                rules.Add(ri.Kind, rl);
-            }
-            rl.Add(ri);
+            RuleHelper.AddRule(rules, ri);
+        }
+
+        ///<summary>
+        /// Associate a state rule to this property
+        ///</summary>   
+        internal void AddStateRule(RuleItem ri)
+        {
+            RuleHelper.AddRule(statesRules, ri);
         }
         ///<summary>
         /// Execute rules by type
         ///</summary>   
         public void ExecuteRules(Rule kind, object target, RoleOperation operation)
         {
-            RuleList rl = null;
-            if (rules.TryGetValue(kind, out rl))
-            {
-                rl.Execute(target, operation);
-            }
-
+            RuleHelper.ExecuteRules(rules, kind, target, operation);
         }
+
+        ///<summary>
+        /// Execute state rules by type
+        ///</summary>   
+        public void ExecuteStateRules(Rule kind, object target, RoleOperation operation)
+        {
+            RuleHelper.ExecuteRules(statesRules, kind, target, operation);
+        }
+
         public void ExecuteCheckValueRules(object target, ref object value)
         {
             RuleList rl = null;

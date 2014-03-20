@@ -40,21 +40,21 @@ namespace Histria.Core.Tests.Associations
             Assert.AreEqual(false, Guid.Empty == nose.Uuid, "has uuid");
             Assert.AreEqual(nose.Body.RefUid, body.Uuid, "uid");
             Assert.AreEqual(body.Nose.RefUid, nose.Uuid, "uid");
-            Assert.AreEqual(nose.Id, body.CurrentNoseId, "Rule prppagation");
-            Assert.AreEqual(body.Id, nose.CurrentBodyId, "Rule prppagation");
+            Assert.AreEqual(nose.Id, body.CurrentNoseId, "Rule propagation");
+            Assert.AreEqual(body.Id, nose.CurrentBodyId, "Rule propagation");
 
 
             body.Nose.Value = null;
             //nose is marked as deleted
-            Assert.AreEqual(ObjectState.Deleting, nose.State & ObjectState.Deleting, "uid");
-            Assert.AreEqual(nose.Body.RefUid, body.Uuid, "uid");
-            Assert.AreEqual(nose.BodyId, body.Id, "test update FKs");
-            Assert.AreEqual(body.Nose.RefUid, Guid.Empty, "uid");
-            Assert.AreEqual(body.Nose.Value, null, "test direct role");
-            Assert.AreEqual(nose.Body.Value, null, "test inv role");
-            Assert.AreEqual(true, string.IsNullOrEmpty(body.CurrentNoseId), "Rule prppagation");
+            Assert.AreEqual(true, nose.IsDeleted, "uid");
+            Assert.AreEqual(body.Uuid, nose.Body.RefUid, "uid");
+            Assert.AreEqual(body.Id, nose.BodyId, "test update FKs");
+            Assert.AreEqual(Guid.Empty, body.Nose.RefUid, "uid");
+            Assert.AreEqual(null, body.Nose.Value, "test direct role");
+            Assert.AreEqual(null, nose.Body.Value, "test inv role");
+            Assert.AreEqual(true, string.IsNullOrEmpty(body.CurrentNoseId), "Rule propagation");
             //false !!!! nose is marked as deleted 
-            Assert.AreEqual(false, string.IsNullOrEmpty(nose.CurrentBodyId), "Rule prppagation");
+            Assert.AreEqual(false, string.IsNullOrEmpty(nose.CurrentBodyId), "Rule propagation");
 
             //test nose.Body.Value = body;
             HumanBody body1 = container.Create<HumanBody>();
@@ -73,7 +73,7 @@ namespace Histria.Core.Tests.Associations
 
 
             nose1.Body.Value = null;
-            Assert.AreEqual(ObjectState.Deleting, nose1.State & ObjectState.Deleting, "uid");
+            Assert.AreEqual(true, nose1.IsDeleted, "uid");
             Assert.AreEqual(nose1.Body.RefUid, body1.Uuid, "uid");
             Assert.AreEqual(nose1.BodyId, body1.Id, "test update FKs");
             Assert.AreEqual(body1.Nose.RefUid, Guid.Empty, "uid");
@@ -246,6 +246,8 @@ namespace Histria.Core.Tests.Associations
 
             Hand leftHand = container.Create<Hand>();
             leftHand.Id = "left";
+            leftHand.Name = "left hand";
+
             Assert.AreEqual(null, leftHand.BodyName, "Initial value");
             body.Hands.Add(leftHand);
 
@@ -271,16 +273,20 @@ namespace Histria.Core.Tests.Associations
             Assert.AreEqual(rightHand.Body.RefUid, body.Uuid, "uid");
             Assert.AreEqual(2, body.HandsCount, "Rule Add/rmv");
             Assert.AreEqual(body.Id, rightHand.BodyName, "Rule Body Change");
+            rightHand.Name = "aaa";
+            Assert.AreEqual("AAA", rightHand.NameToUpper, "Rule");
 
             //cut the right hand  
             rightHand.Body.Value = null;
-            Assert.AreEqual(ObjectState.Deleting, rightHand.State & ObjectState.Deleting, "deleted");
+            Assert.AreEqual(true, rightHand.IsDeleted, "deleted");
             Assert.AreEqual(false, body.Hands.Has(rightHand), "Kirilov don't have the right hand");
             Assert.AreEqual(body.Hands.Count, 1, "Kirilov has only 1 hands");
             Assert.AreEqual(null, rightHand.Body.Value, "test direct role");
             Assert.AreEqual(body.Uuid, rightHand.Body.RefUid, "uid");
             Assert.AreEqual(1, body.HandsCount, "Rule Add/rmv");
             Assert.AreEqual(body.Id, rightHand.BodyName, "Rule Body Change");
+            rightHand.Name = "bbb";
+            Assert.AreEqual("AAA", rightHand.NameToUpper, "Rule not called because is deleted");
 
 
             rightHand = container.Create<Hand>();
@@ -297,7 +303,7 @@ namespace Histria.Core.Tests.Associations
 
             //cut the right hand  
             body.Hands.Remove(rightHand);
-            Assert.AreEqual(ObjectState.Deleting, rightHand.State & ObjectState.Deleting, "deleted");
+            Assert.AreEqual(true, rightHand.IsDeleted, "deleted");
             Assert.AreEqual(false, body.Hands.Has(rightHand), "Kirilov don't have the right hand");
             Assert.AreEqual(body.Hands.Count, 1, "Kirilov has only 1 hands");
             Assert.AreEqual(null, rightHand.Body.Value, "test direct role");
@@ -306,6 +312,153 @@ namespace Histria.Core.Tests.Associations
             Assert.AreEqual(body.Id, rightHand.BodyName, "Rule Body Change");
 
         }
+
+        ///<summary>
+        /// Test  Delete
+        /// The model is defined in OneToManyCompositions.cs
+        ///</summary> 
+        [TestMethod]
+        public void DeleteInCascadeForOneToMany()
+        {
+            Container container = new Container(TestContainerSetup.GetSimpleContainerSetup(model));
+            HBody body = container.Create<HBody>();
+            body.Id = "kirilov";
+            Hand left = container.Create<Hand>();
+            left.Id = "left";
+            Hand right = container.Create<Hand>();
+            right.Id = "right";
+            left.Body.Value = body;
+            right.Body.Value = body;
+            Finger f1 = container.Create<Finger>();
+            f1.Id = "f1";
+            Finger f2 = container.Create<Finger>();
+            f2.Id = "f2";
+            Finger f3 = container.Create<Finger>();
+            f3.Id = "f3";
+            right.Fingers.Add(f1);
+            right.Fingers.Add(f2);
+            right.Fingers.Add(f3);
+            Assert.AreEqual(3, right.Fingers.Count, "right has 3 fingers");
+            Assert.AreEqual(right, f1.Hand.Value, "right has 3 fingers");
+            body.Hands.Remove(right);
+            Assert.AreEqual(0, right.Fingers.Count, "right has not fingers");
+            Assert.AreEqual(null, f1.Hand.Value, "right hasnot fingers");
+            Assert.AreEqual(true, right.IsDeleted, "deleted");
+            Assert.AreEqual(true, f1.IsDeleted, "deleted");
+
+        }
+
+        ///<summary>
+        /// Test  Delete
+        /// The model is defined in OneToManyCompositions.cs
+        ///</summary> 
+        [TestMethod]
+        public void DeleteInCascadeForOneToOne()
+        {
+            Container container = new Container(TestContainerSetup.GetSimpleContainerSetup(model));
+            HumanBody body = container.Create<HumanBody>();
+            body.Id = "body";
+            Nose nose = container.Create<Nose>();
+            nose.Id = "nose";
+            body.Nose.Value = nose;
+            body.Delete();
+
+            Assert.AreEqual(null, body.Nose.Value, "null references");
+            Assert.AreEqual(null, nose.Body.Value, "null references");
+            Assert.AreEqual(true, body.IsDeleted, "deleted");
+            Assert.AreEqual(true, nose.IsDeleted, "deleted");
+        }
+
+        //<summary>
+        /// Test  Property changed Stack 
+        /// The model is defined in OneToManyCompositions.cs
+        ///</summary> 
+        [TestMethod]
+        public void PropertyChangedStack()
+        {
+            Container container = new Container(TestContainerSetup.GetSimpleContainerSetup(model));
+            HBody body = container.Create<HBody>();
+            body.Id = "kirilov";
+            Hand left = container.Create<Hand>();
+            left.Id = "left";
+            Hand right = container.Create<Hand>();
+            right.Id = "right";
+            left.Body.Value = body;
+            right.Body.Value = body;
+            Finger f1 = container.Create<Finger>();
+            f1.Id = "f1";
+            Finger f2 = container.Create<Finger>();
+            f2.Id = "f2";
+            Finger f3 = container.Create<Finger>();
+            f3.Id = "f3";
+            right.Fingers.Add(f1);
+            right.Fingers.Add(f2);
+            right.Fingers.Add(f3);
+            Assert.AreEqual(string.Format("{0}.Hands.{1}.Fingers.{2}",
+                body.Uuid.ToString("N"), right.Uuid.ToString("N"), f3.Uuid.ToString("N")), (f3 as IInterceptedObject).ObjectPath(), "Object pathh");
+
+        }
+
+
+
+        [TestMethod]
+        public void DeleteInCascadeNotifyParentNotNull()
+        {
+            Container container = new Container(TestContainerSetup.GetSimpleContainerSetup(model));
+            HBody body = container.Create<HBody>();
+            body.Id = "kirilov";
+            Hand left = container.Create<Hand>();
+            left.Id = "left";
+            Hand right = container.Create<Hand>();
+            right.Id = "right";
+            left.Body.Value = body;
+            right.Body.Value = body;
+            Finger f1 = container.Create<Finger>();
+            f1.Id = "f1";
+            Finger f2 = container.Create<Finger>();
+            f2.Id = "f2";
+            Finger f3 = container.Create<Finger>();
+            f3.Id = "f3";
+            right.Fingers.Add(f1);
+            right.Fingers.Add(f2);
+            right.Fingers.Add(f3);
+            Assert.AreEqual(3, right.Fingers.Count, "right has 3 fingers");
+            Assert.AreEqual(right, f1.Hand.Value, "right has 3 fingers");
+            right.Delete();
+            Assert.AreEqual(0, right.Fingers.Count, "right has not fingers");
+            Assert.AreEqual(null, f1.Hand.Value, "right has not fingers");
+            Assert.AreEqual(true, right.IsDeleted, "deleted");
+            Assert.AreEqual(true, f1.IsDeleted, "deleted");
+
+        }
+
+        [TestMethod]
+        public void DeleteInCascadeWithParentNull()
+        {
+            Container container = new Container(TestContainerSetup.GetSimpleContainerSetup(model));
+       
+            Hand right = container.Create<Hand>();
+            right.Id = "right";
+       
+            Finger f1 = container.Create<Finger>();
+            f1.Id = "f1";
+            Finger f2 = container.Create<Finger>();
+            f2.Id = "f2";
+            Finger f3 = container.Create<Finger>();
+            f3.Id = "f3";
+            right.Fingers.Add(f1);
+            right.Fingers.Add(f2);
+            right.Fingers.Add(f3);
+            Assert.AreEqual(3, right.Fingers.Count, "right has 3 fingers");
+            Assert.AreEqual(right, f1.Hand.Value, "right has 3 fingers");
+            right.Delete();
+            Assert.AreEqual(0, right.Fingers.Count, "right has not fingers");
+            Assert.AreEqual(null, f1.Hand.Value, "right has not fingers");
+            Assert.AreEqual(true, right.IsDeleted, "deleted");
+            Assert.AreEqual(true, f1.IsDeleted, "deleted");
+
+        }
+
 
     }
 }

@@ -5,10 +5,10 @@ namespace Histria.Model
     /// <summary>
     /// Rule attribute for a method
     /// </summary>
-    [System.AttributeUsage(System.AttributeTargets.All, AllowMultiple = true)]
+    [System.AttributeUsage(System.AttributeTargets.Method, AllowMultiple = true)]
     public class RuleAttribute : System.Attribute  
     {
-        public string Property = "";
+        public string Property;
         public Type TargetType = null;
         public Rule Rule = Rule.Unknown;
         public RoleOperation Operation = RoleOperation.None; 
@@ -16,13 +16,12 @@ namespace Histria.Model
         {
             Rule = ruleType;
         }
-        public bool CheckProperty()
+        public virtual bool CheckProperty()
         {
             if (string.IsNullOrEmpty(Property) && (Rule == Rule.Validation || Rule == Rule.Propagation)) {
                 return false;
             }
             return true;
         }
-   
     }
 }

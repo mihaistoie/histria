@@ -43,8 +43,10 @@
     <Compile Include="Associations\Association.cs" />
     <Compile Include="Associations\BelongsTo.cs" />
     <Compile Include="Associations\HasMany.cs" />
+    <Compile Include="Associations\HasManyAggregation.cs" />
     <Compile Include="Associations\HasManyComposition.cs" />
     <Compile Include="Associations\HasOne.cs" />
+    <Compile Include="Associations\HasOneAgregation.cs" />
     <Compile Include="Associations\HasOneComposition.cs" />
     <Compile Include="Attributes\DbAttribute.cs" />
     <Compile Include="Attributes\DefaultAttribute.cs" />
@@ -54,6 +56,7 @@
     <Compile Include="Attributes\DtNumber.cs" />
     <Compile Include="Attributes\DtTimeAttribute.cs" />
     <Compile Include="Attributes\IndexAttribute.cs" />
+    <Compile Include="Attributes\MethodAttribute.cs" />
     <Compile Include="Attributes\NoModelAttribute.cs" />
     <Compile Include="Attributes\PersistentAttribute.cs" />
     <Compile Include="Attributes\AssociationAttribute.cs" />
@@ -61,6 +64,7 @@
     <Compile Include="Attributes\RuleAttribute.cs" />
     <Compile Include="Attributes\RulesForAttribute.cs" />
     <Compile Include="Attributes\DtStringAttribute.cs" />
+    <Compile Include="Attributes\StateAttribute.cs" />
     <Compile Include="Attributes\TypeAttribute.cs" />
     <Compile Include="ClassType.cs" />
     <Compile Include="Helpers\ModelLoader.cs" />
@@ -71,6 +75,7 @@
     <Compile Include="Model\PrimaryKeyItem.cs" />
     <Compile Include="Model\PropertiesCollection.cs" />
     <Compile Include="Model\RoleInfoItem.cs" />
+    <Compile Include="Model\RuleHelper.cs" />
     <Compile Include="Model\RulesCollection.cs" />
     <Compile Include="Model\ViewInfoItem.cs" />
     <Compile Include="Rule.cs" />
@@ -88,11 +93,14 @@
     <Compile Include="Model\RuleList.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="RuleException.cs" />
+    <Compile Include="State\PropertiesState.cs" />
+    <Compile Include="State\DefaultPropertiesState.cs" />
     <Compile Include="TemplateManager.cs" />
     <Compile Include="Types\IAssociation.cs" />
     <Compile Include="Types\IInterceptedObject.cs" />
     <Compile Include="Types\IClassModel.cs" />
     <Compile Include="Types\IPluginModel.cs" />
+    <Compile Include="Types\IRoleParent.cs" />
     <Compile Include="Types\IViewModel.cs" />
     <Compile Include="Types\IObjectLifetime.cs" />
     <Compile Include="Types\IRoleChild.cs" />
@@ -101,6 +109,7 @@
     <Compile Include="Types\ITranObject.cs" />
     <Compile Include="Types\Relation.cs" />
     <Compile Include="Types\RoleOperation.cs" />
+    <Compile Include="State\PropertyState.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Histria.Json\Histria.Json.csproj">
@@ -115,6 +124,7 @@
   <ItemGroup>
     <Content Include="Resources\ClassDiagram.txt" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

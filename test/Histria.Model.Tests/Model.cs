@@ -15,6 +15,16 @@ namespace Histria.Model.Tests.ModelToTest
         {
         }
     }
+    public class MStateRuleOnValidation : BaseModel
+    {
+        public virtual string Name { get; set; }
+        [State(Rule.Validation, Property = "Name")]
+        protected virtual void InvalidStateRuleDefinition()
+        {
+        }
+    }
+
+    
 
     public class MR1 : BaseModel
     {
@@ -35,6 +45,27 @@ namespace Histria.Model.Tests.ModelToTest
             RuleResult = "MR2.Test";
         }
     }
+
+    public class MSR1 : BaseModel
+    {
+        public virtual string Name { get; set; }
+        public virtual string RuleResult { get; set; }
+        [State(Rule.Propagation, Property = "Name")]
+        protected virtual void Test()
+        {
+            RuleResult = "MR1.Test";
+        }
+    }
+    public class MSR2 : MSR1
+    {
+
+        [State(Rule.Propagation, Property = "Name")]
+        protected override void Test()
+        {
+            RuleResult = "MR2.Test";
+        }
+    }
+
     
     [Display("M3-T", Description="M3-D")]
     public class MR3 : BaseModel

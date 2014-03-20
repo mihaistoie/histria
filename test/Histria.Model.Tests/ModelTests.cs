@@ -34,12 +34,33 @@ namespace Histria.Model.Tests
 
         [TestMethod]
         [ExpectedException(typeof(ModelException))]
+        public void InvalidStateRuleDefinition()
+        {
+            JsonObject cfg = (JsonObject)JsonValue.Parse("{\"types\": [\"" + typeof(MStateRuleOnValidation).FullName + "\"]}");
+            ModelManager m = ModelManager.LoadModel(cfg);
+
+        }
+
+
+
+        [TestMethod]
+        [ExpectedException(typeof(ModelException))]
         public void DuplicatedRule()
         {
             JsonObject cfg = (JsonObject)JsonValue.Parse("{\"types\": [\"" + typeof(MR1).FullName + "\", \"" + typeof(MR2).FullName + "\"]}");
             ModelManager m = ModelManager.LoadModel(cfg);
 
         }
+
+        [TestMethod]
+        [ExpectedException(typeof(ModelException))]
+        public void DuplicatedStateRule()
+        {
+            JsonObject cfg = (JsonObject)JsonValue.Parse("{\"types\": [\"" + typeof(MSR1).FullName + "\", \"" + typeof(MSR2).FullName + "\"]}");
+            ModelManager m = ModelManager.LoadModel(cfg);
+
+        }
+
 
         [TestMethod]
         public void StaticClassTitle()
@@ -86,6 +107,16 @@ namespace Histria.Model.Tests
             }
 
         }
+
+        [TestMethod]
+        public void LoadCorrecionRules()
+        {
+            JsonObject cfg = (JsonObject)JsonValue.Parse("{\"types\": [\"" + typeof(HumanBody).FullName + "\", \"" + typeof(HumanBodyRules).FullName + "\"]}");
+            ModelManager m = ModelManager.LoadModel(cfg);
+            ClassInfoItem ci = m.Class<HumanBody>();
+            PropInfoItem pi = ci.PropertyByName("Name");
+        }
+
 
     }
 }

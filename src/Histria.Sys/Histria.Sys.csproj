@@ -41,6 +41,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="MRWDictionary.cs" />
+    <Compile Include="BaseStack.cs" />
     <Compile Include="StrUtils.cs" />
     <Compile Include="Types\IPersistentObj.cs" />
     <Compile Include="DataTypes.cs" />

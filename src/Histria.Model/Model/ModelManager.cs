@@ -87,8 +87,6 @@ namespace Histria.Model
                 ClassInfoItem ci;
                 NoModelAttribute nm = iType.GetCustomAttributes(typeof(NoModelAttribute), false).FirstOrDefault() as NoModelAttribute;
                 if (nm != null) continue;
-
-
                 
                 if (iType.IsEnum)
                 {

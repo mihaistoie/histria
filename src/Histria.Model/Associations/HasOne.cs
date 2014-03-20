@@ -1,27 +1,16 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
 namespace Histria.Model
 {
-    public class HasOne<T> : Association, IRoleRef where T : IInterceptedObject
+    public class HasOne<T> : Association, IRoleRef, IEnumerable<T> where T : IInterceptedObject
     {
+        #region Internals
         protected T _value;
         protected Guid refUid = Guid.Empty;
-
-   
-        void IRoleRef.SetValue(IInterceptedObject value)
-        {
-            ExternalSetValue((T)value);
-        }
-        
-        
-        protected virtual T LazyLoading()
-        {
-            return _value;
-        }
-
 
         protected virtual void InternalSetValue(T value, bool updateForeignKeys)
         {
@@ -50,6 +39,28 @@ namespace Histria.Model
 
             Instance.AOPAfterSetProperty(PropInfo.Name, nv, ov);
         }
+        #endregion
+
+        #region IRoleRef
+        void IRoleRef.SetValue(IInterceptedObject value)
+        {
+            ExternalSetValue((T)value);
+        }
+
+        IInterceptedObject IRoleRef.GetValue()
+        {
+            return _value as IInterceptedObject;
+        }
+        #endregion
+
+
+        protected virtual T LazyLoading()
+        {
+            return _value;
+        }
+
+
+        #region Properties
         public Guid RefUid { get { return refUid; } }
         
         public virtual T Value
@@ -60,6 +71,26 @@ namespace Histria.Model
                 ExternalSetValue(value);
             }
         }
+        #endregion
+
+        #region IEnumerable<T> Members
+
+        public IEnumerator<T> GetEnumerator()
+        {
+            yield return LazyLoading();
+        }
+
+        #endregion
+
+        #region IEnumerable Members
+
+        IEnumerator IEnumerable.GetEnumerator()
+        {
+            return GetEnumerator();
+        }
+
+        #endregion
+
     }
 }
 

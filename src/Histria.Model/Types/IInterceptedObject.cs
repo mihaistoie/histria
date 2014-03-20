@@ -13,10 +13,13 @@ namespace Histria
     {
         #region Properties
         ClassInfoItem ClassInfo { get; set; }
-        bool CanExecuteRules { get; } 
+        string ObjectPath();
         #endregion
 
         #region Interceptors
+
+
+        #region Property Change
         ///<summary>
         /// Before set property
         ///</summary>
@@ -25,7 +28,10 @@ namespace Histria
         /// After set property
         ///</summary>
         void AOPAfterSetProperty(string propertyName, object newValue, object oldValue);
+        
+        #endregion
 
+        #region Role Change
         ///<summary>
         /// Before modifying a role (add/remove/update)
         ///</summary>
@@ -34,7 +40,9 @@ namespace Histria
         /// After modifying a role (add/remove/update)
         ///</summary>
         void AOPAfterChangeChild(string propertyName, IInterceptedObject child, RoleOperation operation);
+        #endregion
 
+        #region Create / Load
         ///<summary>
         /// After an instance is created
         ///</summary>
@@ -44,11 +52,15 @@ namespace Histria
         /// After an instance is loaded
         ///</summary>
         void AOPLoad<T>(Action<T> loadAction) where T: class;
-        
+        #endregion
+
+        #region Delete
         ///<summary>
-        /// An instance is marked as deleted
+        /// Try to delete an instance
         ///</summary>
-        void AOPDeleted(bool notifyParent);
+        void AOPDelete(bool notifyParent = true);
+
+        #endregion
 
         #endregion
     }

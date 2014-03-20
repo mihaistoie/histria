@@ -52,15 +52,15 @@
     <Compile Include="Execution\IProxyFactory.cs" />
     <Compile Include="Execution\IProxyFactoryGenerator.cs" />
     <Compile Include="Execution\TestContainerSetup.cs" />
+    <Compile Include="Rules\PropertyChangedStack.cs" />
     <Compile Include="Transactions\InstanceList.cs" />
     <Compile Include="Transactions\InstancesByClass.cs" />
     <Compile Include="Transactions\Instances.cs" />
     <Compile Include="Transactions\TranContext.cs" />
+    <Compile Include="Types\ExecutionException.cs" />
     <Compile Include="Types\TranObject.cs" />
-    <Compile Include="Types\ObjectState.cs" />
+    <Compile Include="Types\ObjectStatus.cs" />
     <Compile Include="Types\InterceptedObject.cs" />
-    <Compile Include="Factory\ProxyFactory.cs" />
-    <Compile Include="Types\RulePluginObject.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Types\ViewObject.cs" />
   </ItemGroup>

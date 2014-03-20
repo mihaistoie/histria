@@ -1,6 +1,6 @@
 ﻿namespace Histria.Model
 {
-    [System.AttributeUsage(System.AttributeTargets.Property, AllowMultiple = false)]
+    [System.AttributeUsage(System.AttributeTargets.Property | System.AttributeTargets.Method, AllowMultiple = false)]
     public class DefaultAttribute : System.Attribute
     {
 

@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using System.Collections.ObjectModel;
 
 
 namespace Histria.Model
@@ -19,12 +18,15 @@ namespace Histria.Model
         private readonly PropertiesCollection properties = new PropertiesCollection();
         private readonly PropertiesCollection roles = new PropertiesCollection();
         private List<RuleItem> rulesList = new List<RuleItem>();
+        private List<RuleItem> stateRulesList = new List<RuleItem>();
         private readonly List<MethodItem> methodsList = new List<MethodItem>();
         private readonly Dictionary<string, MethodItem> methods = new Dictionary<string, MethodItem>();
         private readonly PrimaryKeyItem key = new PrimaryKeyItem();
         private readonly List<IndexInfo> indexes = new List<IndexInfo>();
         // Rules by type
         private readonly Dictionary<Rule, RuleList> rules = new Dictionary<Rule, RuleList>();
+        // State rules by type
+        private readonly Dictionary<Rule, RuleList> stateRules = new Dictionary<Rule, RuleList>();
         private bool inherianceResolved = false;
         private string title;
         private string description;
@@ -37,7 +39,7 @@ namespace Histria.Model
         public Type CurrentType { get; set; }
         public Type TargetType { get; set; }
 
-        
+
         ///<summary>
         /// Property  "Parent"
         ///</summary>   	
@@ -58,27 +60,27 @@ namespace Histria.Model
         /// The name of the class
         ///</summary>   		
         public string Name { get; internal set; }
-        
+
         ///<summary>
         /// The title of the class
         ///</summary>   		
         public string Title { get { return ModelHelper.GetStringValue(title, gTitle); } }
-        
+
         ///<summary>
         /// The Description of the class
         ///</summary>   		
         public string Description { get { return ModelHelper.GetStringValue(description, gDescription); } }
-        
+
         ///<summary>
         ///(Persistence) Name of table used to store this class
         ///</summary>   		
         public string DbName { get; internal set; }
-        
+
         ///<summary>
         /// Is a static class ?
         ///</summary>   		
         public bool Static { get; internal set; }
-        
+
         ///<summary>
         /// List of properties
         ///</summary>   	
@@ -89,7 +91,7 @@ namespace Histria.Model
         /// List of roles (relationships)
         ///</summary>   	
         public PropertiesCollection Roles { get { return roles; } }
-        
+
         ///<summary>
         /// Primary key
         ///</summary>   		
@@ -108,16 +110,23 @@ namespace Histria.Model
         #endregion
 
         #region Rules
-      
+
+        ///<summary>
+        /// Execute rules by type
+        ///</summary>  
         public void ExecuteRules(Rule kind, Object target)
         {
-            RuleList rl;
-            if (rules.TryGetValue(kind, out rl))
-            {
-                rl.Execute(target, RoleOperation.None);
-            }
-      
+            RuleHelper.ExecuteRules(rules, kind, target, RoleOperation.None);
         }
+
+        ///<summary>
+        /// Execute rules by type
+        ///</summary>  
+        public void ExecuteStateRules(Rule kind, Object target)
+        {
+            RuleHelper.ExecuteRules(stateRules, kind, target, RoleOperation.None);
+        }
+
 
         private bool _ruleExists(RuleItem ri, List<RuleItem> rl)
         {
@@ -135,19 +144,23 @@ namespace Histria.Model
             return false;
         }
 
+
+
         ///<summary>
         /// Associate a rule to this class
         ///</summary>   
         private void AddRule(RuleItem ri)
         {
-           
-            RuleList rl = null;
-            if (!rules.TryGetValue(ri.Kind, out rl))
-            {
-                rl = new RuleList();
-                rules.Add(ri.Kind, rl);
-            }
-            rl.Add(ri);
+            RuleHelper.AddRule(rules, ri);
+
+        }
+
+        ///<summary>
+        /// Associate a state rule to this class
+        ///</summary>   
+        private void AddStateRule(RuleItem ri)
+        {
+            RuleHelper.AddRule(stateRules, ri);
 
         }
         #endregion
@@ -158,9 +171,9 @@ namespace Histria.Model
 
             if (Static) return;
             //Attach rules to properties/classes
-            foreach (RuleItem ri in rulesList)
+            for (int index = 0, len = rulesList.Count; index < len; index++)
             {
-
+                RuleItem ri = rulesList[index];
                 if (!String.IsNullOrEmpty(ri.Property))
                 {
                     //checked if property exists  
@@ -176,6 +189,26 @@ namespace Histria.Model
                 }
             }
             rulesList.Clear();
+            //Attach state rules to properties/classes
+            for (int index = 0, len = stateRulesList.Count; index < len; index++)
+            {
+                RuleItem ri = stateRulesList[index];
+                if (!String.IsNullOrEmpty(ri.Property))
+                {
+                    //checked if property exists  
+                    PropInfoItem pi = PropertyByName(ri.Property);
+                    if (pi == null)
+                        throw new ModelException(String.Format(L.T("Rule \"{0}.{1}\": The class \"{2}\" has not the property \"{3}\". "), ri.DeclaringType.Name, ri.Name, ri.TargetType.Name, ri.Property), Name);
+                    pi.AddStateRule(ri);
+
+                }
+                else
+                {
+                    AddStateRule(ri);
+                }
+            }
+            stateRulesList.Clear();
+
             foreach (MethodItem mi in methodsList)
             {
                 methods.Add(mi.Method.Name, mi);
@@ -199,7 +232,7 @@ namespace Histria.Model
         #endregion
 
         #region Loading
-        protected virtual void InitializeView(ModelManager model) 
+        protected virtual void InitializeView(ModelManager model)
         {
         }
         // validate class after load
@@ -214,8 +247,9 @@ namespace Histria.Model
             {
                 //Move rules to target class
                 ClassInfoItem dst = model.ClassByType(TargetType);
-                foreach (RuleItem ri in rulesList)
+                for (int index = 0, len = rulesList.Count; index < len; index++)
                 {
+                    RuleItem ri = rulesList[index];
                     ClassInfoItem cdst = (ri.TargetType == TargetType ? dst : model.ClassByType(ri.TargetType));
                     if (cdst != null)
                     {
@@ -223,6 +257,18 @@ namespace Histria.Model
                     }
                 }
                 rulesList.Clear();
+                for (int index = 0, len = stateRulesList.Count; index < len; index++)
+                {
+                    RuleItem ri = stateRulesList[index];
+                    ClassInfoItem cdst = (ri.TargetType == TargetType ? dst : model.ClassByType(ri.TargetType));
+                    if (cdst != null)
+                    {
+                        cdst.rulesList.Add(ri);
+                    }
+                }
+                stateRulesList.Clear();
+
+
                 //Move methods to target class
                 foreach (MethodItem mi in methodsList)
                 {
@@ -274,6 +320,21 @@ namespace Histria.Model
                         }
                     }
                     rulesList = parentRules;
+
+
+                    // Add parent state rules
+                    List<RuleItem> parentStateRules = new List<RuleItem>();
+                    parentStateRules.AddRange(pci.stateRulesList);
+                    // Add child State Rules
+                    foreach (RuleItem ri in stateRulesList)
+                    {
+                        if (!_ruleExists(ri, parentStateRules))
+                        {
+                            parentStateRules.Add(ri);
+                        }
+                    }
+                    stateRulesList = parentStateRules;
+
                 }
 
             }
@@ -320,11 +381,11 @@ namespace Histria.Model
                 properties.Add(item);
                 if (item.IsRole)
                 {
-                    roles.Add(item); 
+                    roles.Add(item);
                 }
             }
         }
-        
+
         private void LoadMethodsAndRules()
         {
             BindingFlags bindingAttr = (Static ? (BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static)
@@ -337,10 +398,11 @@ namespace Histria.Model
                 if (mi.Name.StartsWith("get_") || mi.Name.StartsWith("set_") || mi.Name.StartsWith("AOP")) continue;
 
                 RuleAttribute[] ras = mi.GetCustomAttributes(typeof(RuleAttribute), false) as RuleAttribute[];
-                if ((ras != null) && (ras.Length > 0))
+                if (ras != null)
                 {
-                    foreach (RuleAttribute ra in ras)
+                    for (int index = 0, len = ras.Length; index < len; index++)
                     {
+                        RuleAttribute ra = ras[index];
                         if (ra.Rule == Rule.Unknown)
                         {
                             throw new ModelException(String.Format(L.T("Invalid rule type for \"{0}\" in the class \"{1}\"."), mi.Name, Name), Name);
@@ -367,7 +429,10 @@ namespace Histria.Model
                             ri.TargetType = CurrentType;
                         }
                         ri.DeclaringType = CurrentType;
-                        rulesList.Add(ri);
+                        if (ra is StateAttribute)
+                            stateRulesList.Add(ri);
+                        else
+                            rulesList.Add(ri);
                     }
                 }
                 //Add methods
@@ -381,7 +446,7 @@ namespace Histria.Model
             }
 
         }
-        
+
         private void LoadPersistence()
         {
             if (Static) return;
@@ -395,7 +460,7 @@ namespace Histria.Model
             }
 
         }
-        
+
         private void LoadPrimarykey()
         {
             if (Static) return;
@@ -459,6 +524,9 @@ namespace Histria.Model
                 return null;
             }
         }
+
+        public Type StateClassType { get { return typeof(DefaultPropertiesState); } }
+
         #endregion
 
         #region Constructor
