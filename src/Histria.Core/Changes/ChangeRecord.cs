@@ -10,7 +10,7 @@ namespace Histria.Core.Changes
     {
         public uint Id { get; set;}
         public Guid TargetId { get; set; }
-        public ObjectLifetime Lifetime { get; set; }
+        public ObjectLifetimeEvent Lifetime { get; set; }
         public object[] Arguments { get; set; }
     }
 }

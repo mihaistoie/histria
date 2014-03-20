@@ -8,7 +8,7 @@ namespace Histria.Core.Changes
 {
     public class ChangeRecorder
     {
-        public void Record(Guid targetId, ObjectLifetime lifetime, params object[] arguments)
+        public void Record(Guid targetId, ObjectLifetimeEvent lifetime, params object[] arguments)
         {
             var rec = new ChangeRecord()
             {

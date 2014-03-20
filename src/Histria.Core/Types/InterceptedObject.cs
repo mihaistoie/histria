@@ -98,7 +98,7 @@ namespace Histria.Core
             {
                 state = ObjectState.Iddle;
             }
-            ((IObjectLifetime)this).Notify(ObjectLifetime.Created);
+            ((IObjectLifetime)this).Notify(ObjectLifetimeEvent.Created);
             if (this.canExecuteRules())
                 ClassInfo.ExecuteRules(Rule.AfterCreate, this);
         }
@@ -118,7 +118,7 @@ namespace Histria.Core
             {
                 state = ObjectState.Iddle;
             }
-            ((IObjectLifetime)this).Notify(ObjectLifetime.Loaded);
+            ((IObjectLifetime)this).Notify(ObjectLifetimeEvent.Loaded);
             if (this.canExecuteRules())
                 ClassInfo.ExecuteRules(Rule.AfterLoad, this);
         }
@@ -156,7 +156,7 @@ namespace Histria.Core
         ///</summary>
         void IInterceptedObject.AOPAfterSetProperty(string propertyName, object newValue, object oldValue)
         {
-            (this as IObjectLifetime).Notify(ObjectLifetime.Changed, propertyName, oldValue, newValue);
+            (this as IObjectLifetime).Notify(ObjectLifetimeEvent.Changed, propertyName, oldValue, newValue);
             if (!canExecuteRules()) return;
             PropInfoItem pi = ClassInfo.PropertyByName(propertyName);
             // Validate
@@ -197,7 +197,7 @@ namespace Histria.Core
             //Delete children  
             Association.RemoveChildren(this as IInterceptedObject);
 
-            ((IObjectLifetime)this).Notify(ObjectLifetime.Deleted);
+            ((IObjectLifetime)this).Notify(ObjectLifetimeEvent.Deleted);
             state = ObjectState.Deleting;
         }
         #endregion
@@ -211,7 +211,7 @@ namespace Histria.Core
 
         #endregion
 
-        void IObjectLifetime.Notify(ObjectLifetime objectLifetime, params object[] arguments)
+        void IObjectLifetime.Notify(ObjectLifetimeEvent lifetimeEvent, params object[] arguments)
         {
             //Nothing to do
             //used by AOP interception

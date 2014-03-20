@@ -40,6 +40,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Changes\ChangedProperties.cs" />
     <Compile Include="Changes\ChangeRecord.cs" />
     <Compile Include="Changes\ChangeRecorder.cs" />
     <Compile Include="Changes\ObjectChange.cs" />

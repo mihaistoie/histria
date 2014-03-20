@@ -6,11 +6,15 @@ using System.Text;
 
 namespace Histria.Core.Changes
 {
-    public class ObjectChange
+    public class ObjectDelta
     {
-        public ObjectLifetime Lifetime { get; set; }
+        public ObjectLifetimeEvent Lifetime { get; set; }
         public Guid Target { get; set; }
         public string Class { get; set; }
-        public List<PropertyChange> Properties { get; set; }
+
+        public ChangedProperties Properties 
+        {
+            get; set; 
+        }
     }
 }

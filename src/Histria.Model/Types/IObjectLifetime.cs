@@ -5,7 +5,7 @@ using System.Text;
 
 namespace Histria.Model
 {
-    public enum ObjectLifetime
+    public enum ObjectLifetimeEvent
     {
         Created,
         Loaded,
@@ -17,6 +17,6 @@ namespace Histria.Model
 
     public interface IObjectLifetime
     {
-        void Notify(ObjectLifetime objectLifetime, params object[] arguments);
+        void Notify(ObjectLifetimeEvent lifetimeEvent, params object[] arguments);
     }
 }
