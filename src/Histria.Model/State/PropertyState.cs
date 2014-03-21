@@ -30,20 +30,20 @@ namespace Histria.Model
         #region State Properties
         
         public virtual bool IsHidden { get; set; }
-        
+
         public virtual bool IsDisabled { get; set; }
-        
+
         public virtual bool IsMandatory { get; set; }
         
         #endregion
 
         #region Properties  && Constructor
         
-        public IInterceptedObject Owner { get; private set; }
+        public IObjectLifetime Owner { get; private set; }
         
         public PropInfoItem PiInfo { get; private set; }
 
-        public PropertyState Initialize(IInterceptedObject owner, PropInfoItem pi)
+        public void Initialize(IObjectLifetime owner, PropInfoItem pi)
         {
             this.Owner = owner;
             this.PiInfo = pi;
@@ -51,7 +51,6 @@ namespace Histria.Model
             IsDisabled = pi.IsDisabled;
             IsHidden = pi.IsHidden;
             IsMandatory = pi.IsMandatory;
-            return this;
         }
 
         #endregion
@@ -80,5 +79,13 @@ namespace Histria.Model
         }
 
         #endregion
+
+        public void AOPAfterChange(string propertyName, object oldValue, object newValue)
+        {
+            if (this.Owner != null)
+            {
+                this.Owner.Notify(ObjectLifetimeEvent.StateChanged, propertyName, oldValue, newValue);
+            }
+        }
     }
 }

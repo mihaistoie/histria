@@ -29,7 +29,6 @@ namespace Histria.Core.PropertiesState.Tests
             HBody body = container.Create<HBody>();
 
             Assert.AreEqual<Type>(typeof(HBodyPropertiesState), body.Properties.GetType(), "Initialization");
-            Assert.AreEqual<Type>(typeof(PropertyState), body.Properties.Name.GetType().BaseType, "Initialization");
 
             body.Name = "kirilov";
             Assert.AreEqual(true, body.Properties.Name.IsMandatory, "Initialization");

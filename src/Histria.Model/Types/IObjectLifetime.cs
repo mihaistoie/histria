@@ -10,6 +10,7 @@ namespace Histria.Model
         Created,
         Loaded,
         Changed,
+        StateChanged,
         AssociationsChanged,
         Deleted,
         Disposed

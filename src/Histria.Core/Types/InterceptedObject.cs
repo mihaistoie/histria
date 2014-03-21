@@ -42,8 +42,8 @@ namespace Histria.Core
                     for (int idx = 0, len = ci.Properties.Count; idx < len; idx++)
                     {
                         PropInfoItem pi = ci.Properties[idx];
-                        PropertyState ps = Container.Create<PropertyState>()
-                            .Initialize((IInterceptedObject)this, pi);
+                        PropertyState ps = Container.Create<PropertyState>();
+                        ps.Initialize((IObjectLifetime)this, pi);
                         propsState.Add(pi.Name, ps);
                     }
                 }
@@ -81,10 +81,11 @@ namespace Histria.Core
             status = status & ~value;
         }
 
-        private bool canNotifyChanges()
+        private bool CanNotifyChanges()
         {
             return (status & ObjectStatus.Active) == ObjectStatus.Active;
         }
+
         private void Frozen(Action action)
         {
             AddState(ObjectStatus.Frozen);
@@ -415,8 +416,16 @@ namespace Histria.Core
 
         void IObjectLifetime.Notify(ObjectLifetimeEvent objectLifetime, params object[] arguments)
         {
+            if (CanNotifyChanges())
+            {
+                AOPNotify(objectLifetime, arguments);
+            }
+        }
+
+        protected virtual void AOPNotify(ObjectLifetimeEvent objectLifetime, object[] arguments)
+        {
             //Nothing to do
-            //used by AOP interception
+            //AOP
         }
     }
 

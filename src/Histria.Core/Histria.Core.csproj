@@ -45,7 +45,9 @@
     <Compile Include="Changes\ChangeRecorder.cs" />
     <Compile Include="Changes\ObjectChange.cs" />
     <Compile Include="Changes\PropertyChange.cs" />
+    <Compile Include="Execution\ChangePropertyPointcut.cs" />
     <Compile Include="Execution\ChangePropertyRulesAspect.cs" />
+    <Compile Include="Execution\ChangePropertyStateAspect.cs" />
     <Compile Include="Execution\Container.cs" />
     <Compile Include="Execution\ContainerSetup.cs" />
     <Compile Include="Execution\InstancesList.cs" />

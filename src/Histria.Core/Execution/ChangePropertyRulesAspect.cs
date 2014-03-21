@@ -9,6 +9,8 @@ namespace Histria.Core.Execution
 {
     public class ChangePropertyRulesAspect : IAdvice, IPointcut
     {
+        private ChangePropertyPointcut pointcut = new ChangePropertyPointcut();
+
         public void DoBefore(AspectInvocationContext invocationContext, IList<Exception> errors)
         {
             ChangePropertyRulesAspectContext context = GetContext(invocationContext);
@@ -38,17 +40,19 @@ namespace Histria.Core.Execution
 
         public bool Matches(AspectInvocationContext context)
         {
-            return (context.Target is IInterceptedObject) && IsSetPropMethod(context.Method);
-        }
+            if (context.Target is IInterceptedObject)
+            {
+                var realType = ((IInterceptedObject)context.Target).ClassInfo.CurrentType;
 
-        private static bool IsSetPropMethod(MethodInfo method)
-        {
-            return method.Name.StartsWith("set_");
+                pointcut.AddType(realType);
+                return pointcut.Matches(context);
+            }
+            return false;
         }
 
         private string GetPropName(MethodInfo method)
         {
-            return method.Name.Substring(4);
+            return pointcut.GetPropertyBySetMethod(method).Name;
         }
 
         private IInterceptedObject GetInterceptedObject(object target)
@@ -64,31 +68,17 @@ namespace Histria.Core.Execution
             {
                 get { return (IInterceptedObject)this.Target; }
             }
-            public string PropertyName
+            public string PropertyName { get; set; }
+        }
+
+        private ChangePropertyRulesAspectContext GetContext(AspectInvocationContext invocationContext)
+        {
+            var context = (ChangePropertyRulesAspectContext)invocationContext;
+            if (String.IsNullOrEmpty(context.PropertyName))
             {
-                get { return this.Method.Name.Substring(4); }
+                context.PropertyName = this.pointcut.GetPropertyBySetMethod(context.Method).Name;
             }
-        }
-
-        private static ChangePropertyRulesAspectContext GetContext(AspectInvocationContext invocationContext)
-        {
-            return (ChangePropertyRulesAspectContext)invocationContext;
-        }
-
-        //Used for tests
-        public static Advisor CreateAdvisor()
-        {
-            var cpr = new ChangePropertyRulesAspect();
-            Advisor advisor = new Advisor(
-                new Aspect[]
-                {
-                    new Aspect()
-                    {
-                        Advice = cpr, 
-                        Pointcuts=new IPointcut[]{cpr}
-                    } 
-                });
-            return advisor;
+            return context;
         }
     }
 }
