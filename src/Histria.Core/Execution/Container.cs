@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Reflection;
 
 namespace Histria.Core.Execution
 {
@@ -22,6 +23,8 @@ namespace Histria.Core.Execution
                 proxyFactoryGenerator = value;
             }
         }
+
+        private static readonly MethodInfo createGenericMethodDefinition = typeof(Container).GetMethods().AsQueryable().Where(m=>m.IsGenericMethodDefinition && m.Name == "Create").Single();
 
         public Container(ContainerSetup setup)
         {
@@ -75,6 +78,12 @@ namespace Histria.Core.Execution
                 (interceptedObject as IInterceptedObject).AOPCreate();
             }
             return instance;
+        }
+
+        public object Create(Type type)
+        {
+            var m = createGenericMethodDefinition.MakeGenericMethod(type);
+            return m.Invoke(this, null);
         }
     }
 }

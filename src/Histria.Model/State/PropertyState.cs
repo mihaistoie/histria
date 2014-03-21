@@ -43,14 +43,15 @@ namespace Histria.Model
         
         public PropInfoItem PiInfo { get; private set; }
 
-        public PropertyState(IInterceptedObject owner, PropInfoItem pi)
+        public PropertyState Initialize(IInterceptedObject owner, PropInfoItem pi)
         {
             this.Owner = owner;
             this.PiInfo = pi;
 
             IsDisabled = pi.IsDisabled;
             IsHidden = pi.IsHidden;
-            IsMandatory = pi.IsMandatory; 
+            IsMandatory = pi.IsMandatory;
+            return this;
         }
 
         #endregion

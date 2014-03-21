@@ -38,11 +38,12 @@ namespace Histria.Core
             {
                 if (propsState == null && ClassInfo != null)
                 {
-                    propsState = (IDictionary<string, PropertyState>) Activator.CreateInstance(ClassInfo.StateClassType);
+                    propsState = (IDictionary<string, PropertyState>)Activator.CreateInstance(ClassInfo.StateClassType);
                     for (int idx = 0, len = ci.Properties.Count; idx < len; idx++)
                     {
                         PropInfoItem pi = ci.Properties[idx];
-                        PropertyState ps = new PropertyState((IInterceptedObject)this, pi);
+                        PropertyState ps = Container.Create<PropertyState>()
+                            .Initialize((IInterceptedObject)this, pi);
                         propsState.Add(pi.Name, ps);
                     }
                 }

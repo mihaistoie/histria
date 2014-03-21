@@ -6,28 +6,44 @@ using System.Text;
 
 namespace Histria.Core.PropertiesState.Tests
 {
+    public class HBodyPropertiesState : DefaultPropertiesState
+    {
+        public PropertyState Id { get { return this["Id"]; } }
+        public PropertyState Name { get { return this["Name"]; } }
+    }
+
+    public partial class HBody
+    {
+        /* state */
+        public new HBodyPropertiesState Properties
+        {
+            get { return (HBodyPropertiesState)base.Properties; }
+        }
+    }
+
     [PrimaryKey("Id")]
-    public class HBody : InterceptedObject
+    public partial class HBody : InterceptedObject
     {
         /* primary key */
         public virtual string Id { get; set; }
+
         /* body has two hands */
         [Association(Relation.Composition, Inv = "Body", Min = 0, Max = 2)]
         public virtual HasMany<Hand> Hands { get; set; }
 
-        [Default(Required = true, Hidden=true)]
+        [Default(Required = true, Hidden = true)]
         public virtual string Name { get; set; }
 
         public int RuleHits { get; set; }
-        
+
         [State(Rule.AfterCreate)]
         [State(Rule.AfterLoad)]
         [State(Rule.Propagation, Property = "Hands", Operation = RoleOperation.Remove)]
         [State(Rule.Propagation, Property = "Hands", Operation = RoleOperation.Add)]
-        public void Idstate() 
+        public void Idstate()
         {
             RuleHits++;
-            Properties["Name"].IsDisabled = (Hands.Count > 0);  
+            Properties.Name.IsDisabled = (Hands.Count > 0);
         }
     }
 
@@ -47,7 +63,6 @@ namespace Histria.Core.PropertiesState.Tests
         public virtual HasMany<Finger> Fingers { get; set; }
 
         public virtual string Name { get; set; }
-
     }
 
     [PrimaryKey("Id")]
@@ -60,6 +75,5 @@ namespace Histria.Core.PropertiesState.Tests
         /* belongs to Body */
         [Association(Relation.Composition, Inv = "Fingers", ForeignKey = "HandId")]
         public virtual BelongsTo<Hand> Hand { get; set; }
-
     }
 }

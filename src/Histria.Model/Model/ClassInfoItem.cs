@@ -13,6 +13,7 @@ namespace Histria.Model
     ///</summary>   
     public class ClassInfoItem
     {
+        public static readonly string ProperiesStatePropertyName = "Properties";
         #region private members
         private readonly Dictionary<string, PropertyInfo> propsMap = new Dictionary<string, PropertyInfo>();
         private readonly PropertiesCollection properties = new PropertiesCollection();
@@ -376,6 +377,12 @@ namespace Histria.Model
             PropertyInfo[] props = CurrentType.GetProperties(BindingFlags.Public | BindingFlags.Instance);
             foreach (PropertyInfo pi in props)
             {
+                MethodInfo setMethod = pi.GetSetMethod();
+                if (setMethod == null || !setMethod.IsVirtual)
+                {
+                    continue;
+                }
+
                 PropInfoItem item = new PropInfoItem(pi, this);
                 propsMap.Add(item.Name, item.PropInfo);
                 properties.Add(item);
@@ -508,7 +515,7 @@ namespace Histria.Model
         {
             BindingFlags bindingFlags = BindingFlags.Instance | BindingFlags.Public;
             var propertiesState = (from prop in type.GetProperties(bindingFlags)
-                                   where prop.Name == "Properties" && typeof(IDictionary<string, PropertyState>).IsAssignableFrom(prop.PropertyType) && prop.PropertyType.IsClass
+                                   where prop.Name == ProperiesStatePropertyName && typeof(IDictionary<string, PropertyState>).IsAssignableFrom(prop.PropertyType) && prop.PropertyType.IsClass
                                    select prop).ToList();
             switch(propertiesState.Count)
             {
@@ -567,7 +574,6 @@ namespace Histria.Model
             LoadMethodsAndRules();
             LoadPrimarykey();
             LoadIndexes();
-
         }
         #endregion
     }

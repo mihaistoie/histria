@@ -18,6 +18,12 @@ namespace Histria.Model
         private readonly ClassCollection viewsandclasses;
         private readonly ClassCollection classes;
         private readonly ClassCollection views;
+
+        private static readonly IList<Type> frameworkTypes = new Type[]
+        {
+            typeof(PropertyState)
+        };
+
         #endregion
 
         private ModelManager()
@@ -146,6 +152,14 @@ namespace Histria.Model
         public ClassInfoItem Class<T>()
         {
             return ClassByType(typeof(T));
+        }
+
+        public IList<Type> GetAOPInterceptedTypes()
+        {
+            List<Type> interceptedTypes = new List<Type>(frameworkTypes);
+            //TODO views?
+            interceptedTypes.AddRange(this.Classes.Types);
+            return interceptedTypes;
         }
         #endregion
     }

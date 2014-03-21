@@ -27,22 +27,28 @@ namespace Histria.Core.PropertiesState.Tests
         {
             Container container = new Container(TestContainerSetup.GetSimpleContainerSetup(model));
             HBody body = container.Create<HBody>();
+
+            Assert.AreEqual<Type>(typeof(HBodyPropertiesState), body.Properties.GetType(), "Initialization");
+            Assert.AreEqual<Type>(typeof(PropertyState), body.Properties.Name.GetType().BaseType, "Initialization");
+
             body.Name = "kirilov";
-            Assert.AreEqual(true, body.Properties["Name"].IsMandatory, "Initialization");
-            Assert.AreEqual(false, body.Properties["Name"].IsDisabled, "Initialization");
+            Assert.AreEqual(true, body.Properties.Name.IsMandatory, "Initialization");
+            Assert.AreEqual(false, body.Properties.Name.IsDisabled, "Initialization");
             Hand left = container.Create<Hand>();
+
+            Assert.AreEqual<Type>(typeof(DefaultPropertiesState), left.Properties.GetType(), "Initialization");
+
             body.Hands.Add(left);
-            Assert.AreEqual(true, body.Properties["Name"].IsDisabled, "State rule");
+            Assert.AreEqual(true, body.Properties.Name.IsDisabled, "State rule");
             left.Body.Value = null;
-            Assert.AreEqual(false, body.Properties["Name"].IsDisabled, "State rule");
+            Assert.AreEqual(false, body.Properties.Name.IsDisabled, "State rule");
             Assert.AreEqual(3, body.RuleHits, "State rule was called 3 times");
-            Guid g = Guid.NewGuid();
             
+            Guid g = Guid.NewGuid();
             //string regex = string.Format("^{0}\\.{1}$", "1000", "Address\\.(.*)\\.Country");
             string regex = string.Format(@"^{0}\.{1}$", g.ToString("N"), @"Address\.(.*)\.Country");
             var x = Regex.IsMatch( g.ToString("N") + ".Address.20-00.Country", regex);
             var y = Regex.IsMatch( g.ToString("N") +".Address.30-00.Country", regex);
-            
         }
     }
 }

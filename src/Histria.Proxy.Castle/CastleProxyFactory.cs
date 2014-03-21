@@ -13,26 +13,17 @@ namespace Histria.Proxy.Castle
     {
         private readonly ProxyGenerator generator;
         private readonly AOPInterceptor interceptor;
-        private readonly List<Type> interceptedTypes;
+        private readonly IList<Type> interceptedTypes;
         
         public CastleProxyFactory(Container container)
         {
             this.interceptor = new AOPInterceptor(container.Advisor);
             this.generator = new ProxyGenerator();
-
-            //todo from model
-            this.interceptedTypes = new List<Type>() {
-                typeof(HasOne<>),
-                typeof(HasMany<>),
-                typeof(BelongsTo<>)
-            };
-
-            this.interceptedTypes.AddRange(container.ModelManager.Classes.Types);
+            this.interceptedTypes = container.ModelManager.GetAOPInterceptedTypes();
         }
 
         public T Create<T>() where T:class 
         {
-            //to do frameworktypes
             if (this.interceptedTypes.Contains(typeof(T)))
             {
                 return this.generator.CreateClassProxy<T>(this.interceptor);
