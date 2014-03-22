@@ -17,18 +17,18 @@ namespace Histria.Core.Tests.Associations
 
         public int HandsCount { get; set; }
 
-        [Rule(Rule.AfterCreate)]
-        [Rule(Rule.AfterLoad)]
+        [RuleAfterCreate]
+        [RuleAfterLoad]
         public void CalculateHands()
         {
             HandsCount = 0;
         }
-        [Rule(Rule.Propagation, Property = "Hands", Operation = RoleOperation.Add)]
+        [RulePropagation("Hands", Operation = RoleOperation.Add)]
         public void AddHand()
         {
             HandsCount = HandsCount + 1;
         }
-        [Rule(Rule.Propagation, Property = "Hands", Operation = RoleOperation.Remove)]
+        [RulePropagation("Hands", Operation = RoleOperation.Remove)]
         public void RmvHand()
         {
             HandsCount = HandsCount - 1;
@@ -54,13 +54,13 @@ namespace Histria.Core.Tests.Associations
         public virtual string Name { get; set; }
         public virtual string NameToUpper { get; set; }
 
-        [Rule(Rule.Propagation, Property = "Body")]
+        [RulePropagation("Body")]
         public void PropagateBodyId()
         {
             BodyName = Body.Value == null ? null : Body.Value.Id;
         }
 
-        [Rule(Rule.Propagation, Property = "Name")]
+        [RulePropagation("Name")]
         public void PropagateName()
         {
             NameToUpper = Name.ToUpper();

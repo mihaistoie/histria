@@ -28,8 +28,8 @@ namespace Histria.Core.Tests.Rules.Customers
     [RulesFor(typeof(OrderLine))]
     public class RulesForOrderLine : IPluginModel
     {
-        [Rule(Rule.Propagation, Property = "DecQty")]
-        [Rule(Rule.Propagation, Property = "UnitPrice")]
+        [RulePropagation("DecQty")]
+        [RulePropagation("UnitPrice")]
         [Display("Calculate Sales Line Price")]
         public static void LinePrice(OrderLine target)
         {

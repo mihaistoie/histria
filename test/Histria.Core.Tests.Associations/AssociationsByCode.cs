@@ -36,8 +36,8 @@ namespace Histria.Core.Tests.Associations
         [Association(Relation.Association, ForeignKey = "CountryCode==CountryCode,CityCode=CityCode,ZipCode=ZipCode")]
         public virtual HasOne<City> City { get; set; }
 
-        [Rule(Rule.Propagation, Property = "Country")]
-        [Rule(Rule.Propagation, Property = "City")]
+        [RulePropagation("Country")]
+        [RulePropagation("City")]
         public void PropagateCountryCity() 
         {
             CountryCity = ((Country.Value != null) ? Country.Value.Code : string.Empty) + "-" +

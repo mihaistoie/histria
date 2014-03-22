@@ -240,7 +240,8 @@ namespace Histria.Core
                 pi.SchemaValidation(ref value);
                 if (CanExecuteRules(Rule.Correction))
                     pi.ExecuteCheckValueRules(this, ref value);
-                if (oldValue == value) return false;
+                 bool changed = pi.PropInfo.PropertyType.IsValueType ? !value.Equals(oldValue) : value != oldValue;
+                if (!changed) return false;
             }
             return true;
         }

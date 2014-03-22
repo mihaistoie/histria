@@ -17,7 +17,7 @@ namespace Histria.Core.Tests.Associations
        
         [Association(Relation.Association)]
         public virtual HasOne<Account> Account {get; set;} 
-        [Rule(Rule.Propagation, Property="Account")]
+        [RulePropagation("Account")]
         internal void UpdateAccountCode() 
         {
             AccountCode = Account.Value == null ? null : Account.Value.Code;

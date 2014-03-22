@@ -40,8 +40,8 @@ namespace Histria.Core.Tests.Associations
         ///<summary>
         /// Owns rules
         ///</summary>  
-        [Rule(Rule.Propagation, Property = "FirstName")]
-        [Rule(Rule.Propagation, Property = "LastName")]
+        [RulePropagation("FirstName")]
+        [RulePropagation("LastName")]
         [Rule(Rule.AfterLoad)]
         public void CalculateFullName()
         {

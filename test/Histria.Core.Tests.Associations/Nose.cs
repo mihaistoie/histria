@@ -18,7 +18,7 @@ namespace Histria.Core.Tests.Associations
         [Association(Relation.Composition, Inv = "Nose", ForeignKey = "BodyId")]
         public virtual BelongsTo<HumanBody> Body { get; set; }
 
-        [Rule(Rule.Propagation, Property = "Body")]
+        [RulePropagation("Body")]
         internal void AfterNoseChange()
         {
             CurrentBodyId = (Body.Value == null) ? null : Body.Value.Id;

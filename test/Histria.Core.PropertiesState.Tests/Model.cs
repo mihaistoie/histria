@@ -63,6 +63,8 @@ namespace Histria.Core.PropertiesState.Tests
         public virtual HasMany<Finger> Fingers { get; set; }
 
         public virtual string Name { get; set; }
+
+  
     }
 
     [PrimaryKey("Id")]

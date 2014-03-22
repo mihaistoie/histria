@@ -57,5 +57,16 @@ namespace UnitTestModel
             Assert.AreEqual("NAME", b.Name, "Correction rule");
         }
 
+        [TestMethod]
+        public void PropagationRuleOnInt()
+        {
+            Container container = new Container(TestContainerSetup.GetSimpleContainerSetup(model));
+            Customer cust = container.Create<Customer>();
+            cust.Age = 36;
+            cust.Age = 37;
+            cust.Age = 37;
+            Assert.AreEqual(2, cust.ARCount, "Rule hits");
+        }
+
     }
 }

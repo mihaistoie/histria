@@ -10,7 +10,7 @@ namespace Histria.Model.Tests.ModelToTest
     public class MInvalidRule : BaseModel
     {
         public virtual string Name { get; set; }
-        [Rule(Rule.Propagation, Property = "FirstName")]
+        [RulePropagation("FirstName")]
         protected virtual void InvalidRuleDefinition()
         {
         }
@@ -30,7 +30,7 @@ namespace Histria.Model.Tests.ModelToTest
     {
         public virtual string Name { get; set; }
         public virtual string RuleResult { get; set; }
-        [Rule(Rule.Propagation, Property = "Name")]
+        [RulePropagation("Name")]
         protected virtual void Test()
         {
             RuleResult = "MR1.Test";
@@ -39,7 +39,7 @@ namespace Histria.Model.Tests.ModelToTest
     public class MR2 : MR1
     {
 
-        [Rule(Rule.Propagation, Property = "Name")]
+        [RulePropagation("Name")]
         protected override void Test()
         {
             RuleResult = "MR2.Test";

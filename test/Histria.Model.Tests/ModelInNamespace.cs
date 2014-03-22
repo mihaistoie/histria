@@ -63,8 +63,8 @@ namespace Histria.Model.Tests.XXX
         ///<summary>
         /// Owns rules
         ///</summary>  
-        [Rule(Rule.Propagation, Property="FirstName")]
-        [Rule(Rule.Propagation, Property="LastName")]
+        [RulePropagation("FirstName")]
+        [RulePropagation("LastName")]
         [Rule(Rule.AfterLoad)]
         public void CalculateFullName() 
         {
