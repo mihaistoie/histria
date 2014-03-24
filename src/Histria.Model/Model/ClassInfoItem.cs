@@ -378,7 +378,7 @@ namespace Histria.Model
             foreach (PropertyInfo pi in props)
             {
                 MethodInfo setMethod = pi.GetSetMethod();
-                if (setMethod == null || !setMethod.IsVirtual)
+                if (setMethod == null || !setMethod.IsVirtual || setMethod.IsFinal)
                 {
                     continue;
                 }

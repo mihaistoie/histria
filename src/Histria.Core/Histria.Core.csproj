@@ -43,7 +43,7 @@
     <Compile Include="Changes\ChangedProperties.cs" />
     <Compile Include="Changes\ChangeRecord.cs" />
     <Compile Include="Changes\ChangeRecorder.cs" />
-    <Compile Include="Changes\ObjectChange.cs" />
+    <Compile Include="Changes\ObjectDelta.cs" />
     <Compile Include="Changes\PropertyChange.cs" />
     <Compile Include="Execution\ChangePropertyPointcut.cs" />
     <Compile Include="Execution\ChangePropertyRulesAspect.cs" />

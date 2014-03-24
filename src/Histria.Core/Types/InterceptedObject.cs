@@ -104,7 +104,7 @@ namespace Histria.Core
 
         #region Properties
         private Guid uuid = Guid.Empty;
-        public Guid Uuid
+        public virtual Guid Uuid
         {
             get
             {

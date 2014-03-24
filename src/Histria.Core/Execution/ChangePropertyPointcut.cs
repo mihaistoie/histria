@@ -42,7 +42,7 @@ namespace Histria.Core.Execution
             foreach (var pi in type.GetProperties(bindingFlags))
             {
                 MethodInfo setMethod = pi.GetSetMethod();
-                if (setMethod == null || !setMethod.IsVirtual)
+                if (setMethod == null || !setMethod.IsVirtual || setMethod.IsFinal)
                 {
                     continue;
                 }

@@ -7,7 +7,7 @@ namespace Histria.Model.Tests
 {
     public class BaseModel: IClassModel
     {
-        public Guid Uuid { get; set; } 
+        public virtual Guid Uuid { get; set; } 
     }
 
     public class BaseView : BaseModel, IViewModel
