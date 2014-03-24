@@ -1,4 +1,5 @@
-﻿using Histria.Model;
+﻿using Histria.Core.Changes;
+using Histria.Model;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -15,5 +16,16 @@ namespace Histria.Core.Tests.Changes
         public virtual DateTime Date { get; set; }
 
         public virtual decimal Value { get; set; }
+
+        public List<Tuple<ObjectLifetimeEvent, object[]>> Notifications = new List<Tuple<ObjectLifetimeEvent, object[]>>();
+
+        public ChangeRecorder Recorder = new ChangeRecorder();
+
+        protected override void AOPNotify(ObjectLifetimeEvent objectLifetime, object[] arguments)
+        {
+            Notifications.Add(new Tuple<ObjectLifetimeEvent,object[]>(objectLifetime, arguments));
+            Recorder.Record(this.Uuid, objectLifetime, arguments);
+            base.AOPNotify(objectLifetime, arguments);
+        }
     }
 }

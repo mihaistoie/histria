@@ -160,7 +160,7 @@ namespace Histria.Core
                 RmvState(ObjectStatus.InCreating);
                 AddState(ObjectStatus.Created | ObjectStatus.Active);
             }
-            ((IObjectLifetime)this).Notify(ObjectLifetimeEvent.Created);
+            ((IObjectLifetime)this).Notify(ObjectLifetimeEvent.Created, this);
             if (this.CanExecuteRules(Rule.AfterCreate))
             {
                 ClassInfo.ExecuteRules(Rule.AfterCreate, this);

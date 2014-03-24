@@ -1,43 +1,61 @@
 ﻿using Histria.Model;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 
 namespace Histria.Core.Changes
 {
-    public class ChangeRecorder
+    public class ChangeRecorder: KeyedCollection<Guid, ObjectDelta>
     {
+        private readonly Dictionary<ObjectLifetimeEvent, Action<Guid, ObjectLifetimeEvent, object[]>> recordActions;
+
+        public ChangeRecorder()
+        {
+            this.recordActions = new Dictionary<ObjectLifetimeEvent,Action<Guid,ObjectLifetimeEvent,object[]>>()
+            {
+                {ObjectLifetimeEvent.Created, ObjectCreated},
+                {ObjectLifetimeEvent.Changed, PropertyChanged},
+            };
+        }
+
         public void Record(Guid targetId, ObjectLifetimeEvent lifetime, params object[] arguments)
         {
-            var rec = new ChangeRecord()
+            Action<Guid, ObjectLifetimeEvent, object[]> recordAction;
+            if(this.recordActions.TryGetValue(lifetime, out recordAction))
             {
-                Id = this.NextId++,
-                TargetId = targetId,
-                Lifetime = lifetime,
-                Arguments = arguments
-            };
-            this.Records.Add(rec);
+                recordAction(targetId, lifetime, arguments);
+            }
         }
 
-        public IList<ChangeRecord> GetRecordsFrom(uint id)
+        private void ObjectCreated(Guid targetId, ObjectLifetimeEvent lifetime, object[] arguments)
         {
-            return this.records.FindAll(r => r.Id >= id);
+            if(this.Contains(targetId))
+            {
+                throw new InvalidOperationException(String.Format("Object {0} allready created", targetId));
+            }
+            var target = arguments[0] as IInterceptedObject;
+            ObjectDelta delta = ObjectDelta.InitFromObject(target);
+            this.Add(delta);
         }
-
-        public void Clear()
+            
+        private void PropertyChanged(Guid targetId, ObjectLifetimeEvent lifetime, object[] arguments)
         {
-            this.records.Clear();
+            if(!this.Contains(targetId))
+            {
+                throw new InvalidOperationException(String.Format("Object {0} not found", targetId));
+            }
+            ObjectDelta delta = this[targetId];
+            string propertyName = (string)arguments[0];
+            object oldValue = arguments[1];
+            object newValue = arguments[2];
+            delta.Properties[propertyName].Value = newValue;
         }
 
-        public void RemoveBefore(uint id)
+        protected override Guid GetKeyForItem(ObjectDelta item)
         {
-            this.records.RemoveAll(r => r.Id < id);
+            return item.Target;
         }
-
-        private List<ChangeRecord> records = new List<ChangeRecord>();
-        public IList<ChangeRecord> Records { get { return this.records; } }
-
-        public uint NextId { get; private set; }
     }
 }

@@ -41,7 +41,6 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Changes\ChangedProperties.cs" />
-    <Compile Include="Changes\ChangeRecord.cs" />
     <Compile Include="Changes\ChangeRecorder.cs" />
     <Compile Include="Changes\ObjectDelta.cs" />
     <Compile Include="Changes\PropertyChange.cs" />
@@ -50,7 +49,6 @@
     <Compile Include="Execution\ChangePropertyStateAspect.cs" />
     <Compile Include="Execution\Container.cs" />
     <Compile Include="Execution\ContainerSetup.cs" />
-    <Compile Include="Execution\InstancesList.cs" />
     <Compile Include="Execution\IProxyFactory.cs" />
     <Compile Include="Execution\IProxyFactoryGenerator.cs" />
     <Compile Include="Execution\TestContainerSetup.cs" />
