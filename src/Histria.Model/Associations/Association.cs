@@ -45,29 +45,124 @@ namespace Histria.Model
             return (Association)Activator.CreateInstance(declaredType);
 
         }
-		public static string ExpandSearchPath(IInterceptedObject value, string path) 
-		{
-            /*
-			string[] segments = path.Split('.');
-			for (string segment in  segments) 
-			{
-				if (string.IsNullOrEmpty(segment)) 
-				{
-					throw new Exception(L.T("Invalid search path '{0}'. Empty segments.", path))
-				}
-			}
-			if (segments.length == 1) 
-			{
-				return string.Format("{0}.{1}", value.ObjectPath(), path) ;
-			}
-			*/
-			
-			return path;
-		}
+
+        struct WalkResult
+        {
+            internal IInterceptedObject Value;
+            internal bool StopWalk;
+            internal bool CanFindPath;
+            internal string Path;
+            internal string VariablePath;
+        }
+
+        private static WalkResult WalkSegment(IInterceptedObject value, string segment, string outpath, bool isLastSegment)
+        {
+            WalkResult res;
+            res.Value = value;
+            res.StopWalk = false;
+            res.CanFindPath = false;
+            res.Path = outpath;
+            res.VariablePath = "";
+
+            if (segment == "*")
+            {
+                res.StopWalk  = true;
+                res.CanFindPath = isLastSegment;
+                if (res.CanFindPath) 
+                {
+                    res.VariablePath = "*";
+                }
+                return res;
+            }
+
+            // back to parent 
+            if (value.ClassInfo.Parent.Name == segment)
+            {
+                object role = value.ClassInfo.Parent.PropInfo.GetValue(value, null);
+                res.Value = (role as IRoleRef).GetValue();
+                if (value == null)
+                {
+                    res.StopWalk = true;
+                    res.CanFindPath = false;
+                } else 
+                {
+                    res.Path = res.Value.ObjectPath();
+                }
+                return res;
+            }
+
+            PropInfoItem pi = value.ClassInfo.PropertyByName(segment);
+            if (pi == null)
+            {
+                throw new Exception(L.T("Invalid segment: '{0}.{1}'. .", value.ClassInfo.Name, segment));
+            }
+            if (!pi.IsRole)
+            {
+                res.StopWalk = true;
+                res.CanFindPath = isLastSegment;
+                if ( res.CanFindPath) 
+                {
+                    res.Path = string.Format("{0}.{1}", value.ObjectPath(), segment);;
+                }
+                return res; 
+            }
+            // role
+
+
+            throw new Exception(L.T("Invalid segment: '{0}.{1}'. .", value.ClassInfo.Name, segment));
+
+        }
+        public static string ExpandSearchPath(IInterceptedObject value, string path, out string variable, out bool canFind)
+        {
+            variable = null;
+            canFind = true;
+            List<string> segments = path.Split('.').ToList();
+            if (segments.Count == 0)
+            {
+                throw new Exception(L.T("Invalid search path '{0}'. Empty path.", path));
+            }
+            foreach (string segment in segments)
+            {
+                if (string.IsNullOrEmpty(segment))
+                {
+                    throw new Exception(L.T("Invalid search path '{0}'. Empty segments.", path));
+                }
+            }
+            if (segments.Count == 1)
+            {
+                if (segments[0] == "*")
+                {
+                    variable = "*";
+                    return value.ObjectPath();
+                }
+                return string.Format("{0}.{1}", value.ObjectPath(), path);
+            }
+
+            int index = 0;
+            string outPath = "";
+            while (index < segments.Count)
+            {
+                // take a segmment 
+                string segment = segments[index];
+                WalkResult walk = WalkSegment(value, segment, outPath, index == segments.Count - 1);
+                if (!walk.CanFindPath) 
+                {
+                    canFind = true;
+                    return "";
+                }
+                if (walk.StopWalk)
+                {
+                    variable = walk.VariablePath;
+                    return walk.Path;
+                }
+            }
+            throw new Exception(L.T("Invalid search path '{0}'. Empty segments.", path));
+
+        }
         public static string ObjectPath(IInterceptedObject value, ref bool canBeCached)
         {
             canBeCached = true;
-            List<string> path = new List<string>() {value.Uuid.ToString("N") };
+            List<string> path = new List<string>() { value.Uuid.ToString("N") };
             PropInfoItem pi = value.ClassInfo.Parent;
             while (pi != null)
             {
@@ -84,7 +179,7 @@ namespace Histria.Model
                 pi = value.ClassInfo.Parent;
             }
             StringBuilder sb = new StringBuilder();
-            for (int i = path.Count -1; i > 0; i--)
+            for (int i = path.Count - 1; i > 0; i--)
             {
                 sb.Append(path[i]);
                 sb.Append(".");
@@ -92,7 +187,7 @@ namespace Histria.Model
             sb.Append(path[0]);
             return sb.ToString();
         }
-        
+
 
         ///<summary>
         /// Property info 

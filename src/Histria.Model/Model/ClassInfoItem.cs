@@ -392,6 +392,32 @@ namespace Histria.Model
                 }
             }
         }
+        private void AddRuleItem(MethodInfo mi, RuleAttribute ra, string prop)
+        {
+            RuleItem ri = new RuleItem(mi);
+            ri.Kind = ra.Rule;
+            ri.Property = prop;
+            ri.Operation = ra.Operation;
+            if (Static)
+            {
+                if (ri.TargetType == null)
+                    ri.TargetType = TargetType;
+                if (ri.TargetType == null)
+                {
+                    throw new ModelException(String.Format(L.T("Invalid rule target for \"{0}\" in the class \"{1}\"."), mi.Name, Name), Name);
+                }
+            }
+            else
+            {
+                ri.TargetType = CurrentType;
+            }
+            ri.DeclaringType = CurrentType;
+
+            if (ra is StateAttribute)
+                stateRulesList.Add(ri);
+            else
+                rulesList.Add(ri);
+        }
 
         private void LoadMethodsAndRules()
         {
@@ -418,28 +444,19 @@ namespace Histria.Model
                         {
                             throw new ModelException(String.Format(L.T("Invalid rule property for \"{0}\" in the class \"{1}\"."), mi.Name, Name), Name);
                         }
-                        RuleItem ri = new RuleItem(mi);
-                        ri.Kind = ra.Rule;
-                        ri.Property = ra.Property;
-                        ri.Operation = ra.Operation;
-                        if (Static)
+                        string[] props = ra.Properties;
+                        //TODO Code review is requred
+                        if (props != null)
                         {
-                            if (ri.TargetType == null)
-                                ri.TargetType = TargetType;
-                            if (ri == null)
+                            foreach (string prop in props) 
                             {
-                                throw new ModelException(String.Format(L.T("Invalid rule target for \"{0}\" in the class \"{1}\"."), mi.Name, Name), Name);
+                                AddRuleItem(mi, ra, prop);
                             }
                         }
                         else
                         {
-                            ri.TargetType = CurrentType;
+                            AddRuleItem(mi, ra, ra.Property);
                         }
-                        ri.DeclaringType = CurrentType;
-                        if (ra is StateAttribute)
-                            stateRulesList.Add(ri);
-                        else
-                            rulesList.Add(ri);
                     }
                 }
                 //Add methods

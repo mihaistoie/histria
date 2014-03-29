@@ -42,8 +42,7 @@ namespace Histria.Core.Tests.Rules.Customers
 
 
 
-        [RulePropagation("FirstName")]
-        [RulePropagation("LastName")]
+        [Rule(Rule.Propagation, Property = "LastName, FirstName")]
         [Display("Calculate Full Name", Description = "Calculate Full Name")]
         protected virtual void CalculatePersistentFullName()
         {
@@ -80,6 +79,7 @@ namespace Histria.Core.Tests.Rules.Customers
             FullName = (String.IsNullOrEmpty(LastName) ? "" : LastName).ToUpper() + " " + MiddleName + " " + FirstName;
         }
     }
+
 
 
 }

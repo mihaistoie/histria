@@ -26,10 +26,18 @@ namespace Histria.Core
         ///<summary>
         /// Which property changed called me?
         ///</summary>
-        public bool IsComingFrom(IInterceptedObject io, string property)
+        internal bool IsComingFrom(IInterceptedObject io, string property)
         {
-
-            return false;
+            string variable;
+            bool canFind = true;
+            string path = Association.ExpandSearchPath(io, property, out variable, out canFind);
+            if (!canFind)
+            {
+                return false;
+            }
+            return Contains(path, variable);
         }
+
+    
     }
 }

@@ -459,6 +459,5 @@ namespace Histria.Core.Tests.Associations
 
         }
 
-
     }
 }

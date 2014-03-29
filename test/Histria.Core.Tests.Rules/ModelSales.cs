@@ -11,7 +11,15 @@ namespace Histria.Core.Tests.Rules.Customers
         public virtual string Customer { get; set; }
         public virtual int OrderNumber { get; set; }
         public virtual DateTime OrderDate { get; set; }
-        [Association(Relation.Composition, Inv="Order")]
+
+        [Display("Net Amount (excluding VAT)")]
+        public virtual Decimal NetAmount { get; set; }
+        [Display("VAT")]
+        public virtual Decimal VAT { get; set; }
+        [Display("Gross Amount (including VAT)")]
+        public virtual Decimal GrossAmount { get; set; }
+
+        [Association(Relation.Composition, Inv = "Order")]
         public virtual HasMany<OrderLine> Lines { get; set; }
     }
 
@@ -47,7 +55,7 @@ namespace Histria.Core.Tests.Rules.Customers
             bool isDisabled = string.IsNullOrEmpty(target.Product);
             target.Properties["UnitPrice"].IsDisabled = isDisabled;
             target.Properties["DecQty"].IsDisabled = isDisabled;
-            target.Properties["Price"].IsDisabled = isDisabled; 
+            target.Properties["Price"].IsDisabled = isDisabled;
         }
         [State(Rule.AfterCreate)]
         [State(Rule.AfterLoad)]
@@ -57,4 +65,42 @@ namespace Histria.Core.Tests.Rules.Customers
 
     }
 
+    [RulesFor(typeof(SalesOrder))]
+    public class PropagationRulesForOrder : IPluginModel
+    {
+        private static decimal VatTax = 18.33M;
+        public static void VATForOrder(SalesOrder target)
+        {
+            target.VAT = Math.Round(target.NetAmount * VatTax / 100, 2);
+            target.GrossAmount = target.VAT + target.NetAmount;
+        }
+
+        //After NetAmount Changed     
+        [RulePropagation("NetAmount")]
+        public static void NetAmountChanged(SalesOrder target)
+        {
+            VATForOrder(target);
+        }
+
+        //After VAT Changed
+        [RulePropagation("VAT")]
+        public static void VATChanged(SalesOrder target)
+        {
+            if (target.Container.IsComingFrom(target, "NetAmount"))
+                return;
+            target.NetAmount = Math.Round(target.VAT * 100 / VatTax, 2);
+        }
+
+        //After GrossAmount Changed
+        [RulePropagation("GrossAmount")]
+        public static void GrossAmounthanged(SalesOrder target)
+        {
+            if (target.Container.IsComingFrom(target, "NetAmount"))
+                return;
+            const decimal VatTax = 18.33M; // only for demo 
+            target.NetAmount = Math.Round(target.GrossAmount * 100 / (100 + VatTax), 2);
+        }
+
+    }
 }
+

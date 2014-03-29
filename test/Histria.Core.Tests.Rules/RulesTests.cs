@@ -67,6 +67,28 @@ namespace UnitTestModel
             cust.Age = 37;
             Assert.AreEqual(2, cust.ARCount, "Rule hits");
         }
+        [TestMethod]
+        public void BasicRuleExecutionControl()
+        {
+            Container container = new Container(TestContainerSetup.GetSimpleContainerSetup(model));
+            SalesOrder order = container.Create<SalesOrder>();
+            order.NetAmount = 100;
+            Assert.AreEqual(100M, order.NetAmount, "NET");
+            Assert.AreEqual(18.33M, order.VAT, "VAT");
+            Assert.AreEqual(118.33M, order.GrossAmount, "Gross");
+
+            order.NetAmount = 52M;
+            Assert.AreEqual(52M, order.NetAmount, "NET");
+            Assert.AreEqual(9.53M, order.VAT, "VAT");
+            Assert.AreEqual(61.53M, order.GrossAmount, "Gross");
+            order.NetAmount = 0M;
+
+            order.GrossAmount = 61.53M;
+            Assert.AreEqual(52M, order.NetAmount, "NET");
+            Assert.AreEqual(9.53M, order.VAT, "VAT");
+            Assert.AreEqual(61.53M, order.GrossAmount, "Gross");
+
+        }
 
     }
 }

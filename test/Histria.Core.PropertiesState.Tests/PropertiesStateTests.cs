@@ -43,11 +43,6 @@ namespace Histria.Core.PropertiesState.Tests
             Assert.AreEqual(false, body.Properties.Name.IsDisabled, "State rule");
             Assert.AreEqual(3, body.RuleHits, "State rule was called 3 times");
             
-            Guid g = Guid.NewGuid();
-            //string regex = string.Format("^{0}\\.{1}$", "1000", "Address\\.(.*)\\.Country");
-            string regex = string.Format(@"^{0}\.{1}$", g.ToString("N"), @"Address\.(.*)\.Country");
-            var x = Regex.IsMatch( g.ToString("N") + ".Address.20-00.Country", regex);
-            var y = Regex.IsMatch( g.ToString("N") +".Address.30-00.Country", regex);
         }
     }
 }

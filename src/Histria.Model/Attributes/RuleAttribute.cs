@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 
 namespace Histria.Model
 {
@@ -11,6 +12,17 @@ namespace Histria.Model
         public string Property;
         public Type TargetType = null;
         public Rule Rule = Rule.Unknown;
+        public string[] Properties
+        {
+            get
+            {
+                if (!string.IsNullOrEmpty(Property) && (Property.IndexOf(",") > 0))
+                {
+                    return Array.ConvertAll(Property.Split(','), element => element.Trim());
+                }
+                return null;
+            }
+        }
         public RoleOperation Operation = RoleOperation.None;
         protected RuleAttribute()
         {
@@ -47,7 +59,7 @@ namespace Histria.Model
             Rule = Rule.AfterCreate;
         }
     }
-   
+
     [System.AttributeUsage(System.AttributeTargets.Method, AllowMultiple = true)]
     public class RuleAfterLoad : RuleAttribute
     {
@@ -56,7 +68,7 @@ namespace Histria.Model
             Rule = Rule.AfterLoad;
         }
     }
-    
+
     [System.AttributeUsage(System.AttributeTargets.Method, AllowMultiple = true)]
     public class RuleAfterDelete : RuleAttribute
     {

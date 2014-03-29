@@ -44,7 +44,11 @@ namespace Histria.Core.Execution
         private IProxyFactory ProxyFactory { get { return proxyFactory; } }
 
         private readonly PropertyChangedStack pstack = new PropertyChangedStack();
-        public PropertyChangedStack PropertyChangedStack { get { return this.pstack; } }
+        internal PropertyChangedStack PropertyChangedStack { get { return this.pstack; } }
+        public bool IsComingFrom(IInterceptedObject io, string property)
+        {
+            return pstack.IsComingFrom(io, property);
+        }
 
 
         private T CreateInstance<T>() where T : class
