@@ -86,7 +86,7 @@ namespace Histria.Core.Tests.Rules.Customers
         [RulePropagation("VAT")]
         public static void VATChanged(SalesOrder target)
         {
-            if (target.Container.IsComingFrom(target, "NetAmount"))
+            if (target.IsComingFrom("NetAmount"))
                 return;
             target.NetAmount = Math.Round(target.VAT * 100 / VatTax, 2);
         }
@@ -95,7 +95,7 @@ namespace Histria.Core.Tests.Rules.Customers
         [RulePropagation("GrossAmount")]
         public static void GrossAmounthanged(SalesOrder target)
         {
-            if (target.Container.IsComingFrom(target, "NetAmount"))
+            if (target.IsComingFrom("NetAmount"))
                 return;
             const decimal VatTax = 18.33M; // only for demo 
             target.NetAmount = Math.Round(target.GrossAmount * 100 / (100 + VatTax), 2);

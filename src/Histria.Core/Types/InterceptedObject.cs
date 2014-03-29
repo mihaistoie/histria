@@ -240,7 +240,7 @@ namespace Histria.Core
                 pi.SchemaValidation(ref value);
                 if (CanExecuteRules(Rule.Correction))
                     pi.ExecuteCheckValueRules(this, ref value);
-                 bool changed = pi.PropInfo.PropertyType.IsValueType ? !value.Equals(oldValue) : value != oldValue;
+                bool changed = pi.PropInfo.PropertyType.IsValueType ? !value.Equals(oldValue) : value != oldValue;
                 if (!changed) return false;
             }
             return true;
@@ -405,6 +405,12 @@ namespace Histria.Core
 
         #endregion
 
+        #region Rules
+        public bool IsComingFrom(string search)
+        {
+            return this.Container.IsComingFrom(this, search);
+        }
+        #endregion
 
         #region Memory
 

@@ -45,7 +45,7 @@ namespace Histria.Core.Execution
 
         private readonly PropertyChangedStack pstack = new PropertyChangedStack();
         internal PropertyChangedStack PropertyChangedStack { get { return this.pstack; } }
-        public bool IsComingFrom(IInterceptedObject io, string property)
+        internal bool IsComingFrom(IInterceptedObject io, string property)
         {
             return pstack.IsComingFrom(io, property);
         }
