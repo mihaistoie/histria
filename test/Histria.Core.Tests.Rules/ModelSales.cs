@@ -93,7 +93,7 @@ namespace Histria.Core.Tests.Rules.Customers
 
         //After GrossAmount Changed
         [RulePropagation("GrossAmount")]
-        public static void GrossAmounthanged(SalesOrder target)
+        public static void GrossAmountChanged(SalesOrder target)
         {
             if (target.IsComingFrom("NetAmount"))
                 return;
