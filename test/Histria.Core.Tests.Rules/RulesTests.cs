@@ -105,8 +105,11 @@ namespace UnitTestModel
             d3.Proc = 40M;
             budget.Total = 100M;
             Assert.AreEqual(40M, d3.Value, "R");
+            Assert.AreEqual(1, d1.FromTotal, "Rule hits");
             d3.Value = 80M;
             Assert.AreEqual(200M, budget.Total, "R");
+            Assert.AreEqual(1, d3.FromTotal, "Rule hits");
+            Assert.AreEqual(2, d2.FromTotal, "Rule hits");
 
 
         }

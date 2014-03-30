@@ -15,6 +15,7 @@ namespace Histria.Core.Tests.Rules.Customers
     
     public class BudgetDetail : InterceptedObject
     {
+        public int FromTotal; 
         public virtual Decimal Value { get; set; }
         public virtual Decimal Proc { get; set; }
         [Association(Relation.Composition, Inv = "Details")]
@@ -28,12 +29,16 @@ namespace Histria.Core.Tests.Rules.Customers
         [RulePropagation("Value")]
         public static void ValueChanged(BudgetDetail target)
         {
-            if (!target.IsComingFrom("Budget.Total")) 
+            if (!target.IsComingFrom("Budget.Total"))
             {
                 if ((target.Budget.Value != null) && (target.Proc > 0))
                 {
                     target.Budget.Value.Total = Math.Round(target.Value * 100 / target.Proc, 2);
                 }
+            }
+            else
+            {
+                target.FromTotal++;
             }
         }
     }
