@@ -87,6 +87,7 @@ namespace Histria.Model
                 } else 
                 {
                     res.Path = res.Value.ObjectPath();
+                    res.CanFindPath = true;
                 }
                 return res;
             }
@@ -155,6 +156,8 @@ namespace Histria.Model
                     variable = walk.VariablePath;
                     return walk.Path;
                 }
+                value = walk.Value;
+                index++;
             }
             throw new Exception(L.T("Invalid search path '{0}'. Empty segments.", path));
 
