@@ -76,7 +76,7 @@ namespace Histria.Model
             }
 
             // back to parent 
-            if (value.ClassInfo.Parent.Name == segment)
+            if (value.ClassInfo.Parent != null &&  value.ClassInfo.Parent.Name == segment)
             {
                 object role = value.ClassInfo.Parent.PropInfo.GetValue(value, null);
                 res.Value = (role as IRoleRef).GetValue();

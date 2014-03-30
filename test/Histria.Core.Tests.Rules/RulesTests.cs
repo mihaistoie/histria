@@ -89,6 +89,27 @@ namespace UnitTestModel
             Assert.AreEqual(61.53M, order.GrossAmount, "Gross");
 
         }
+        [TestMethod]
+        public void ComplexRuleExecutionControl()
+        {
+            Container container = new Container(TestContainerSetup.GetSimpleContainerSetup(model));
+            Budget budget = container.Create<Budget>();
+            BudgetDetail d1 = container.Create<BudgetDetail>();
+            BudgetDetail d2 = container.Create<BudgetDetail>();
+            BudgetDetail d3 = container.Create<BudgetDetail>();
+            budget.Details.Add(d1);
+            budget.Details.Add(d2);
+            budget.Details.Add(d3);
+            d1.Proc = 25M;
+            d2.Proc = 35M;
+            d3.Proc = 40M;
+            budget.Total = 100M;
+            Assert.AreEqual(40M, d3.Value, "R");
+            d3.Value = 80M;
+            Assert.AreEqual(200M, budget.Total, "R");
+
+
+        }
 
     }
 }

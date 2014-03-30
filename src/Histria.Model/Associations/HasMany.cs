@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Histria.Sys;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,7 +12,7 @@ namespace Histria.Model
     public class HasMany<T> : Association, IEnumerable<T>, IRoleList where T : IInterceptedObject
     {
         #region Internal members
-        private List<T> _values = null;
+        private List<T> instances = null;
         #endregion
 
         #region Lazy loading
@@ -19,17 +20,25 @@ namespace Histria.Model
         {
             get
             {
-                if (_values == null)
+                if (instances == null)
                 {
-                    _values = new List<T>();
+                    instances = new List<T>();
                 }
-                return _values;
+                return instances;
             }
         }
         #endregion
 
         #region Properties
         public int Count { get { return values.Count; } }
+        
+        public T this[int index]
+        {
+            get
+            {
+                return values[index];
+            }
+        }
 
         #endregion
 
@@ -109,6 +118,10 @@ namespace Histria.Model
         #region Interface IRoleList
         void IRoleList.AddOrInsert(IInterceptedObject value, int index)
         {
+            if (Has((T)value))
+            {
+                throw new RuleException(L.T("Item already exists."));
+            }
             AddOrInsert((T)value, index);
         }
 
