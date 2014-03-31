@@ -8,7 +8,8 @@ namespace Histria.Core.Tests.Rules.Customers
 {
     public class Budget : InterceptedObject
     {
-        public int FromDetail; 
+        public int FromDetail;
+        [DtNumber(Decimals = 2)]
         public virtual Decimal Total { get; set; }
         [Association(Relation.Composition, Inv = "Budget")]
         public virtual HasMany<BudgetDetail> Details { get; set; }
@@ -17,7 +18,9 @@ namespace Histria.Core.Tests.Rules.Customers
     public class BudgetDetail : InterceptedObject
     {
         public int FromTotal; 
+        [DtNumber(Decimals = 2)]
         public virtual Decimal Value { get; set; }
+        [DtNumber(Decimals = 2)]
         public virtual Decimal Proc { get; set; }
         [Association(Relation.Composition, Inv = "Details")]
         public virtual BelongsTo<Budget> Budget { get; set; }
@@ -34,7 +37,7 @@ namespace Histria.Core.Tests.Rules.Customers
             {
                 if ((target.Budget.Value != null) && (target.Proc > 0))
                 {
-                    target.Budget.Value.Total = Math.Round(target.Value * 100 / target.Proc, 2);
+                    target.Budget.Value.Total = target.Value * 100 / target.Proc;
                 }
             }
             else
@@ -60,7 +63,7 @@ namespace Histria.Core.Tests.Rules.Customers
             for (int i = 0, len = target.Details.Count; i < len; i++)
             {
                 BudgetDetail c = target.Details[i];
-                c.Value = Math.Round(c.Proc * target.Total / 100, 2);
+                c.Value = c.Proc * target.Total / 100;
                 if (c.Value > tmp) {
                     tmp = c.Value;
                     MaxBudget = c;

@@ -12,5 +12,9 @@ namespace Histria.Model
             errors = null;
             return true;
         }
+        internal virtual object SchemaValidation(object value) 
+        {
+            return value;
+        }
     }
 }

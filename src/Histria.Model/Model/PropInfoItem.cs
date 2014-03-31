@@ -39,6 +39,7 @@ namespace Histria.Model
         private static void NumberAction(PropInfoItem item)
         {
             item.DtType = DataTypes.Number;
+            item.TypeValidation = item.PropInfo.GetCustomAttributes(typeof(DtNumberAttribute), false).FirstOrDefault() as DtNumberAttribute;
         }
         private static void DateTimeAction(PropInfoItem item)
         {
@@ -510,6 +511,10 @@ namespace Histria.Model
         ///</summary>   
         public void SchemaValidation(ref object value)
         {
+            if (TypeValidation != null)
+            {
+                value = TypeValidation.SchemaValidation(value);
+            }
         }
 
         #endregion

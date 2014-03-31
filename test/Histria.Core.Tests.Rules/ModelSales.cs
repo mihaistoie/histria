@@ -13,10 +13,13 @@ namespace Histria.Core.Tests.Rules.Customers
         public virtual DateTime OrderDate { get; set; }
 
         [Display("Net Amount (excluding VAT)")]
+        [DtNumber(Decimals = 2)]
         public virtual Decimal NetAmount { get; set; }
         [Display("VAT")]
+        [DtNumber(Decimals = 2)]
         public virtual Decimal VAT { get; set; }
         [Display("Gross Amount (including VAT)")]
+        [DtNumber(Decimals = 2)]
         public virtual Decimal GrossAmount { get; set; }
 
         [Association(Relation.Composition, Inv = "Order")]
@@ -71,7 +74,7 @@ namespace Histria.Core.Tests.Rules.Customers
         private static decimal VatTax = 18.33M;
         public static void VATForOrder(SalesOrder target)
         {
-            target.VAT = Math.Round(target.NetAmount * VatTax / 100, 2);
+            target.VAT = target.NetAmount * VatTax / 100;
             target.GrossAmount = target.VAT + target.NetAmount;
         }
 
@@ -88,7 +91,7 @@ namespace Histria.Core.Tests.Rules.Customers
         {
             if (target.IsComingFrom("NetAmount"))
                 return;
-            target.NetAmount = Math.Round(target.VAT * 100 / VatTax, 2);
+            target.NetAmount = target.VAT * 100 / VatTax;
         }
 
         //After GrossAmount Changed
@@ -97,8 +100,7 @@ namespace Histria.Core.Tests.Rules.Customers
         {
             if (target.IsComingFrom("NetAmount"))
                 return;
-            const decimal VatTax = 18.33M; // only for demo 
-            target.NetAmount = Math.Round(target.GrossAmount * 100 / (100 + VatTax), 2);
+            target.NetAmount = target.GrossAmount * 100 / (100 + VatTax);
         }
 
     }
