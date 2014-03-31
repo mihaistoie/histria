@@ -8,6 +8,7 @@ namespace Histria.Core.Tests.Rules.Customers
 {
     public class Budget : InterceptedObject
     {
+        public int FromDetail; 
         public virtual Decimal Total { get; set; }
         [Association(Relation.Composition, Inv = "Budget")]
         public virtual HasMany<BudgetDetail> Details { get; set; }
@@ -49,9 +50,10 @@ namespace Histria.Core.Tests.Rules.Customers
         [RulePropagation("Total")]
         public static void TotalChanged(Budget target)
         {
-            //if (!target.IsComingFrom("Budget.Details.Value"))
-            //{
-            //}
+            if (target.IsComingFrom("Details.Value"))
+            {
+                target.FromDetail++;
+            }
             BudgetDetail MaxBudget = null;
             Decimal tmp = 0;
             Decimal tt = 0;

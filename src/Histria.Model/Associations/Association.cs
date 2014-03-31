@@ -51,6 +51,7 @@ namespace Histria.Model
             internal IInterceptedObject Value;
             internal bool StopWalk;
             internal bool CanFindPath;
+            internal bool UpdateVariablePath;
             internal string Path;
             internal string VariablePath;
         }
@@ -63,12 +64,13 @@ namespace Histria.Model
             res.CanFindPath = false;
             res.Path = outpath;
             res.VariablePath = "";
+            res.UpdateVariablePath =  false;
 
             if (segment == "*")
             {
-                res.StopWalk  = true;
+                res.StopWalk = true;
                 res.CanFindPath = isLastSegment;
-                if (res.CanFindPath) 
+                if (res.CanFindPath)
                 {
                     res.VariablePath = "*";
                 }
@@ -76,15 +78,16 @@ namespace Histria.Model
             }
 
             // back to parent 
-            if (value.ClassInfo.Parent != null &&  value.ClassInfo.Parent.Name == segment)
+            if (value.ClassInfo.Parent != null && value.ClassInfo.Parent.Name == segment)
             {
                 object role = value.ClassInfo.Parent.PropInfo.GetValue(value, null);
                 res.Value = (role as IRoleRef).GetValue();
-                if (value == null)
+                if (res.Value == null)
                 {
                     res.StopWalk = true;
                     res.CanFindPath = false;
-                } else 
+                }
+                else
                 {
                     res.Path = res.Value.ObjectPath();
                     res.CanFindPath = true;
@@ -95,21 +98,83 @@ namespace Histria.Model
             PropInfoItem pi = value.ClassInfo.PropertyByName(segment);
             if (pi == null)
             {
-                throw new Exception(L.T("Invalid segment: '{0}.{1}'. .", value.ClassInfo.Name, segment));
+                throw new Exception(L.T("Invalid segment: '{0}.{1}'.", value.ClassInfo.Name, segment));
             }
             if (!pi.IsRole)
             {
                 res.StopWalk = true;
                 res.CanFindPath = isLastSegment;
-                if ( res.CanFindPath) 
+                if (res.CanFindPath)
                 {
-                    res.Path = string.Format("{0}.{1}", value.ObjectPath(), segment);;
+                    res.Path = string.Format("{0}.{1}", value.ObjectPath(), segment); ;
                 }
-                return res; 
+                return res;
             }
             // role
-
-
+            if (pi.Role.IsParent)
+            {
+                if (pi.Role.IsList)
+                {
+                    // composition list
+                    res.Path = value.ObjectPath();
+                    res.StopWalk = true;
+                    res.CanFindPath = true;
+                    res.VariablePath = segment;
+                    res.UpdateVariablePath = true;
+                    return res;
+                }
+                else
+                {
+                    // composition ref
+                    if (isLastSegment)
+                    {
+                        
+                        res.StopWalk = true;
+                        res.CanFindPath = isLastSegment;
+                        res.Path = string.Format("{0}.{1}", value.ObjectPath(), segment);
+                        return res;
+                    }
+                    else
+                    {
+                        object role = value.ClassInfo.Parent.PropInfo.GetValue(value, null);
+                        res.Value = (role as IRoleRef).GetValue();
+                        if (res.Value == null)
+                        {
+                            res.StopWalk = true;
+                            res.CanFindPath = false;
+                        }
+                        else
+                        {
+                            res.Path = res.Value.ObjectPath();
+                            res.CanFindPath = true;
+                        }
+                        return res;
+                    }
+                }
+            }
+            else
+            {
+                if (pi.Role.IsList)
+                {
+                    res.StopWalk = true;
+                    res.CanFindPath = false;
+                    return res;
+                }
+                if (pi.Role.Type == Relation.Aggregation)
+                {
+                    throw new NotImplementedException("Walk on Aggregation");
+                }
+                else
+                {
+                    res.StopWalk = true;
+                    res.CanFindPath = isLastSegment;
+                    if (res.CanFindPath)
+                    {
+                        res.Path = string.Format("{0}.{1}", value.ObjectPath(), segment);
+                    }
+                    return res;
+                }
+            }
             throw new Exception(L.T("Invalid segment: '{0}.{1}'. .", value.ClassInfo.Name, segment));
 
         }
@@ -139,20 +204,29 @@ namespace Histria.Model
                 return string.Format("{0}.{1}", value.ObjectPath(), path);
             }
 
-            int index = 0;
+            int index = 0, len = segments.Count;
             string outPath = "";
-            while (index < segments.Count)
+            while (index < len)
             {
                 // take a segmment 
                 string segment = segments[index];
                 WalkResult walk = WalkSegment(value, segment, outPath, index == segments.Count - 1);
-                if (!walk.CanFindPath) 
+                if (!walk.CanFindPath)
                 {
-                    canFind = true;
+                    canFind = false;
                     return "";
                 }
                 if (walk.StopWalk)
                 {
+                    if (walk.UpdateVariablePath)
+                    {
+                        StringBuilder sb = new StringBuilder(walk.VariablePath);
+                        for (int i = index + 1; i < len; i++)
+                        {
+                            sb.Append(string.Format(".{0}", segments[i]));
+                        }
+                        walk.VariablePath = sb.ToString();
+                    }
                     variable = walk.VariablePath;
                     return walk.Path;
                 }
