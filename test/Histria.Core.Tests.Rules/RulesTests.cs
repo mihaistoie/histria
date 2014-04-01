@@ -112,6 +112,13 @@ namespace UnitTestModel
             Assert.AreEqual(1, d3.FromTotal, "Rule hits");
             Assert.AreEqual(2, d2.FromTotal, "Rule hits");
 
+            BudgetDetailModel modelBudget = container.Create<BudgetDetailModel>();
+            modelBudget.Value = 20M;
+            d3.Model.Value = modelBudget;
+            Assert.AreEqual(20M, d3.Value, "R");
+            Assert.AreEqual(50M, budget.Total, "R");
+            Assert.AreEqual(1, d3.FromModel, "Rule hits");
+            Assert.AreEqual(0, d2.FromModel, "Rule hits");
 
         }
 

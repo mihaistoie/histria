@@ -17,14 +17,23 @@ namespace Histria.Core.Tests.Rules.Customers
     
     public class BudgetDetail : InterceptedObject
     {
-        public int FromTotal; 
+        public int FromTotal;
+        public int FromModel;
         [DtNumber(Decimals = 2)]
         public virtual Decimal Value { get; set; }
         [DtNumber(Decimals = 2)]
         public virtual Decimal Proc { get; set; }
         [Association(Relation.Composition, Inv = "Details")]
         public virtual BelongsTo<Budget> Budget { get; set; }
+        [Association(Relation.Association)]
+        public virtual HasOne<BudgetDetailModel> Model { get; set; }
     }
+
+    public class BudgetDetailModel : InterceptedObject
+    {
+        [DtNumber(Decimals = 2)]
+        public virtual Decimal Value { get; set; }
+     }
 
     [RulesFor(typeof(BudgetDetail))]
     public class PropagationRulesForBudgetDetail : IPluginModel
@@ -44,6 +53,20 @@ namespace Histria.Core.Tests.Rules.Customers
             {
                 target.FromTotal++;
             }
+            if (target.IsComingFrom("Model"))
+            {
+                target.FromModel++;
+            }
+        }
+
+        //After Value Changed     
+        [RulePropagation("Model")]
+        public static void ModelChanged(BudgetDetail target)
+        {
+            if (target.Model.Value != null)
+            {
+                target.Value = target.Model.Value.Value;
+            } 
         }
     }
     [RulesFor(typeof(Budget))]
