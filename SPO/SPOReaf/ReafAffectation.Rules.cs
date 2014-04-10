@@ -53,7 +53,7 @@
             decimal ventile = 0m;
             decimal part = MathUtil.Round2(this.HT / cnt);
 
-            for (int i = 0; i < this.ProgAffectations.Count - 2; i++)
+            for (int i = 0; i < this.ProgAffectations.Count - 1; i++)
             {
                 ReafAffectationProg progAff = this.ProgAffectations[i];
                 progAff.HT = part;
