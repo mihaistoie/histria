@@ -171,19 +171,19 @@ namespace Histria.Core
         ///<summary>
         /// IInterceptedObject.AOPAfterLoad
         ///</summary>
-        void IInterceptedObject.AOPLoad<T>(Action<T> loadAction)
+        void IInterceptedObject.AOPBeginLoad()
         {
             AddState(ObjectStatus.InLoading);
-            try
-            {
-                AOPInitializeAssociations();
-                loadAction(this as T);
-            }
-            finally
-            {
-                RmvState(ObjectStatus.InLoading);
-                AddState(ObjectStatus.Loaded | ObjectStatus.Active);
-            }
+            AOPInitializeAssociations();
+        }
+
+        ///<summary>
+        /// IInterceptedObject.AOPEndLoad
+        ///</summary>
+        void IInterceptedObject.AOPEndLoad()
+        {
+            RmvState(ObjectStatus.InLoading);
+            AddState(ObjectStatus.Loaded | ObjectStatus.Active);
             ((IObjectLifetime)this).Notify(ObjectLifetimeEvent.Loaded);
             if (this.CanExecuteRules(Rule.AfterLoad))
             {

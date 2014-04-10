@@ -49,9 +49,19 @@ namespace Histria
         void AOPCreate();
 
         ///<summary>
-        /// After an instance is loaded
+        /// Start loading instance
         ///</summary>
-        void AOPLoad<T>(Action<T> loadAction) where T: class;
+        void AOPBeginLoad();
+
+        ///<summary>
+        /// Start loading instance
+        ///</summary>
+
+        void AOPEndLoad();
+        ///<summary>
+        /// End loading instance
+        ///</summary>
+
         #endregion
 
         #region Delete

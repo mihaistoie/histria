@@ -10,6 +10,7 @@ namespace Histria.Model
         {
             return item.CurrentType;
         }
+
         public Type[] Types
         {
             get
@@ -23,6 +24,11 @@ namespace Histria.Model
                     return this.Select(i => this.GetKeyForItem(i)).ToArray();
                 }
             }
+        }
+
+        public bool TryGetClassInfo(Type type, out ClassInfoItem classInfo)
+        {
+            return this.Dictionary.TryGetValue(type, out classInfo);
         }
     }
 }

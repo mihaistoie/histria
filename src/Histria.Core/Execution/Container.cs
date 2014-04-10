@@ -50,6 +50,37 @@ namespace Histria.Core.Execution
             return pstack.IsComingFrom(io, property);
         }
 
+        public bool IsInLoading { get; private set; }
+
+        private List<InterceptedObject> loadingInstances;
+
+        public void Load(Action loadAction)
+        {
+            if (this.IsInLoading)
+            {
+                throw new InvalidOperationException("Container is in loading state");
+            }
+            this.IsInLoading = true;
+            this.loadingInstances = new List<InterceptedObject>();
+            try
+            {
+                ExecuteLoading(loadAction);
+            }
+            finally
+            {
+                this.IsInLoading = false;
+                this.loadingInstances = null;
+            }
+        }
+
+        private void ExecuteLoading(Action loadAction)
+        {
+            loadAction();
+            foreach(InterceptedObject instance in this.loadingInstances)
+            {
+                (instance as IInterceptedObject).AOPEndLoad();
+            }
+        }
 
         private T CreateInstance<T>() where T : class
         {
@@ -62,24 +93,21 @@ namespace Histria.Core.Execution
             return instance;
         }
 
-        public T Load<T>(Action<T> loadAction) where T:class
-        {
-            T instance = this.CreateInstance<T>();
-            var interceptedObject = instance as InterceptedObject;
-            if (interceptedObject != null)
-            {
-                (interceptedObject as IInterceptedObject).AOPLoad(loadAction);
-            }
-            return instance;
-        }
-
         public T Create<T>() where T : class
         {
             T instance = CreateInstance<T>();
             var interceptedObject = instance as InterceptedObject;
             if (interceptedObject != null)
             {
-                (interceptedObject as IInterceptedObject).AOPCreate();
+                if (this.IsInLoading)
+                {
+                    this.loadingInstances.Add(interceptedObject);
+                    (interceptedObject as IInterceptedObject).AOPBeginLoad();
+                }
+                else
+                {
+                    (interceptedObject as IInterceptedObject).AOPCreate();
+                }
             }
             return instance;
         }

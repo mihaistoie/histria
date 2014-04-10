@@ -20,6 +20,7 @@ namespace Histria.Model.Helpers
         // cfg = {"nameSpaces": ["Model.CRM","Model.Library"]}  //list namespaces (segments of namespaces)  to scan
         static public void LoadModel(JsonObject cfg, LoadTypes lt)
         {
+            LoadAllAssemblies();
             Assembly[] used = AppDomain.CurrentDomain.GetAssemblies();
             List<Assembly> list = new List<Assembly>();
             foreach (Assembly a in used)
@@ -86,6 +87,32 @@ namespace Histria.Model.Helpers
 
         }
 
+        private static void LoadAllAssemblies()
+        {
+            Assembly[] used = AppDomain.CurrentDomain.GetAssemblies();
+            foreach (Assembly a in used)
+            {
+                var refAssemblyNames = a.GetReferencedAssemblies();
+                foreach (var refAN in refAssemblyNames)
+                {
+                    LoadAssembly(refAN);
+                }
+            }
+        }
+
+        private static void LoadAssembly(AssemblyName an)
+        {
+                if (!isSystem(an.FullName))
+                {
+                    Assembly a = Assembly.Load(an);
+                    var refAssemblyNames = a.GetReferencedAssemblies();
+                    foreach(var refAN in refAssemblyNames)
+                    {
+                        LoadAssembly(refAN);
+                    }
+                }
+        }
+
         #region Implementation details
 
         private static bool isSystem(string name)
@@ -102,21 +129,29 @@ namespace Histria.Model.Helpers
             }
             foreach (string ns in modelNameSpaces)
             {
-                string fns = "." + ns + ".";
-                int ii = nameSpace.IndexOf(fns);
-                if (ii > 0)
+                if (nameSpace.IndexOf(ns) >= 0)
                 {
-                    return nameSpace.Substring(0, ii) + "." + ns;
-                }
-                fns = "." + ns;
-                if (nameSpace.EndsWith(fns))
-                {
-                    return nameSpace.Substring(0, nameSpace.Length - fns.Length) + "." + ns;
-                }
-                fns = ns + ".";
-                if (nameSpace.StartsWith(fns))
-                {
-                    return ns;
+                    string fns = "." + ns + ".";
+                    int ii = nameSpace.IndexOf(fns);
+                    if (ii > 0)
+                    {
+                        return nameSpace.Substring(0, ii) + "." + ns;
+                    }
+                    fns = "." + ns;
+                    if (nameSpace.EndsWith(fns))
+                    {
+                        return nameSpace.Substring(0, nameSpace.Length - fns.Length) + "." + ns;
+                    }
+                    fns = ns + ".";
+                    if (nameSpace.StartsWith(fns))
+                    {
+                        return ns;
+                    }
+                    fns = ns;
+                    if (nameSpace == fns)
+                    {
+                        return ns;
+                    }
                 }
             }
             return "";

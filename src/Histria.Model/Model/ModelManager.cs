@@ -54,7 +54,7 @@ namespace Histria.Model
                 ClassInfoItem ci;
                 NoModelAttribute nm = iType.GetCustomAttributes(typeof(NoModelAttribute), false).FirstOrDefault() as NoModelAttribute;
                 if (nm != null) continue;
-                
+
                 if (iType.IsEnum)
                 {
                     //load enums 
@@ -95,7 +95,7 @@ namespace Histria.Model
             Logger.Info(Logger.MODEL, L.T("Model loading ... done"), interval.TotalMilliseconds);
 
         }
-        
+
         private void AfterLoad()
         {
             foreach (ClassInfoItem cc in viewsandclasses)
@@ -112,7 +112,7 @@ namespace Histria.Model
                 cc.Loaded(this);
             }
         }
-        
+
         #endregion
 
         #region Properties
@@ -137,14 +137,9 @@ namespace Histria.Model
         ///</summary>
         internal ClassInfoItem ClassByType(Type ct)
         {
-            try
-            {
-                return viewsandclasses[ct];
-            }
-            catch
-            {
-                return null;
-            }
+            ClassInfoItem result;
+            viewsandclasses.TryGetClassInfo(ct, out result);
+            return result;
         }
         ///<summary>
         /// Class by value
