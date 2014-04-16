@@ -35,7 +35,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Histria.Sys.Tests", "test\H
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{BEEA3AEC-C9BE-4022-BFC4-A61B02345DD9}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Histria.Core.Tests.Changes", "Histria.Core.Tests.Changes\Histria.Core.Tests.Changes.csproj", "{9663AA97-827E-4312-A7EC-ADB8975AEE74}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Histria.Core.Tests.Changes", "test\Histria.Core.Tests.Changes\Histria.Core.Tests.Changes.csproj", "{9663AA97-827E-4312-A7EC-ADB8975AEE74}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "SPO", "SPO", "{DA4333EC-5963-496D-81FF-E2200A837E68}"
 EndProject
