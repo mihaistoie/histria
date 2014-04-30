@@ -13,37 +13,81 @@ namespace Histria.Model
     {
         public static Association AssociationFactory(PropInfoItem propInfo, Type declaredType)
         {
-            Type generic = declaredType.GetGenericArguments()[0];
-            Type hasOne = typeof(HasOne<>);
-            Type cc = hasOne.MakeGenericType(generic);
-            if (declaredType == cc)
+            Type genericArgument = declaredType.GetGenericArguments()[0];
+            Type genericTypeDefinition = declaredType.GetGenericTypeDefinition();
+
+            Type implementationGenericTypeDefinition;
+            if (genericTypeDefinition == typeof(HasOne<>))
             {
-                if (propInfo.Role.IsList)
-                {
-                    return (Association)Activator.CreateInstance(typeof(HasOneComposition<>).MakeGenericType(generic));
-                }
-                else if (propInfo.Role.Type == Relation.Aggregation)
-                {
-                    return (Association)Activator.CreateInstance(typeof(HasOneAggregation<>).MakeGenericType(generic));
-                }
-                return (Association)Activator.CreateInstance(declaredType);
+                implementationGenericTypeDefinition = GetHasOneImplementation(propInfo);
+            }
+            else if (genericTypeDefinition == typeof(HasMany<>))
+            {
+                implementationGenericTypeDefinition = GetHasManyImplementation(propInfo);
+            }
+            else
+            {
+                implementationGenericTypeDefinition = null;
             }
 
-            Type hasMany = typeof(HasMany<>);
-            cc = hasMany.MakeGenericType(generic);
-            if (declaredType == cc)
-            {
-                if (propInfo.Role.IsParent)
-                {
-                    return (Association)Activator.CreateInstance(typeof(HasManyComposition<>).MakeGenericType(generic));
-                }
-                else if (propInfo.Role.Type == Relation.Aggregation)
-                {
-                    return (Association)Activator.CreateInstance(typeof(HasManyAggregation<>).MakeGenericType(generic));
-                }
-            }
-            return (Association)Activator.CreateInstance(declaredType);
+            Association result = CreateAssociationInstance(declaredType, genericArgument, implementationGenericTypeDefinition);
+            return result;
+        }
 
+        private static Association CreateAssociationInstance(Type declaredType, Type genericArgument, Type implementationGenericTypeDefinition)
+        {
+            Type implementationType;
+            if (implementationGenericTypeDefinition == null)
+            {
+                implementationType = declaredType;
+            }
+            else
+            {
+                implementationType = implementationGenericTypeDefinition.MakeGenericType(genericArgument);
+            }
+
+            Association result = (Association)Activator.CreateInstance(implementationType);
+            return result;
+        }
+
+        private static Type GetHasManyImplementation(PropInfoItem propInfo)
+        {
+            Type implementationGenericTypeDefinition;
+            if (propInfo.Role.IsParent)
+            {
+                implementationGenericTypeDefinition = typeof(HasManyComposition<>);
+            }
+            else if (propInfo.Role.Type == Relation.Aggregation)
+            {
+                implementationGenericTypeDefinition = typeof(HasManyAggregation<>);
+            }
+            else if (propInfo.Role.Type == Relation.List)
+            {
+                implementationGenericTypeDefinition = typeof(HasManyList<>);
+            }
+            else
+            {
+                implementationGenericTypeDefinition = null;
+            }
+            return implementationGenericTypeDefinition;
+        }
+
+        private static Type GetHasOneImplementation(PropInfoItem propInfo)
+        {
+            Type implementationGenericTypeDefinition;
+            if (propInfo.Role.IsList)
+            {
+                implementationGenericTypeDefinition = typeof(HasOneComposition<>);
+            }
+            else if (propInfo.Role.Type == Relation.Aggregation)
+            {
+                implementationGenericTypeDefinition = typeof(HasOneAggregation<>);
+            }
+            else
+            {
+                implementationGenericTypeDefinition = null;
+            }
+            return implementationGenericTypeDefinition;
         }
 
         struct WalkResult
@@ -64,7 +108,7 @@ namespace Histria.Model
             res.CanFindPath = false;
             res.Path = outpath;
             res.VariablePath = "";
-            res.UpdateVariablePath =  false;
+            res.UpdateVariablePath = false;
 
             if (segment == "*")
             {
@@ -128,7 +172,7 @@ namespace Histria.Model
                     // composition ref
                     if (isLastSegment)
                     {
-                        
+
                         res.StopWalk = true;
                         res.CanFindPath = isLastSegment;
                         res.Path = string.Format("{0}.{1}", value.ObjectPath(), segment);

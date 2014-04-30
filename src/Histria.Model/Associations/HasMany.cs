@@ -67,7 +67,7 @@ namespace Histria.Model
         #region Add/Remove
         public bool Has(T item)
         {
-            return values.IndexOf(item) >= 0;
+            return values.Contains(item);
         }
 
         protected virtual void Remove(T item, int index)

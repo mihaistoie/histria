@@ -10,6 +10,6 @@ namespace Histria
     ///</summary>   
     public enum Relation
     {
-        Association, Composition, Embedded, Aggregation
+        Association, Composition, Embedded, Aggregation, List
     };
 }

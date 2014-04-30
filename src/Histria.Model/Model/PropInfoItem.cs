@@ -165,6 +165,7 @@ namespace Histria.Model
                 {
                     throw new ModelException(String.Format(L.T("Association attribute is missing.({0}.{1})"), Name, ClassInfo.Name), ClassInfo.Name);
                 }
+                
                 RoleInfoItem role = null;
 
                 if (roleListType.IsAssignableFrom(PropInfo.PropertyType))
@@ -190,9 +191,7 @@ namespace Histria.Model
                         {
                             throw new ModelException(String.Format(L.T("Invalid association type.({0}.{1}. Excepted composition or aggregation.)"), Name, ClassInfo.Name), ClassInfo.Name);
                         }
-
                     }
-
                 }
             }
         }

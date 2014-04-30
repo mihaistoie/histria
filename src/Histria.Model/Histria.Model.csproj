@@ -45,6 +45,7 @@
     <Compile Include="Associations\HasMany.cs" />
     <Compile Include="Associations\HasManyAggregation.cs" />
     <Compile Include="Associations\HasManyComposition.cs" />
+    <Compile Include="Associations\HasManyList.cs" />
     <Compile Include="Associations\HasOne.cs" />
     <Compile Include="Associations\HasOneAgregation.cs" />
     <Compile Include="Associations\HasOneComposition.cs" />
