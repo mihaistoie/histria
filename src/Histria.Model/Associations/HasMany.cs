@@ -70,14 +70,9 @@ namespace Histria.Model
             return values.Contains(item);
         }
 
-        protected virtual void Remove(T item, int index)
+        protected virtual void InternalRemoveValue(T item)
         {
-            values.RemoveAt(index);
-
-        }
-        protected void InternalRemoveValue(T item, int index)
-        {
-            values.RemoveAt(index);
+            values.Remove(item);
         }
 
         protected virtual void AddOrInsert(T item, int index)
@@ -85,7 +80,7 @@ namespace Histria.Model
             InternalAddValue(item, index);
         }
 
-        protected virtual void InternalAddValue(T item, int index)
+        protected void InternalAddValue(T item, int index)
         {
             if (index >= 0)
                 values.Insert(index, item);
@@ -98,19 +93,15 @@ namespace Histria.Model
             AddOrInsert(item, -1);
         }
 
-        public void Remove(T item)
+        public virtual void Remove(T item)
         {
-            int index = values.IndexOf(item);
-            if (index >= 0)
-            {
-                Remove(item, index);
-            }
+            InternalRemoveValue(item);
         }
 
         public void RemoveAt(int index)
         {
             T item = values[index];
-            Remove(item, index);
+            Remove(item);
         }
 
         #endregion

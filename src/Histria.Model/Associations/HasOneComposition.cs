@@ -15,13 +15,13 @@ namespace Histria.Model
 
 
         #region Interface IRoleParent
-        bool IRoleParent.RemoveChildAt(IInterceptedObject child, int index)
+        bool IRoleParent.RemoveChild(IInterceptedObject child)
         {
             if (child == null)
             {
                 child = _value;
-                if (child == null) return true;
             }
+            if (child == null) return true;
 
             PropInfoItem inv = PropInfo.Role.InvRole.RoleProp;
             IRoleChild rc = inv.PropInfo.GetValue(child, null) as IRoleChild;
@@ -35,7 +35,7 @@ namespace Histria.Model
        
         bool IRoleParent.RemoveAllChildren()
         {
-            return (this as IRoleParent).RemoveChildAt(null, -1);
+            return (this as IRoleParent).RemoveChild(null);
 
         }
         #endregion

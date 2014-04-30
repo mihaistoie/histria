@@ -63,7 +63,7 @@ namespace Histria.Model
             }
             else if (propInfo.Role.Type == Relation.List)
             {
-                implementationGenericTypeDefinition = typeof(HasManyList<>);
+                implementationGenericTypeDefinition = typeof(HasManyComposition<>);
             }
             else
             {

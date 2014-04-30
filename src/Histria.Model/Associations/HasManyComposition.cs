@@ -7,19 +7,22 @@ namespace Histria.Model
 {
     internal class HasManyComposition<T> : HasMany<T>, IRoleParent where T : IInterceptedObject
     {
+        protected bool HasInvRole { get { return PropInfo.Role.InvRole != null; } }
 
         #region Interface IRoleParent
-        bool IRoleParent.RemoveChildAt(IInterceptedObject child, int index)
+        bool IRoleParent.RemoveChild(IInterceptedObject child)
         {
-            PropInfoItem inv = PropInfo.Role.InvRole.RoleProp;
-            IRoleChild rc = inv.PropInfo.GetValue(child, null) as IRoleChild;
-            if (!rc.SetParent(null, false))
+            if (this.HasInvRole)
             {
-                return false;
+                PropInfoItem inv = PropInfo.Role.InvRole.RoleProp;
+                IRoleChild rc = inv.PropInfo.GetValue(child, null) as IRoleChild;
+                if (!rc.SetParent(null, false))
+                {
+                    return false;
+                }
             }
             T val = (T)child;
-            if (index < 0) index = values.IndexOf(val);
-            InternalRemoveValue(val, index);
+            InternalRemoveValue(val);
             return true;
         }
         bool IRoleParent.RemoveAllChildren()
@@ -28,7 +31,7 @@ namespace Histria.Model
             IRoleParent rp = this as IRoleParent;
             for (int index = values.Count - 1; index >= 0; index--)
             {
-                if (!rp.RemoveChildAt(values[index], index))
+                if (!rp.RemoveChild(values[index]))
                     res = false;
             }
             return res;
@@ -41,23 +44,28 @@ namespace Histria.Model
         {
 
             IRoleChild rc = null;
-            PropInfoItem inv = PropInfo.Role.InvRole.RoleProp;
+            PropInfoItem inv = this.HasInvRole ? PropInfo.Role.InvRole.RoleProp : null;
             IInterceptedObject child = item as IInterceptedObject;
             if (!Instance.AOPBeforeChangeChild(PropInfo.Name, child, RoleOperation.Add))
             {
                 return;
             }
-            rc = inv.PropInfo.GetValue(item, null) as IRoleChild;
-            if (!rc.SetParent(Instance, true))
+
+            if (inv != null)
             {
-                return;
+                rc = inv.PropInfo.GetValue(item, null) as IRoleChild;
+                if (!rc.SetParent(Instance, true))
+                {
+                    return;
+                }
             }
+            
             InternalAddValue(item, index);
             (Instance as IObjectLifetime).Notify(ObjectLifetimeEvent.AssociationsChanged, PropInfo.Name, this);
             Instance.AOPAfterChangeChild(PropInfo.Name, child, RoleOperation.Add);
         }
 
-        protected override void Remove(T item, int index)
+        public override void Remove(T item)
         {
 
             IInterceptedObject child = item as IInterceptedObject;
@@ -67,10 +75,9 @@ namespace Histria.Model
                 return;
             }
             item.AOPDelete(false);
-            (this as IRoleParent).RemoveChildAt(item, index);
+            (this as IRoleParent).RemoveChild(item);
             (Instance as IObjectLifetime).Notify(ObjectLifetimeEvent.AssociationsChanged, PropInfo.Name, this);
             Instance.AOPAfterChangeChild(PropInfo.Name, child, RoleOperation.Remove);
-
         }
         #endregion
     }

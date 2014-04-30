@@ -10,7 +10,7 @@ namespace Histria
         ///<summary>
         /// Remove a  child without notifications (no notifications and no rules)
         ///</summary>
-        bool RemoveChildAt(IInterceptedObject child, int index);
+        bool RemoveChild(IInterceptedObject child);
        
         ///<summary>
         /// Remove all children without notifications (no notifications and no rules)
