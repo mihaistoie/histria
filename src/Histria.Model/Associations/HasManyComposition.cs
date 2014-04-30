@@ -42,7 +42,10 @@ namespace Histria.Model
 
         protected override void AddOrInsert(T item, int index = -1)
         {
-
+            if (this.Has(item))
+            {
+                return;
+            }
             IRoleChild rc = null;
             PropInfoItem inv = this.HasInvRole ? PropInfo.Role.InvRole.RoleProp : null;
             IInterceptedObject child = item as IInterceptedObject;

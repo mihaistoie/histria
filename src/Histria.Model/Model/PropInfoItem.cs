@@ -370,7 +370,7 @@ namespace Histria.Model
                 // Check role && Load role dependencies
 
                 RoleInfoItem role = Role;
-                if (role.IsList && string.IsNullOrEmpty(role.InvRoleName))
+                if (role.Type != Relation.List && role.IsList && string.IsNullOrEmpty(role.InvRoleName))
                 {
                     throw new ModelException(String.Format(L.T("Invalid role definition {0}.{1}. Missing 'Inv' attribute."), ci.Name, PropInfo.Name), ci.Name);
                 }
@@ -537,17 +537,17 @@ namespace Histria.Model
         ///<summary>
         /// Execute rules by type
         ///</summary>   
-        public void ExecuteRules(Rule kind, object target, RoleOperation operation)
+        public void ExecuteRules(Rule kind, object target, RoleOperation operation, object[] arguments = null)
         {
-            RuleHelper.ExecuteRules(rules, kind, target, operation);
+            RuleHelper.ExecuteRules(rules, kind, target, operation, arguments);
         }
 
         ///<summary>
         /// Execute state rules by type
         ///</summary>   
-        public void ExecuteStateRules(Rule kind, object target, RoleOperation operation)
+        public void ExecuteStateRules(Rule kind, object target, RoleOperation operation, object[] arguments = null)
         {
-            RuleHelper.ExecuteRules(statesRules, kind, target, operation);
+            RuleHelper.ExecuteRules(statesRules, kind, target, operation, arguments);
         }
 
         public void ExecuteCheckValueRules(object target, ref object value)

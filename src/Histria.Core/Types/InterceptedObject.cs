@@ -298,9 +298,10 @@ namespace Histria.Core
             {
                 PropInfoItem pi = ClassInfo.PropertyByName(propertyName);
                 // Validate
+                object[] arguments = new object[] { child };
                 if (CanExecuteRules(Rule.Validation))
                 {
-                    Frozen(() => { pi.ExecuteRules(Rule.Validation, this, operation); });
+                    Frozen(() => { pi.ExecuteRules(Rule.Validation, this, operation, arguments); });
                 }
                 // Propagate
                 if (CanExecuteRules(Rule.Propagation))
@@ -308,8 +309,8 @@ namespace Histria.Core
                     this.Container.PropertyChangedStack.Push(this, propertyName);
                     try
                     {
-                        Frozen(() => { pi.ExecuteStateRules(Rule.Propagation, this, operation); });
-                        pi.ExecuteRules(Rule.Propagation, this, operation);
+                        Frozen(() => { pi.ExecuteStateRules(Rule.Propagation, this, operation, arguments); });
+                        pi.ExecuteRules(Rule.Propagation, this, operation, arguments);
                     }
                     finally
                     {

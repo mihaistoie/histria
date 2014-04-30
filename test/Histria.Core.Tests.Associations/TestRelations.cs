@@ -459,5 +459,42 @@ namespace Histria.Core.Tests.Associations
 
         }
 
+        [TestMethod]
+        public void AssociationListTest()
+        {
+            Container container = new Container(TestContainerSetup.GetSimpleContainerSetup(model));
+            ElementList list = container.Create<ElementList>();
+            Element[] elements = new Element[3];
+            for (int i = 0; i < elements.Length; i++)
+			{
+			    elements[i] = container.Create<Element>();
+                elements[i].Name = i.ToString();
+			}
+
+            list.Elements.Add(elements[0]);
+            Assert.AreEqual(1, list.Count);
+            Assert.AreEqual(1, list.Elements.Count);
+            Assert.AreEqual<Element>(elements[0], list.Elements[0]);
+            Assert.AreEqual("0", list.LastItemChanged);
+            
+            list.LastItemChanged = null;
+            list.Elements.Add(elements[0]);
+            Assert.AreEqual(1, list.Count);
+            Assert.AreEqual(1, list.Elements.Count);
+            Assert.AreEqual<Element>(elements[0], list.Elements[0]);
+            Assert.AreEqual(null, list.LastItemChanged);
+
+            list.Elements.Add(elements[1]);
+            Assert.AreEqual(2, list.Count);
+            Assert.AreEqual(2, list.Elements.Count);
+            Assert.AreEqual<Element>(elements[1], list.Elements[1]);
+            Assert.AreEqual("1", list.LastItemChanged);
+
+            list.Elements.Remove(elements[0]);
+            Assert.AreEqual(1, list.Count);
+            Assert.AreEqual(1, list.Elements.Count);
+            Assert.AreEqual<Element>(elements[0], list.Elements[0]);
+            Assert.AreEqual("0", list.LastItemChanged);
+        }
     }
 }

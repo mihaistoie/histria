@@ -13,6 +13,11 @@ namespace Histria.Model
         {
             return item.PropInfo;
         }
+
+        public bool TryGetValue(PropertyInfo key, out PropInfoItem value)
+        {
+            return this.Dictionary.TryGetValue(key, out value);
+        }
     }
 
 }

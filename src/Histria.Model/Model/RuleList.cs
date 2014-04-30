@@ -18,7 +18,7 @@ namespace Histria.Model
                 {
                     try
                     {
-                        object[] arguments = null; 
+                        object[] arguments = null;
                         if (ri.Method.IsStatic)
                         {
                             arguments = new object[] { target, value };
@@ -42,7 +42,7 @@ namespace Histria.Model
             }
         }
 
-        public void Execute(object target, RoleOperation operation)
+        public void Execute(object target, RoleOperation operation, object[] arguments)
         {
             foreach (RuleItem ri in this)
             {
@@ -50,16 +50,32 @@ namespace Histria.Model
                 {
                     try
                     {
+                        int methodArgumentsCount = ri.Method.GetParameters().Length;
+
+                        object[] allArgs = new object[methodArgumentsCount];
+                        int idx;
+                        object instance;
+
                         if (ri.Method.IsStatic)
                         {
-                            ri.Method.Invoke(null, new object[] { target });
+                            allArgs[0] = target;
+                            idx = 1;
+                            instance = null;
                         }
                         else
                         {
-                            ri.Method.Invoke(target, null);
+                            idx = 0;
+                            instance = target;
                         }
 
-
+                        if (arguments != null && arguments.Length > 0)
+                        {
+                            for (int i = 0; i < arguments.Length && idx < allArgs.Length; i++)
+                            {
+                                allArgs[idx + i] = arguments[i];
+                            }
+                        }
+                        ri.Method.Invoke(instance, allArgs);
                     }
                     catch (TargetInvocationException ex)
                     {

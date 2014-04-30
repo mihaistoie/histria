@@ -25,12 +25,12 @@ namespace Histria.Model
         ///<summary>
         /// Execute rules by type
         ///</summary>   
-        internal static void ExecuteRules(Dictionary<Rule, RuleList> rules, Rule kind, object target, RoleOperation operation)
+        internal static void ExecuteRules(Dictionary<Rule, RuleList> rules, Rule kind, object target, RoleOperation operation, object[] arguments)
         {
             RuleList rl = null;
             if (rules.TryGetValue(kind, out rl))
             {
-                rl.Execute(target, operation);
+                rl.Execute(target, operation, arguments);
             }
 
         }

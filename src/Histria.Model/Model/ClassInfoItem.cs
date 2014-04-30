@@ -117,7 +117,7 @@ namespace Histria.Model
         ///</summary>  
         public void ExecuteRules(Rule kind, Object target)
         {
-            RuleHelper.ExecuteRules(rules, kind, target, RoleOperation.None);
+            RuleHelper.ExecuteRules(rules, kind, target, RoleOperation.None, null);
         }
 
         ///<summary>
@@ -125,7 +125,7 @@ namespace Histria.Model
         ///</summary>  
         public void ExecuteStateRules(Rule kind, Object target)
         {
-            RuleHelper.ExecuteRules(stateRules, kind, target, RoleOperation.None);
+            RuleHelper.ExecuteRules(stateRules, kind, target, RoleOperation.None, null);
         }
 
 
@@ -563,14 +563,13 @@ namespace Histria.Model
         }
         public PropInfoItem PropertyByName(string propName)
         {
-            try
-            {
-                return properties[propsMap[propName]];
-            }
-            catch (Exception)
+            PropertyInfo pi;
+            PropInfoItem result;
+            if(!propsMap.TryGetValue(propName, out pi) || !properties.TryGetValue(pi, out result))
             {
                 return null;
             }
+            return result;
         }
 
         #endregion

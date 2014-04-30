@@ -10,6 +10,7 @@
         public string ForeignKey;
         public AssociationAttribute(Relation type)
         {
+            this.Type = type;
         }
     }
 }
