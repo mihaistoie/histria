@@ -63,6 +63,9 @@ namespace Histria.Core.Tests.Associations
             uv.Age = 25;
             Assert.AreEqual(25, u.Age);
             Assert.AreEqual(25, uv.Age);
+
+            container.DereferenceView(uv);
+            Assert.IsTrue(uv.IsDisposing);
         }
     }
 }

@@ -222,6 +222,7 @@ namespace Histria.Model
             throw new Exception(L.T("Invalid segment: '{0}.{1}'. .", value.ClassInfo.Name, segment));
 
         }
+    
         public static string ExpandSearchPath(IInterceptedObject value, string path, out string variable, out bool canFind)
         {
             variable = null;
@@ -280,6 +281,7 @@ namespace Histria.Model
             throw new Exception(L.T("Invalid search path '{0}'. Empty segments.", path));
 
         }
+        
         public static string ObjectPath(IInterceptedObject value, ref bool canBeCached)
         {
             canBeCached = true;
@@ -453,9 +455,26 @@ namespace Histria.Model
                         }
 
                     }
-
                 }
             }
         }
+
+        #region Views
+
+        private List<Association> associationViews;
+
+        public List<Association> AssociationViews
+        {
+            get
+            {
+                if (associationViews == null)
+                {
+                    associationViews = new List<Association>();
+                }
+                return associationViews;
+            }
+        }
+
+        #endregion
     }
 }

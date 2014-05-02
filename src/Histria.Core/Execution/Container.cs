@@ -142,5 +142,18 @@ namespace Histria.Core.Execution
                 });
             return view;
         }
+
+        public void DereferenceView(ViewObject view)
+        {
+            InterceptedObject model = view.GetModel();
+            if (model == null)
+            {
+                return;
+            }
+            if (model.Views.RemoveRef(view) <= 0)
+            {
+                view.CleanObject();
+            }
+        }
     }
 }

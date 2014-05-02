@@ -16,6 +16,12 @@ namespace Histria.Model
 
         public bool TryGetValue(PropertyInfo key, out PropInfoItem value)
         {
+            if (this.Dictionary == null)
+            {
+                value = null;
+                return false;
+            }
+
             return this.Dictionary.TryGetValue(key, out value);
         }
     }

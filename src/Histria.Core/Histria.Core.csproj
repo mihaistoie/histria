@@ -58,11 +58,13 @@
     <Compile Include="Transactions\Instances.cs" />
     <Compile Include="Transactions\TranContext.cs" />
     <Compile Include="Types\ExecutionException.cs" />
+    <Compile Include="Types\ObjectRef.cs" />
     <Compile Include="Types\TranObject.cs" />
     <Compile Include="Types\ObjectStatus.cs" />
     <Compile Include="Types\InterceptedObject.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Types\ViewObject.cs" />
+    <Compile Include="Types\ObjectRefCollection.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Histria.AOP\Histria.AOP.csproj">

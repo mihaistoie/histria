@@ -28,6 +28,11 @@ namespace Histria.Model
 
         public bool TryGetClassInfo(Type type, out ClassInfoItem classInfo)
         {
+            if (this.Dictionary == null)
+            {
+                classInfo = null;
+                return false;
+            }
             return this.Dictionary.TryGetValue(type, out classInfo);
         }
     }

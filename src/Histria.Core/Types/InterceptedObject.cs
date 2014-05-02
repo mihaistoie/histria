@@ -32,6 +32,10 @@ namespace Histria.Core
             get { return (status & ObjectStatus.Created) == ObjectStatus.Created; }
         }
 
+        public bool IsDisposing
+        {
+            get { return (status & ObjectStatus.Disposing) == ObjectStatus.Disposing; }
+        }
         private IDictionary<string, PropertyState> propsState;
         public IDictionary<string, PropertyState> Properties
         {
@@ -285,7 +289,7 @@ namespace Histria.Core
             if (InterceptSet())
             {
                 (this as IObjectLifetime).Notify(ObjectLifetimeEvent.Changed, propertyName, oldValue, newValue);
-                foreach (ViewObject view in this.Views)
+                foreach (ViewObject view in this.Views.Instances)
                 {
                     view.fromModelToViewValueFlow = true;
                     try
@@ -462,20 +466,21 @@ namespace Histria.Core
         public void CleanObject()
         {
             status = ObjectStatus.Disposing;
+            //TODO clean views
         }
 
         #endregion
 
         #region Views
 
-        private List<ViewObject> views;
-        internal List<ViewObject> Views
+        private ObjectRefCollection<ViewObject> views;
+        internal ObjectRefCollection<ViewObject> Views
         {
             get
             {
                 if (this.views == null)
                 {
-                    this.views = new List<ViewObject>();
+                    this.views = new ObjectRefCollection<ViewObject>();
                 }
                 return this.views;
             }
@@ -498,7 +503,7 @@ namespace Histria.Core
             }
         }
 
-        private InterceptedObject GetModel()
+        internal InterceptedObject GetModel()
         {
             ViewInfoItem vi = this.ClassInfo as ViewInfoItem;
             if (vi == null)

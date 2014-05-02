@@ -20,7 +20,7 @@ namespace Histria.Core
             this.Model = model;
             this.InitAttributes();
             this.InitAssociations();
-            this.Model.Views.Add(this);
+            this.Model.Views.AddRef(this);
         }
 
         private void InitAssociations()
