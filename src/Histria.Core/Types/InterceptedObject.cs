@@ -2,6 +2,7 @@
 
 namespace Histria.Core
 {
+    using System.Linq;
     using Histria.Core.Execution;
     using Histria.Model;
     using Histria.Sys;
@@ -62,7 +63,8 @@ namespace Histria.Core
             {
                 throw new ExecutionException(L.T("You can't change the object in a state rule."));
             }
-            return (status & ObjectStatus.Active) == ObjectStatus.Active;
+            bool result = (status & ObjectStatus.Active) == ObjectStatus.Active;
+            return result;
         }
 
 
@@ -100,9 +102,25 @@ namespace Histria.Core
 
         }
 
+
+        void IObjectLifetime.Notify(ObjectLifetimeEvent objectLifetime, params object[] arguments)
+        {
+            if (CanNotifyChanges())
+            {
+                AOPNotify(objectLifetime, arguments);
+            }
+        }
+
+        protected virtual void AOPNotify(ObjectLifetimeEvent objectLifetime, object[] arguments)
+        {
+            //Nothing to do
+            //AOP
+        }
+
         #endregion
 
         #region Properties
+
         private Guid uuid = Guid.Empty;
         public virtual Guid Uuid
         {
@@ -113,11 +131,13 @@ namespace Histria.Core
             }
             set { uuid = value; }
         }
-        public void AllocId()
+
+        private void AllocId()
         {
             if (uuid == Guid.Empty)
                 uuid = Guid.NewGuid();
         }
+
         #endregion
 
         #region Model
@@ -130,7 +150,7 @@ namespace Histria.Core
                 {
                     Type tt = this.GetType();
                     ModelManager model = this.Container.ModelManager;
-                    ci = model.Classes[tt.BaseType];
+                    ci = model.ViewsAndClasses[tt.BaseType];
                 }
                 return ci;
             }
@@ -141,9 +161,9 @@ namespace Histria.Core
         }
         #endregion
 
-        public Container Container { get; set; }
-
         #region Initialization
+
+        public Container Container { get; internal set; }
 
         ///<summary>
         /// IInterceptedObject.AOPAfterCreate
@@ -207,7 +227,6 @@ namespace Histria.Core
 
         #region Interceptors
 
-
         ///<summary>
         /// IInterceptedObject.ObjectPath
         ///  ///</summary>
@@ -227,6 +246,8 @@ namespace Histria.Core
             return objectPath;
         }
 
+        private bool fromModelToViewValueFlow;
+
         ///<summary>
         /// IInterceptedObject.AOPBeforeSetProperty
         ///</summary>
@@ -237,6 +258,16 @@ namespace Histria.Core
                 PropInfoItem pi = ClassInfo.PropertyByName(propertyName);
                 if (pi.CanGetValueByReflection)
                     oldValue = pi.PropInfo.GetValue(this, null);
+
+                if (pi.ModelPropInfo != null && !fromModelToViewValueFlow)
+                {
+                    InterceptedObject model = this.GetModel();
+                    if (model != null)
+                    {
+                        model.SetPropertyValue(propertyName, value);
+                        return false;
+                    }
+                }
                 pi.SchemaValidation(ref value);
                 if (CanExecuteRules(Rule.Correction))
                     pi.ExecuteCheckValueRules(this, ref value);
@@ -254,6 +285,19 @@ namespace Histria.Core
             if (InterceptSet())
             {
                 (this as IObjectLifetime).Notify(ObjectLifetimeEvent.Changed, propertyName, oldValue, newValue);
+                foreach (ViewObject view in this.Views)
+                {
+                    view.fromModelToViewValueFlow = true;
+                    try
+                    {
+                        view.SetPropertyValue(propertyName, newValue);
+                    }
+                    finally
+                    {
+                        view.fromModelToViewValueFlow = false;
+                    }
+                }
+
                 PropInfoItem pi = ClassInfo.PropertyByName(propertyName);
                 // Validate
                 if (CanExecuteRules(Rule.Validation))
@@ -422,19 +466,54 @@ namespace Histria.Core
 
         #endregion
 
-        void IObjectLifetime.Notify(ObjectLifetimeEvent objectLifetime, params object[] arguments)
+        #region Views
+
+        private List<ViewObject> views;
+        internal List<ViewObject> Views
         {
-            if (CanNotifyChanges())
+            get
             {
-                AOPNotify(objectLifetime, arguments);
+                if (this.views == null)
+                {
+                    this.views = new List<ViewObject>();
+                }
+                return this.views;
             }
         }
 
-        protected virtual void AOPNotify(ObjectLifetimeEvent objectLifetime, object[] arguments)
+        internal void SetPropertyValue(string propertyName, object value)
         {
-            //Nothing to do
-            //AOP
+            PropInfoItem pi = this.ClassInfo.PropertyByName(propertyName);
+            if (pi.IsRole)
+            {
+                throw new InvalidOperationException(String.Format("Property {0} is a role", propertyName));
+            }
+            try
+            {
+                pi.PropInfo.SetValue(this, value, null);
+            }
+            catch (TargetInvocationException ex)
+            {
+                throw ex.InnerException;
+            }
         }
+
+        private InterceptedObject GetModel()
+        {
+            ViewInfoItem vi = this.ClassInfo as ViewInfoItem;
+            if (vi == null)
+            {
+                return null;
+            }
+            Type iViewObjectType = typeof(IViewModel<>).MakeGenericType(new Type[] { vi.ModelClass.TargetType });
+            if (this.GetType().GetInterfaces().Where(i => i == iViewObjectType).SingleOrDefault() != null)
+            {
+                return iViewObjectType.GetProperty("Model").GetValue(this, null) as InterceptedObject;
+            }
+            return null;
+        }
+        #endregion
+
     }
 
 }

@@ -61,6 +61,7 @@
     <Compile Include="TestRelations.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ViewsTest.cs" />
+    <Compile Include="ViewsTestModel.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\src\Histria.Core\Histria.Core.csproj">

@@ -1,62 +1,68 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+using Histria.Core.Execution;
+using Histria.Json;
+using Histria.Model;
+using Histria.Sys;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace Histria.Core.Tests.Associations
 {
-    using Histria.Model;
-    ///<summary>
-    /// Model (Entity) "User"
-    ///</summary>  
-    public class User : InterceptedObject
+    [TestClass]
+    public class ViewsTest
     {
-        [Display("First Name")]
-        public virtual string FirstName { get; set; }
-        [Display("Last Name")]
-        public virtual string LastName { get; set; }
-        [Display("Age")]
-        public virtual int Age { get; set; }
-        [Display("Email Address")]
-        public virtual int Email { get; set; }
-    }
-
-    ///<summary>
-    /// A View (Representation) of "User"
-    ///</summary>  
-    public class UserViewList : ViewObject<User>
-    {
-        ///<summary>
-        /// Properties exposed from User
-        ///</summary>  
-        public virtual string FirstName { get; set; }
-        public virtual string LastName { get; set; }
-
-        ///<summary>
-        /// Owns properties
-        ///</summary>  
-        public virtual string FullName { get; set; }
-
-        ///<summary>
-        /// Owns rules
-        ///</summary>  
-        [RulePropagation("FirstName")]
-        [RulePropagation("LastName")]
-        [Rule(Rule.AfterLoad)]
-        public void CalculateFullName()
+        private static ModelManager model;
+        [ClassInitialize]
+        public static void Setup(TestContext testContext)
         {
-            FullName = FirstName + " " + LastName.ToUpper();
+            string scfg = @"{""nameSpaces"": [""Associations""]}";
+            JsonObject cfg = (JsonObject)JsonValue.Parse(scfg);
+            model = ModelManager.LoadModel(cfg);
+            ModulePlugIn.Load("Histria.Proxy.Castle");
+            ModulePlugIn.Initialize(model);
         }
-    }
 
-    ///<summary>
-    /// A standalone view
-    ///</summary>  
-    public class UserReportSelctions : ViewObject
-    {
-        [Display("Start First Name")]
-        public virtual string StartFirstName { get; set; }
-        [Display("End First Name")]
-        public virtual string EndLastName { get; set; }
+        [TestMethod]
+        public void SimpleViewPropertiesTest()
+        {
+            Container container = new Container(TestContainerSetup.GetSimpleContainerSetup(model));
+            User u = null;
+            UserView uv = null;
+            container.Load(() =>
+                {
+                    u = container.Create<User>();
+                    u.FirstName = "Luis";
+                    u.LastName = "Martin";
+                    u.Age = 30;
+                    u.Email = "luis.martin@histria.org";
+
+                    uv = container.CreateView<UserView, User>(u);
+                });
+            Assert.AreEqual("Luis MARTIN", uv.FullName);
+
+
+            u.FirstName = "Mike";
+
+            Assert.AreEqual("Mike MARTIN", uv.FullName);
+
+            uv.FirstName = "Alice";
+            Assert.AreEqual("Alice", u.FirstName);
+            Assert.AreEqual("Alice", uv.FirstName);
+            Assert.AreEqual("Alice MARTIN", uv.FullName);
+
+            try
+            {
+                uv.FirstName = null;
+            }
+            catch (Exception ex)
+            {
+                Assert.IsInstanceOfType(ex, typeof(ApplicationException));
+            }
+            Assert.AreEqual(u.FirstName, "Alice");
+            Assert.AreEqual(uv.FirstName, u.FirstName);
+
+            uv.Age = 25;
+            Assert.AreEqual(25, u.Age);
+            Assert.AreEqual(25, uv.Age);
+        }
     }
 }

@@ -131,7 +131,10 @@ namespace Histria.Model
         ///</summary>
         public ClassCollection Views { get { return views; } }
 
-
+        ///<summary>
+        /// List of Views and Classes used by Application 
+        ///</summary>
+        public ClassCollection ViewsAndClasses { get { return viewsandclasses; } }
         ///<summary>
         /// Class by type
         ///</summary>
@@ -153,7 +156,7 @@ namespace Histria.Model
         {
             List<Type> interceptedTypes = new List<Type>(frameworkTypes);
             //TODO views?
-            interceptedTypes.AddRange(this.Classes.Types);
+            interceptedTypes.AddRange(this.ViewsAndClasses.Types);
             return interceptedTypes;
         }
         #endregion

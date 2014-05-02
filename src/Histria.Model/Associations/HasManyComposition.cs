@@ -25,6 +25,7 @@ namespace Histria.Model
             InternalRemoveValue(val);
             return true;
         }
+
         bool IRoleParent.RemoveAllChildren()
         {
             bool res = true;

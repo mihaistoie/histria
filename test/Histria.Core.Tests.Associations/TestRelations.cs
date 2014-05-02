@@ -493,7 +493,7 @@ namespace Histria.Core.Tests.Associations
             list.Elements.Remove(elements[0]);
             Assert.AreEqual(1, list.Count);
             Assert.AreEqual(1, list.Elements.Count);
-            Assert.AreEqual<Element>(elements[0], list.Elements[0]);
+            Assert.AreEqual<Element>(elements[1], list.Elements[0]);
             Assert.AreEqual("0", list.LastItemChanged);
         }
     }

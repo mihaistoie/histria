@@ -13,7 +13,6 @@ namespace Histria.Model
         ///</summary>   	
         internal override bool IsView { get { return true; } }
 
-
         protected override void InitializeView(ModelManager model)
         {
 
@@ -29,8 +28,8 @@ namespace Histria.Model
             }
 
         }
-        internal ClassInfoItem ModelClass { get; set; }
-
+        
+        public ClassInfoItem ModelClass { get; set; }
 
         public ViewInfoItem(Type cType)
             : base(cType, false)

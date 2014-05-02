@@ -50,36 +50,47 @@ namespace Histria.Core.Execution
             return pstack.IsComingFrom(io, property);
         }
 
-        public bool IsInLoading { get; private set; }
+        private int loadingCallCount = 0;
+        public bool IsInLoading { get{return loadingCallCount != 0;}}
 
         private List<InterceptedObject> loadingInstances;
 
         public void Load(Action loadAction)
         {
-            if (this.IsInLoading)
-            {
-                throw new InvalidOperationException("Container is in loading state");
-            }
-            this.IsInLoading = true;
-            this.loadingInstances = new List<InterceptedObject>();
+            this.StartLoading();
             try
             {
-                ExecuteLoading(loadAction);
+                loadAction();
             }
             finally
             {
-                this.IsInLoading = false;
-                this.loadingInstances = null;
+                this.EndLoading();
             }
         }
 
-        private void ExecuteLoading(Action loadAction)
+        private void EndLoading()
         {
-            loadAction();
-            foreach(InterceptedObject instance in this.loadingInstances)
+            if(this.loadingCallCount <= 0)
             {
-                (instance as IInterceptedObject).AOPEndLoad();
+                throw new InvalidOperationException("Loading count error");
             }
+            this.loadingCallCount--;
+            if (this.loadingCallCount == 0)
+            {
+                foreach (InterceptedObject instance in this.loadingInstances)
+                {
+                    (instance as IInterceptedObject).AOPEndLoad();
+                }
+            }
+        }
+
+        private void StartLoading()
+        {
+            if (this.loadingCallCount == 0)
+            {
+                this.loadingInstances = new List<InterceptedObject>();
+            }
+            this.loadingCallCount++;
         }
 
         private T CreateInstance<T>() where T : class
@@ -116,6 +127,20 @@ namespace Histria.Core.Execution
         {
             var m = createGenericMethodDefinition.MakeGenericMethod(type);
             return m.Invoke(this, null);
+        }
+
+        public V CreateView<V,T>(T model) 
+            where T: InterceptedObject
+            where V: ViewObject<T>
+        {
+
+            V view = null;
+            this.Load(() =>
+                {
+                    view = this.Create<V>();
+                    view.Init((T)model);
+                });
+            return view;
         }
     }
 }
