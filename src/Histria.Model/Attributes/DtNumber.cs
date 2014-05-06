@@ -11,16 +11,35 @@ namespace Histria.Model
     [System.AttributeUsage(System.AttributeTargets.Property, AllowMultiple = false)]
     public class DtNumberAttribute : TypeAttribute
     {
+        #region Implementation
+        internal override void InitFromTemplate(TypeAttribute template)
+        {
+            if (template is DtNumberAttribute)
+            {
+                DtNumberAttribute tt = (DtNumberAttribute)template;
+                Decimals = tt.Decimals;
+                MinValue = tt.MinValue;
+                MaxValue = tt.MaxValue;
+            }
+        }
+        #endregion
+
+        #region Properties
+
         public int Decimals { get; set; }
         public decimal? MinValue { get; set;  }
         public decimal? MaxValue { get; set; }
-        public string Template { get; set; }
 
+        #endregion
+
+        #region Constructor
         public DtNumberAttribute()
         {
             Decimals = -1;
         }
+        #endregion
 
+        #region Validation
         internal override object SchemaValidation(object value)
         {
             decimal dv = (decimal)value;
@@ -48,5 +67,6 @@ namespace Histria.Model
             }
             return true;
         }
+        #endregion
     }
 }

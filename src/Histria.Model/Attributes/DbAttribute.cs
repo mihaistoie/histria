@@ -6,7 +6,7 @@
     [System.AttributeUsage(System.AttributeTargets.Class, AllowMultiple = false)]
     public class DbAttribute : System.Attribute
     {
-        public string TableName = "";
+        public string TableName {get; set;}
         public DbAttribute()
         {
         }

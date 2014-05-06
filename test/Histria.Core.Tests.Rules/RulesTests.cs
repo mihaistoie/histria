@@ -17,6 +17,7 @@ namespace UnitTestModel
         [ClassInitialize]
         public static void Setup(TestContext testContext)
         {
+            TemplateManager.Register("Amount", new DtNumberAttribute() { Decimals = 2 });
             JsonObject cfg = (JsonObject)JsonValue.Parse(@"{""nameSpaces"": [""Customers""]}");
             model = ModelManager.LoadModel(cfg);
             ModulePlugIn.Load("Histria.Proxy.Castle");

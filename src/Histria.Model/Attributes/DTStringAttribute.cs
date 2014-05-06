@@ -13,23 +13,38 @@ namespace Histria.Model
     [System.AttributeUsage(System.AttributeTargets.Property, AllowMultiple = false)]
     public class DtStringAttribute : TypeAttribute
     {
-        private string template;
-        private Regex regexPattern = null;
-        private void SetTemplate(string templ)
+        #region Implementation 
+        private Regex _regexPattern = null;
+        internal override void InitFromTemplate(TypeAttribute template)
         {
-            template = templ;
+            if (template is DtStringAttribute)
+            {
+                DtStringAttribute tt = (DtStringAttribute)template;
+                MaxLength = tt.MaxLength;
+                MinLength = tt.MinLength;
+                Pattern = tt.Pattern;
+                Format = tt.Format;
+            }
         }
+        #endregion
+
+        #region Properties
         public int MaxLength { get; set; }
         public int MinLength { get; set; }
         public string Pattern { get; set; }
         public StringFormatType Format { get; set; }
-        public string Template { get { return template; } set { SetTemplate(value); } }
+        #endregion
+
+        #region Constructor
         public DtStringAttribute()
         {
             Format = StringFormatType.None;
             MaxLength = 0;
             MinLength = 0;
         }
+        #endregion 
+
+        #region Validation
         internal override bool TryValidate(object value, out string errors)
         {
             errors = null;
@@ -46,19 +61,19 @@ namespace Histria.Model
                 }
                 if (len < MinLength && MinLength > 0)
                 {
-                    
-                    errors =  L.T("Minimum {0} characters required.", MinLength);
+
+                    errors = L.T("Minimum {0} characters required.", MinLength);
                     return false;
                 }
 
             }
-            if (regexPattern != null || !string.IsNullOrEmpty(Pattern))
+            if (_regexPattern != null || !string.IsNullOrEmpty(Pattern))
             {
-                if (regexPattern == null)
+                if (_regexPattern == null)
                 {
-                    regexPattern = new Regex(Pattern);
+                    _regexPattern = new Regex(Pattern);
                 }
-                if (!regexPattern.IsMatch(val))
+                if (!_regexPattern.IsMatch(val))
                 {
                     errors = L.T("Invalid format.");
                     return false;
@@ -67,7 +82,8 @@ namespace Histria.Model
             }
             return true;
         }
-
+        #endregion
     }
 
 }
+

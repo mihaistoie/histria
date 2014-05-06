@@ -13,13 +13,13 @@ namespace Histria.Core.Tests.Rules.Customers
         public virtual DateTime OrderDate { get; set; }
 
         [Display("Net Amount (excluding VAT)")]
-        [DtNumber(Decimals = 2)]
+        [DtNumber(Template = "Amount")]
         public virtual Decimal NetAmount { get; set; }
         [Display("VAT")]
-        [DtNumber(Decimals = 2)]
+        [DtNumber(Template = "Amount")]
         public virtual Decimal VAT { get; set; }
         [Display("Gross Amount (including VAT)")]
-        [DtNumber(Decimals = 2)]
+        [DtNumber(Template = "Amount")]
         public virtual Decimal GrossAmount { get; set; }
 
         [Association(Relation.Composition, Inv = "Order")]
