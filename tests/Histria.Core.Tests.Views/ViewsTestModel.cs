@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace Histria.Core.Tests.Associations
+namespace Histria.Core.Tests.Views
 {
     using Histria.Model;
     ///<summary>

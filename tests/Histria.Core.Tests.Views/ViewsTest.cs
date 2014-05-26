@@ -5,7 +5,7 @@ using Histria.Model;
 using Histria.Sys;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
-namespace Histria.Core.Tests.Associations
+namespace Histria.Core.Tests.Views
 {
     [TestClass]
     public class ViewsTest
@@ -14,7 +14,7 @@ namespace Histria.Core.Tests.Associations
         [ClassInitialize]
         public static void Setup(TestContext testContext)
         {
-            string scfg = @"{""nameSpaces"": [""Associations""]}";
+            string scfg = @"{""nameSpaces"": [""Views""]}";
             JsonObject cfg = (JsonObject)JsonValue.Parse(scfg);
             model = ModelManager.LoadModel(cfg);
             ModulePlugIn.Load("Histria.Proxy.Castle");

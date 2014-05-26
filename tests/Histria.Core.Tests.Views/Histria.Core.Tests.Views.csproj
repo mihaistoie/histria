@@ -1,14 +1,14 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+<Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{6C3852C5-D372-47EE-9FF0-B126308CDD72}</ProjectGuid>
+    <ProjectGuid>{C3F920BC-C136-4DBC-90B7-582928DE85ED}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Histria.Core.Tests.Associations</RootNamespace>
-    <AssemblyName>Histria.Core.Tests.Associations</AssemblyName>
-    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <RootNamespace>Histria.Core.Tests.Views</RootNamespace>
+    <AssemblyName>Histria.Core.Tests.Views</AssemblyName>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <ProjectTypeGuids>{3AC096D0-A1C2-E12C-1390-A8335801FDAB};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
@@ -16,7 +16,6 @@
     <ReferencePath>$(ProgramFiles)\Common Files\microsoft shared\VSTT\$(VisualStudioVersion)\UITestExtensionPackages</ReferencePath>
     <IsCodedUITest>False</IsCodedUITest>
     <TestProjectType>UnitTest</TestProjectType>
-    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -51,14 +50,7 @@
     </Otherwise>
   </Choose>
   <ItemGroup>
-    <Compile Include="AssociationList.cs" />
-    <Compile Include="AssociationsByCode.cs" />
-    <Compile Include="AssociationsByUids.cs" />
-    <Compile Include="CompositionsByUids.cs" />
-    <Compile Include="HumanBody.cs" />
-    <Compile Include="Nose.cs" />
-    <Compile Include="OneToManyCompositions.cs" />
-    <Compile Include="TestRelations.cs" />
+    <Compile Include="ViewsTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ViewsTestModel.cs" />
   </ItemGroup>
