@@ -291,7 +291,7 @@ namespace Histria.Db.SqlServer.Model
             sql.AppendLine(" SELECT");
             sql.AppendLine(" FKC.TABLE_NAME as RTABLE, PKC.TABLE_NAME as UTABLE, FKC.COLUMN_NAME as RCOLUMN,");
             sql.AppendLine(" PKC.COLUMN_NAME as UCOLUMN,");
-            sql.AppendLine(" FKC.CONSTRAINT_NAME");
+            sql.AppendLine(" FKC.CONSTRAINT_NAME, R.DELETE_RULE, R.UPDATE_RULE");
             sql.AppendLine(" from INFORMATION_SCHEMA.KEY_COLUMN_USAGE FKC");
             sql.AppendLine(" inner join INFORMATION_SCHEMA.REFERENTIAL_CONSTRAINTS R");
             sql.AppendLine(" ON R.CONSTRAINT_CATALOG = FKC.CONSTRAINT_CATALOG");
@@ -337,6 +337,8 @@ namespace Histria.Db.SqlServer.Model
                 int idxRC = rdr.GetOrdinal("RCOLUMN");
                 int idxUC = rdr.GetOrdinal("UCOLUMN");
                 int idxCN = rdr.GetOrdinal("CONSTRAINT_NAME");
+                int idxDR = rdr.GetOrdinal("DELETE_RULE");
+                int idxUR = rdr.GetOrdinal("UPDATE_RULE");
 
 
                 while (rdr.Read())
@@ -360,7 +362,7 @@ namespace Histria.Db.SqlServer.Model
                         var fkName = rdr.GetString(idxCN);
                         if (fk == null || fk.FKName != fkName)
                         {
-                            fk = new DbFk() { FKName = fkName, TableName = rdr.GetString(idxRT), UniqueTableName = rdr.GetString(idxUT) };
+                            fk = new DbFk() { FKName = fkName, TableName = rdr.GetString(idxRT), UniqueTableName = rdr.GetString(idxUT), OnDeleteCascade = (rdr.GetString(idxDR) == "CASCADE") };
                             rtable.ForeignKeys.Add(fk);
                         }
                         var fki = new DbFkItem() { ColumnName = rdr.GetString(idxRC), UniqueColumnName = rdr.GetString(idxUC) };

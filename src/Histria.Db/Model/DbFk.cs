@@ -7,13 +7,13 @@ namespace Histria.Db.Model
 {
     public class DbFk
     {
-        private string indexFields;
+        private string _indexFields;
         protected DbFkColumns columns = new DbFkColumns();
         public string IndexFields
         {
             get
             {
-                if (string.IsNullOrEmpty(indexFields))
+                if (string.IsNullOrEmpty(_indexFields))
                 {
                     var inb = new StringBuilder();
                     for (var i = 0; i < columns.Count; ++i)
@@ -21,12 +21,13 @@ namespace Histria.Db.Model
                         var cc = columns[i];
                         inb.Append(cc.ColumnName.ToLower()).Append(",");
                     }
-                    indexFields = inb.ToString();
+                    _indexFields = inb.ToString();
                 }
-                return indexFields;
+                return _indexFields;
             }
         }
         public string FKName { get; set; }
+        public bool OnDeleteCascade { get; set; }
         public string TableName { get; set; }
         public string UniqueTableName { get; set; }
         public DbFkColumns Columns { get { return columns; } }
