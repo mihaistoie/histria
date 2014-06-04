@@ -61,8 +61,9 @@ namespace Histria.Db.SqlServer.Model
         }
         private string SQLDefault()
         {
-            return string.Empty;
+            return string.IsNullOrEmpty(DefaultValue) ? string.Empty : string.Format(" default {0}", DefaultValue);
         }
+
         private string FieldDef()
         {
             var notNull = Nullable ? string.Empty : " not null";

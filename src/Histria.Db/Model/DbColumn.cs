@@ -15,6 +15,7 @@ namespace Histria.Db.Model
         public int Precision { get; set; }
         public int Scale { get; set; }
         public  bool Nullable { get; set; }
+        public string DefaultValue { get; set; }
         public DbColumn()
         {
             Size = 0;
