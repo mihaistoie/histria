@@ -9,7 +9,7 @@ namespace Histria.Db.Model
     {
         #region Implementation
         protected string indexName;
-        private string indexFields;
+        private string _indexFields;
         protected DbIndexColumns columns = new DbIndexColumns();
         #endregion
 
@@ -72,7 +72,7 @@ namespace Histria.Db.Model
         {
             get
             {
-                if (string.IsNullOrEmpty(indexFields))
+                if (string.IsNullOrEmpty(_indexFields))
                 {
                     var inb = new StringBuilder();
                     for (var i = 0; i < columns.Count; ++i)
@@ -80,9 +80,9 @@ namespace Histria.Db.Model
                         var cc = columns[i];
                         inb.Append(cc.ColumnName.ToLower()).Append(",");
                     }
-                    indexFields = inb.ToString();
+                    _indexFields = inb.ToString();
                 }
-                return indexFields;
+                return _indexFields;
             }
         }
 

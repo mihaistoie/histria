@@ -16,7 +16,7 @@ namespace Histria.Db.Model
         ///<summary>
         /// Get Table By Name (case insensitive)
         ///</summary>
-        public DbTable TableByName(string tableName) 
+        public DbTable TableByName(string tableName)
         {
             try
             {
@@ -121,7 +121,7 @@ namespace Histria.Db.Model
             {
                 for (var i = 0; i < tables.Count; i++)
                 {
-                    var table = tables[i]; 
+                    var table = tables[i];
                     table.CreateColumnsSQL(structure);
                     table.CreatePKSQL(structure);
                 }
@@ -143,7 +143,7 @@ namespace Histria.Db.Model
                     table.CreateFKSQL(structure);
                 }
             }
-           
+
             return structure;
         }
 

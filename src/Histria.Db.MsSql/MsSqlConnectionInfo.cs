@@ -10,11 +10,11 @@ namespace Histria.Db.SqlServer
 {
     public class MsSqlConnectionInfo : DbConnectionInfo
     {
-        public static string  MasterDatabase = "master";
+        public static string MasterDatabase = "master";
         public string Schema = "dbo";
         public override DbProtocol Protocol() { return DbProtocol.mssql; }
 
- 
+
         public override void Load(string url)
         {
             DbUri uri = new DbUri(url);

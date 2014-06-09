@@ -12,8 +12,9 @@ namespace Histria.Db.Model
         {
             return item.IndexName.ToLower();
         }
-        public DbIndexes(): 
-            base(StringComparer.OrdinalIgnoreCase) {
+        public DbIndexes() :
+            base(StringComparer.OrdinalIgnoreCase)
+        {
         }
     }
 }

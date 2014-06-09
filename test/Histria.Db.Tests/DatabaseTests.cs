@@ -460,7 +460,7 @@ namespace Histria.Db.Tests
                     cmd.Execute();
 
                     cmd.Clear();
-                    cmd.Sql = "Alter table question_bank Add foreign key (question_exam_key, question_exam_id) references exams(exam_key, exam_id)";
+                    cmd.Sql = "Alter table question_bank Add foreign key (question_exam_key, question_exam_id) references exams(exam_key, exam_id) ON DELETE CASCADE";
                     cmd.Execute();
 
                     cmd.Clear();
@@ -479,6 +479,8 @@ namespace Histria.Db.Tests
                 {
                     var fk = table.ForeignKeys[0];
                     Assert.AreEqual(2, fk.Columns.Count, "Number of fields in fkFK");
+                    Assert.AreEqual(true, fk.OnDeleteCascade, "On delete cascade");
+                    
                     if (fk.Columns.Count > 1)
                     {
                         var fkc = fk.Columns[0];
@@ -508,6 +510,7 @@ namespace Histria.Db.Tests
                 {
                     var fk = table.ForeignKeys[0];
                     Assert.AreEqual(2, fk.Columns.Count, "Number of fields in fkFK");
+                    Assert.AreEqual(true, fk.OnDeleteCascade, "On delete cascade");
                     if (fk.Columns.Count > 1)
                     {
                         var fkc = fk.Columns[0];
@@ -580,7 +583,7 @@ namespace Histria.Db.Tests
                     cmd.Execute();
 
                     cmd.Clear();
-                    cmd.Sql = "Alter table question_bank Add foreign key (question_examName) references exams(examName)";
+                    cmd.Sql = "Alter table question_bank Add foreign key (question_examName) references exams(examName)  ON DELETE CASCADE";
                     cmd.Execute();
 
                 }
@@ -595,6 +598,7 @@ namespace Histria.Db.Tests
                 {
                     var fk = table.ForeignKeys[0];
                     Assert.AreEqual(1, fk.Columns.Count, "Number of fields in fkFK");
+                    Assert.AreEqual(true, fk.OnDeleteCascade, "Delete Cascade");
                     if (fk.Columns.Count > 0)
                     {
                         var fkc = fk.Columns[0];
@@ -623,6 +627,7 @@ namespace Histria.Db.Tests
                 {
                     var fk = table.ForeignKeys[0];
                     Assert.AreEqual(1, fk.Columns.Count, "Number of fields in fkFK");
+                    Assert.AreEqual(true, fk.OnDeleteCascade, "Delete Cascade");
                     if (fk.Columns.Count > 0)
                     {
                         var fkc = fk.Columns[0];
