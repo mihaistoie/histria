@@ -30,6 +30,9 @@ namespace Histria.Model
         {
             item.DtType = DataTypes.String;
             item.TypeValidation = item.PropInfo.GetCustomAttributes(typeof(DtStringAttribute), false).FirstOrDefault() as DtStringAttribute;
+            if (item.TypeValidation == null)
+                item.TypeValidation = new DtStringAttribute() { Template = TemplateManager.DefaultString};
+
         }
         private static void BoolAction(PropInfoItem item)
         {

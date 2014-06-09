@@ -12,6 +12,8 @@ namespace Histria.Model
     ///</summary>  
     public sealed class TemplateManager
     {
+
+        public static string  DefaultString = "string";
         #region Private Members
         private readonly Dictionary<string, TypeAttribute> _templates;
         #endregion
@@ -37,6 +39,7 @@ namespace Histria.Model
                             if (_instance == null)
                             {
                                 TemplateManager tm = new TemplateManager();
+                                tm._templates[DefaultString] = new DtStringAttribute() { MaxLength = 128 };
                                 _instance = tm;
                             }
                         }

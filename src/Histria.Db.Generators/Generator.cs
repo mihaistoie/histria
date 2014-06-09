@@ -6,51 +6,131 @@ using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using Histria.Db.Model;
+using Histria.Sys;
 
 namespace Histria.Db.Generators
 {
     public class Generator
     {
-        #region proprietes
+        #region Internals
+        private StringBuilder _sb;
+        private ClassTranslator _ct = new ClassTranslator();
+        private int _indentCount = 0;
 
-        public String RepertoireDest { get; set; }
-        public DbSchema Schema { get; set; }
-        public String NameSpaceDest { get; set; }
-        private StringBuilder m_sb;
-        private string m_Indent = String.Empty;
-        private string FileName { get; set; }
-
-        private string m_AppDir;
-        public string AppDir
+        private static string _indent = "\t";
+        private void AppendLine(string value)
         {
-            get
-            {
-                if (String.IsNullOrEmpty(m_AppDir))
-                {
-                    var a = Assembly.GetExecutingAssembly();
-                    Uri u = new Uri(a.CodeBase);
-                    string exePath = u.LocalPath;
-                    string root = Path.GetDirectoryName(exePath);
-                    m_AppDir = Path.Combine(root);
-                }
-                return m_AppDir;
-            }
+            string indent = string.Concat(Enumerable.Repeat(_indent, _indentCount));
+            _sb.AppendLine(string.Format("{0}{1}", indent, value));
         }
+
+        private void AppendEmtyLine()
+        {
+            _sb.AppendLine();
+        }
+
         #endregion
 
-        #region constructeurs
-
-        public Generator(DbSchema schema, string repertoireDest, string nameSpace)
+        #region Class generation
+        private void GenerateUsing()
         {
-            Schema = schema;
-            RepertoireDest = repertoireDest;
-            NameSpaceDest = nameSpace;
+            _indentCount = 0;
+            AppendLine("using System;");
+            AppendLine("using Histria.Core;");
+            AppendLine("using Histria.Model;");
+            AppendLine("using Histria.Sys;");
+
+        }
+
+
+        private void Column2Class(DbTable table, DbColumn col)
+        {
+            string title = _ct.ColumnName2PropertyTitle(table.TableName, col.ColumnName);
+            string description = _ct.ColumnName2PropertyDescription(table.TableName, col.ColumnName);
+            if (!string.IsNullOrEmpty(title))
+            {
+                AppendLine(string.Format(@"[Display(""{0}"", Description = ""{1}"")]", title, description));
+            }
+            string a = _ct.DefaultAttribute(col);
+            if (!string.IsNullOrEmpty(a))
+            {
+                AppendLine(a);
+            }
+            a = _ct.DataTypeAttribute(col);
+            if (!string.IsNullOrEmpty(a))
+            {
+                AppendLine(a);
+            }
+            AppendLine(string.Format(@"[Persistent(PersistentName = ""{0}"")]", col.ColumnName));
+            AppendLine(string.Format("public virtual {0} {1} {{ get; set; }}", _ct.ColumnType(col), _ct.ColumnName2PropertyName(table.TableName, col.ColumnName)));
+            AppendEmtyLine();
+ 
+        }
+
+        private void BuildClass(DbTable table)
+        {
+            string className = _ct.TableName2ClassName(table.TableName);
+            _sb = new StringBuilder();
+            //Using 
+            GenerateUsing();
+            AppendEmtyLine();
+
+            // Namespace
+            AppendLine(string.Format("namespace {0}", this.OutputNamespace));
+            AppendLine("{");
+            _indentCount++;
+            // Class
+            AppendLine(string.Format(@"[Db(""{0}"")]", table.TableName));
+            string pk = _ct.PrimaryKeyAttribute(table);
+            if (!string.IsNullOrEmpty(pk))
+            {
+                AppendLine(pk);
+            }
+            
+            AppendLine(string.Format("public partial class {0} : InterceptedObject ", className));
+            AppendLine("{");
+
+            _indentCount++;
+            foreach (DbColumn col in table.Columns)
+            {
+                Column2Class(table, col);
+            }
+            _indentCount--;
+            AppendLine("}");
+            _indentCount--;
+            AppendLine("}");
+        }
+
+        #endregion
+
+        #region Properties
+        public string OutputFolder { get; set; }
+        public string OutputNamespace { get; set; }
+        public string DatabaseUrl { get; set; }
+        #endregion
+
+        #region Constructor
+        public Generator(string databaseUrl, string repertoireDest, string nameSpace)
+        {
+            OutputFolder = repertoireDest;
+            OutputNamespace = nameSpace;
+            DatabaseUrl = databaseUrl;
         }
         #endregion
 
         public void Generate()
         {
-            foreach (var table in Schema.Tables)
+
+            if (string.IsNullOrEmpty(DatabaseUrl))
+            {
+                throw new Exception(L.T("Database is empty"));
+            }
+
+            DbSchema ss = DbDrivers.Instance.Schema(DbServices.Url2Protocol(DatabaseUrl));
+
+            //Load database structure 
+            ss.Load(DatabaseUrl);
+            foreach (var table in ss.Tables)
             {
                 GenerateClass(table);
             }
@@ -59,99 +139,17 @@ namespace Histria.Db.Generators
         #region méthodes de génération classes
         private void GenerateClass(DbTable table)
         {
-            Initial();
-            WriteClass(table);
+            BuildClass(table);
+            string className = _ct.TableName2ClassName(table.TableName);
+            DirectoryInfo dd = new DirectoryInfo(this.OutputFolder);
+            if (!dd.Exists)
+                dd.Create();
 
-            string strGen = m_sb.ToString();
-            if (strGen != null)
+            using (TextWriter writer = new StreamWriter(Path.Combine(this.OutputFolder, className + ".cs")))
             {
-                SaveFile(strGen, table.TableName);
+                writer.Write(_sb.ToString());
             }
-        }
 
-        private void WriteClass(DbTable table)
-        {
-            // Using
-            AppendLine("using System;");
-            AppendLine("using Histria.Core;");
-            AppendLine("using Histria.Model;");
-            AppendLine("using Histria.Sys;");
-            AppendLine("using Histria.Json;");
-            // Namespace
-            AppendLine();
-            AppendIndent();
-            AppendLine("namespace {0}", this.NameSpaceDest);
-            AppendLine("{");
-            AppendIndent();
-            // Class
-            Indent();
-            AppendLine("public partial class {0} : InterceptedObject ", table.TableName);
-            AppendLine("{");
-            Indent();
-            foreach (var col in table.Columns)
-            {
-                //[Display("First Name", Description = "First Name of Customer")]
-                AppendLine(@"[Display(""{0}"", Description = ""{1}"")]", col.ColumnName, col.ColumnName);
-                AppendLine("public virtual {0} {1} {{ get; set; }}", col.Type, col.ColumnName);
-            }
-            UnIndent();
-            AppendLine("}");
-            UnIndent();
-            AppendLine("}");
-        }
-
-        private void Initial()
-        {
-            m_sb = new StringBuilder();
-        }
-
-        private void SaveFile(string generated, string nameFile)
-        {
-            FileName = Path.Combine(this.RepertoireDest, nameFile + ".cs");
-            if (File.Exists(FileName))
-            {
-                File.Delete(FileName);
-            }
-            using (TextWriter writer = new StreamWriter(FileName))
-            {
-                writer.Write(generated);
-            }
-        }
-
-        private string m_IndentIncrement = new string(' ', 4);
-        private void Indent()
-        {
-            m_Indent = m_Indent + m_IndentIncrement;
-        }
-
-        private void AppendLine()
-        {
-            AppendLine(String.Empty);
-        }
-
-        private void AppendLine(string line)
-        {
-            AppendIndent();
-            m_sb.AppendLine(line);
-        }
-
-        private void AppendLine(string fmt, params object[] args)
-        {
-            string line = String.Format(fmt, args);
-            AppendLine(line);
-        }
-
-        private void AppendIndent()
-        {
-            m_sb.Append(m_Indent);
-        }
-
-        private void UnIndent()
-        {
-            if (m_Indent.Length > 0)
-            {
-                m_Indent = m_Indent.Substring(0, m_Indent.Length - m_IndentIncrement.Length);
-            }
         }
 
         #endregion
