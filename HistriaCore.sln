@@ -49,7 +49,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{D4B6A876
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SPO.Tests", "SPO\SPO.Tests\SPO.Tests.csproj", "{D05A65C8-EA4D-4A08-B373-B2F247974612}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Histria.Core.Tests.Views", "tests\Histria.Core.Tests.Views\Histria.Core.Tests.Views.csproj", "{C3F920BC-C136-4DBC-90B7-582928DE85ED}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Histria.Core.Tests.Views", "test\Histria.Core.Tests.Views\Histria.Core.Tests.Views.csproj", "{C3F920BC-C136-4DBC-90B7-582928DE85ED}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
