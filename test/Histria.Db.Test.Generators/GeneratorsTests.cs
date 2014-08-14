@@ -23,7 +23,7 @@ namespace Histria.Db.Test.Generators
         public void GeneratorsClasses()
         {
             string dburl = "mssql://(local)\\SQLEXPRESS/gefsragat?schema=dbo";
-            DbSchema ss = DbDrivers.Instance.Schema(DbServices.Url2Protocol(dburl));
+            DbSchema ss = DbDrivers.Schema(DbServices.Url2Protocol(dburl));
             if (ss.DatabaseExists(dburl))
             {
                 ss.DropDatabase(dburl);
@@ -31,7 +31,7 @@ namespace Histria.Db.Test.Generators
             ss.CreateDatabase(dburl);
 
 
-            using (DbSession session = DbDrivers.Instance.Session(dburl))
+            using (DbSession session = DbDrivers.Session(dburl))
             {
                 using (DbCmd cmd = session.Command(""))
                 {

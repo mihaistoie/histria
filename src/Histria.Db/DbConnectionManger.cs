@@ -11,18 +11,18 @@ namespace Histria.Db
 {
 
     ///<summary>
-    /// Database connection manager (singleton)
+    /// Database _connection manager (singleton)
     /// Contains the list of registered databases 
     ///</summary>
     public class DbConnectionManger
     {
 
-        private Dictionary<string, JsonObject> databases = new Dictionary<string, JsonObject>();
-        private ReaderWriterLockSlim rwlook = new ReaderWriterLockSlim(LockRecursionPolicy.NoRecursion);
+        private Dictionary<string, JsonObject> _databases = new Dictionary<string, JsonObject>();
+        private ReaderWriterLockSlim _rwlook = new ReaderWriterLockSlim(LockRecursionPolicy.NoRecursion);
 
         #region Singleton thread-safe pattern
-        private static volatile DbConnectionManger instance = null;
-        private static object syncRoot = new Object();
+        private static volatile DbConnectionManger _instance = null;
+        private static object _syncRoot = new Object();
 
 
         private DbConnectionManger()
@@ -45,28 +45,28 @@ namespace Histria.Db
         {
             get
             {
-                if (instance == null)
+                if (_instance == null)
                 {
 
-                    lock (syncRoot)
+                    lock (_syncRoot)
                     {
-                        if (instance == null)
+                        if (_instance == null)
                         {
                             DbConnectionManger conn = new DbConnectionManger();
-                            instance = conn;
+                            _instance = conn;
                         }
                     }
                 }
 
-                return instance;
+                return _instance;
 
             }
         }
         public static void CleanUp()
         {
-            lock (syncRoot)
+            lock (_syncRoot)
             {
-                instance = null;
+                _instance = null;
             }
 
         }
@@ -77,47 +77,47 @@ namespace Histria.Db
 
         public void RegisterDatabase(string url, JsonObject settings)
         {
-            rwlook.EnterWriteLock();
+            _rwlook.EnterWriteLock();
             try
             {
-                if (databases.ContainsKey(url))
+                if (_databases.ContainsKey(url))
                     return;
-                databases.Add(url, settings);
+                _databases.Add(url, settings);
             }
             finally
             {
-                rwlook.ExitWriteLock();
+                _rwlook.ExitWriteLock();
             }
         }
 
         public void UnRegisterDatabase(string url)
         {
-            rwlook.EnterWriteLock();
+            _rwlook.EnterWriteLock();
             try
             {
-                if (databases.ContainsKey(url))
-                    databases.Remove(url);
+                if (_databases.ContainsKey(url))
+                    _databases.Remove(url);
 
             }
             finally
             {
-                rwlook.ExitWriteLock();
+                _rwlook.ExitWriteLock();
             }
         }
 
         public JsonObject ConnectionSettings(string url)
         {
-            rwlook.EnterReadLock();
+            _rwlook.EnterReadLock();
             try
             {
-                if (databases.ContainsKey(url))
-                    return databases[url];
+                if (_databases.ContainsKey(url))
+                    return _databases[url];
                 return null;
 
             }
             finally
             {
-                rwlook.ExitReadLock();
+                _rwlook.ExitReadLock();
             }
         }
 

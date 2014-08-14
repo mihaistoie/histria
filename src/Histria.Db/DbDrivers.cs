@@ -11,34 +11,34 @@ namespace Histria.Db
     {
         class DbDriver
         {
-            private Type connection = null;
-            private Type session = null;
-            private Type structure = null;
+            private Type _connection = null;
+            private Type _session = null;
+            private Type _structure = null;
             public DbTranslator Translator = null;
             private DbDriver()
             {
             }
             public DbConnectionInfo Connection()
             {
-                return (DbConnectionInfo)Activator.CreateInstance(connection);
+                return (DbConnectionInfo)Activator.CreateInstance(_connection);
             }
 
             public DbSession Session()
             {
-                return (DbSession)Activator.CreateInstance(session);
+                return (DbSession)Activator.CreateInstance(_session);
             }
 
             public DbSchema Structure()
             {
-                return (DbSchema)Activator.CreateInstance(structure);
+                return (DbSchema)Activator.CreateInstance(_structure);
             }
 
             public DbDriver(Type ConnectionType, Type DbSessionType, Type TranslatorType, Type DbStructure)
             {
                 Translator = (DbTranslator)Activator.CreateInstance(TranslatorType);
-                connection = ConnectionType;
-                session = DbSessionType;
-                structure = DbStructure;
+                _connection = ConnectionType;
+                _session = DbSessionType;
+                _structure = DbStructure;
             }
         }
 
@@ -47,8 +47,8 @@ namespace Histria.Db
         /// Contains the list of supported databases (Sqlsetver/Oracle/MySql ) 
         ///</summary>
         #region Singleton thread-safe pattern
-        private static volatile DbDrivers instance = null;
-        private static object syncRoot = new Object();
+        private static volatile DbDrivers _instance = null;
+        private static object _syncRoot = new Object();
         private Dictionary<DbProtocol, DbDriver> drivers = new Dictionary<DbProtocol, DbDriver>();
 
         private DbDrivers()
@@ -57,36 +57,36 @@ namespace Histria.Db
             drivers.Add(DbProtocol.nodb, new DbDriver(typeof(DbConnectionInfo), typeof(DbSession), typeof(DbTranslator), typeof(DbSchema)));
         }
    
-        public void RegisterDriver(DbProtocol protocol, Type connectionType, Type sessionType, Type translatorType, Type SchemaType)
+        public static void RegisterDriver(DbProtocol protocol, Type connectionType, Type sessionType, Type translatorType, Type SchemaType)
         {
-            drivers.Add(protocol, new DbDriver(connectionType, sessionType, translatorType, SchemaType));
+            Drivers.drivers.Add(protocol, new DbDriver(connectionType, sessionType, translatorType, SchemaType));
         }
 
-        public static DbDrivers Instance
+        private static DbDrivers Drivers
         {
             get
             {
-                if (instance == null)
+                if (_instance == null)
                 {
 
-                    lock (syncRoot)
+                    lock (_syncRoot)
                     {
-                        if (instance == null)
+                        if (_instance == null)
                         {
                             DbDrivers conn = new DbDrivers();
-                            instance = conn;
+                            _instance = conn;
                         }
                     }
                 }
-                return instance;
+                return _instance;
             }
         }
         #endregion
 
         #region Driver services
-        public DbTranslator Translator(DbProtocol protocol)
+        public static  DbTranslator Translator(DbProtocol protocol)
         {
-            DbDriver driver = drivers[protocol];
+            DbDriver driver = Drivers.drivers[protocol];
             if (driver != null)
             {
                 return driver.Translator;
@@ -94,10 +94,10 @@ namespace Histria.Db
             return null;
         }
 
-        public DbConnectionInfo Connection(string url)
+        public static DbConnectionInfo Connection(string url)
         {
             DbProtocol protocol = DbServices.Url2Protocol(url);
-            DbDriver driver = drivers[protocol];
+            DbDriver driver = Drivers.drivers[protocol];
             if (driver != null)
             {
                 DbConnectionInfo ci = driver.Connection();
@@ -107,10 +107,10 @@ namespace Histria.Db
             return null;
         }
 
-        public DbSession Session(string url)
+        public static DbSession Session(string url)
         {
             DbProtocol protocol = DbServices.Url2Protocol(url);
-            DbDriver driver = drivers[protocol];
+            DbDriver driver = Drivers.drivers[protocol];
             if (driver != null)
             {
                 DbSession session = driver.Session();
@@ -122,9 +122,9 @@ namespace Histria.Db
 
         }
 
-        public DbSchema Schema(DbProtocol protocol)
+        public static DbSchema Schema(DbProtocol protocol)
         {
-            DbDriver driver = drivers[protocol];
+            DbDriver driver = Drivers.drivers[protocol];
             if (driver != null)
             {
                 return driver.Structure();

@@ -381,7 +381,7 @@ namespace Histria.Db.SqlServer.Model
         public override void CreateDatabase(string url)
         {
             DbUri uri = new DbUri(url);
-            using (MsSqlSession session = (MsSqlSession)DbDrivers.Instance.Session(MasterUrl(url)))
+            using (MsSqlSession session = (MsSqlSession)DbDrivers.Session(MasterUrl(url)))
             {
                 if (session != null)
                 {
@@ -392,7 +392,7 @@ namespace Histria.Db.SqlServer.Model
         public override bool DatabaseExists(string url)
         {
             DbUri uri = new DbUri(url);
-            using (MsSqlSession session = (MsSqlSession)DbDrivers.Instance.Session(MasterUrl(url)))
+            using (MsSqlSession session = (MsSqlSession)DbDrivers.Session(MasterUrl(url)))
                 if (session != null)
                 {
                     return session.DatabaseExists(uri.DatabaseName);
@@ -402,7 +402,7 @@ namespace Histria.Db.SqlServer.Model
         public override void DropDatabase(string url)
         {
             DbUri uri = new DbUri(url);
-            using (MsSqlSession session = (MsSqlSession)DbDrivers.Instance.Session(MasterUrl(url)))
+            using (MsSqlSession session = (MsSqlSession)DbDrivers.Session(MasterUrl(url)))
             {
                 if (session != null)
                 {
@@ -427,9 +427,9 @@ namespace Histria.Db.SqlServer.Model
         {
             tables.Clear();
             DbUri uri = new DbUri(url);
-            MsSqlTranslator translator = (MsSqlTranslator)DbDrivers.Instance.Translator(DbProtocol.mssql);
+            MsSqlTranslator translator = (MsSqlTranslator)DbDrivers.Translator(DbProtocol.mssql);
 
-            using (MsSqlSession session = (MsSqlSession)DbDrivers.Instance.Session(url))
+            using (MsSqlSession session = (MsSqlSession)DbDrivers.Session(url))
             {
                 DataTable Tables = session.Connection.GetSchema("Tables");
                 using (DbCmd cmd = session.Command(""))

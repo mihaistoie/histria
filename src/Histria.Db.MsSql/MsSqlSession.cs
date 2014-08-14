@@ -24,7 +24,7 @@ namespace Histria.Db.SqlServer
         protected override void setUrl(string value)
         {
             url = value;
-            connection = (MsSqlConnectionInfo)DbDrivers.Instance.Connection(url);
+            connection = (MsSqlConnectionInfo)DbDrivers.Connection(url);
             this.db = new SqlConnection(connection.ConnectionString());
         }
 
@@ -77,7 +77,7 @@ namespace Histria.Db.SqlServer
 
         public bool DatabaseExists(string dbname)
         {
-            MsSqlTranslator translator = (MsSqlTranslator)DbDrivers.Instance.Translator(DbProtocol.mssql);
+            MsSqlTranslator translator = (MsSqlTranslator)DbDrivers.Translator(DbProtocol.mssql);
 
             using (DbCmd cmd = Command(translator.SQL_DatabaseExists()))
             {
@@ -91,7 +91,7 @@ namespace Histria.Db.SqlServer
         public void DropDatabase(string dbname)
         {
             SqlConnection.ClearAllPools();
-            MsSqlTranslator translator = (MsSqlTranslator)DbDrivers.Instance.Translator(DbProtocol.mssql);
+            MsSqlTranslator translator = (MsSqlTranslator)DbDrivers.Translator(DbProtocol.mssql);
             using (DbCmd cmd = Command(string.Format(translator.SQL_DropDatabase(), dbname)))
             {
                 cmd.Execute();
@@ -100,7 +100,7 @@ namespace Histria.Db.SqlServer
 
         public void CreateDatabase(string dbname)
         {
-            MsSqlTranslator translator = (MsSqlTranslator)DbDrivers.Instance.Translator(DbProtocol.mssql);
+            MsSqlTranslator translator = (MsSqlTranslator)DbDrivers.Translator(DbProtocol.mssql);
             using (DbCmd cmd = Command(string.Format(translator.SQL_CreateDatabase(), dbname)))
             {
                 cmd.Execute();

@@ -26,7 +26,7 @@ namespace Histria.Db.Tests
         public void MsSqlUrlParser()   
         {
             string dburl = string.Format("mssql://{0}/master?schema=dbo", sqlServerInstance);
-            DbConnectionInfo ci = DbDrivers.Instance.Connection(dburl);
+            DbConnectionInfo ci = DbDrivers.Connection(dburl);
             Assert.AreEqual(sqlServerInstance, ci.ServerAddress, "Parse Server part");
             Assert.AreEqual("master", ci.DatabaseName, "Parse Database part");
             MsSqlConnectionInfo ms = (MsSqlConnectionInfo)ci;
@@ -37,7 +37,7 @@ namespace Histria.Db.Tests
         public void MsSqlConnection()
         {
             string dburl = string.Format("mssql://{0}/master?schema=dbo", sqlServerInstance);
-            using (DbSession ss = DbDrivers.Instance.Session(dburl))
+            using (DbSession ss = DbDrivers.Session(dburl))
             {
                 DbCmd cmd = ss.Command("select 1");
                 int res = (int)cmd.ExecuteScalar();
@@ -49,7 +49,7 @@ namespace Histria.Db.Tests
         public void MsSqlDatabases()
         {
             string dburl = string.Format("mssql://{0}/xyzgrls?schema=dbo", sqlServerInstance);
-            DbSchema ss = DbDrivers.Instance.Schema(DbServices.Url2Protocol(dburl));
+            DbSchema ss = DbDrivers.Schema(DbServices.Url2Protocol(dburl));
             if (ss.DatabaseExists(dburl))
             {
                 ss.DropDatabase(dburl);
@@ -63,7 +63,7 @@ namespace Histria.Db.Tests
         {
             string dburl = string.Format("mssql://{0}/msergrls?schema=dbo", sqlServerInstance);
             DbSchema ss = CreateDB(dburl);
-            using (DbSession session = DbDrivers.Instance.Session(dburl))
+            using (DbSession session = DbDrivers.Session(dburl))
             {
                 using (DbCmd cmd = session.Command(""))
                 {
@@ -73,7 +73,7 @@ namespace Histria.Db.Tests
                     cmd.Execute();
                 }
             }
-            //Test load structure
+            //Test load _structure
             ss.Load(dburl);
             Assert.AreEqual(true, ss.ContainsTable("a1"), "Table exists");
             Assert.AreEqual(true, ss.ContainsTable("B1"), "Table exists");
@@ -115,7 +115,7 @@ namespace Histria.Db.Tests
         {
             string dburl = string.Format("mssql://{0}/slergrls?schema=dbo", sqlServerInstance);
             DbSchema ss = CreateDB(dburl);
-            using (DbSession session = DbDrivers.Instance.Session(dburl))
+            using (DbSession session = DbDrivers.Session(dburl))
             {
                 using (DbCmd cmd = session.Command(""))
                 {
@@ -206,7 +206,7 @@ namespace Histria.Db.Tests
             
             string dburl = string.Format("mssql://{0}/slfsergrls?schema=dbo", sqlServerInstance);
             DbSchema ss = CreateDB(dburl);
-            using (DbSession session = DbDrivers.Instance.Session(dburl))
+            using (DbSession session = DbDrivers.Session(dburl))
             {
                 using (DbCmd cmd = session.Command(""))
                 {
@@ -254,7 +254,7 @@ namespace Histria.Db.Tests
 
         private DbSchema CreateDB(string dburl)
         {
-            DbSchema ss = DbDrivers.Instance.Schema(DbServices.Url2Protocol(dburl));
+            DbSchema ss = DbDrivers.Schema(DbServices.Url2Protocol(dburl));
             if (ss.DatabaseExists(dburl))
             {
                 ss.DropDatabase(dburl);
@@ -277,7 +277,7 @@ namespace Histria.Db.Tests
         {
             string dburl = string.Format("mssql://{0}/slfsrgroyls?schema=dbo", sqlServerInstance);
             DbSchema ss = CreateDB(dburl);
-            using (DbSession session = DbDrivers.Instance.Session(dburl))
+            using (DbSession session = DbDrivers.Session(dburl))
             {
                 using (DbCmd cmd = session.Command(""))
                 {
@@ -418,7 +418,7 @@ namespace Histria.Db.Tests
         {
             string dburl = string.Format("mssql://{0}/zqmsrgrls?schema=dbo", sqlServerInstance);
             DbSchema ss = CreateDB(dburl);
-            using (DbSession session = DbDrivers.Instance.Session(dburl))
+            using (DbSession session = DbDrivers.Session(dburl))
             {
                 using (DbCmd cmd = session.Command(""))
                 {
@@ -549,7 +549,7 @@ namespace Histria.Db.Tests
         {
             string dburl = string.Format("mssql://{0}/zqmserwgrls?schema=dbo", sqlServerInstance);
             DbSchema ss = CreateDB(dburl);
-            using (DbSession session = DbDrivers.Instance.Session(dburl))
+            using (DbSession session = DbDrivers.Session(dburl))
             {
                 using (DbCmd cmd = session.Command(""))
                 {
@@ -658,7 +658,7 @@ namespace Histria.Db.Tests
         public void LoadComplexDB()
         {
             string dburl = string.Format("mssql://{0}/SFR?schema=dbo", sqlServerInstance);
-            DbSchema ss = DbDrivers.Instance.Schema(DbServices.Url2Protocol(dburl));
+            DbSchema ss = DbDrivers.Schema(DbServices.Url2Protocol(dburl));
             if (ss.DatabaseExists(dburl))
             {
                 ss.Load(dburl);

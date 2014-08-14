@@ -61,7 +61,10 @@ namespace Histria.Db.Generators
             {
                 AppendLine(a);
             }
-            AppendLine(string.Format(@"[Persistent(PersistentName = ""{0}"")]", col.ColumnName));
+            string propName = _ct.ColumnName2PropertyName(table.TableName, col.ColumnName);
+            if (propName != col.ColumnName)
+                AppendLine(string.Format(@"[Persistent(PersistentName = ""{0}"")]", col.ColumnName));
+
             AppendLine(string.Format("public virtual {0} {1} {{ get; set; }}", _ct.ColumnType(col), _ct.ColumnName2PropertyName(table.TableName, col.ColumnName)));
             AppendEmtyLine();
  
@@ -126,9 +129,9 @@ namespace Histria.Db.Generators
                 throw new Exception(L.T("Database is empty"));
             }
 
-            DbSchema ss = DbDrivers.Instance.Schema(DbServices.Url2Protocol(DatabaseUrl));
+            DbSchema ss = DbDrivers.Schema(DbServices.Url2Protocol(DatabaseUrl));
 
-            //Load database structure 
+            //Load database _structure 
             ss.Load(DatabaseUrl);
             foreach (var table in ss.Tables)
             {

@@ -72,7 +72,7 @@ namespace Histria.Db.Model
 
         #region Structure
         ///<summary>
-        /// Load database structure (tables/columns/constraints)
+        /// Load database _structure (tables/columns/constraints)
         ///</summary>
         public virtual void Load(string url)
         {
@@ -81,7 +81,7 @@ namespace Histria.Db.Model
 
         public virtual void ExecuteSchemaScript(string url, List<string> structure)
         {
-            using (DbSession session = DbDrivers.Instance.Session(url))
+            using (DbSession session = DbDrivers.Session(url))
             {
                 using (DbCmd cmd = session.Command(""))
                 {
