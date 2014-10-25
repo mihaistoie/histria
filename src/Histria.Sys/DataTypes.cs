@@ -7,16 +7,16 @@ namespace Histria
 {
     public enum DataTypes
     {
-        Unknown,
-        uuid,      //uniqueidentifier 
-        SmallInt,   //int   
-        Int,        //int   
-        BigInt,     //bigint
-        Bool,       //bit
-        Enum,       //smallint
-        String,     //varchar or nvarchar
-        Number,     //decimal(15,8)     
-        Currency,   //Money (decimal(19.4)) 
+        Unknown,    //SQL                          --C#
+        uuid,       //uniqueidentifier             --Gid
+        SmallInt,   //int                          --byte/char/short/ushort   
+        Int,        //int                          --int/uint 
+        BigInt,     //bigint                       --long/ulong
+        Bool,       //bit                          --bool
+        Enum,       //smallint                     --enum 
+        String,     //varchar(255)/nvarchar(255)   --string
+        Number,     //decimal(15,8)                --Decimal
+        Currency,   //Money (decimal(19.4))        --Decimal
         Date,       //Date
         Time,       //time
         DateTime,   //DateTime

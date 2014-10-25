@@ -10,51 +10,113 @@ namespace Histria.Core.Execution
 {
     public class Container
     {
-        private static IProxyFactoryGenerator proxyFactoryGenerator;
+        private static IProxyFactoryGenerator _proxyFactoryGenerator;
         public static IProxyFactoryGenerator ProxyFactoryGenerator
         {
-            get { return proxyFactoryGenerator; }
+            get { return _proxyFactoryGenerator; }
             set
             {
-                if (proxyFactoryGenerator != null)
+                if (_proxyFactoryGenerator != null)
                 {
                     throw new InvalidOperationException("ProxyFactorygenerator allready initialised");
                 }
-                proxyFactoryGenerator = value;
+                _proxyFactoryGenerator = value;
             }
         }
 
-        private static readonly MethodInfo createGenericMethodDefinition = typeof(Container).GetMethods().AsQueryable().Where(m=>m.IsGenericMethodDefinition && m.Name == "Create").Single();
+        private static readonly MethodInfo _createGenericMethodDefinition = typeof(Container).GetMethods().AsQueryable().Where(m=>m.IsGenericMethodDefinition && m.Name == "Create").Single();
 
         public Container(ContainerSetup setup)
         {
-            this.modelManager = setup.ModelManager;
-            this.advisor = setup.Advisor;
-
-            this.proxyFactory = ProxyFactoryGenerator.CreateProxyFactory(this);
+            this._modelManager = setup.ModelManager;
+            this._advisor = setup.Advisor;
+            this._proxyFactory = ProxyFactoryGenerator.CreateProxyFactory(this);
         }
 
-        private readonly ModelManager modelManager;
-        public ModelManager ModelManager { get { return this.modelManager; } }
 
-        private readonly Advisor advisor;
-        public Advisor Advisor { get { return this.advisor; } }
+        private readonly ModelManager _modelManager;
+        /// <summary>
+        /// Model manager
+        /// </summary>
+        public ModelManager ModelManager { get { return this._modelManager; } }
 
-        private readonly IProxyFactory proxyFactory;
-        private IProxyFactory ProxyFactory { get { return proxyFactory; } }
+        private readonly Advisor _advisor;
+        /// <summary>
+        /// Advisor
+        /// </summary>
+        public Advisor Advisor { get { return this._advisor; } }
 
-        private readonly PropertyChangedStack pstack = new PropertyChangedStack();
-        internal PropertyChangedStack PropertyChangedStack { get { return this.pstack; } }
+        private readonly IProxyFactory _proxyFactory;
+        private IProxyFactory ProxyFactory { get { return _proxyFactory; } }
+
+        private readonly PropertyChangedStack _pstack = new PropertyChangedStack();
+        
+        internal PropertyChangedStack PropertyChangedStack { get { return this._pstack; } }
         internal bool IsComingFrom(IInterceptedObject io, string property)
         {
-            return pstack.IsComingFrom(io, property);
+            return _pstack.IsComingFrom(io, property);
         }
 
-        private int loadingCallCount = 0;
-        public bool IsInLoading { get{return loadingCallCount != 0;}}
+        private int _loadingCallCount = 0;
+        private List<InterceptedObject> _loadingInstances;
 
-        private List<InterceptedObject> loadingInstances;
+        #region Private Methods
+        private bool IsInLoading { get{return _loadingCallCount != 0;}}
 
+        /// <summary>
+        /// Satart loading from persitance
+        /// </summary>
+        private void StartLoading()
+        {
+            if (this._loadingCallCount == 0 && this._loadingInstances == null)
+            {
+                this._loadingInstances = new List<InterceptedObject>();
+            }
+            this._loadingCallCount++;
+        }
+
+        /// <summary>
+        /// After loading call  rules "AfterLoading"
+        /// </summary>
+        private void EndLoading()
+        {
+            if (this._loadingCallCount <= 0)
+            {
+                throw new InvalidOperationException("Loading count error");
+            }
+            this._loadingCallCount--;
+            if (this._loadingCallCount == 0)
+            {
+                foreach (InterceptedObject instance in this._loadingInstances)
+                {
+                    (instance as IInterceptedObject).AOPEndLoad();
+                }
+                this._loadingInstances.Clear();
+            }
+        }
+
+        /// <summary>
+        ///  Create an instance of intercepted object and add it to container
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <returns></returns>
+        private T CreateInstance<T>() where T : class
+        {
+            T instance = this._proxyFactory.Create<T>();
+            var interceptedObject = instance as InterceptedObject;
+            if (interceptedObject != null)
+            {
+                interceptedObject.Container = this;
+            }
+            return instance;
+        }
+
+        #endregion
+
+        /// <summary>
+        /// Load one or many instances from persistence
+        /// </summary>
+        /// <param name="loadAction"></param>
         public void Load(Action loadAction)
         {
             this.StartLoading();
@@ -68,42 +130,11 @@ namespace Histria.Core.Execution
             }
         }
 
-        private void EndLoading()
-        {
-            if(this.loadingCallCount <= 0)
-            {
-                throw new InvalidOperationException("Loading count error");
-            }
-            this.loadingCallCount--;
-            if (this.loadingCallCount == 0)
-            {
-                foreach (InterceptedObject instance in this.loadingInstances)
-                {
-                    (instance as IInterceptedObject).AOPEndLoad();
-                }
-            }
-        }
-
-        private void StartLoading()
-        {
-            if (this.loadingCallCount == 0)
-            {
-                this.loadingInstances = new List<InterceptedObject>();
-            }
-            this.loadingCallCount++;
-        }
-
-        private T CreateInstance<T>() where T : class
-        {
-            T instance = this.proxyFactory.Create<T>();
-            var interceptedObject = instance as InterceptedObject;
-            if (interceptedObject != null)
-            {
-                interceptedObject.Container = this;
-            }
-            return instance;
-        }
-
+        /// <summary>
+        ///  Create an instance
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <returns></returns>
         public T Create<T>() where T : class
         {
             T instance = CreateInstance<T>();
@@ -112,7 +143,7 @@ namespace Histria.Core.Execution
             {
                 if (this.IsInLoading)
                 {
-                    this.loadingInstances.Add(interceptedObject);
+                    this._loadingInstances.Add(interceptedObject);
                     (interceptedObject as IInterceptedObject).AOPBeginLoad();
                 }
                 else
@@ -125,10 +156,12 @@ namespace Histria.Core.Execution
 
         public object Create(Type type)
         {
-            var m = createGenericMethodDefinition.MakeGenericMethod(type);
+            var m = _createGenericMethodDefinition.MakeGenericMethod(type);
             return m.Invoke(this, null);
         }
 
+
+        //To review
         public V CreateView<V,T>(T model) 
             where T: InterceptedObject
             where V: ViewObject<T>
@@ -142,7 +175,7 @@ namespace Histria.Core.Execution
                 });
             return view;
         }
-
+        //To review
         public void DereferenceView(ViewObject view)
         {
             InterceptedObject model = view.GetModel();
