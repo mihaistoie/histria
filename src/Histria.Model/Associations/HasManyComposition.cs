@@ -41,18 +41,14 @@ namespace Histria.Model
 
         #region Add / Remove for compositions
 
-        protected override void AddOrInsert(T item, int index = -1)
+        protected override bool BeforeAddValue(T item)
         {
-            if (this.Has(item))
-            {
-                return;
-            }
             IRoleChild rc = null;
             PropInfoItem inv = this.HasInvRole ? PropInfo.Role.InvRole.RoleProp : null;
             IInterceptedObject child = item as IInterceptedObject;
             if (!Instance.AOPBeforeChangeChild(PropInfo.Name, child, RoleOperation.Add))
             {
-                return;
+                return false;
             }
 
             if (inv != null)
@@ -60,14 +56,18 @@ namespace Histria.Model
                 rc = inv.PropInfo.GetValue(item, null) as IRoleChild;
                 if (!rc.SetParent(Instance, true))
                 {
-                    return;
+                    return false;
                 }
             }
-            
-            InternalAddValue(item, index);
+            return true;
+        }
+        protected override void AfterAddValue(T item)
+        {
+            IInterceptedObject child = item as IInterceptedObject;
             (Instance as IObjectLifetime).Notify(ObjectLifetimeEvent.AssociationsChanged, PropInfo.Name, this);
             Instance.AOPAfterChangeChild(PropInfo.Name, child, RoleOperation.Add);
-        }
+        } 
+
 
         public override void Remove(T item)
         {

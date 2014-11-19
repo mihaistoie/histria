@@ -65,22 +65,24 @@ namespace Histria.Model
         #endregion
 
         #region Add/Remove
-        public bool Has(T item)
-        {
-            return values.Contains(item);
-        }
 
-        protected virtual void InternalRemoveValue(T item)
+
+        #region Private
+        protected void InternalRemoveValue(T item)
         {
             values.Remove(item);
         }
 
-        protected virtual void AddOrInsert(T item, int index)
+        private void AddOrInsert(T item, int index)
         {
+
+            if (!BeforeAddValue(item))
+                return;
             InternalAddValue(item, index);
+            AfterAddValue(item);
         }
 
-        protected void InternalAddValue(T item, int index)
+        private void InternalAddValue(T item, int index)
         {
             if (index >= 0)
                 values.Insert(index, item);
@@ -88,8 +90,33 @@ namespace Histria.Model
                 values.Add(item);
         }
 
+        #endregion
+
+
+        #region Protected
+        protected virtual bool BeforeAddValue(T item)
+        {
+            return true;
+        }
+        protected virtual void AfterAddValue(T item)
+        {
+            IInterceptedObject child = item as IInterceptedObject;
+            (Instance as IObjectLifetime).Notify(ObjectLifetimeEvent.AssociationsChanged, PropInfo.Name, this);
+            Instance.AOPAfterChangeChild(PropInfo.Name, child, RoleOperation.Add);
+
+        } 
+        #endregion
+
+
+        public bool Has(T item)
+        {
+            return values.Contains(item);
+        }
+
+
         public void Add(T item)
         {
+            if (Has(item)) return;
             AddOrInsert(item, -1);
         }
 

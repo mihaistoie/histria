@@ -31,23 +31,17 @@ namespace Histria.Model
             }
         }
 
-        protected override void AddOrInsert(T item, int index)
+        protected override bool BeforeAddValue(T item)
         {
-            if (this.Has(item))
-            {
-                return;
-            }
             IInterceptedObject child = item as IInterceptedObject;
-            if (!Instance.AOPBeforeChangeChild(PropInfo.Name, child, RoleOperation.Add))
-            {
-                return;
-            }
-
-            InternalAddValue(item, index);
+            return Instance.AOPBeforeChangeChild(PropInfo.Name, child, RoleOperation.Add);
+        }
+        protected override void AfterAddValue(T item)
+        {
+            IInterceptedObject child = item as IInterceptedObject;
             (Instance as IObjectLifetime).Notify(ObjectLifetimeEvent.AssociationsChanged, PropInfo.Name, this);
             Instance.AOPAfterChangeChild(PropInfo.Name, child, RoleOperation.Add);
-        }
-
+        } 
 
         public override void Remove(T item)
         {
