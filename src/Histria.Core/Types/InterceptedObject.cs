@@ -221,7 +221,7 @@ namespace Histria.Core
             for (int index = 0; index < ClassInfo.Roles.Count; index++)
             {
                 PropInfoItem pp = ClassInfo.Roles[index];
-                Association roleInstance = Association.AssociationFactory(pp, pp.PropInfo.PropertyType);
+                Association roleInstance = AssociationHelper.AssociationFactory(pp, pp.PropInfo.PropertyType);
                 roleInstance.PropInfo = pp;
                 roleInstance.Instance = this;
                 pp.PropInfo.SetValue(this, roleInstance, null);
@@ -240,7 +240,7 @@ namespace Histria.Core
             if (string.IsNullOrEmpty(objectPath))
             {
                 bool canBeCached = false;
-                string s = Association.ObjectPath(this, ref canBeCached);
+                string s = AssociationHelper.ObjectPath(this, ref canBeCached);
                 if (canBeCached)
                     objectPath = s;
                 else
@@ -377,13 +377,13 @@ namespace Histria.Core
                 return;
             if (notifyParent)
             {
-                if (Association.RemoveMeFromParent(this))
+                if (AssociationHelper.RemoveMeFromParent(this))
                 {
                     return;
                 }
             }
             List<InterceptedObject> toDelete = new List<InterceptedObject>() { this };
-            Association.EnumChildren(this as IInterceptedObject, true, (x) => { toDelete.Add((InterceptedObject)x); });
+            AssociationHelper.EnumChildren(this as IInterceptedObject, true, (x) => { toDelete.Add((InterceptedObject)x); });
 
             //Execute before
             toDelete.ForEach((x) =>
@@ -397,7 +397,7 @@ namespace Histria.Core
                 {
                     if (!x.HasState(ObjectStatus.Created))
                     {
-                        Association.CkeckConstraints(x as IInterceptedObject);
+                        AssociationHelper.CkeckConstraints(x as IInterceptedObject);
                     }
 
                     if (x.CanExecuteRules(Rule.BeforeDelete))
@@ -416,7 +416,7 @@ namespace Histria.Core
                 });
                 throw;
             }
-            Association.RemoveChildren(this as IInterceptedObject);
+            AssociationHelper.RemoveChildren(this as IInterceptedObject);
 
 
             //Rules After delete 

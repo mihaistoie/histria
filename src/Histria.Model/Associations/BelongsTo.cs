@@ -23,7 +23,7 @@ namespace Histria.Model
                     return false;
                 }
                 value = (T)nv;
-                UpdateForeignKeys(PropInfo, Instance, value);
+                AssociationHelper.UpdateForeignKeys(PropInfo, Instance, value);
                 refUid = (value != null) ? value.Uuid : Guid.Empty;
             }
             _value = value;

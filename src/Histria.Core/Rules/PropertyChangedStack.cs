@@ -30,7 +30,7 @@ namespace Histria.Core
         {
             string variable;
             bool canFind = true;
-            string path = Association.ExpandSearchPath(io, property, out variable, out canFind);
+            string path = AssociationHelper.ExpandSearchPath(io, property, out variable, out canFind);
             if (!canFind)
             {
                 return false;

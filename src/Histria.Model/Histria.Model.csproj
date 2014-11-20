@@ -41,6 +41,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Associations\Association.cs" />
+    <Compile Include="Associations\AssociationHelper.cs" />
     <Compile Include="Associations\BelongsTo.cs" />
     <Compile Include="Associations\HasMany.cs" />
     <Compile Include="Associations\HasManyAggregation.cs" />

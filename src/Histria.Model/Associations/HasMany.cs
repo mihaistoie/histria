@@ -66,20 +66,10 @@ namespace Histria.Model
 
         #region Add/Remove
 
-
         #region Private
         protected void InternalRemoveValue(T item)
         {
             values.Remove(item);
-        }
-
-        private void AddOrInsert(T item, int index)
-        {
-
-            if (!BeforeAddValue(item))
-                return;
-            InternalAddValue(item, index);
-            AfterAddValue(item);
         }
 
         private void InternalAddValue(T item, int index)
@@ -89,9 +79,17 @@ namespace Histria.Model
             else
                 values.Add(item);
         }
+        
+        private void AddOrInsert(T item, int index)
+        {
 
+            if (!BeforeAddValue(item))
+                return;
+            InternalAddValue(item, index);
+            AfterAddValue(item);
+        }
+ 
         #endregion
-
 
         #region Protected
         protected virtual bool BeforeAddValue(T item)

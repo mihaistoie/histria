@@ -12,11 +12,11 @@ namespace Histria.Model
         protected T _value;
         protected Guid refUid = Guid.Empty;
 
-        protected virtual void InternalSetValue(T value, bool updateForeignKeys)
+        protected  virtual void InternalSetValue(T value, bool updateForeignKeys)
         {
             if (updateForeignKeys)
             {
-                UpdateForeignKeys(PropInfo, Instance, value);
+                AssociationHelper.UpdateForeignKeys(PropInfo, Instance, value);
                 refUid = (value != null) ? value.Uuid : Guid.Empty;
             }
             _value = value;
@@ -24,7 +24,6 @@ namespace Histria.Model
 
         protected virtual void ExternalSetValue(T value)
         {
-
 
             object nv = value;
             object ov = _value;
@@ -42,6 +41,7 @@ namespace Histria.Model
         #endregion
 
         #region IRoleRef
+
         void IRoleRef.SetValue(IInterceptedObject value)
         {
             ExternalSetValue((T)value);
