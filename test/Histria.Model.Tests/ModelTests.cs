@@ -91,7 +91,7 @@ namespace Histria.Model.Tests
             Assert.AreNotEqual(null, ci, "Class found");
             ci = m.Class<Account>();
             Assert.AreNotEqual(null, ci, "Class found");
-            
+
             ClassInfoItem vi = m.Class<AccountView>();
             Assert.AreNotEqual(null, vi, "Class found");
             if (ci != null && vi != null)
@@ -109,12 +109,121 @@ namespace Histria.Model.Tests
         }
 
         [TestMethod]
-        public void LoadCorrecionRules()
+        public void LoadCorrectionsRules()
         {
             JsonObject cfg = (JsonObject)JsonValue.Parse("{\"types\": [\"" + typeof(HumanBody).FullName + "\", \"" + typeof(HumanBodyRules).FullName + "\"]}");
             ModelManager m = ModelManager.LoadModel(cfg);
             ClassInfoItem ci = m.Class<HumanBody>();
             PropInfoItem pi = ci.PropertyByName("Name");
+            Assert.AreNotEqual(null, pi, "Property  found");
+        }
+
+        [TestMethod]
+        public void DerivedClasses()
+        {
+            JsonObject cfg = (JsonObject)JsonValue.Parse("{\"types\": [\"" + typeof(CParent).FullName
+                + "\", \"" + typeof(CC1).FullName
+                + "\", \"" + typeof(CC2).FullName
+                + "\", \"" + typeof(CC3).FullName
+                + "\"]}");
+            ModelManager m = ModelManager.LoadModel(cfg);
+            ClassInfoItem cip = m.Class<CParent>();
+            ClassInfoItem cic1 = m.Class<CC1>();
+            ClassInfoItem cic2 = m.Class<CC2>();
+            ClassInfoItem cic3 = m.Class<CC3>();
+            Assert.AreNotEqual(null, cip, "Class found");
+            Assert.AreNotEqual(null, cic1, "Class found");
+            Assert.AreNotEqual(null, cic2, "Class found");
+            Assert.AreNotEqual(null, cic3, "Class found");
+
+            PropInfoItem pi = cip.PropertyByName("ParentMember");
+            Assert.AreNotEqual(null, pi, "Property found");
+
+            pi = cic1.PropertyByName("ParentMember");
+            Assert.AreNotEqual(null, pi, "Property found");
+
+            pi = cic2.PropertyByName("ParentMember");
+            Assert.AreNotEqual(null, pi, "Property found");
+
+            pi = cic3.PropertyByName("ParentMember");
+            Assert.AreNotEqual(null, pi, "Property found");
+
+            pi = cic2.PropertyByName("CC3Member");
+            Assert.AreEqual(null, pi, "Property found");
+
+
+        }
+        [TestMethod]
+        public void DerivedClassesPersistence()
+        {
+            JsonObject cfg = (JsonObject)JsonValue.Parse("{\"types\": [\"" + typeof(CP1).FullName
+                + "\", \"" + typeof(CC4).FullName
+                + "\"]}");
+            ModelManager m = ModelManager.LoadModel(cfg);
+            ClassInfoItem pp = m.Class<CP1>();
+            ClassInfoItem cc = m.Class<CC4>();
+            
+            Assert.AreNotEqual(null, pp, "Class found");
+            Assert.AreNotEqual(null, cc, "Class found");
+            Assert.AreEqual(pp.DbName, cc.DbName, "Same table name");
+            Assert.AreEqual("XXX", cc.DbName, "Table name");
+
+            PropInfoItem pi = pp.PropertyByName("ParentMember");
+            Assert.AreNotEqual(null, pi, "Property found");
+            Assert.AreEqual("M", pi.PersistentName, "Column name");
+
+            pi = cc.PropertyByName("ParentMember");
+            Assert.AreNotEqual(null, pi, "Property found");
+            Assert.AreEqual("M", pi.PersistentName, "Column name");
+        }
+        
+        [TestMethod]
+        [ExpectedException(typeof(ModelException))]
+        public void DerivedClassesInvalidDbAttribute()
+        {
+            JsonObject cfg = (JsonObject)JsonValue.Parse("{\"types\": [\"" + typeof(CP2).FullName + "\", \"" + typeof(CC5).FullName + "\"]}");
+            ModelManager m = ModelManager.LoadModel(cfg);
+
+        }
+
+        [TestMethod]
+        [ExpectedException(typeof(ModelException))]
+        public void DerivedClassesInvalidPkDefinition()
+        {
+            JsonObject cfg = (JsonObject)JsonValue.Parse("{\"types\": [\"" + typeof(CP3).FullName + "\", \"" + typeof(CC6).FullName + "\"]}");
+            ModelManager m = ModelManager.LoadModel(cfg);
+
+        }
+        [TestMethod]
+        public void DerivedClassesSamePk()
+        {
+            JsonObject cfg = (JsonObject)JsonValue.Parse("{\"types\": [\"" + typeof(CP4).FullName + "\", \"" + typeof(CC7).FullName + "\"]}");
+            ModelManager m = ModelManager.LoadModel(cfg);
+
+            ClassInfoItem pp = m.Class<CP4>();
+            ClassInfoItem cc = m.Class<CC7>();
+
+            Assert.AreNotEqual(null, pp, "Class found");
+            Assert.AreNotEqual(null, cc, "Class found");
+            Assert.AreEqual("Id", pp.Key.Items[0].Property.Name, "Pk name");
+            Assert.AreEqual("Id", cc.Key.Items[0].Property.Name, "Pk name");
+ 
+        }
+        [TestMethod]
+        public void DerivedClassesIndexes()
+        {
+            JsonObject cfg = (JsonObject)JsonValue.Parse("{\"types\": [\"" + typeof(CP1).FullName
+                + "\", \"" + typeof(CC4).FullName
+                + "\"]}");
+            ModelManager m = ModelManager.LoadModel(cfg);
+            ClassInfoItem pp = m.Class<CP1>();
+            ClassInfoItem cc = m.Class<CC4>();
+
+            Assert.AreNotEqual(null, pp, "Class found");
+            Assert.AreNotEqual(null, cc, "Class found");
+            Assert.AreEqual(1, pp.Indexes.Count, "Parent has one index");
+            Assert.AreEqual(2, cc.Indexes.Count, "Child has two indexes");
+            
         }
 
 

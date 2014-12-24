@@ -3,17 +3,18 @@
     /// <summary>
     /// Allow to define the table name for a class
     /// </summary>
-    [System.AttributeUsage(System.AttributeTargets.Class, AllowMultiple = false)]
+    [System.AttributeUsage(System.AttributeTargets.Class | System.AttributeTargets.Property, AllowMultiple = false)]
     public class DbAttribute : System.Attribute
     {
-        public string TableName {get; set;}
+        public string Name {get; set;}
+        public bool IsPersistent = true;
         public DbAttribute()
         {
         }
 
-        public DbAttribute(string iTableName)
+        public DbAttribute(string iName)
         {
-            TableName = iTableName;
+            Name = iName;
         }
 
     }

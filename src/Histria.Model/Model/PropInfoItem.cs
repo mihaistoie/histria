@@ -124,12 +124,12 @@ namespace Histria.Model
         {
             PersistentName = PropInfo.Name;
             IsPersistent = ClassInfo.IsPersistent;
-            PersistentAttribute pa = PropInfo.GetCustomAttributes(typeof(PersistentAttribute), false).FirstOrDefault() as PersistentAttribute;
+            DbAttribute pa = PropInfo.GetCustomAttributes(typeof(DbAttribute), false).FirstOrDefault() as DbAttribute;
             if (pa != null)
             {
                 IsPersistent = pa.IsPersistent;
-                if (!string.IsNullOrEmpty(pa.PersistentName))
-                    PersistentName = pa.PersistentName;
+                if (!string.IsNullOrEmpty(pa.Name))
+                    PersistentName = pa.Name;
             }
         }
 
