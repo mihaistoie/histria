@@ -14,7 +14,8 @@ namespace Histria.Model
     public class ClassInfoItem
     {
         public static readonly string ProperiesStatePropertyName = "Properties";
-        #region private members
+
+        #region Private members
         private readonly Dictionary<string, PropertyInfo> propsMap = new Dictionary<string, PropertyInfo>();
         private readonly PropertiesCollection properties = new PropertiesCollection();
         private readonly PropertiesCollection roles = new PropertiesCollection();
@@ -220,16 +221,11 @@ namespace Histria.Model
             this.gTitle = this.ExtractMethod(title);
             this.gDescription = this.ExtractMethod(description);
         }
-        private MethodItem MethodByName(string methodName)
+        public MethodItem MethodByName(string methodName)
         {
-            try
-            {
-                return methods[methodName];
-            }
-            catch
-            {
-                return null;
-            }
+            MethodItem mi = null;
+            this.methods.TryGetValue(methodName, out mi);
+            return mi;
         }
         #endregion
 
@@ -494,8 +490,8 @@ namespace Histria.Model
         {
             BindingFlags bindingAttr = (Static ? (BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static)
                 : (BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Static));
-
-            MethodInfo[] methods = CurrentType.GetMethods(bindingAttr);
+            //Load all methods
+            MethodInfo[] methods = this.CurrentType.GetMethods(bindingAttr);
             foreach (MethodInfo mi in methods)
             {
 
@@ -504,6 +500,7 @@ namespace Histria.Model
                 RuleAttribute[] ras = mi.GetCustomAttributes(typeof(RuleAttribute), false) as RuleAttribute[];
                 if (ras != null)
                 {
+                    // mi is a Rule !!!
                     for (int index = 0, len = ras.Length; index < len; index++)
                     {
                         RuleAttribute ra = ras[index];

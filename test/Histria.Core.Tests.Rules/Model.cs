@@ -24,6 +24,7 @@ namespace Histria.Core.Tests.Rules.Customers
     {
         public int RCount = 0;
         public int ARCount = 0;
+        public int MethodTest = 0;
         [Display("First Name", Description = "First Name of Customer")]
         public virtual string FirstName { get; set; }
 
@@ -55,6 +56,19 @@ namespace Histria.Core.Tests.Rules.Customers
         {
             ARCount++;
         }
+
+        [Method]
+        [Display("Customer Method 1 ")]
+        public void MethodInBaseClass1()
+        {
+
+        }
+        [Method]
+        [Display("Customer Method 2")]
+        public virtual void MethodInBaseClass2()
+        {
+            this.MethodTest = 100;
+        }
   
     }
 
@@ -77,6 +91,16 @@ namespace Histria.Core.Tests.Rules.Customers
         protected override void CalculatePersistentFullName()
         {
             FullName = (String.IsNullOrEmpty(LastName) ? "" : LastName).ToUpper() + " " + MiddleName + " " + FirstName;
+        }
+        [Method]
+        [Display("Russian Method")]
+        public void MethodInDerivedClass()
+        {
+
+        }
+        public override void MethodInBaseClass2()
+        {
+            this.MethodTest = 200;
         }
     }
 

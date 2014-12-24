@@ -36,9 +36,16 @@ namespace UnitTestModel
             Assert.AreEqual(2, cust.RCount, "Rule hits");
             Assert.AreEqual("John SMITH", cust.FullName, "Propagation rule not called");
             Assert.AreEqual("AfterFirstNameChanged", cust.AfterFirstNameChanged, "Plugin  rule");
+            ClassInfoItem cc = container.ModelManager.Class<Customer>();
+            MethodItem mi = cc.MethodByName("MethodInBaseClass1");
+            Assert.AreNotEqual(null, mi, "Method found");
+            mi = cc.MethodByName("MethodInBaseClass2");
+            Assert.AreNotEqual(null, mi, "Method found");
+            cust.MethodInBaseClass2();
+            Assert.AreEqual(100, cust.MethodTest, "method call");
         }
         [TestMethod]
-        public void InheritedPropagationRule()
+        public void InheritedRulePropagation()
         {
             Container container = new Container(TestContainerSetup.GetSimpleContainerSetup(model));
             RussianCustomer rcust = container.Create<RussianCustomer>();
@@ -47,6 +54,26 @@ namespace UnitTestModel
             rcust.MiddleName = "A.";
             Assert.AreEqual(0, rcust.RCount, "Rule hits");
             Assert.AreEqual("DOSTOIEVSKI A. Fiodor", rcust.FullName, "Propagation rule not called");
+        }
+
+        [TestMethod]
+        public void InheritedMethodsPropagation()
+        {
+            Container container = new Container(TestContainerSetup.GetSimpleContainerSetup(model));
+
+            ClassInfoItem cc = container.ModelManager.Class<RussianCustomer>();
+            MethodItem mi = cc.MethodByName("MethodInBaseClass1");
+            Assert.AreNotEqual(null, mi, "Method found");
+            mi = cc.MethodByName("MethodInBaseClass2");
+            Assert.AreNotEqual(null, mi, "Method found");
+            mi = cc.MethodByName("MethodInDerivedClass");
+            Assert.AreNotEqual(null, mi, "Method found");
+
+            
+            RussianCustomer rcust = container.Create<RussianCustomer>();
+            rcust.MethodInBaseClass2();
+            Assert.AreEqual(200, rcust.MethodTest, "method call");
+            
         }
        
         [TestMethod]

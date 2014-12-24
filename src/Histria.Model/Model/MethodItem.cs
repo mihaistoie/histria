@@ -11,26 +11,36 @@ namespace Histria.Model
     {
         private string title;
         private string description;
+        private bool isInterfaceMethod;
+        private string property;
         public MethodInfo Method;
         public Type TargetType { get; set; }
         public Type DeclaringType { get; set; }
         public string Title { get { return title; } }
         public string Description { get { return description; } }
+        public string Property { get { return property; } }
+        public bool IsInterfaceMethod { get { return isInterfaceMethod; } }
         public MethodItem(MethodInfo info)
         {
-            Method = info;
-            title = Method.Name;
-            DeclaringType = Method.DeclaringType;
+            this.Method = info;
+            this.title = Method.Name;
+            this.DeclaringType = Method.DeclaringType;
             DisplayAttribute da = Method.GetCustomAttributes(typeof(DisplayAttribute), false).FirstOrDefault() as DisplayAttribute;
-            title = Method.Name;
+            this.title = Method.Name;
             if (da != null)
             {
-                title = da.Title;
-                description = da.Description;
+                this.title = da.Title;
+                this.description = da.Description;
             }
             if (string.IsNullOrEmpty(description))
             {
-                description = title;
+                this.description = this.title;
+            }
+            MethodAttribute ma = Method.GetCustomAttributes(typeof(MethodAttribute), false).FirstOrDefault() as MethodAttribute;
+            if (ma != null)
+            {
+                isInterfaceMethod = true;
+                property = ma.Property;
             }
         }
 

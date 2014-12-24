@@ -12,10 +12,11 @@ namespace Histria.Model
     [System.AttributeUsage(System.AttributeTargets.Method, AllowMultiple = false)]
     public class MethodAttribute : System.Attribute
     {
+        /// <summary>
+        /// The method is linked to a property or to a class (Property is empty)
+        /// </summary>
         public string Property;
-        public MethodAttribute(Rule ruleType)
-        {
-        }
+        
     }
 }
 
