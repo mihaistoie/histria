@@ -14,7 +14,7 @@
 
         public DbAttribute(string iName)
         {
-            Name = iName;
+            this.Name = iName;
         }
 
     }

@@ -51,6 +51,7 @@
     <Compile Include="Associations\HasOneAgregation.cs" />
     <Compile Include="Associations\HasOneComposition.cs" />
     <Compile Include="Attributes\DbAttribute.cs" />
+    <Compile Include="Attributes\DbEnumAsStringAttribute.cs" />
     <Compile Include="Attributes\DefaultAttribute.cs" />
     <Compile Include="Attributes\DisplayAttribute.cs" />
     <Compile Include="Attributes\DtDateAttribute.cs" />

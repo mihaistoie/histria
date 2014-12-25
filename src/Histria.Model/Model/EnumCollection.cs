@@ -12,5 +12,16 @@ namespace Histria.Model
         {
             return item.EnumType;
         }
+        
+        public bool TryGetEnumInfo(Type type, out EnumInfoItem enumInfo)
+        {
+            if (this.Dictionary == null)
+            {
+                enumInfo = null;
+                return false;
+            }
+            return this.Dictionary.TryGetValue(type, out enumInfo);
+        }
     }
+    
 }

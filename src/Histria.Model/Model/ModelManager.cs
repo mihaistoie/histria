@@ -28,10 +28,10 @@ namespace Histria.Model
 
         private ModelManager()
         {
-            enums = new EnumCollection();
-            views = new ClassCollection();
-            classes = new ClassCollection();
-            viewsandclasses = new ClassCollection();
+            this.enums = new EnumCollection();
+            this.views = new ClassCollection();
+            this.classes = new ClassCollection();
+            this.viewsandclasses = new ClassCollection();
         }
         //used only for tests
         public static ModelManager LoadModel(JsonObject config)
@@ -58,27 +58,27 @@ namespace Histria.Model
                 if (iType.IsEnum)
                 {
                     //load enums 
-                    enums.Add(new EnumInfoItem(iType));
+                    this.enums.Add(new EnumInfoItem(iType));
                 }
                 else if (iType.IsClass)
                 {
                     if (iw.IsAssignableFrom(iType))
                     {
                         ci = new ViewInfoItem(iType);
-                        views.Add(ci);
-                        viewsandclasses.Add(ci);
+                        this.views.Add(ci);
+                        this.viewsandclasses.Add(ci);
                     }
                     else if (ii.IsAssignableFrom(iType))
                     {
                         ci = new ClassInfoItem(iType, false);
-                        classes.Add(ci);
-                        viewsandclasses.Add(ci);
+                        this.classes.Add(ci);
+                        this.viewsandclasses.Add(ci);
                     }
                     else if (ip.IsAssignableFrom(iType))
                     {
                         ci = new ClassInfoItem(iType, true);
-                        classes.Add(ci);
-                        viewsandclasses.Add(ci);
+                        this.classes.Add(ci);
+                        this.viewsandclasses.Add(ci);
                     }
                 }
 

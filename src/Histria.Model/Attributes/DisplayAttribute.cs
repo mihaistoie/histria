@@ -21,7 +21,7 @@ namespace Histria.Model
         public string Description {get; set;}
         public DisplayAttribute(string iTitle)
         {
-            Title = iTitle;
+            this.Title = iTitle;
             
         }
     }

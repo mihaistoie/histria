@@ -38,6 +38,8 @@ namespace Histria.Core.Tests.Rules.Customers
         [Display("Age", Description = "Age")]
         public virtual int Age { get; set; }
 
+        [Display("Gender", Description = "Gender")]
+        public virtual CustomerGender Gender { get; set; }
          
         public virtual string AfterFirstNameChanged { get; set; }
 

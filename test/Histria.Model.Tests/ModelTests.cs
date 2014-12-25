@@ -162,7 +162,7 @@ namespace Histria.Model.Tests
             ModelManager m = ModelManager.LoadModel(cfg);
             ClassInfoItem pp = m.Class<CP1>();
             ClassInfoItem cc = m.Class<CC4>();
-            
+
             Assert.AreNotEqual(null, pp, "Class found");
             Assert.AreNotEqual(null, cc, "Class found");
             Assert.AreEqual(pp.DbName, cc.DbName, "Same table name");
@@ -176,7 +176,7 @@ namespace Histria.Model.Tests
             Assert.AreNotEqual(null, pi, "Property found");
             Assert.AreEqual("M", pi.PersistentName, "Column name");
         }
-        
+
         [TestMethod]
         [ExpectedException(typeof(ModelException))]
         public void DerivedClassesInvalidDbAttribute()
@@ -207,7 +207,7 @@ namespace Histria.Model.Tests
             Assert.AreNotEqual(null, cc, "Class found");
             Assert.AreEqual("Id", pp.Key.Items[0].Property.Name, "Pk name");
             Assert.AreEqual("Id", cc.Key.Items[0].Property.Name, "Pk name");
- 
+
         }
         [TestMethod]
         public void DerivedClassesIndexes()
@@ -223,9 +223,44 @@ namespace Histria.Model.Tests
             Assert.AreNotEqual(null, cc, "Class found");
             Assert.AreEqual(1, pp.Indexes.Count, "Parent has one index");
             Assert.AreEqual(2, cc.Indexes.Count, "Child has two indexes");
+
+        }
+
+        [TestMethod]
+        public void EnumLoad()
+        {
+            JsonObject cfg = (JsonObject)JsonValue.Parse("{\"types\": [\"" + typeof(TypeYesNo).FullName + "\"]}");
+            ModelManager m = ModelManager.LoadModel(cfg);
+            EnumInfoItem ei;
+            m.Enums.TryGetEnumInfo(typeof(TypeYesNo), out ei);
+            Assert.AreNotEqual(null, ei, "Enum found");
+        }
+        
+        [TestMethod]
+        [ExpectedException(typeof(ModelException))]
+        public void EnumMissing()
+        {
+            JsonObject cfg = (JsonObject)JsonValue.Parse("{\"types\": [\"" + typeof(EnuUsed).FullName + "\"]}");
+            ModelManager m = ModelManager.LoadModel(cfg);
             
         }
 
+        [TestMethod]
+        public void EnumLoad2()
+        {
+            JsonObject cfg = (JsonObject)JsonValue.Parse("{\"types\": [\"" + typeof(EnuUsed).FullName
+                + "\", \"" + typeof(TypeYesNo).FullName
+                + "\"]}");
+            ModelManager m = ModelManager.LoadModel(cfg);
+            EnumInfoItem ei;
+            m.Enums.TryGetEnumInfo(typeof(TypeYesNo), out ei);
+            Assert.AreNotEqual(null, ei, "Enum found");
+            ClassInfoItem cc = m.Class<EnuUsed>();
+            Assert.AreNotEqual(null, cc, "Class found");
+            PropInfoItem pi = cc.PropertyByName("IsRed");
+            Assert.AreNotEqual(null, pi, "Property found");
+        }
 
+        
     }
 }

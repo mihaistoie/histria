@@ -17,15 +17,15 @@ namespace Histria.Model
         public EnumInfoItem(Type enumType)
         {
             DisplayAttribute da = enumType.GetCustomAttributes(typeof(DisplayAttribute), false).FirstOrDefault() as DisplayAttribute;
-            EnumType = enumType;
-            Name = EnumType.Name;
-            Title = Name;
+            this.EnumType = enumType;
+            this.Name = EnumType.Name;
+            this.Title = this.Name;
             if (da != null)
             {
-                Title = da.Title;
-                Description = da.Description;
+                this.Title = da.Title;
+                this.Description = da.Description;
             }
-            if (Description == "") Description = Title;
+            if (string.IsNullOrEmpty(Description)) this.Description = this.Title;
            
             foreach (var enumValue in Enum.GetValues(enumType)) 
             { 
@@ -36,7 +36,7 @@ namespace Histria.Model
                 {
                     svalue = eda.Title;
                 }
-                Add((int)enumValue, svalue);
+                this.Add((int)enumValue, svalue);
                 
             }
            

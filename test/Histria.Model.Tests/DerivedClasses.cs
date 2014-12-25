@@ -90,6 +90,20 @@ namespace Histria.Model.Tests.ModelToTest
         public virtual string Name { get; set; }
     }
 
+    ///----------------------------------------
+    // Enums
+    //----------------------------------------
+    [DbEnumAsStringAttribute]
+    public enum TypeYesNo
+    {
+        Yes, No
+    }
+    public class EnuUsed : BaseModel, IPersistentObj
+    {
+        public virtual TypeYesNo IsRed { get; set; }
+    }
+
+
 
 
 }

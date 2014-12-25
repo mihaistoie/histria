@@ -31,7 +31,7 @@ namespace Histria.Model
             item.DtType = DataTypes.String;
             item.TypeValidation = item.PropInfo.GetCustomAttributes(typeof(DtStringAttribute), false).FirstOrDefault() as DtStringAttribute;
             if (item.TypeValidation == null)
-                item.TypeValidation = new DtStringAttribute() { Template = TemplateManager.DefaultString};
+                item.TypeValidation = new DtStringAttribute() { Template = TemplateManager.DefaultString };
 
         }
         private static void BoolAction(PropInfoItem item)
@@ -80,14 +80,14 @@ namespace Histria.Model
 
         private void InitializeType()
         {
-            if (PropInfo.PropertyType.IsEnum)
+            if (this.PropInfo.PropertyType.IsEnum)
             {
                 EnumAction(this);
             }
             else
             {
                 Action<PropInfoItem> action;
-                if (handleAction.TryGetValue(PropInfo.PropertyType, out action))
+                if (handleAction.TryGetValue(this.PropInfo.PropertyType, out action))
                 {
                     action(this);
                 }
@@ -168,7 +168,7 @@ namespace Histria.Model
                 {
                     throw new ModelException(String.Format(L.T("Association attribute is missing.({0}.{1})"), Name, ClassInfo.Name), ClassInfo.Name);
                 }
-                
+
                 RoleInfoItem role = null;
 
                 if (roleListType.IsAssignableFrom(PropInfo.PropertyType))
@@ -330,6 +330,12 @@ namespace Histria.Model
         ///</summary>   
         internal DataTypes DtType = DataTypes.Unknown;
 
+        //<summary>
+        /// Data type
+        ///</summary>   
+        internal EnumInfoItem EnumInfo = null;
+
+
 
         #endregion
 
@@ -348,11 +354,11 @@ namespace Histria.Model
 
         internal void AddRole(RoleInfoItem role)
         {
-            if (dependOnMe == null)
+            if (this.dependOnMe == null)
             {
-                dependOnMe = new List<RoleInfoItem>();
+                this.dependOnMe = new List<RoleInfoItem>();
             }
-            dependOnMe.Add(role);
+            this.dependOnMe.Add(role);
         }
 
         public void InitializeView(ModelManager model, ClassInfoItem ci)
@@ -367,12 +373,12 @@ namespace Histria.Model
 
         internal void AfterLoad(ModelManager model, ClassInfoItem ci)
         {
-            InitializeView(model, ci);
-            if (IsRole)
+            this.InitializeView(model, ci);
+            if (this.IsRole)
             {
                 // Check role && Load role dependencies
 
-                RoleInfoItem role = Role;
+                RoleInfoItem role = this.Role;
                 if (role.Type != Relation.List && role.IsList && string.IsNullOrEmpty(role.InvRoleName))
                 {
                     throw new ModelException(String.Format(L.T("Invalid role definition {0}.{1}. Missing 'Inv' attribute."), ci.Name, PropInfo.Name), ci.Name);
@@ -500,7 +506,15 @@ namespace Histria.Model
 
                     }
                 }
- 
+
+            }
+            else if (this.DtType == DataTypes.Enum)
+            {
+                model.Enums.TryGetEnumInfo(this.PropInfo.PropertyType, out this.EnumInfo);
+                if (EnumInfo == null)
+                {
+                    throw new ModelException(String.Format(L.T("Invalid enum type for property '{0}.{1}'."), ci.Name, this.PropInfo.Name), ci.Name);
+                }
             }
 
         }
