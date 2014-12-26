@@ -122,14 +122,19 @@ namespace Histria.Model
 
         private void InitializePersistence()
         {
-            PersistentName = PropInfo.Name;
-            IsPersistent = ClassInfo.IsPersistent;
-            DbAttribute pa = PropInfo.GetCustomAttributes(typeof(DbAttribute), false).FirstOrDefault() as DbAttribute;
+            this.PersistentName = this.PropInfo.Name;
+            this.IsPersistent = this.ClassInfo.IsPersistent;
+            DbAttribute pa = this.PropInfo.GetCustomAttributes(typeof(DbAttribute), false).FirstOrDefault() as DbAttribute;
             if (pa != null)
             {
-                IsPersistent = pa.IsPersistent;
                 if (!string.IsNullOrEmpty(pa.Name))
-                    PersistentName = pa.Name;
+                    this.PersistentName = pa.Name;
+            }
+            else
+            {
+                NoPersistentlAttribute np = this.PropInfo.GetCustomAttributes(typeof(NoPersistentlAttribute), false).FirstOrDefault() as NoPersistentlAttribute;
+                if (np != null)
+                    this.IsPersistent = false;
             }
         }
 

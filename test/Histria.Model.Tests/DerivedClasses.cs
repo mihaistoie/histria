@@ -93,7 +93,7 @@ namespace Histria.Model.Tests.ModelToTest
     ///----------------------------------------
     // Enums
     //----------------------------------------
-    [DbEnumAsStringAttribute]
+    [Db(EnumStoredAsString = true)]
     public enum TypeYesNo
     {
         Yes, No

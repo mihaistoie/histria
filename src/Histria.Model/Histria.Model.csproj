@@ -51,7 +51,6 @@
     <Compile Include="Associations\HasOneAgregation.cs" />
     <Compile Include="Associations\HasOneComposition.cs" />
     <Compile Include="Attributes\DbAttribute.cs" />
-    <Compile Include="Attributes\DbEnumAsStringAttribute.cs" />
     <Compile Include="Attributes\DefaultAttribute.cs" />
     <Compile Include="Attributes\DisplayAttribute.cs" />
     <Compile Include="Attributes\DtDateAttribute.cs" />
@@ -62,6 +61,7 @@
     <Compile Include="Attributes\MethodAttribute.cs" />
     <Compile Include="Attributes\NoModelAttribute.cs" />
     <Compile Include="Attributes\AssociationAttribute.cs" />
+    <Compile Include="Attributes\NoPersistentlAttribute.cs" />
     <Compile Include="Attributes\PrimaryKeyAttribute.cs" />
     <Compile Include="Attributes\RuleAttribute.cs" />
     <Compile Include="Attributes\RulesForAttribute.cs" />
@@ -70,6 +70,7 @@
     <Compile Include="Attributes\TypeAttribute.cs" />
     <Compile Include="ClassType.cs" />
     <Compile Include="Helpers\ModelLoader.cs" />
+    <Compile Include="InheritanceAttribute.cs" />
     <Compile Include="ModelConst.cs" />
     <Compile Include="Model\ClassCollection.cs" />
     <Compile Include="Model\EnumCollection.cs" />
