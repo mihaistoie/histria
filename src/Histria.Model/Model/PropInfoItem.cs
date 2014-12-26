@@ -150,6 +150,7 @@ namespace Histria.Model
                 IsDisabled = dfa.Disabled;
                 IsHidden = dfa.Hidden;
                 IsMandatory = dfa.Required;
+                IsReadOnly = dfa.ReadOnly;
                 DefaultValue = dfa.Value;
             }
         }
@@ -280,6 +281,14 @@ namespace Histria.Model
         /// Default Value ?
         ///</summary>   
         public object DefaultValue { get; set; }
+
+
+        ///<summary>
+        /// Read Only Property
+        ///</summary>   
+        public object IsReadOnly { get; set; }
+
+
 
         ///<summary>
         /// Title of property

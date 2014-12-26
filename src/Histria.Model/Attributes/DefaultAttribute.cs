@@ -7,6 +7,7 @@
         public bool Required = false;
         public bool Hidden = false;
         public bool Disabled = false;
+        public bool ReadOnly = false;
         public object Value = null;
         public DefaultAttribute()
         {

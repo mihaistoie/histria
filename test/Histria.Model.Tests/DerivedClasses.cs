@@ -7,21 +7,30 @@ using Histria.Model;
 namespace Histria.Model.Tests.ModelToTest
 {
 
+    public enum EnumClassType
+    {
+        CParent, CC1, CC2, CC3, CC4, CC5, CC6, CC7, CP1, CP2, CP3, CP4
+    }
+
     public class CParent : BaseModel, IPersistentObj
     {
+        public virtual EnumClassType TypeClass { get; set; }
         public virtual string ParentMember { get; set; }
     }
 
+    [Inheritance("TypeClass", (int)EnumClassType.CC1)]
     public class CC1 : CParent
     {
         public virtual string CC1Member { get; set; }
     }
 
+    [Inheritance("TypeClass", (int)EnumClassType.CC2)]
     public class CC2 : CParent
     {
         public virtual string CC2Member { get; set; }
     }
 
+    [Inheritance("TypeClass", (int)EnumClassType.CC3)]
     public class CC3 : CC1
     {
         public virtual string CC3Member { get; set; }
@@ -38,6 +47,7 @@ namespace Histria.Model.Tests.ModelToTest
         public virtual string I2 { get; set; }
     }
     [Index("I1,I3")]
+    [Inheritance("TypeClass", (int)EnumClassType.CC4)]
     public class CC4 : CP1
     {
         public virtual string I3 { get; set; }
@@ -54,6 +64,7 @@ namespace Histria.Model.Tests.ModelToTest
     }
 
     [Db("YYY")]
+    [Inheritance("TypeClass", (int)EnumClassType.CC5)]
     public class CC5 : CP2
     {
     }
@@ -69,6 +80,7 @@ namespace Histria.Model.Tests.ModelToTest
     }
 
     [PrimaryKey("Name")]
+    [Inheritance("TypeClass", (int)EnumClassType.CC6)]
     public class CC6 : CP3
     {
         public virtual string Name { get; set; }
@@ -85,6 +97,7 @@ namespace Histria.Model.Tests.ModelToTest
         public virtual string Id { get; set; }
     }
 
+    [Inheritance("TypeClass", (int)EnumClassType.CC7)]
     public class CC7 : CP4
     {
         public virtual string Name { get; set; }

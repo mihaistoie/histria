@@ -333,6 +333,7 @@ namespace Histria.Model
         /// <param name="pci"></param>
         private void ResolveInheritancePersistence(ClassInfoItem pci)
         {
+            InheritanceAttribute ia = this.CurrentType.GetCustomAttributes(typeof(InheritanceAttribute), false).FirstOrDefault() as InheritanceAttribute;
             // Add parent rules
             if (pci.IsPersistent)
             {
@@ -344,8 +345,21 @@ namespace Histria.Model
                     }
                     this.DbName = pci.DbName;
                 }
+                if (ia == null)
+                {
+                    throw new ModelException(String.Format(L.T("Missing inheritance attribute for  the class \"{0}\"."), this.Name), this.Name);
+                }
+                // 1add control : daca o prop e read only  nu putem sa o schimbam 
+                // 2 unit test for derivated  init 
 
-
+            }
+            if (ia != null)
+            {
+                PropInfoItem pi = this.PropertyByName(ia.EnumProperty); 
+                if (pi == null || pi.DtType != DataTypes.Enum)
+                    throw new ModelException(String.Format(L.T("Invalid inheritance attribute for the class \"{0}\" Property not found or not an enum \"{1}\"."), this.Name ,ia.EnumProperty), this.Name);
+                pi.DefaultValue = ia.Value;
+                pi.IsReadOnly = true; 
             }
         }
 
