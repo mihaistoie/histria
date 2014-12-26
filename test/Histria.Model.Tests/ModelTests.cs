@@ -125,6 +125,7 @@ namespace Histria.Model.Tests
                 + "\", \"" + typeof(CC1).FullName
                 + "\", \"" + typeof(CC2).FullName
                 + "\", \"" + typeof(CC3).FullName
+                + "\", \"" + typeof(EnumClassType).FullName
                 + "\"]}");
             ModelManager m = ModelManager.LoadModel(cfg);
             ClassInfoItem cip = m.Class<CParent>();
@@ -181,7 +182,9 @@ namespace Histria.Model.Tests
         [ExpectedException(typeof(ModelException))]
         public void DerivedClassesInvalidDbAttribute()
         {
-            JsonObject cfg = (JsonObject)JsonValue.Parse("{\"types\": [\"" + typeof(CP2).FullName + "\", \"" + typeof(CC5).FullName + "\"]}");
+            JsonObject cfg = (JsonObject)JsonValue.Parse("{\"types\": [\"" + typeof(CP2).FullName
+                + "\", \"" + typeof(EnumClassType).FullName
+                + "\", \"" + typeof(CC5).FullName + "\"]}");
             ModelManager m = ModelManager.LoadModel(cfg);
 
         }
@@ -190,14 +193,18 @@ namespace Histria.Model.Tests
         [ExpectedException(typeof(ModelException))]
         public void DerivedClassesInvalidPkDefinition()
         {
-            JsonObject cfg = (JsonObject)JsonValue.Parse("{\"types\": [\"" + typeof(CP3).FullName + "\", \"" + typeof(CC6).FullName + "\"]}");
+            JsonObject cfg = (JsonObject)JsonValue.Parse("{\"types\": [\"" + typeof(CP3).FullName
+                + "\", \"" + typeof(EnumClassType).FullName
+                + "\", \"" + typeof(CC6).FullName + "\"]}");
             ModelManager m = ModelManager.LoadModel(cfg);
 
         }
         [TestMethod]
         public void DerivedClassesSamePk()
         {
-            JsonObject cfg = (JsonObject)JsonValue.Parse("{\"types\": [\"" + typeof(CP4).FullName + "\", \"" + typeof(CC7).FullName + "\"]}");
+            JsonObject cfg = (JsonObject)JsonValue.Parse("{\"types\": [\"" + typeof(CP4).FullName
+                + "\", \"" + typeof(EnumClassType).FullName
+                + "\", \"" + typeof(CC7).FullName + "\"]}");
             ModelManager m = ModelManager.LoadModel(cfg);
 
             ClassInfoItem pp = m.Class<CP4>();
@@ -213,6 +220,7 @@ namespace Histria.Model.Tests
         public void DerivedClassesIndexes()
         {
             JsonObject cfg = (JsonObject)JsonValue.Parse("{\"types\": [\"" + typeof(CP1).FullName
+                + "\", \"" + typeof(EnumClassType).FullName
                 + "\", \"" + typeof(CC4).FullName
                 + "\"]}");
             ModelManager m = ModelManager.LoadModel(cfg);
@@ -235,14 +243,14 @@ namespace Histria.Model.Tests
             m.Enums.TryGetEnumInfo(typeof(TypeYesNo), out ei);
             Assert.AreNotEqual(null, ei, "Enum found");
         }
-        
+
         [TestMethod]
         [ExpectedException(typeof(ModelException))]
         public void EnumMissing()
         {
             JsonObject cfg = (JsonObject)JsonValue.Parse("{\"types\": [\"" + typeof(EnuUsed).FullName + "\"]}");
             ModelManager m = ModelManager.LoadModel(cfg);
-            
+
         }
 
         [TestMethod]
@@ -261,6 +269,6 @@ namespace Histria.Model.Tests
             Assert.AreNotEqual(null, pi, "Property found");
         }
 
-        
+
     }
 }

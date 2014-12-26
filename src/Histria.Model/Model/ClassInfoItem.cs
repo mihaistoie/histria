@@ -345,6 +345,13 @@ namespace Histria.Model
                     this.DbName = pci.DbName;
                 }
 
+                InheritanceAttribute ia = this.CurrentType.GetCustomAttributes(typeof(InheritanceAttribute), false).FirstOrDefault() as InheritanceAttribute;
+                if (ia == null)
+                {
+                    throw new ModelException(String.Format(L.T("Missing inheritance attribute for  the class \"{0}\"."), this.Name), this.Name);
+                }
+                //xx
+
 
             }
         }
