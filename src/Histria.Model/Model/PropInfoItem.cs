@@ -527,7 +527,7 @@ namespace Histria.Model
                 model.Enums.TryGetEnumInfo(this.PropInfo.PropertyType, out this.EnumInfo);
                 if (EnumInfo == null)
                 {
-                    throw new ModelException(String.Format(L.T("Invalid enum type for property '{0}.{1}'."), ci.Name, this.PropInfo.Name), ci.Name);
+                    throw new ModelException(String.Format(L.T("Invalid enum type for property '{0}.{1}'. (Enum not found in model)"), ci.Name, this.PropInfo.Name), ci.Name);
                 }
             }
 

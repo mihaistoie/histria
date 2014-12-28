@@ -45,6 +45,7 @@ namespace Histria.Model.Tests.ModelToTest
         public virtual string ParentMember { get; set; }
         public virtual string I1 { get; set; }
         public virtual string I2 { get; set; }
+        public virtual EnumClassType TypeClass { get; set; }
     }
     [Index("I1,I3")]
     [Inheritance("TypeClass", (int)EnumClassType.CC4)]
@@ -60,7 +61,7 @@ namespace Histria.Model.Tests.ModelToTest
     [Db("XXX")]
     public class CP2 : BaseModel, IPersistentObj
     {
-
+        public virtual EnumClassType TypeClass { get; set; }
     }
 
     [Db("YYY")]
@@ -77,6 +78,7 @@ namespace Histria.Model.Tests.ModelToTest
     public class CP3 : BaseModel, IPersistentObj
     {
         public virtual string Id { get; set; }
+        public virtual EnumClassType TypeClass { get; set; }
     }
 
     [PrimaryKey("Name")]
@@ -94,6 +96,7 @@ namespace Histria.Model.Tests.ModelToTest
     [PrimaryKey("Id")]
     public class CP4 : BaseModel, IPersistentObj
     {
+        public virtual EnumClassType TypeClass { get; set; }
         public virtual string Id { get; set; }
     }
 
