@@ -355,11 +355,12 @@ namespace Histria.Model
             }
             if (ia != null)
             {
-                PropInfoItem pi = this.PropertyByName(ia.EnumProperty); 
+                PropInfoItem pi = this.PropertyByName(ia.EnumProperty);
                 if (pi == null || pi.DtType != DataTypes.Enum)
-                    throw new ModelException(String.Format(L.T("Invalid inheritance attribute for the class \"{0}\" Property not found or not an enum \"{1}\"."), this.Name ,ia.EnumProperty), this.Name);
+                    throw new ModelException(String.Format(L.T("Invalid inheritance attribute for the class \"{0}\" Property not found or not an enum \"{1}\"."), this.Name, ia.EnumProperty), this.Name);
                 pi.DefaultValue = ia.Value;
-                pi.IsReadOnly = true; 
+                pi.IsReadOnly = true;
+
             }
         }
 
@@ -396,7 +397,7 @@ namespace Histria.Model
                 }
                 this.indexes.InsertRange(0, list);
             }
-            
+
         }
 
         ///<summary>
