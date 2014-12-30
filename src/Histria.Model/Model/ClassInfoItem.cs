@@ -349,8 +349,6 @@ namespace Histria.Model
                 {
                     throw new ModelException(String.Format(L.T("Missing inheritance attribute for  the class \"{0}\"."), this.Name), this.Name);
                 }
-                // 1add control : daca o prop e read only  nu putem sa o schimbam 
-                // 2 unit test for derivated  init 
 
             }
             if (ia != null)
