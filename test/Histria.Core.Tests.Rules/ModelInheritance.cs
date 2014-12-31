@@ -11,6 +11,9 @@ namespace Histria.Core.Tests.Rules.Customers
         Unknown, Shape, Ellipse, Circle, Rectangle
     }
 
+    /// <summary>
+    /// Persistent Class (inherited from InterceptedDbObject)
+    /// </summary>
     public class Shape : InterceptedDbObject
     {
         /// <summary>
