@@ -8,7 +8,7 @@ namespace Histria.Core.Tests.Rules.Customers
 {
     public enum ShapeType
     {
-        Shape, Ellipse, Circle, Rectangle
+        Unknown, Shape, Ellipse, Circle, Rectangle
     }
 
     public class Shape : InterceptedObject, IPersistentObj
@@ -16,22 +16,23 @@ namespace Histria.Core.Tests.Rules.Customers
         /// <summary>
         /// Used for persistent inheritance
         /// </summary>
+        [Default(Value = ShapeType.Shape)]
         public virtual ShapeType Type { get; set; }
     }
 
-    [Inheritance("Type", (int)ShapeType.Ellipse)]
+    [Inheritance("Type", ShapeType.Ellipse)]
     public class Ellipse : Shape
     {
 
     }
 
-    [Inheritance("Type", (int)ShapeType.Circle)]
+    [Inheritance("Type", ShapeType.Circle)]
     public class Circle : Ellipse
     {
 
     }
 
-    [Inheritance("Type", (int)ShapeType.Rectangle)]
+    [Inheritance("Type", ShapeType.Rectangle)]
     public class Rectangle : Shape
     {
 

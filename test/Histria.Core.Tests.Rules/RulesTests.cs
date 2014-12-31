@@ -154,6 +154,12 @@ namespace UnitTestModel
         public void InheritedPersistance()
         {
             Container container = new Container(TestContainerSetup.GetSimpleContainerSetup(model));
+            Shape shape = container.Create<Shape>();
+            Assert.AreEqual(ShapeType.Shape, shape.Type, "Parent Type initialization");
+            shape.Type = ShapeType.Rectangle;
+            Assert.AreEqual(ShapeType.Shape, shape.Type, "Parent  Type is readonly");
+            Assert.AreEqual(true, shape.Properties["Type"].IsHidden, "Parent  Type is hidden");
+
             Rectangle rectangle = container.Create<Rectangle>();
             Assert.AreEqual(ShapeType.Rectangle, rectangle.Type, "Type initialization");
             rectangle.Type = ShapeType.Shape;

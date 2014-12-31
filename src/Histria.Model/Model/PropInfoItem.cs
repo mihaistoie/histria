@@ -278,15 +278,16 @@ namespace Histria.Model
         public bool IsDisabled { get; set; }
 
         ///<summary>
+        /// Read Only Property
+        ///</summary>   
+        public bool IsReadOnly { get; set; }
+
+        ///<summary>
         /// Default Value ?
         ///</summary>   
         public object DefaultValue { get; set; }
 
 
-        ///<summary>
-        /// Read Only Property
-        ///</summary>   
-        public object IsReadOnly { get; set; }
 
 
 

@@ -34,6 +34,7 @@ namespace Histria.Model
         private string description;
         private MethodItem gTitle = null;
         private MethodItem gDescription = null;
+        private ClassInfoItem super = null;
         #endregion
 
         #region Properties/Primary Key/Indexes
@@ -353,13 +354,27 @@ namespace Histria.Model
             }
             if (ia != null)
             {
-                PropInfoItem pi = this.PropertyByName(ia.EnumProperty);
-                if (pi == null || pi.DtType != DataTypes.Enum)
-                    throw new ModelException(String.Format(L.T("Invalid inheritance attribute for the class \"{0}\" Property not found or not an enum \"{1}\"."), this.Name, ia.EnumProperty), this.Name);
-                pi.DefaultValue = ia.Value;
-                pi.IsReadOnly = true;
-
+                this.InheritanceProperty(ia.EnumProperty, ia.Value);
             }
+        }
+
+        private void InheritanceProperty(string propName, object value)
+        {
+            PropInfoItem pi = this.PropertyByName(propName);
+            if (pi == null || pi.DtType != DataTypes.Enum)
+                throw new ModelException(String.Format(L.T("Invalid inheritance attribute for the class \"{0}\" Property not found or not an enum \"{1}\"."), this.Name, propName), this.Name);
+            pi.DefaultValue = value;
+            pi.IsReadOnly = true;
+            ClassInfoItem ci = this;
+            while (ci.super != null)
+            {
+                ci = ci.super;
+                pi = ci.PropertyByName(propName);
+                if (pi == null || pi.IsReadOnly)
+                    break;
+                pi.IsReadOnly = true;
+            }
+
         }
 
         private void ResolveInheritancePk(ClassInfoItem pci)
@@ -407,14 +422,14 @@ namespace Histria.Model
             if (this.inherianceResolved) return;
             if (this.CurrentType.BaseType != null)
             {
-                ClassInfoItem pci = model.ClassByType(this.CurrentType.BaseType);
-                if (pci != null)
+                this.super =  model.ClassByType(this.CurrentType.BaseType);
+                if (this.super != null)
                 {
-                    pci.ResolveInheritance(model);
-                    this.ResolveInheritancePersistence(pci);
-                    this.ResolveInheritancePk(pci);
-                    this.ResolveInheritanceIndexes(pci);
-                    this.AddRulesFromParent(pci);
+                    this.super.ResolveInheritance(model);
+                    this.ResolveInheritancePersistence(this.super);
+                    this.ResolveInheritancePk(this.super);
+                    this.ResolveInheritanceIndexes(this.super);
+                    this.AddRulesFromParent(this.super);
 
                 }
 

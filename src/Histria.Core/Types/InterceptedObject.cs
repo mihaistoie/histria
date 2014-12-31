@@ -287,6 +287,7 @@ namespace Histria.Core
             if (InterceptSet())
             {
                 PropInfoItem pi = ClassInfo.PropertyByName(propertyName);
+                if (pi.IsReadOnly) return false;
                 if (pi.CanGetValueByReflection)
                     oldValue = pi.PropInfo.GetValue(this, null);
 

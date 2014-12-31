@@ -49,7 +49,7 @@ namespace Histria.Model
             this.PiInfo = pi;
 
             IsDisabled = pi.IsDisabled;
-            IsHidden = pi.IsHidden;
+            IsHidden = pi.IsHidden || pi.IsReadOnly;
             IsMandatory = pi.IsMandatory;
         }
 
