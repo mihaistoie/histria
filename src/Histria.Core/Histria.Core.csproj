@@ -58,6 +58,7 @@
     <Compile Include="Transactions\Instances.cs" />
     <Compile Include="Transactions\TranContext.cs" />
     <Compile Include="Types\ExecutionException.cs" />
+    <Compile Include="Types\InterceptedDbObject.cs" />
     <Compile Include="Types\ObjectRef.cs" />
     <Compile Include="Types\TranObject.cs" />
     <Compile Include="Types\ObjectStatus.cs" />

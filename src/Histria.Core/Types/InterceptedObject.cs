@@ -37,20 +37,14 @@ namespace Histria.Core
             get { return (status & ObjectStatus.Disposing) == ObjectStatus.Disposing; }
         }
         private IDictionary<string, PropertyState> propsState;
+
         public IDictionary<string, PropertyState> Properties
         {
             get
             {
                 if (propsState == null && ClassInfo != null)
                 {
-                    propsState = (IDictionary<string, PropertyState>)Activator.CreateInstance(ClassInfo.StateClassType);
-                    for (int idx = 0, len = ci.Properties.Count; idx < len; idx++)
-                    {
-                        PropInfoItem pi = ci.Properties[idx];
-                        PropertyState ps = Container.Create<PropertyState>();
-                        ps.Initialize((IObjectLifetime)this, pi);
-                        propsState.Add(pi.Name, ps);
-                    }
+                    AOPInitializeStates();
                 }
                 return propsState;
             }
@@ -169,6 +163,9 @@ namespace Histria.Core
 
         public Container Container { get; internal set; }
 
+        
+
+
         ///<summary>
         /// IInterceptedObject.AOPAfterCreate
         ///</summary>
@@ -178,6 +175,7 @@ namespace Histria.Core
             try
             {
                 AOPInitializeAssociations();
+                AOPInitializeProperties();
             }
             finally
             {
@@ -199,6 +197,7 @@ namespace Histria.Core
         {
             AddState(ObjectStatus.InLoading);
             AOPInitializeAssociations();
+            AOPInitializeProperties();
         }
 
         ///<summary>
@@ -218,15 +217,43 @@ namespace Histria.Core
 
         private void AOPInitializeAssociations()
         {
-            for (int index = 0; index < ClassInfo.Roles.Count; index++)
+            foreach (PropInfoItem pp in this.ClassInfo.Roles)
             {
-                PropInfoItem pp = ClassInfo.Roles[index];
                 Association roleInstance = AssociationHelper.AssociationFactory(pp, pp.PropInfo.PropertyType);
                 roleInstance.PropInfo = pp;
                 roleInstance.Instance = this;
                 pp.PropInfo.SetValue(this, roleInstance, null);
             }
         }
+
+        /// <summary>
+        /// Initialize properties
+        /// </summary>
+        private void AOPInitializeProperties()
+        {
+            foreach (PropInfoItem pi in this.ClassInfo.Properties)
+            {
+                if (pi.DefaultValue != null)
+                {
+                    pi.PropInfo.SetValue(this, pi.DefaultValue, null);
+                }
+            }
+        }
+
+        /// <summary>
+        /// Initialize states
+        /// </summary>
+        private void AOPInitializeStates()
+        {
+            this.propsState = (IDictionary<string, PropertyState>)Activator.CreateInstance(this.ClassInfo.StateClassType);
+            foreach (PropInfoItem pi in this.ClassInfo.Properties)
+            {
+                PropertyState ps = this.Container.Create<PropertyState>();
+                ps.Initialize((IObjectLifetime)this, pi);
+                this.propsState.Add(pi.Name, ps);
+            }
+        }
+
         #endregion
 
         #region Interceptors
@@ -260,6 +287,7 @@ namespace Histria.Core
             if (InterceptSet())
             {
                 PropInfoItem pi = ClassInfo.PropertyByName(propertyName);
+                if (pi.IsReadOnly) return false;
                 if (pi.CanGetValueByReflection)
                     oldValue = pi.PropInfo.GetValue(this, null);
 

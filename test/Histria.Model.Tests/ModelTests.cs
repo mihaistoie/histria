@@ -158,8 +158,8 @@ namespace Histria.Model.Tests
         public void DerivedClassesPersistence()
         {
             JsonObject cfg = (JsonObject)JsonValue.Parse("{\"types\": [\"" + typeof(CP1).FullName
-                + "\", \"" + typeof(CC4).FullName
                 + "\", \"" + typeof(EnumClassType).FullName
+                + "\", \"" + typeof(CC4).FullName
                 + "\"]}");
             ModelManager m = ModelManager.LoadModel(cfg);
             ClassInfoItem pp = m.Class<CP1>();

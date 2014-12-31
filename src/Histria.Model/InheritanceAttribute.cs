@@ -15,10 +15,10 @@
         /// </summary>
         public int Value { get; set; }
 
-        public InheritanceAttribute(string name, int value)
+        public InheritanceAttribute(string name, object value)
         {
             this.EnumProperty = name;
-            this.Value = value;
+            this.Value = (int)value;
         }
 
     }
