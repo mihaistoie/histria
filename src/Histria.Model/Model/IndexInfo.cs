@@ -70,7 +70,7 @@ namespace Histria.Model
                 if (pi == null)
                     throw new ModelException(String.Format(L.T("Class {0}: Invalid property {1} for index {2}."), ci.Name, sfield, indexName), ci.Name);
                 PropInfoItem pp = ci.Properties[pi];
-                defIndexName += '_' + pp.PersistentName;
+                defIndexName += '_' + pp.DbName;
                 this.Items.Add(new IndexInfoItem(pi, sfield, desc));
             }
             if (this.Items.Count == 0)

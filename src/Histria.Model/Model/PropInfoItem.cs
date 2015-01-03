@@ -122,13 +122,13 @@ namespace Histria.Model
 
         private void InitializePersistence()
         {
-            this.PersistentName = this.PropInfo.Name;
+            this.DbName = this.PropInfo.Name;
             this.IsPersistent = this.ClassInfo.IsPersistent;
             DbAttribute pa = this.PropInfo.GetCustomAttributes(typeof(DbAttribute), false).FirstOrDefault() as DbAttribute;
             if (pa != null)
             {
                 if (!string.IsNullOrEmpty(pa.Name))
-                    this.PersistentName = pa.Name;
+                    this.DbName = pa.Name;
             }
             else
             {
@@ -255,7 +255,7 @@ namespace Histria.Model
         ///<summary>
         /// Column Name - database Mapping
         ///</summary>   
-        public string PersistentName { get; set; }
+        public string DbName { get; set; }
 
         ///<summary>
         /// Is stored in db ?

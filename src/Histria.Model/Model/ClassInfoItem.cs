@@ -46,6 +46,8 @@ namespace Histria.Model
         public Type TargetType { get; set; }
         public Type StateClassType { get; private set; }
 
+        public List<ClassInfoItem> Descendants { get { return descendants; } }
+
         ///<summary>
         /// Property  "Parent"
         /// If this class is the child-side in an composition relationship, Parent allow to access access the parent-side of relation.
@@ -231,6 +233,19 @@ namespace Histria.Model
             this.methods.TryGetValue(methodName, out mi);
             return mi;
         }
+        #endregion
+
+        #region DB helpers
+
+        public ClassInfoItem GetTopPersistentAscendent()
+        {
+            if (!this.IsPersistent) return null;
+            ClassInfoItem ci = this;
+            while (ci.super != null && ci.super.IsPersistent)
+                ci = ci.super;
+            return ci;
+        }
+
         #endregion
 
         #region Loading

@@ -13,12 +13,28 @@ namespace Histria.Model.Db
     public static class ModelDbExtension
     {
         #region Implementation
-        private static void LoadColumns(ClassInfoItem ci, DbTable tt)
+        private static void LoadColumns(ClassInfoItem ci, DbTable tt, DbSchema schema)
         {
+            List<ClassInfoItem> list = new List<ClassInfoItem>() { ci };
+            list.AddRange(ci.Descendants);
+            foreach (ClassInfoItem cii in list)
+            {
+                foreach (PropInfoItem pi in cii.Properties)
+                {
+                    if (!pi.IsPersistent || tt.ContainsColumn(pi.DbName))  continue;
+                    DbColumn c = schema.Column();
+                    tt.AddColumn(c);
+                }
+            }
         }
 
         private static void LoadPK(ClassInfoItem ci, DbTable tt)
         {
+            foreach (KeyItem key in ci.Key.Items)
+            {
+                PropInfoItem pi = ci.Properties[key.Property];
+                tt.PK.Add(pi.DbName);
+            }
         }
 
         private static void LoadIndexes(ClassInfoItem ci, DbTable tt)
@@ -29,12 +45,12 @@ namespace Histria.Model.Db
         {
         }
 
-        private static void LoadTable(ClassInfoItem ci, DbTable tt)
+        private static void LoadTable(ClassInfoItem ci, DbTable tt, DbSchema schema)
         {
             // Load columns 
-
+            ClassInfoItem pci = ci.GetTopPersistentAscendent();
             LoadPK(ci, tt);
-            LoadColumns(ci, tt);
+            LoadColumns(ci, tt, schema);
             LoadIndexes(ci, tt);
             LoadFKs(ci, tt);
 
@@ -56,7 +72,7 @@ namespace Histria.Model.Db
                 DbTable tt = new DbTable();
                 tt.TableName = ci.DbName;
                 schema.Tables.Add(tt);
-                LoadTable(ci, tt); 
+                LoadTable(ci, tt, schema);
             }
             return schema;
         }
