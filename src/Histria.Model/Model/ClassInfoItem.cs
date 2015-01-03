@@ -35,6 +35,9 @@ namespace Histria.Model
         private MethodItem gTitle = null;
         private MethodItem gDescription = null;
         private ClassInfoItem super = null;
+        private PropInfoItem cidProp = null;
+        private List<ClassInfoItem> descendants = new List<ClassInfoItem>();
+
         #endregion
 
         #region Properties/Primary Key/Indexes
@@ -366,6 +369,7 @@ namespace Histria.Model
             pi.DefaultValue = value;
             pi.IsReadOnly = true;
             ClassInfoItem ci = this;
+            ci.cidProp = pi;
             while (ci.super != null)
             {
                 ci = ci.super;
@@ -422,9 +426,10 @@ namespace Histria.Model
             if (this.inherianceResolved) return;
             if (this.CurrentType.BaseType != null)
             {
-                this.super =  model.ClassByType(this.CurrentType.BaseType);
+                this.super = model.ClassByType(this.CurrentType.BaseType);
                 if (this.super != null)
                 {
+                    this.super.AddDescendant(this);
                     this.super.ResolveInheritance(model);
                     this.ResolveInheritancePersistence(this.super);
                     this.ResolveInheritancePk(this.super);
@@ -435,6 +440,13 @@ namespace Histria.Model
 
             }
             this.inherianceResolved = true;
+        }
+
+        private void AddDescendant(ClassInfoItem ci)
+        {
+            this.descendants.Add(ci);
+            if (this.super != null)
+                this.super.AddDescendant(ci);
         }
 
         ///<summary>

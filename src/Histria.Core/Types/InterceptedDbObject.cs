@@ -1,10 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-
+﻿
 namespace Histria.Core
 {
+    /// <summary>
+    /// Don't  write code here: this a wrapper for  InterceptedObject, IPersistentObj
+    /// </summary>
     public class InterceptedDbObject : InterceptedObject, IPersistentObj
     {
     }

@@ -29,6 +29,17 @@ namespace Histria.Model.Db
         {
         }
 
+        private static void LoadTable(ClassInfoItem ci, DbTable tt)
+        {
+            // Load columns 
+
+            LoadPK(ci, tt);
+            LoadColumns(ci, tt);
+            LoadIndexes(ci, tt);
+            LoadFKs(ci, tt);
+
+        }
+
         #endregion
 
         /// <summary>
@@ -37,23 +48,18 @@ namespace Histria.Model.Db
         public static DbSchema Schema(this ModelManager model)
         {
             DbSchema schema = new DbSchema();
-            for (int i = 0; i < model.Classes.Count; i++)
+            foreach (ClassInfoItem ci in model.Classes)
             {
-                ClassInfoItem ci = model.Classes[i];
                 if (ci.Static) continue;
                 if (!ci.IsPersistent) continue;
-
+                if (schema.ContainsTable(ci.DbName)) continue;
                 DbTable tt = new DbTable();
                 tt.TableName = ci.DbName;
                 schema.Tables.Add(tt);
-                // Load columns 
-                LoadPK(ci, tt);
-                LoadColumns(ci, tt);
-                LoadIndexes(ci, tt);
-                LoadFKs(ci, tt);
-
+                LoadTable(ci, tt); 
             }
             return schema;
         }
+
     }
 }
