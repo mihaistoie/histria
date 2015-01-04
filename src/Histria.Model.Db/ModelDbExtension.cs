@@ -13,6 +13,14 @@ namespace Histria.Model.Db
     public static class ModelDbExtension
     {
         #region Implementation
+        private static void Property2Column(PropInfoItem pi, DbColumn col,  DbTable tt)
+        {
+            col.ColumnName = pi.DbName;
+            col.Nullable = pi.IsMandatory || tt.PK.Contains(col.ColumnName, StringComparer.OrdinalIgnoreCase);
+
+
+        }
+
         private static void LoadColumns(ClassInfoItem ci, DbTable tt, DbSchema schema)
         {
             List<ClassInfoItem> list = new List<ClassInfoItem>() { ci };
@@ -23,6 +31,7 @@ namespace Histria.Model.Db
                 {
                     if (!pi.IsPersistent || tt.ContainsColumn(pi.DbName))  continue;
                     DbColumn c = schema.Column();
+                    Property2Column(pi, c, tt);
                     tt.AddColumn(c);
                 }
             }

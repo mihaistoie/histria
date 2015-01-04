@@ -7,6 +7,12 @@
     public class DbAttribute : System.Attribute
     {
         public string Name {get; set;}
+
+        /// <summary>
+        /// Only for strings: posibility to specify MaxSize 
+        /// </summary>
+        public int Size { get; set; }
+
         /// <summary>
         /// Only for enums : Stored as an integer or a string 
         /// </summary>

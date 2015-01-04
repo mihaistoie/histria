@@ -42,6 +42,7 @@ namespace Histria.Model.Tests.ModelToTest
     public class CP1 : BaseModel, IPersistentObj
     {
         [Db("M")]
+        [Display("Parent Member")]
         public virtual string ParentMember { get; set; }
         public virtual string I1 { get; set; }
         public virtual string I2 { get; set; }

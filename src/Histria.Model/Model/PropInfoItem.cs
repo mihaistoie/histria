@@ -253,7 +253,7 @@ namespace Histria.Model
         public string Name { get; set; }
 
         ///<summary>
-        /// Column Name - database Mapping
+        /// Column Name - Database Mapping
         ///</summary>   
         public string DbName { get; set; }
 

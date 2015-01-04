@@ -173,10 +173,13 @@ namespace Histria.Model.Tests
             PropInfoItem pi = pp.PropertyByName("ParentMember");
             Assert.AreNotEqual(null, pi, "Property found");
             Assert.AreEqual("M", pi.DbName, "Column name");
+            Assert.AreEqual("Parent Member", pi.Title, "Property title");
 
+          
             pi = cc.PropertyByName("ParentMember");
             Assert.AreNotEqual(null, pi, "Property found");
             Assert.AreEqual("M", pi.DbName, "Column name");
+            Assert.AreEqual("Parent Member", pi.Title, "Property title");
         }
 
         [TestMethod]
