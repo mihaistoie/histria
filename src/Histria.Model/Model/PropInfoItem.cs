@@ -18,6 +18,13 @@ namespace Histria.Model
         {
             item.DtType = DataTypes.BigInt;
         }
+
+        private static void GuidAction(PropInfoItem item)
+        {
+            item.DtType = DataTypes.uuid;
+        }
+
+        
         private static void IntAction(PropInfoItem item)
         {
             item.DtType = DataTypes.Int;
@@ -60,6 +67,7 @@ namespace Histria.Model
         private static Dictionary<Type, Action<PropInfoItem>> handleAction =
             new Dictionary<Type, Action<PropInfoItem>>() 
             { 
+                { typeof(Guid), GuidAction },
                 { typeof(long), BigIntAction },
                 { typeof(ulong), BigIntAction },
                 { typeof(int), IntAction },

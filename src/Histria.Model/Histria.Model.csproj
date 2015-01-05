@@ -69,6 +69,9 @@
     <Compile Include="Attributes\StateAttribute.cs" />
     <Compile Include="Attributes\TypeAttribute.cs" />
     <Compile Include="ClassType.cs" />
+    <Compile Include="ComplexTypes\Binary.cs" />
+    <Compile Include="ComplexTypes\ComplexData.cs" />
+    <Compile Include="ComplexTypes\Memo.cs" />
     <Compile Include="Helpers\ModelLoader.cs" />
     <Compile Include="InheritanceAttribute.cs" />
     <Compile Include="ModelConst.cs" />

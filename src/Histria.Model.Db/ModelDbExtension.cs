@@ -17,7 +17,7 @@ namespace Histria.Model.Db
         {
             col.ColumnName = pi.DbName;
             col.Nullable = pi.IsMandatory || tt.PK.Contains(col.ColumnName, StringComparer.OrdinalIgnoreCase);
-
+            //col.Type
 
         }
 

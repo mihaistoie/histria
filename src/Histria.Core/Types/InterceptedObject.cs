@@ -224,6 +224,8 @@ namespace Histria.Core
                 roleInstance.Instance = this;
                 pp.PropInfo.SetValue(this, roleInstance, null);
             }
+
+           //  create memo / binary instances
         }
 
         /// <summary>
