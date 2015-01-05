@@ -32,7 +32,9 @@ namespace Histria.Model
             item.TypeValidation = item.PropInfo.GetCustomAttributes(typeof(DtStringAttribute), false).FirstOrDefault() as DtStringAttribute;
             if (item.TypeValidation == null)
                 item.TypeValidation = new DtStringAttribute() { Template = TemplateManager.DefaultString };
-
+            DtStringAttribute sa = (DtStringAttribute)item.TypeValidation;
+            item.DbSize =  (sa.MaxLength <= 0) ? DataTypesConsts.MAX_STRING_SIZE : sa.MaxLength;
+            //
         }
         private static void BoolAction(PropInfoItem item)
         {
@@ -344,6 +346,11 @@ namespace Histria.Model
         /// Data type
         ///</summary>   
         internal DataTypes DtType = DataTypes.Unknown;
+        
+        ///<summary>
+        /// DB Size
+        ///</summary>   
+        internal int DbSize = 0;
 
         //<summary>
         /// Data type

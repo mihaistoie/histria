@@ -18,9 +18,28 @@ namespace Histria
         Number,     //decimal(15,8)                --Decimal
         Currency,   //Money (decimal(19.4))        --Decimal
         Date,       //Date
-        Time,       //time
+        Time,       //Time
         DateTime,   //DateTime
-        Memo,       //Text or Ntext 
-        Binary      //binary
+        Memo,       //varchar(max)  or nvarchar(max) 
+        Binary      //varbinary(max)
+    }
+
+    public static class DataTypesConsts
+    {
+        //String max size
+        public static int MAX_STRING_SIZE = 128;
+
+        //String Codes
+        public static int MAX_CODE_SIZE = 64;
+        
+        
+        //Number
+        public static int NUMBER_PRECISION = 15;
+        public static int NUMBER_SCALE = 8;
+        
+        //Money
+        public static int MONEY_PRECISION = 19;
+        public static int MONEY_SCALE = 4;
+        
     }
 }

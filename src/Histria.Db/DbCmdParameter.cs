@@ -10,7 +10,6 @@ namespace Histria.Db
     ///</summary>
     public class DbCmdParameter
     {
-        private static int MAX_VARCHAR_SIZE = 128;
         ///<summary>
         /// Name of  parameter
         ///</summary>
@@ -27,7 +26,7 @@ namespace Histria.Db
                     switch (Type)
                     {
                         case DataTypes.String :
-                            size = MAX_VARCHAR_SIZE;
+                            size = DataTypesConsts.MAX_STRING_SIZE;
                             break;
                     }
                 }
