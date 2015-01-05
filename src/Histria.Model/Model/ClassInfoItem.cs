@@ -379,7 +379,7 @@ namespace Histria.Model
         private void InheritanceProperty(string propName, object value)
         {
             PropInfoItem pi = this.PropertyByName(propName);
-            if (pi == null || pi.DtType != DataTypes.Enum)
+            if (pi == null || !pi.IsEnum)
                 throw new ModelException(String.Format(L.T("Invalid inheritance attribute for the class \"{0}\" Property not found or not an enum \"{1}\"."), this.Name, propName), this.Name);
             pi.DefaultValue = value;
             pi.IsReadOnly = true;

@@ -24,7 +24,7 @@ namespace Histria.Model
             item.DtType = DataTypes.uuid;
         }
 
-        
+
         private static void IntAction(PropInfoItem item)
         {
             item.DtType = DataTypes.Int;
@@ -40,7 +40,7 @@ namespace Histria.Model
             if (item.TypeValidation == null)
                 item.TypeValidation = new DtStringAttribute() { Template = TemplateManager.DefaultString };
             DtStringAttribute sa = (DtStringAttribute)item.TypeValidation;
-            item.DbSize =  (sa.MaxLength <= 0) ? DataTypesConsts.MAX_STRING_SIZE : sa.MaxLength;
+            item.DbSize = (sa.MaxLength <= 0) ? DataTypesConsts.MAX_STRING_SIZE : sa.MaxLength;
             //
         }
         private static void BoolAction(PropInfoItem item)
@@ -59,7 +59,16 @@ namespace Histria.Model
         }
         private static void EnumAction(PropInfoItem item)
         {
+            //
             item.DtType = DataTypes.Enum;
+            if (item.EnumInfo != null)
+            {
+                if (item.EnumInfo.StoredAsString)
+                {
+                    item.DtType = DataTypes.String;
+                    item.DbSize = DataTypesConsts.MAX_CODE_SIZE;
+                }
+            }
         }
         private static void UnknownAction(PropInfoItem item)
         {
@@ -90,7 +99,7 @@ namespace Histria.Model
 
         private void InitializeType()
         {
-            if (this.PropInfo.PropertyType.IsEnum)
+            if (this.IsEnum)
             {
                 EnumAction(this);
             }
@@ -297,7 +306,10 @@ namespace Histria.Model
         ///</summary>   
         public object DefaultValue { get; set; }
 
-
+        /// <summary>
+        /// Is enum ?
+        /// </summary>
+        internal bool IsEnum { get { return this.PropInfo.PropertyType.IsEnum; } }
 
 
 
@@ -352,9 +364,11 @@ namespace Histria.Model
 
         ///<summary>
         /// Data type
-        ///</summary>   
+        ///</summary> 
         internal DataTypes DtType = DataTypes.Unknown;
-        
+
+
+
         ///<summary>
         /// DB Size
         ///</summary>   
@@ -538,13 +552,14 @@ namespace Histria.Model
                 }
 
             }
-            else if (this.DtType == DataTypes.Enum)
+            else if (this.IsEnum)
             {
                 model.Enums.TryGetEnumInfo(this.PropInfo.PropertyType, out this.EnumInfo);
-                if (EnumInfo == null)
+                if (this.EnumInfo == null)
                 {
                     throw new ModelException(String.Format(L.T("Invalid enum type for property '{0}.{1}'. (Enum not found in model)"), ci.Name, this.PropInfo.Name), ci.Name);
                 }
+                EnumAction(this);
             }
 
         }

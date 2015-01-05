@@ -48,6 +48,13 @@ namespace Histria.Model
             Type ii = typeof(IClassModel);
             Type iw = typeof(IViewModel);
             Type ip = typeof(IPluginModel);
+
+            //Load enums first
+            types.FindAll(x => x.IsEnum).ToList().ForEach(x =>
+            {
+                this.enums.Add(new EnumInfoItem(x));
+            });
+
             for (int i = 0, len = types.Count; i < len; i++)
             {
                 Type iType = types[i];
@@ -55,12 +62,7 @@ namespace Histria.Model
                 NoModelAttribute nm = iType.GetCustomAttributes(typeof(NoModelAttribute), false).FirstOrDefault() as NoModelAttribute;
                 if (nm != null) continue;
 
-                if (iType.IsEnum)
-                {
-                    //load enums 
-                    this.enums.Add(new EnumInfoItem(iType));
-                }
-                else if (iType.IsClass)
+                if (iType.IsClass)
                 {
                     if (iw.IsAssignableFrom(iType))
                     {
