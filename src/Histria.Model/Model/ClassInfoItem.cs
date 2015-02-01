@@ -505,6 +505,8 @@ namespace Histria.Model
                     continue;
                 }
 
+                if (!PropInfoItem.IsModelPrperty(pi))
+                    continue;
                 PropInfoItem item = new PropInfoItem(pi, this);
                 propsMap.Add(item.Name, item.PropInfo);
                 properties.Add(item);

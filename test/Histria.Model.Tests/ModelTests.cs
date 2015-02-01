@@ -83,6 +83,24 @@ namespace Histria.Model.Tests
         }
 
         [TestMethod]
+        public void ComplexClassTypes()
+        {
+            JsonObject cfg = (JsonObject)JsonValue.Parse("{\"types\": [\"" + typeof(ComplexClass).FullName + "\"]}");
+            ModelManager m = ModelManager.LoadModel(cfg);
+            ClassInfoItem ci = m.Class<ComplexClass>();
+            PropInfoItem pi = ci.PropertyByName("Name");
+            Assert.AreNotEqual(null, pi, "Property found");
+            pi = ci.PropertyByName("DateTimeNullable");
+            Assert.AreNotEqual(null, pi, "Property found");
+            pi = ci.PropertyByName("IntNullable");
+            Assert.AreNotEqual(null, pi, "Property found");
+            pi = ci.PropertyByName("MyList");
+            Assert.AreEqual(null, pi, "Property not found");
+            pi = ci.PropertyByName("Log");
+            Assert.AreNotEqual(null, pi, "Property found");
+        }
+
+        [TestMethod]
         public void Views()
         {
             JsonObject cfg = (JsonObject)JsonValue.Parse("{\"nameSpaces\": [\"XXX\"]}");

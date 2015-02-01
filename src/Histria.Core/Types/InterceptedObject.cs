@@ -81,9 +81,14 @@ namespace Histria.Core
             status = status & ~value;
         }
 
-        private bool CanNotifyChanges()
+        private bool IsActive()
         {
             return (status & ObjectStatus.Active) == ObjectStatus.Active;
+        }
+
+        private bool CanNotifyChanges()
+        {
+            return IsActive();
         }
 
         private void Frozen(Action action)
@@ -163,7 +168,7 @@ namespace Histria.Core
 
         public Container Container { get; internal set; }
 
-        
+
 
 
         ///<summary>
@@ -225,7 +230,7 @@ namespace Histria.Core
                 pp.PropInfo.SetValue(this, roleInstance, null);
             }
 
-           //  create memo / binary instances
+            //  create memo / binary instances
         }
 
         /// <summary>
@@ -290,7 +295,10 @@ namespace Histria.Core
             {
                 PropInfoItem pi = ClassInfo.PropertyByName(propertyName);
                 if (pi.IsReadOnly) return false;
-                if (pi.CanGetValueByReflection)
+                if (!pi.CanGetValueByReflection)
+                {
+                }
+                else
                     oldValue = pi.PropInfo.GetValue(this, null);
 
                 if (pi.ModelPropInfo != null && !fromModelToViewValueFlow)

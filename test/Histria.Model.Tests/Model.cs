@@ -84,6 +84,19 @@ namespace Histria.Model.Tests.ModelToTest
             return "MR4.yyy";
         }
     }
+    public class ComplexClass : BaseModel
+    {
+        public virtual String Name { get; set; }
+        public virtual DateTime? DateTimeNullable { get; set; }
+        public virtual int? IntNullable { get; set; }
+        public virtual List<string> MyList { get; set; }
+        public virtual Memo Log { get; set; }
+  
+  
+    }
+
+
+    
 
     
 }

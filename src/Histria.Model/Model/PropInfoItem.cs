@@ -80,19 +80,31 @@ namespace Histria.Model
             { 
                 { typeof(Guid), GuidAction },
                 { typeof(long), BigIntAction },
+                { typeof(long?), BigIntAction },
                 { typeof(ulong), BigIntAction },
+                { typeof(ulong?), BigIntAction },
                 { typeof(int), IntAction },
+                { typeof(int?), IntAction },
                 { typeof(uint), IntAction },
+                { typeof(uint?), IntAction },
                 { typeof(short), ShortAction },
+                { typeof(short?), ShortAction },
                 { typeof(ushort), ShortAction },
+                { typeof(ushort?), ShortAction },
                 { typeof(sbyte), ShortAction },
+                { typeof(sbyte?), ShortAction },
                 { typeof(byte), ShortAction },
+                { typeof(byte?), ShortAction },
                 { typeof(char), ShortAction },
+                { typeof(char?), ShortAction },
                 { typeof(string), StringAction },
                 { typeof(bool), BoolAction },
+                { typeof(bool?), BoolAction },
                 { typeof(decimal), NumberAction },
+                { typeof(decimal?), NumberAction },
                 { typeof(double), NumberAction },
                 { typeof(float), NumberAction },
+                { typeof(DateTime?), DateTimeAction },
                 { typeof(DateTime), DateTimeAction }
 
             };
@@ -298,6 +310,7 @@ namespace Histria.Model
 
         ///<summary>
         /// Read Only Property
+        /// 
         ///</summary>   
         public bool IsReadOnly { get; set; }
 
@@ -384,6 +397,19 @@ namespace Histria.Model
         #endregion
 
         #region Loading
+        internal static bool IsModelPrperty(PropertyInfo pi)
+        {
+            if (pi.PropertyType.IsEnum || handleAction.ContainsKey(pi.PropertyType))
+                return true;
+            Type associationType = typeof(IAssociation);
+            Type ct = typeof(ComplexData);
+            if (associationType.IsAssignableFrom(pi.PropertyType))
+                return true;
+            if (ct.IsAssignableFrom(pi.PropertyType))
+                return true;
+            return false;
+        } 
+
         internal PropInfoItem(PropertyInfo cPi, ClassInfoItem ci)
         {
             PropInfo = cPi;
