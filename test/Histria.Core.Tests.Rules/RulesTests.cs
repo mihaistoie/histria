@@ -166,5 +166,17 @@ namespace UnitTestModel
             Assert.AreEqual(ShapeType.Rectangle, rectangle.Type, "Type is readonly");
             Assert.AreEqual(true, rectangle.Properties["Type"].IsHidden, "Type is hidden");
         }
+
+        [TestMethod]
+        public void ComplexTypesInitialization()
+        {
+            Container container = new Container(TestContainerSetup.GetSimpleContainerSetup(model));
+            BlogItem bi = container.Create<BlogItem>();
+            Assert.AreNotEqual(null, bi.Text, "Text is not null");
+
+        }
+
+    
+
     }
 }

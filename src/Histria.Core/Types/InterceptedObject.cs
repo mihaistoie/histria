@@ -188,6 +188,7 @@ namespace Histria.Core
                 AddState(ObjectStatus.Created | ObjectStatus.Active);
             }
             ((IObjectLifetime)this).Notify(ObjectLifetimeEvent.Created, this);
+
             if (this.CanExecuteRules(Rule.AfterCreate))
             {
                 ClassInfo.ExecuteRules(Rule.AfterCreate, this);
@@ -230,7 +231,22 @@ namespace Histria.Core
                 pp.PropInfo.SetValue(this, roleInstance, null);
             }
 
+            foreach (PropInfoItem pp in this.ClassInfo.Complexes)
+            {
+                ComplexData cd = ComplexData.ComplexDataFactory(pp, pp.PropInfo.PropertyType);
+                cd.PropInfo = pp;
+                cd.Instance = this;
+                pp.PropInfo.SetValue(this, cd, null);
+            }
+
             //  create memo / binary instances
+        }
+
+        /// <summary>
+        /// Can be overriden to initialize properties
+        /// </summary>
+        protected void Initialize()
+        {
         }
 
         /// <summary>
@@ -245,6 +261,7 @@ namespace Histria.Core
                     pi.PropInfo.SetValue(this, pi.DefaultValue, null);
                 }
             }
+            Initialize();
         }
 
         /// <summary>

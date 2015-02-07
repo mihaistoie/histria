@@ -101,6 +101,7 @@
     <Compile Include="State\DefaultPropertiesState.cs" />
     <Compile Include="TemplateManager.cs" />
     <Compile Include="Types\IAssociation.cs" />
+    <Compile Include="Types\IComplexData.cs" />
     <Compile Include="Types\IInterceptedObject.cs" />
     <Compile Include="Types\IClassModel.cs" />
     <Compile Include="Types\IPluginModel.cs" />

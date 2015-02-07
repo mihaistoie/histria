@@ -3,10 +3,12 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace Histria.Model
+namespace Histria
 {
-    public class Memo : ComplexData
+    /// <summary>
+    /// 
+    /// </summary>
+    public interface IComplexData
     {
-
     }
 }

@@ -402,13 +402,20 @@ namespace Histria.Model
             if (pi.PropertyType.IsEnum || handleAction.ContainsKey(pi.PropertyType))
                 return true;
             Type associationType = typeof(IAssociation);
-            Type ct = typeof(ComplexData);
             if (associationType.IsAssignableFrom(pi.PropertyType))
                 return true;
+            if (IsComplex(pi))
+                return true;
+            return false;
+        }
+
+        internal static bool IsComplex(PropertyInfo pi)
+        {
+            Type ct = typeof(IComplexData);
             if (ct.IsAssignableFrom(pi.PropertyType))
                 return true;
             return false;
-        } 
+        }
 
         internal PropInfoItem(PropertyInfo cPi, ClassInfoItem ci)
         {

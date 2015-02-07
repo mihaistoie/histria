@@ -16,15 +16,16 @@ namespace Histria.Model
         public static readonly string ProperiesStatePropertyName = "Properties";
 
         #region Private members
-        private readonly Dictionary<string, PropertyInfo> propsMap = new Dictionary<string, PropertyInfo>();
-        private readonly PropertiesCollection properties = new PropertiesCollection();
-        private readonly PropertiesCollection roles = new PropertiesCollection();
-        private List<RuleItem> rulesList = new List<RuleItem>();
-        private List<RuleItem> stateRulesList = new List<RuleItem>();
-        private readonly List<MethodItem> methodsList = new List<MethodItem>();
-        private readonly Dictionary<string, MethodItem> methods = new Dictionary<string, MethodItem>();
-        private readonly PrimaryKeyItem key = new PrimaryKeyItem();
-        private readonly List<IndexInfo> indexes = new List<IndexInfo>();
+        private readonly Dictionary<string, PropertyInfo> _propsMap = new Dictionary<string, PropertyInfo>();
+        private readonly PropertiesCollection _properties = new PropertiesCollection();
+        private readonly PropertiesCollection _roles = new PropertiesCollection();
+        private readonly PropertiesCollection _complexes = new PropertiesCollection();
+        private List<RuleItem> _rulesList = new List<RuleItem>();
+        private List<RuleItem> _stateRulesList = new List<RuleItem>();
+        private readonly List<MethodItem> _methodsList = new List<MethodItem>();
+        private readonly Dictionary<string, MethodItem> _methods = new Dictionary<string, MethodItem>();
+        private readonly PrimaryKeyItem _key = new PrimaryKeyItem();
+        private readonly List<IndexInfo> _indexes = new List<IndexInfo>();
         // Rules by type
         private readonly Dictionary<Rule, RuleList> rules = new Dictionary<Rule, RuleList>();
         // State rules by type
@@ -94,22 +95,29 @@ namespace Histria.Model
         /// List of properties
         ///</summary>   	
         ///
-        public PropertiesCollection Properties { get { return properties; } }
+        public PropertiesCollection Properties { get { return _properties; } }
 
         ///<summary>
         /// List of roles (relationships)
         ///</summary>   	
-        public PropertiesCollection Roles { get { return roles; } }
+        public PropertiesCollection Roles { get { return _roles; } }
 
+
+        ///<summary>
+        /// List of complex properties 
+        ///</summary>   	
+        public PropertiesCollection Complexes { get { return _complexes; } }
+
+  
         ///<summary>
         /// Primary key
         ///</summary>   		
-        public PrimaryKeyItem Key { get { return key; } }
+        public PrimaryKeyItem Key { get { return _key; } }
 
         ///<summary>
         ///List of indexes
         ///</summary>   		
-        public List<IndexInfo> Indexes { get { return indexes; } }
+        public List<IndexInfo> Indexes { get { return _indexes; } }
 
         ///<summary>
         /// Is View ?
@@ -180,9 +188,9 @@ namespace Histria.Model
 
             if (this.Static) return;
             //Attach rules to properties/classes
-            for (int index = 0, len = this.rulesList.Count; index < len; index++)
+            for (int index = 0, len = this._rulesList.Count; index < len; index++)
             {
-                RuleItem ri = this.rulesList[index];
+                RuleItem ri = this._rulesList[index];
                 if (!String.IsNullOrEmpty(ri.Property))
                 {
                     //checked if property exists  
@@ -197,11 +205,11 @@ namespace Histria.Model
                     this.AddRule(ri);
                 }
             }
-            this.rulesList.Clear();
+            this._rulesList.Clear();
             //Attach state rules to properties/classes
-            for (int index = 0, len = this.stateRulesList.Count; index < len; index++)
+            for (int index = 0, len = this._stateRulesList.Count; index < len; index++)
             {
-                RuleItem ri = this.stateRulesList[index];
+                RuleItem ri = this._stateRulesList[index];
                 if (!String.IsNullOrEmpty(ri.Property))
                 {
                     //checked if property exists  
@@ -216,13 +224,13 @@ namespace Histria.Model
                     this.AddStateRule(ri);
                 }
             }
-            this.stateRulesList.Clear();
+            this._stateRulesList.Clear();
 
-            foreach (MethodItem mi in this.methodsList)
+            foreach (MethodItem mi in this._methodsList)
             {
-                this.methods.Add(mi.Method.Name, mi);
+                this._methods.Add(mi.Method.Name, mi);
             }
-            this.methodsList.Clear();
+            this._methodsList.Clear();
 
             this.gTitle = this.ExtractMethod(title);
             this.gDescription = this.ExtractMethod(description);
@@ -230,7 +238,7 @@ namespace Histria.Model
         public MethodItem MethodByName(string methodName)
         {
             MethodItem mi = null;
-            this.methods.TryGetValue(methodName, out mi);
+            this._methods.TryGetValue(methodName, out mi);
             return mi;
         }
         #endregion
@@ -256,7 +264,7 @@ namespace Histria.Model
         internal void ValidateAndPrepare(ModelManager model)
         {
             this.InitializeView(model);
-            foreach (PropInfoItem pi in this.properties)
+            foreach (PropInfoItem pi in this._properties)
             {
                 pi.AfterLoad(model, this);
             }
@@ -264,38 +272,38 @@ namespace Histria.Model
             {
                 //Move rules to target class
                 ClassInfoItem dst = model.ClassByType(this.TargetType);
-                for (int index = 0, len = this.rulesList.Count; index < len; index++)
+                for (int index = 0, len = this._rulesList.Count; index < len; index++)
                 {
-                    RuleItem ri = this.rulesList[index];
+                    RuleItem ri = this._rulesList[index];
                     ClassInfoItem cdst = (ri.TargetType == this.TargetType ? dst : model.ClassByType(ri.TargetType));
                     if (cdst != null)
                     {
-                        cdst.rulesList.Add(ri);
+                        cdst._rulesList.Add(ri);
                     }
                 }
-                this.rulesList.Clear();
-                for (int index = 0, len = this.stateRulesList.Count; index < len; index++)
+                this._rulesList.Clear();
+                for (int index = 0, len = this._stateRulesList.Count; index < len; index++)
                 {
-                    RuleItem ri = this.stateRulesList[index];
+                    RuleItem ri = this._stateRulesList[index];
                     ClassInfoItem cdst = (ri.TargetType == this.TargetType ? dst : model.ClassByType(ri.TargetType));
                     if (cdst != null)
                     {
-                        cdst.rulesList.Add(ri);
+                        cdst._rulesList.Add(ri);
                     }
                 }
-                this.stateRulesList.Clear();
+                this._stateRulesList.Clear();
 
 
                 //Move methods to target class
-                foreach (MethodItem mi in this.methodsList)
+                foreach (MethodItem mi in this._methodsList)
                 {
                     ClassInfoItem cdst = (mi.TargetType == this.TargetType ? dst : model.ClassByType(mi.TargetType));
                     if (cdst != null)
                     {
-                        cdst.methodsList.Add(mi);
+                        cdst._methodsList.Add(mi);
                     }
                 }
-                this.methodsList.Clear();
+                this._methodsList.Clear();
             }
 
 
@@ -320,30 +328,30 @@ namespace Histria.Model
         {
             // Add parent rules
             List<RuleItem> parentRules = new List<RuleItem>();
-            parentRules.AddRange(pci.rulesList);
+            parentRules.AddRange(pci._rulesList);
             // Add child Rules
-            foreach (RuleItem ri in rulesList)
+            foreach (RuleItem ri in _rulesList)
             {
                 if (!this._ruleExists(ri, parentRules))
                 {
                     parentRules.Add(ri);
                 }
             }
-            this.rulesList = parentRules;
+            this._rulesList = parentRules;
 
 
             // Add parent state rules
             List<RuleItem> parentStateRules = new List<RuleItem>();
-            parentStateRules.AddRange(pci.stateRulesList);
+            parentStateRules.AddRange(pci._stateRulesList);
             // Add child State Rules
-            foreach (RuleItem ri in this.stateRulesList)
+            foreach (RuleItem ri in this._stateRulesList)
             {
                 if (!this._ruleExists(ri, parentStateRules))
                 {
                     parentStateRules.Add(ri);
                 }
             }
-            this.stateRulesList = parentStateRules;
+            this._stateRulesList = parentStateRules;
         }
 
         /// <summary>
@@ -405,13 +413,13 @@ namespace Histria.Model
             else if (!pci.UseUuidAsPk)
             {
                 // 
-                string[] akeys = new string[pci.key.Items.Count];
-                for (int i = 0; i < pci.key.Items.Count; i++)
+                string[] akeys = new string[pci._key.Items.Count];
+                for (int i = 0; i < pci._key.Items.Count; i++)
                 {
-                    akeys[i] = pci.key.Items[i].Key;
+                    akeys[i] = pci._key.Items[i].Key;
                 }
 
-                this.key.Items.Clear();
+                this._key.Items.Clear();
                 CreatePkItems(akeys);
             }
         }
@@ -427,7 +435,7 @@ namespace Histria.Model
                     nii.Load(ii.ItemsAsString(), ii.IndexName, ii.Unique, this);
                     list.Add(nii);
                 }
-                this.indexes.InsertRange(0, list);
+                this._indexes.InsertRange(0, list);
             }
 
         }
@@ -508,11 +516,15 @@ namespace Histria.Model
                 if (!PropInfoItem.IsModelPrperty(pi))
                     continue;
                 PropInfoItem item = new PropInfoItem(pi, this);
-                propsMap.Add(item.Name, item.PropInfo);
-                properties.Add(item);
+                _propsMap.Add(item.Name, item.PropInfo);
+                _properties.Add(item);
                 if (item.IsRole)
                 {
-                    roles.Add(item);
+                    _roles.Add(item);
+                }
+                else if (PropInfoItem.IsComplex(pi))
+                {
+                    _complexes.Add(item);
                 }
             }
         }
@@ -538,9 +550,9 @@ namespace Histria.Model
             ri.DeclaringType = CurrentType;
 
             if (ra is StateAttribute)
-                stateRulesList.Add(ri);
+                _stateRulesList.Add(ri);
             else
-                rulesList.Add(ri);
+                _rulesList.Add(ri);
         }
 
         private void LoadMethodsAndRules()
@@ -590,7 +602,7 @@ namespace Histria.Model
                     MethodItem method = new MethodItem(mi);
                     method.TargetType = TargetType;
                     method.DeclaringType = CurrentType;
-                    methodsList.Add(method);
+                    _methodsList.Add(method);
                 }
             }
 
@@ -643,7 +655,7 @@ namespace Histria.Model
                 PropInfoItem pi = PropertyByName(skey);
                 if (pi == null)
                     throw new ModelException(String.Format(L.T("Invalid primary key declaration. Field not found '{0}.{1}'."), Name, skey), Name);
-                this.key.Items.Add(new KeyItem(skey, pi.PropInfo));
+                this._key.Items.Add(new KeyItem(skey, pi.PropInfo));
             }
         }
 
@@ -659,7 +671,7 @@ namespace Histria.Model
                 IndexAttribute ia = arttr as IndexAttribute;
                 IndexInfo ii = new IndexInfo();
                 ii.Load(ia.Columns, ia.Name, ia.Unique, this);
-                this.indexes.Add(ii);
+                this._indexes.Add(ii);
             }
         }
 
@@ -692,7 +704,7 @@ namespace Histria.Model
         public PropertyInfo PropertyInfoByName(string propName)
         {
             PropertyInfo pi = null;
-            this.propsMap.TryGetValue(propName, out pi);
+            this._propsMap.TryGetValue(propName, out pi);
             return pi;
 
         }
@@ -700,7 +712,7 @@ namespace Histria.Model
         {
             PropertyInfo pi;
             PropInfoItem result;
-            if (!this.propsMap.TryGetValue(propName, out pi) || !this.properties.TryGetValue(pi, out result))
+            if (!this._propsMap.TryGetValue(propName, out pi) || !this._properties.TryGetValue(pi, out result))
             {
                 return null;
             }

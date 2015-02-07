@@ -53,6 +53,7 @@
   <ItemGroup>
     <Compile Include="Model.cs" />
     <Compile Include="ModelBudget.cs" />
+    <Compile Include="ModelComplex.cs" />
     <Compile Include="ModelInheritance.cs" />
     <Compile Include="ModelRules.cs" />
     <Compile Include="ModelSales.cs" />
