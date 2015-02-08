@@ -18,72 +18,72 @@ namespace Histria.Core
         #endregion
 
         #region State & Notifications
-        private ObjectStatus status = ObjectStatus.None;
+        private ObjectStatus _status = ObjectStatus.None;
 
         ///<summary>
         /// Object is deleted ?
         ///</summary>
         public bool IsDeleted
         {
-            get { return (status & ObjectStatus.Deleted) == ObjectStatus.Deleted; }
+            get { return (_status & ObjectStatus.Deleted) == ObjectStatus.Deleted; }
         }
         public bool IsNewObject
         {
-            get { return (status & ObjectStatus.Created) == ObjectStatus.Created; }
+            get { return (_status & ObjectStatus.Created) == ObjectStatus.Created; }
         }
 
         public bool IsDisposing
         {
-            get { return (status & ObjectStatus.Disposing) == ObjectStatus.Disposing; }
+            get { return (_status & ObjectStatus.Disposing) == ObjectStatus.Disposing; }
         }
-        private IDictionary<string, PropertyState> propsState;
+        private IDictionary<string, PropertyState> _propsState;
 
         public IDictionary<string, PropertyState> Properties
         {
             get
             {
-                if (propsState == null && ClassInfo != null)
+                if (_propsState == null && ClassInfo != null)
                 {
                     AOPInitializeStates();
                 }
-                return propsState;
+                return _propsState;
             }
         }
 
         private bool CanExecuteRules(Rule ruleType)
         {
-            return (status & ObjectStatus.Active) == ObjectStatus.Active;
+            return (_status & ObjectStatus.Active) == ObjectStatus.Active;
         }
 
         private bool InterceptSet()
         {
-            if ((status & ObjectStatus.Frozen) == ObjectStatus.Frozen)
+            if ((_status & ObjectStatus.Frozen) == ObjectStatus.Frozen)
             {
                 throw new ExecutionException(L.T("You can't change the object in a state rule."));
             }
-            bool result = (status & ObjectStatus.Active) == ObjectStatus.Active;
+            bool result = (_status & ObjectStatus.Active) == ObjectStatus.Active;
             return result;
         }
 
 
         private void AddState(ObjectStatus value)
         {
-            status = status | value;
+            _status = _status | value;
         }
 
         private bool HasState(ObjectStatus value)
         {
-            return ((status | value) == value);
+            return ((_status | value) == value);
         }
 
         private void RmvState(ObjectStatus value)
         {
-            status = status & ~value;
+            _status = _status & ~value;
         }
 
         private bool IsActive()
         {
-            return (status & ObjectStatus.Active) == ObjectStatus.Active;
+            return (_status & ObjectStatus.Active) == ObjectStatus.Active;
         }
 
         private bool CanNotifyChanges()
@@ -231,6 +231,7 @@ namespace Histria.Core
                 pp.PropInfo.SetValue(this, roleInstance, null);
             }
 
+            //  create memo / binary instances
             foreach (PropInfoItem pp in this.ClassInfo.Complexes)
             {
                 ComplexData cd = ComplexData.ComplexDataFactory(pp, pp.PropInfo.PropertyType);
@@ -239,13 +240,13 @@ namespace Histria.Core
                 pp.PropInfo.SetValue(this, cd, null);
             }
 
-            //  create memo / binary instances
+
         }
 
         /// <summary>
         /// Can be overriden to initialize properties
         /// </summary>
-        protected void Initialize()
+        protected virtual void Initialize()
         {
         }
 
@@ -269,12 +270,12 @@ namespace Histria.Core
         /// </summary>
         private void AOPInitializeStates()
         {
-            this.propsState = (IDictionary<string, PropertyState>)Activator.CreateInstance(this.ClassInfo.StateClassType);
+            this._propsState = (IDictionary<string, PropertyState>)Activator.CreateInstance(this.ClassInfo.StateClassType);
             foreach (PropInfoItem pi in this.ClassInfo.Properties)
             {
                 PropertyState ps = this.Container.Create<PropertyState>();
                 ps.Initialize((IObjectLifetime)this, pi);
-                this.propsState.Add(pi.Name, ps);
+                this._propsState.Add(pi.Name, ps);
             }
         }
 
@@ -284,7 +285,7 @@ namespace Histria.Core
 
         ///<summary>
         /// IInterceptedObject.ObjectPath
-        ///  ///</summary>
+        ///</summary>
         private string objectPath;
         string IInterceptedObject.ObjectPath()
         {
@@ -302,6 +303,18 @@ namespace Histria.Core
         }
 
         private bool fromModelToViewValueFlow;
+
+        ///<summary>
+        /// IInterceptedObject.AOPChangeProperty
+        ///</summary>
+        void IInterceptedObject.AOPChangeProperty(PropInfoItem pi, string subProperty, Action changeAction)
+        {
+            if (InterceptSet())
+            {
+                changeAction();
+                AOPExecuteRulesAfterChange(pi, subProperty); 
+            }
+        }
 
         ///<summary>
         /// IInterceptedObject.AOPBeforeSetProperty
@@ -343,43 +356,52 @@ namespace Histria.Core
         {
             if (InterceptSet())
             {
-                (this as IObjectLifetime).Notify(ObjectLifetimeEvent.Changed, propertyName, oldValue, newValue);
-                foreach (ViewObject view in this.Views.Instances)
-                {
-                    view.fromModelToViewValueFlow = true;
-                    try
-                    {
-                        view.SetPropertyValue(propertyName, newValue);
-                    }
-                    finally
-                    {
-                        view.fromModelToViewValueFlow = false;
-                    }
-                }
-
                 PropInfoItem pi = ClassInfo.PropertyByName(propertyName);
-                // Validate
-                if (CanExecuteRules(Rule.Validation))
-                {
-                    Frozen(() => { pi.ExecuteRules(Rule.Validation, this, RoleOperation.None); });
-                }
-                // Propagate
-                if (CanExecuteRules(Rule.Propagation))
-                {
-                    this.Container.PropertyChangedStack.Push(this, propertyName);
-                    try
-                    {
-                        Frozen(() => { pi.ExecuteStateRules(Rule.Propagation, this, RoleOperation.None); });
-                        pi.ExecuteRules(Rule.Propagation, this, RoleOperation.None);
-                    }
-                    finally
-                    {
-                        this.Container.PropertyChangedStack.Pop();
-                    }
-                }
+                AOPAfterChangeProperty(pi, newValue, oldValue);
             }
         }
 
+        private void AOPAfterChangeProperty(PropInfoItem pi, object newValue, object oldValue)
+        {
+            (this as IObjectLifetime).Notify(ObjectLifetimeEvent.Changed, pi.Name, oldValue, newValue);
+            // Notify views
+            foreach (ViewObject view in this.Views.Instances)
+            {
+                view.fromModelToViewValueFlow = true;
+                try
+                {
+                    view.SetPropertyValue(pi.Name, newValue);
+                }
+                finally
+                {
+                    view.fromModelToViewValueFlow = false;
+                }
+            }
+            AOPExecuteRulesAfterChange(pi, null);
+        }
+
+        private void AOPExecuteRulesAfterChange(PropInfoItem pi, string subProperty)
+        {
+            // Validate
+            if (CanExecuteRules(Rule.Validation))
+            {
+                Frozen(() => { pi.ExecuteRules(Rule.Validation, this, RoleOperation.None, subProperty); });
+            }
+            // Propagate
+            if (CanExecuteRules(Rule.Propagation))
+            {
+                this.Container.PropertyChangedStack.Push(this, pi.Name);
+                try
+                {
+                    Frozen(() => { pi.ExecuteStateRules(Rule.Propagation, this, RoleOperation.None, subProperty); });
+                    pi.ExecuteRules(Rule.Propagation, this, RoleOperation.None, subProperty);
+                }
+                finally
+                {
+                    this.Container.PropertyChangedStack.Pop();
+                }
+            }
+        }
 
         ///<summary>
         /// Before modifying a role (add/remove/update)
@@ -404,16 +426,16 @@ namespace Histria.Core
                 object[] arguments = new object[] { child };
                 if (CanExecuteRules(Rule.Validation))
                 {
-                    Frozen(() => { pi.ExecuteRules(Rule.Validation, this, operation, arguments); });
+                    Frozen(() => { pi.ExecuteRules(Rule.Validation, this, operation, null, arguments); });
                 }
                 // Propagate
                 if (CanExecuteRules(Rule.Propagation))
                 {
-                    this.Container.PropertyChangedStack.Push(this, propertyName);
+                    this.Container.PropertyChangedStack.Push(this, pi.Name);
                     try
                     {
-                        Frozen(() => { pi.ExecuteStateRules(Rule.Propagation, this, operation, arguments); });
-                        pi.ExecuteRules(Rule.Propagation, this, operation, arguments);
+                        Frozen(() => { pi.ExecuteStateRules(Rule.Propagation, this, operation, null, arguments); });
+                        pi.ExecuteRules(Rule.Propagation, this, operation, null, arguments);
                     }
                     finally
                     {
@@ -520,7 +542,7 @@ namespace Histria.Core
 
         public void CleanObject()
         {
-            status = ObjectStatus.Disposing;
+            _status = ObjectStatus.Disposing;
             //TODO clean views
         }
 

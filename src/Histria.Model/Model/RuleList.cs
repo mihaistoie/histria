@@ -42,12 +42,24 @@ namespace Histria.Model
             }
         }
 
-        public void Execute(object target, RoleOperation operation, object[] arguments)
+        public void Execute(object target, RoleOperation operation, string detail, object[] arguments)
         {
+
+            bool hd = !string.IsNullOrEmpty(detail);
             foreach (RuleItem ri in this)
             {
                 if (ri.Operation == operation)
                 {
+                    if (hd)
+                    {
+                        if (!string.IsNullOrEmpty(ri.SubProperty) && (ri.SubProperty != detail))
+                            continue;
+                    }
+                    else
+                    {
+                        if (!string.IsNullOrEmpty(ri.SubProperty))
+                            continue;
+                    }
                     try
                     {
                         int methodArgumentsCount = ri.Method.GetParameters().Length;

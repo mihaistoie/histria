@@ -632,17 +632,17 @@ namespace Histria.Model
         ///<summary>
         /// Execute rules by type
         ///</summary>   
-        public void ExecuteRules(Rule kind, object target, RoleOperation operation, object[] arguments = null)
+        public void ExecuteRules(Rule kind, object target, RoleOperation operation, string detail, object[] arguments = null)
         {
-            RuleHelper.ExecuteRules(rules, kind, target, operation, arguments);
+            RuleHelper.ExecuteRules(rules, kind, target, operation, detail, arguments);
         }
 
         ///<summary>
         /// Execute state rules by type
         ///</summary>   
-        public void ExecuteStateRules(Rule kind, object target, RoleOperation operation, object[] arguments = null)
+        public void ExecuteStateRules(Rule kind, object target, RoleOperation operation, string detail, object[] arguments = null)
         {
-            RuleHelper.ExecuteRules(statesRules, kind, target, operation, arguments);
+            RuleHelper.ExecuteRules(statesRules, kind, target, operation, detail, arguments);
         }
 
         public void ExecuteCheckValueRules(object target, ref object value)

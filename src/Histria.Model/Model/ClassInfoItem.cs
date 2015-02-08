@@ -30,14 +30,14 @@ namespace Histria.Model
         private readonly Dictionary<Rule, RuleList> rules = new Dictionary<Rule, RuleList>();
         // State rules by type
         private readonly Dictionary<Rule, RuleList> stateRules = new Dictionary<Rule, RuleList>();
-        private bool inherianceResolved = false;
-        private string title;
-        private string description;
-        private MethodItem gTitle = null;
-        private MethodItem gDescription = null;
-        private ClassInfoItem super = null;
-        private PropInfoItem cidProp = null;
-        private List<ClassInfoItem> descendants = new List<ClassInfoItem>();
+        private bool _inherianceResolved = false;
+        private string _title;
+        private string _description;
+        private MethodItem _gTitle = null;
+        private MethodItem _gDescription = null;
+        private ClassInfoItem _super = null;
+        private PropInfoItem _cidProp = null;
+        private List<ClassInfoItem> _descendants = new List<ClassInfoItem>();
 
         #endregion
 
@@ -47,7 +47,7 @@ namespace Histria.Model
         public Type TargetType { get; set; }
         public Type StateClassType { get; private set; }
 
-        public List<ClassInfoItem> Descendants { get { return descendants; } }
+        public List<ClassInfoItem> Descendants { get { return _descendants; } }
 
         ///<summary>
         /// Property  "Parent"
@@ -74,12 +74,12 @@ namespace Histria.Model
         ///<summary>
         /// The title of the class
         ///</summary>   		
-        public string Title { get { return ModelHelper.GetStringValue(title, gTitle); } }
+        public string Title { get { return ModelHelper.GetStringValue(_title, _gTitle); } }
 
         ///<summary>
         /// The Description of the class
         ///</summary>   		
-        public string Description { get { return ModelHelper.GetStringValue(description, gDescription); } }
+        public string Description { get { return ModelHelper.GetStringValue(_description, _gDescription); } }
 
         ///<summary>
         ///(Persistence) Name of table used to store this class
@@ -133,7 +133,7 @@ namespace Histria.Model
         ///</summary>  
         public void ExecuteRules(Rule kind, Object target)
         {
-            RuleHelper.ExecuteRules(rules, kind, target, RoleOperation.None, null);
+            RuleHelper.ExecuteRules(rules, kind, target, RoleOperation.None, null, null);
         }
 
         ///<summary>
@@ -141,7 +141,7 @@ namespace Histria.Model
         ///</summary>  
         public void ExecuteStateRules(Rule kind, Object target)
         {
-            RuleHelper.ExecuteRules(stateRules, kind, target, RoleOperation.None, null);
+            RuleHelper.ExecuteRules(stateRules, kind, target, RoleOperation.None, null, null);
         }
 
 
@@ -232,8 +232,8 @@ namespace Histria.Model
             }
             this._methodsList.Clear();
 
-            this.gTitle = this.ExtractMethod(title);
-            this.gDescription = this.ExtractMethod(description);
+            this._gTitle = this.ExtractMethod(_title);
+            this._gDescription = this.ExtractMethod(_description);
         }
         public MethodItem MethodByName(string methodName)
         {
@@ -249,8 +249,8 @@ namespace Histria.Model
         {
             if (!this.IsPersistent) return null;
             ClassInfoItem ci = this;
-            while (ci.super != null && ci.super.IsPersistent)
-                ci = ci.super;
+            while (ci._super != null && ci._super.IsPersistent)
+                ci = ci._super;
             return ci;
         }
 
@@ -392,10 +392,10 @@ namespace Histria.Model
             pi.DefaultValue = value;
             pi.IsReadOnly = true;
             ClassInfoItem ci = this;
-            ci.cidProp = pi;
-            while (ci.super != null)
+            ci._cidProp = pi;
+            while (ci._super != null)
             {
-                ci = ci.super;
+                ci = ci._super;
                 pi = ci.PropertyByName(propName);
                 if (pi == null || pi.IsReadOnly)
                     break;
@@ -446,30 +446,30 @@ namespace Histria.Model
         internal void ResolveInheritance(ModelManager model)
         {
             if (this.Static) return;
-            if (this.inherianceResolved) return;
+            if (this._inherianceResolved) return;
             if (this.CurrentType.BaseType != null)
             {
-                this.super = model.ClassByType(this.CurrentType.BaseType);
-                if (this.super != null)
+                this._super = model.ClassByType(this.CurrentType.BaseType);
+                if (this._super != null)
                 {
-                    this.super.AddDescendant(this);
-                    this.super.ResolveInheritance(model);
-                    this.ResolveInheritancePersistence(this.super);
-                    this.ResolveInheritancePk(this.super);
-                    this.ResolveInheritanceIndexes(this.super);
-                    this.AddRulesFromParent(this.super);
+                    this._super.AddDescendant(this);
+                    this._super.ResolveInheritance(model);
+                    this.ResolveInheritancePersistence(this._super);
+                    this.ResolveInheritancePk(this._super);
+                    this.ResolveInheritanceIndexes(this._super);
+                    this.AddRulesFromParent(this._super);
 
                 }
 
             }
-            this.inherianceResolved = true;
+            this._inherianceResolved = true;
         }
 
         private void AddDescendant(ClassInfoItem ci)
         {
-            this.descendants.Add(ci);
-            if (this.super != null)
-                this.super.AddDescendant(ci);
+            this._descendants.Add(ci);
+            if (this._super != null)
+                this._super.AddDescendant(ci);
         }
 
         ///<summary>
@@ -485,11 +485,11 @@ namespace Histria.Model
             DisplayAttribute da = CurrentType.GetCustomAttributes(typeof(DisplayAttribute), false).FirstOrDefault() as DisplayAttribute;
             if (da != null)
             {
-                this.title = da.Title;
-                this.description = da.Description;
+                this._title = da.Title;
+                this._description = da.Description;
             }
-            if (string.IsNullOrEmpty(description))
-                this.description = this.title;
+            if (string.IsNullOrEmpty(_description))
+                this._description = this._title;
             if (this.Static)
             {
                 RulesForAttribute rf = CurrentType.GetCustomAttributes(typeof(RulesForAttribute), false).FirstOrDefault() as RulesForAttribute;
@@ -530,9 +530,8 @@ namespace Histria.Model
         }
         private void AddRuleItem(MethodInfo mi, RuleAttribute ra, string prop)
         {
-            RuleItem ri = new RuleItem(mi);
+            RuleItem ri = new RuleItem(mi, prop);
             ri.Kind = ra.Rule;
-            ri.Property = prop;
             ri.Operation = ra.Operation;
             if (Static)
             {
@@ -729,7 +728,7 @@ namespace Histria.Model
             this.StateClassType = GetPropertiesStateType(CurrentType);
 
             this.Name = CurrentType.Name;
-            this.title = CurrentType.Name;
+            this._title = CurrentType.Name;
             this.Static = staticClass;
             this.LoadTitle();
             this.LoadPersistence();

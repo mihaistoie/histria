@@ -28,6 +28,13 @@ namespace Histria
         /// After set property
         ///</summary>
         void AOPAfterSetProperty(string propertyName, object newValue, object oldValue);
+
+        ///<summary>
+        /// Change property
+        ///</summary>
+        void AOPChangeProperty(PropInfoItem pi, string subProperty, Action changeAction);
+
+        
         
         #endregion
 

@@ -176,7 +176,16 @@ namespace UnitTestModel
 
         }
 
-    
+        [TestMethod]
+        public void ComplexTypesRules()
+        {
+            string comment = "Comment ...";
+            Container container = new Container(TestContainerSetup.GetSimpleContainerSetup(model));
+            BlogItem bi = container.Create<BlogItem>();
+            bi.Text.Value = comment;
+            Assert.AreEqual(comment.Length, bi.CCount, "Rule called");
+
+        }
 
     }
 }

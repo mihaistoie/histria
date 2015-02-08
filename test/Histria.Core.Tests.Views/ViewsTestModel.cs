@@ -49,8 +49,7 @@ namespace Histria.Core.Tests.Views
         ///<summary>
         /// Owns rules
         ///</summary>  
-        [RulePropagation("FirstName")]
-        [RulePropagation("LastName")]
+        [RulePropagation("FirstName, LastName")]
         [Rule(Rule.AfterLoad)]
         public void CalculateFullName()
         {
