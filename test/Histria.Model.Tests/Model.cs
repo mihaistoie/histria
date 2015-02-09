@@ -84,6 +84,8 @@ namespace Histria.Model.Tests.ModelToTest
             return "MR4.yyy";
         }
     }
+
+
     public class ComplexClass : BaseModel
     {
         public virtual String Name { get; set; }
@@ -94,9 +96,6 @@ namespace Histria.Model.Tests.ModelToTest
   
   
     }
-
-
-    
 
     
 }

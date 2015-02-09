@@ -19,6 +19,7 @@ namespace Histria.Core
         InSaving = 128,
         Saved = 256,
         Frozen = 512,
+        NoProppagation = 1024,
         Disposing = 2048,
         
     }

@@ -52,7 +52,10 @@ namespace Histria.Core
 
         private bool CanExecuteRules(Rule ruleType)
         {
-            return (_status & ObjectStatus.Active) == ObjectStatus.Active;
+            bool res = (_status & ObjectStatus.Active) == ObjectStatus.Active;
+            if (res && ruleType == Rule.Propagation)
+                res = (_status & ObjectStatus.NoProppagation) == 0;
+            return res;
         }
 
         private bool InterceptSet()
@@ -73,7 +76,7 @@ namespace Histria.Core
 
         private bool HasState(ObjectStatus value)
         {
-            return ((_status | value) == value);
+            return ((_status & value) == value);
         }
 
         private void RmvState(ObjectStatus value)
@@ -312,7 +315,7 @@ namespace Histria.Core
             if (InterceptSet())
             {
                 changeAction();
-                AOPExecuteRulesAfterChange(pi, subProperty); 
+                AOPExecuteRulesAfterChange(pi, subProperty);
             }
         }
 
@@ -536,6 +539,20 @@ namespace Histria.Core
         {
             return this.Container.IsComingFrom(this, search);
         }
+
+        public void NoRules(Action action)
+        {
+            AddState(ObjectStatus.NoProppagation);
+            try
+            {
+                action();
+            }
+            finally
+            {
+                RmvState(ObjectStatus.NoProppagation);
+            }
+        }
+
         #endregion
 
         #region Memory

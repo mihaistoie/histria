@@ -177,15 +177,22 @@ namespace UnitTestModel
         }
 
         [TestMethod]
-        public void ComplexTypesRules()
+        public void ComplexTypesPropagationRules()
         {
             string comment = "Comment ...";
             Container container = new Container(TestContainerSetup.GetSimpleContainerSetup(model));
             BlogItem bi = container.Create<BlogItem>();
+            Assert.AreEqual(null, bi.Text.Value, "Rule called");
+            Assert.AreEqual("text/html", bi.Text.ContentType, "Rule called");
             bi.Text.Value = comment;
             Assert.AreEqual(comment.Length, bi.CCount, "Rule called");
+            Assert.AreEqual(2, bi.RuleHit, "Rule called");
+            bi.Text.ContentType = "application/json";
+            Assert.AreEqual(0, bi.CCount, "Rule called");
+            Assert.AreEqual(6, bi.RuleHit, "Rule called");
 
         }
+       
 
     }
 }
