@@ -190,7 +190,7 @@ namespace UnitTestModel
             bi.Text.ContentType = "application/json";
             Assert.AreEqual(0, bi.CCount, "Rule called");
             Assert.AreEqual(6, bi.RuleHit, "Rule called");
-
+            Assert.AreEqual(true, bi.Properties["Text"].IsMandatory, "State initialization");
         }
        
 

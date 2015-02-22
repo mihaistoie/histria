@@ -29,6 +29,7 @@ namespace Histria.Core.Tests.Rules.Customers
 
     public partial class BlogItem : InterceptedObject
     {
+        [Default(Required = true)]
         public virtual MemoTyped Text { get; set; }
     }
 
