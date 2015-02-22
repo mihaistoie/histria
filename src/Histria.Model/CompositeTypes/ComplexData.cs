@@ -7,6 +7,10 @@ namespace Histria.Model
 {
     public abstract class CompositeData: IComplexData
     {
+        protected void ChangePropertyValue(string propertyName, Action changeAction) { 
+             this.Instance.AOPChangeProperty(this.PropInfo, propertyName, changeAction);
+       }
+
         public static CompositeData ComplexDataFactory(PropInfoItem propInfo, Type declaredType)
         {
             return (CompositeData) Activator.CreateInstance(declaredType);

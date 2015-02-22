@@ -18,10 +18,7 @@ namespace Histria.Core.Tests.Rules.Customers
                 if (value != _contentType)
                 {
                     // Manually  call object change
-                    Instance.AOPChangeProperty(PropInfo, "ContentType", delegate()
-                    {
-                        _contentType = value;
-                    });
+                    ChangePropertyValue("ContentType", delegate() { _contentType = value;});
                 }
             }
         }
@@ -64,3 +61,7 @@ namespace Histria.Core.Tests.Rules.Customers
     }
 
 }
+
+
+
+

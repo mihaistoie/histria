@@ -15,9 +15,7 @@ namespace Histria.Model
                 if (value != _value)
                 {
                     // Manually  call object change
-                    Instance.AOPChangeProperty(PropInfo, "Value", delegate () {
-                        _value = value;
-                    });
+                    ChangePropertyValue("Value", delegate () { _value = value; });
                 }
             }
         }
