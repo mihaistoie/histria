@@ -5,7 +5,7 @@ using System.Text;
 
 namespace Histria.Model
 {
-    public class Memo : ComplexData
+    public class Memo : CompositeData
     {
         private string _value;
        

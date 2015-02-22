@@ -5,11 +5,11 @@ using System.Text;
 
 namespace Histria.Model
 {
-    public abstract class ComplexData: IComplexData
+    public abstract class CompositeData: IComplexData
     {
-        public static ComplexData ComplexDataFactory(PropInfoItem propInfo, Type declaredType)
+        public static CompositeData ComplexDataFactory(PropInfoItem propInfo, Type declaredType)
         {
-            return (ComplexData) Activator.CreateInstance(declaredType);
+            return (CompositeData) Activator.CreateInstance(declaredType);
         }
         ///<summary>
         /// Property info 

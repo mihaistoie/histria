@@ -5,7 +5,7 @@ using System.Text;
 
 namespace Histria.Model
 {
-    public class Binary: ComplexData
+    public class Binary: CompositeData
     {
     }
 }

@@ -237,7 +237,7 @@ namespace Histria.Core
             //  create memo / binary instances
             foreach (PropInfoItem pp in this.ClassInfo.Complexes)
             {
-                ComplexData cd = ComplexData.ComplexDataFactory(pp, pp.PropInfo.PropertyType);
+                CompositeData cd = CompositeData.ComplexDataFactory(pp, pp.PropInfo.PropertyType);
                 cd.PropInfo = pp;
                 cd.Instance = this;
                 pp.PropInfo.SetValue(this, cd, null);
