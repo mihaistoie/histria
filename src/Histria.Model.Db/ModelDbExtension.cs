@@ -1,4 +1,5 @@
-﻿using Histria.Db.Model;
+﻿using Histria.Db;
+using Histria.Db.Model;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -59,7 +60,7 @@ namespace Histria.Model.Db
             // Load columns 
             ClassInfoItem pci = ci.GetTopPersistentAscendent();
             LoadPK(ci, tt);
-            LoadColumns(ci, tt, schema);
+            LoadColumns(pci, tt, schema);
             LoadIndexes(ci, tt);
             LoadFKs(ci, tt);
 
@@ -70,15 +71,15 @@ namespace Histria.Model.Db
         /// <summary>
         /// Generate database schema from Business model   
         /// </summary>
-        public static DbSchema Schema(this ModelManager model)
+        public static DbSchema Schema(this ModelManager model, DbProtocol protocol)
         {
-            DbSchema schema = new DbSchema();
+            DbSchema schema = DbDrivers.Schema(protocol);
             foreach (ClassInfoItem ci in model.Classes)
             {
                 if (ci.Static) continue;
                 if (!ci.IsPersistent) continue;
                 if (schema.ContainsTable(ci.DbName)) continue;
-                DbTable tt = new DbTable();
+                DbTable tt = schema.Table();
                 tt.TableName = ci.DbName;
                 schema.Tables.Add(tt);
                 LoadTable(ci, tt, schema);
