@@ -51,6 +51,7 @@
     </Otherwise>
   </Choose>
   <ItemGroup>
+    <Compile Include="Model.cs" />
     <Compile Include="ModelDbTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
@@ -66,6 +67,10 @@
     <ProjectReference Include="..\..\src\Histria.Json\Histria.Json.csproj">
       <Project>{129e2aa1-5a70-42b0-9051-f84360105480}</Project>
       <Name>Histria.Json</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\src\Histria.Model.Db\Histria.Model.Db.csproj">
+      <Project>{2161234c-d508-48cf-97f1-2d4b3eb95696}</Project>
+      <Name>Histria.Model.Db</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\src\Histria.Model\Histria.Model.csproj">
       <Project>{a546c0e7-972d-47cb-849a-617f16855977}</Project>
