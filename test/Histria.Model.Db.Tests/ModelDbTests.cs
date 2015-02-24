@@ -15,7 +15,7 @@ namespace Histria.Model.Db.Tests
         private static ModelManager model;
         private static DbSchema schema;
         //static string sqlServerInstance = "(local)\\SQLEXPRESS";
-  
+
         [ClassInitialize]
         public static void Setup(TestContext testContext)
         {
@@ -35,17 +35,29 @@ namespace Histria.Model.Db.Tests
             //derived classes with more tables
         }
         [TestMethod]
-        public void Primarykeys()
+        public void PrimaryKeys()
         {
-            //Assert.AreEqual(true, schema.ContainsTable(typeof(Fruit).Name), "Table found");
             //uid
+            DbTable ff = schema.Tables[typeof(Fruit).Name];
+            Assert.AreEqual(1, ff.PK.Count, "PK one field");
+            Assert.AreEqual("uuid", ff.PK[0], true, "PK uuid");
+
             //code
+            DbTable ct = schema.Tables[typeof(Country).Name];
+            Assert.AreEqual(1, ct.PK.Count, "PK one field");
+            Assert.AreEqual("codeISO", ct.PK[0], true, "PK codeISO");
+         
             //multi key
+            ct = schema.Tables[typeof(Color).Name];
+            Assert.AreEqual(3, ct.PK.Count, "PK 3 field");
+            Assert.AreEqual("Red", ct.PK[0], true, "PK Red");
+            Assert.AreEqual("Green", ct.PK[1], true, "PK Red");
+            Assert.AreEqual("Blue", ct.PK[2], true, "PK Red");
         }
         [TestMethod]
         public void StringColumns()
         {
-            //max length , requred
+            //max length , required
         }
         [TestMethod]
         public void IntegerColumns()
