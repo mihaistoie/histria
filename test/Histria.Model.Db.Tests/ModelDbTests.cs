@@ -27,13 +27,22 @@ namespace Histria.Model.Db.Tests
         }
 
         [TestMethod]
-        public void TableFound()
+        public void DbCollectionNames()
         {
             //simple table
             Assert.AreEqual(true, schema.ContainsTable(typeof(Fruit).Name), "Table found");
             //derived classes with single table
+            Assert.AreEqual(true, schema.ContainsTable(typeof(Shape).Name), "Table found");
+            Assert.AreEqual(model.Classes[typeof(Shape)].DbName, model.Classes[typeof(Rectangle)].DbName, "Same table name");
+            Assert.AreEqual(model.Classes[typeof(Shape)].DbName, model.Classes[typeof(Circle)].DbName, "Same table name");
+            Assert.AreEqual(true, schema.ContainsTable(typeof(Shape).Name), "Table not found");
             //derived classes with more tables
+            Assert.AreEqual(false, schema.ContainsTable(typeof(Animal).Name), "Table not found");
+            Assert.AreEqual(true, schema.ContainsTable(typeof(Mammal).Name), "Table not found");
+            Assert.AreNotEqual(model.Classes[typeof(Mammal)].DbName, model.Classes[typeof(Bird)].DbName, "Different table name");
+            
         }
+         
         [TestMethod]
         public void PrimaryKeys()
         {
@@ -57,6 +66,7 @@ namespace Histria.Model.Db.Tests
         [TestMethod]
         public void StringColumns()
         {
+            //
             //max length , required
         }
         [TestMethod]
