@@ -1,4 +1,5 @@
-﻿using Histria.Model;
+﻿using Histria.Core;
+using Histria.Model;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -7,24 +8,23 @@ using System.Text;
 namespace Histria.DbModel.Tests
 {
     [NoModel]
-    public class BaseModel : IClassModel
+    public class BaseModel : InterceptedDbObject
     {
-        public virtual Guid Uuid { get; set; }
     }
 
 
-    public class Fruit : BaseModel, IPersistentObj
+    public class Fruit : BaseModel
     {
     }
 
     [PrimaryKey("CodeISO")]
-    public class Country : BaseModel, IPersistentObj
+    public class CountryClass : BaseModel
     {
         public virtual string CodeISO { get; set; }
     }
 
     [PrimaryKey("Red,Green,Blue")]
-    public class Color : BaseModel, IPersistentObj
+    public class Color : BaseModel
     {
         public virtual int Red  { get; set; }
         public virtual int Green { get; set; }
@@ -40,7 +40,7 @@ namespace Histria.DbModel.Tests
     /// <summary>
     /// Persistent Class (inherited from InterceptedDbObject)
     /// </summary>
-    public class Shape : BaseModel, IPersistentObj
+    public class Shape : BaseModel
     {
         /// <summary>
         /// Used for persistent inheritance
@@ -66,20 +66,20 @@ namespace Histria.DbModel.Tests
     // <summary>
     /// No Persistent Class 
     /// </summary>
-    public class Animal : BaseModel
+    public class Animal : InterceptedObject
     {
     }
 
     /// <summary>
     /// Persistent Class (use Bird data table)
     /// </summary>
-    public class Bird : Animal, IPersistentObj
+    public class Bird : Animal
     {
     }
     /// <summary>
     /// Persistent Class (use Mammal data table)
     /// </summary>
-    public class Mammal : Animal, IPersistentObj
+    public class Mammal : Animal
     {
     }
 

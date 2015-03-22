@@ -41,7 +41,7 @@ namespace Histria.Model.Db.Tests
             Assert.AreEqual(true, schema.ContainsTable(typeof(Mammal).Name), "Table not found");
             Assert.AreNotEqual(model.Classes[typeof(Mammal)].DbName, model.Classes[typeof(Bird)].DbName, "Different table name");
             
-        }
+        }  
          
         [TestMethod]
         public void PrimaryKeys()
@@ -52,7 +52,7 @@ namespace Histria.Model.Db.Tests
             Assert.AreEqual("uuid", ff.PK[0], true, "PK uuid");
 
             //code
-            DbTable ct = schema.Tables[typeof(Country).Name];
+            DbTable ct = schema.Tables[typeof(CountryClass).Name];
             Assert.AreEqual(1, ct.PK.Count, "PK one field");
             Assert.AreEqual("codeISO", ct.PK[0], true, "PK codeISO");
          
@@ -67,18 +67,21 @@ namespace Histria.Model.Db.Tests
         public void StringColumns()
         {
             //
+            Assert.AreEqual(true, false, "Not Implemented");
             //max length , required
         }
         [TestMethod]
         public void IntegerColumns()
         {
             //int, bigint ... short
+            Assert.AreEqual(true, false, "Not Implemented");
         }
         [TestMethod]
         public void EnumColumns()
         {
             // enum as smallint
             // enum as string
+            Assert.AreEqual(true, false, "Not Implemented");
         }
 
         [TestMethod]
@@ -89,6 +92,7 @@ namespace Histria.Model.Db.Tests
         [TestMethod]
         public void DateTimeColumns()
         {
+            Assert.AreEqual(true, false, "Not Implemented");
         }
 
         [TestMethod]
@@ -100,6 +104,7 @@ namespace Histria.Model.Db.Tests
         public void ConstraintsColumns()
         {
             //required ...
+            Assert.AreEqual(true, false, "Not Implemented");
         }
 
         [TestMethod]
@@ -107,19 +112,25 @@ namespace Histria.Model.Db.Tests
         {
             //binary
             //memo
+            Assert.AreEqual(true, false, "Not Implemented");
         }
 
 
         [TestMethod]
         public void ForeingKeys()
         {
-            //multiple
+            //by uuid
+            //by ccodes
+            //composition
+            //association 
+            Assert.AreEqual(true, false, "Not Implemented");
         }
 
 
         [TestMethod]
         public void Indexes()
         {
+            Assert.AreEqual(true, false, "Not Implemented");
         }
 
     }

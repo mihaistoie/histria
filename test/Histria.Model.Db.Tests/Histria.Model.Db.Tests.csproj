@@ -51,11 +51,22 @@
     </Otherwise>
   </Choose>
   <ItemGroup>
+    <Compile Include="Associations\AssociationList.cs" />
+    <Compile Include="Associations\AssociationsByCode.cs" />
+    <Compile Include="Associations\AssociationsByUids.cs" />
+    <Compile Include="Associations\CompositionsByUids.cs" />
+    <Compile Include="Associations\HumanBody.cs" />
+    <Compile Include="Associations\Nose.cs" />
+    <Compile Include="Associations\OneToManyCompositions.cs" />
     <Compile Include="Model.cs" />
     <Compile Include="ModelDbTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\src\Histria.Core\Histria.Core.csproj">
+      <Project>{78ad75af-a56f-418f-bf38-56959c893dd3}</Project>
+      <Name>Histria.Core</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\src\Histria.Db.MsSql\Histria.Db.MsSql.csproj">
       <Project>{7c410682-0d61-4ac8-b4ca-8a7f53ee10dd}</Project>
       <Name>Histria.Db.MsSql</Name>
