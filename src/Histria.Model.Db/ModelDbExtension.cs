@@ -14,7 +14,7 @@ namespace Histria.Model.Db
     public static class ModelDbExtension
     {
         #region Implementation
-        private static void Property2Column(PropInfoItem pi, DbColumn col,  DbTable tt)
+        private static void Property2Column(PropInfoItem pi, DbColumn col, DbTable tt)
         {
             col.ColumnName = pi.DbName;
             col.Nullable = pi.IsMandatory || tt.PK.Contains(col.ColumnName, StringComparer.OrdinalIgnoreCase);
@@ -30,7 +30,7 @@ namespace Histria.Model.Db
             {
                 foreach (PropInfoItem pi in cii.Properties)
                 {
-                    if (!pi.IsPersistent || tt.ContainsColumn(pi.DbName))  continue;
+                    if (!pi.IsPersistent || tt.ContainsColumn(pi.DbName)) continue;
                     DbColumn c = schema.Column();
                     Property2Column(pi, c, tt);
                     tt.AddColumn(c);
@@ -38,6 +38,7 @@ namespace Histria.Model.Db
             }
         }
 
+        #region Pk
         private static void LoadPK(ClassInfoItem ci, DbTable tt)
         {
             foreach (KeyItem key in ci.Key.Items)
@@ -46,25 +47,47 @@ namespace Histria.Model.Db
                 tt.PK.Add(pi.DbName);
             }
         }
+        #endregion
 
-        private static void LoadIndexes(ClassInfoItem ci, DbTable tt)
+        private static void LoadIndexes(ClassInfoItem ci, DbTable tt, DbSchema schema)
         {
         }
 
-        private static void LoadFKs(ClassInfoItem ci, DbTable tt)
+        private static void LoadFKs(ClassInfoItem ci, DbTable tt, DbSchema schema)
         {
+            List<ClassInfoItem> list = new List<ClassInfoItem>() { ci };
+            list.AddRange(ci.Descendants);
+            foreach (ClassInfoItem cii in list)
+            {
+                foreach (PropInfoItem pi in cii.Roles)
+                {
+                    if (pi.IsRole && pi.Role.IsRef)
+                    {
+
+                        DbFk fk = schema.Foreignkey();
+                        fk.TableName = cii.DbName;
+                        fk.UniqueTableName = pi.Role.RemoteClass.DbName;
+                        tt.ForeignKeys.Add(fk);
+                    }
+
+
+                }
+            }
+
         }
 
+        #region Table
         private static void LoadTable(ClassInfoItem ci, DbTable tt, DbSchema schema)
         {
             // Load columns 
             ClassInfoItem pci = ci.GetTopPersistentAscendent();
             LoadPK(ci, tt);
             LoadColumns(pci, tt, schema);
-            LoadIndexes(ci, tt);
-            LoadFKs(ci, tt);
+            LoadIndexes(ci, tt, schema);
+            LoadFKs(ci, tt, schema);
 
         }
+        #endregion
 
         #endregion
 

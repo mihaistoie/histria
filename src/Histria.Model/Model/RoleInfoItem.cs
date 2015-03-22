@@ -5,42 +5,42 @@ using System.Text;
 
 namespace Histria.Model
 {
-    class ForeignKeyInfo
+    public class ForeignKeyInfo
     {
         public string Field;
         public bool ReadOnly = false;
         public PropInfoItem Prop;
     } 
-    class PKeyInfo
+    public class PKeyInfo
     {
         public string Field;
         public PropInfoItem Prop;
     } 
  
-    class RoleInfoItem
+    public class RoleInfoItem
     {
-        private List<ForeignKeyInfo> fkFields;
-        private List<PKeyInfo> pkFields;
-        private bool fkFieldsExist = true;
+        private List<ForeignKeyInfo> _fkFields;
+        private List<PKeyInfo> _pkFields;
+        private bool _fkFieldsExist = true;
        
-        public int Max { get; set; }
-        public int Min { get; set; }
+        public int Max { get; internal set; }
+        public int Min { get; internal set; }
         
-        public Type ClassType { get; set; }
-        public Relation Type { get; set; }
-        public PropInfoItem RoleProp { get; set; }
-        public RoleInfoItem InvRole { get; set; }
-        public bool IsList { get; set; }
-        public bool IsRef { get { return !IsList; } }
-        public string InvRoleName { get; set; }
-        public string ForeignKey { get; set; }
+        public Type ClassType { get; internal set; }
+        public Relation Type { get; internal set; }
+        public PropInfoItem RoleProp { get; internal set; }
+        public RoleInfoItem InvRole { get; internal set; }
+        public bool IsList { get; internal set; }
+        public bool IsRef { get { return !this.IsList; } }
+        public string InvRoleName { get; internal set; }
+        public string ForeignKey { get; internal set; }
         private RoleInfoItem()
         {
 
         }
         internal RoleInfoItem(PropInfoItem prop)
         {
-            RoleProp = prop;
+            this.RoleProp = prop;
             prop.Role = this;
         }
 
@@ -49,23 +49,24 @@ namespace Histria.Model
         ///</summary>   
         public bool HasReadOnlyField(string field) 
         {
-            if (fkFields != null)
+            if (this._fkFields != null)
             {
-                return fkFields.Find((fk) => { return fk.ReadOnly && fk.Field == field; }) != null;
+                return this._fkFields.Find((fk) => { return fk.ReadOnly && fk.Field == field; }) != null;
             }
             return false;
 
         }
+        public ClassInfoItem RemoteClass { get; internal set; }
 
         ///<summary>
         /// Is child (belongs to)
         ///</summary>   
-        public bool IsChild{ get; set; }
+        public bool IsChild{ get; internal set; }
 
         ///<summary>
         /// Is Parent (the other side of relation is child)
         ///</summary>   
-        public bool IsParent { get { return  !IsChild && InvRole != null && InvRole.IsChild; } }
+        public bool IsParent { get { return !this.IsChild && this.InvRole != null && this.InvRole.IsChild; } }
 
         ///<summary>
         /// UseUuid =  (PkFields[0] =='Uuid' && PkFields.Length == 1);
@@ -74,7 +75,7 @@ namespace Histria.Model
         {
             get
             {
-                return (IsRef ? (PkFields != null && pkFields.Count == 1 && pkFields[0].Field == ModelConst.UUID) : true);
+                return (this.IsRef ? (this.PkFields != null && this._pkFields.Count == 1 && this._pkFields[0].Field == ModelConst.UUID) : true);
             }
         }
         ///<summary>
@@ -84,11 +85,11 @@ namespace Histria.Model
         {
             get
             {
-                return (IsRef ? fkFieldsExist : true);
+                return (this.IsRef ? this._fkFieldsExist : true);
             }
-            set
+            internal set
             {
-                if (IsRef) fkFieldsExist = value;
+                if (this.IsRef) this._fkFieldsExist = value;
             }
         }
       
@@ -99,11 +100,11 @@ namespace Histria.Model
         {
             get
             {
-                return (IsRef ? fkFields : null);
+                return (this.IsRef ? this._fkFields : null);
             }
-            set
+            internal set
             {
-                if (IsRef) fkFields = value;
+                if (this.IsRef) this._fkFields = value;
             }
         }
         
@@ -114,17 +115,17 @@ namespace Histria.Model
         {
             get
             {
-                return (IsRef ? pkFields : null);
+                return (this.IsRef ? this._pkFields : null);
             }
-            set
+            internal set
             {
-                if (IsRef) pkFields = value;
+                if (this.IsRef) this._pkFields = value;
             }
         }
         
         ///<summary>
         /// Primary key fields used for this relationship = Primary key fields of remote class  (InvRole.Classtype)  
         ///</summary>
-        public bool UsePk { get; set; }
+        public bool UsePk { get; internal set; }
     }
 }

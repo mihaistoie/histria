@@ -276,48 +276,48 @@ namespace Histria.Model
         ///<summary>
         /// Class info 
         ///</summary>   
-        internal ClassInfoItem ClassInfo = null;
+        public ClassInfoItem ClassInfo { get; internal set; }
 
         ///<summary>
         /// Name of property
         ///</summary>   
-        public string Name { get; set; }
+        public string Name { get; internal set; }
 
         ///<summary>
         /// Column Name - Database Mapping
         ///</summary>   
-        public string DbName { get; set; }
+        public string DbName { get; internal set; }
 
         ///<summary>
         /// Is stored in db ?
         ///</summary>   
-        public bool IsPersistent { get; set; }
+        public bool IsPersistent { get; internal set; }
 
         ///<summary>
         /// Default is required ?
         ///</summary>   
-        public bool IsMandatory { get; set; }
+        public bool IsMandatory { get; internal set; }
 
         ///<summary>
         /// Default is hidden ?
         ///</summary>   
-        public bool IsHidden { get; set; }
+        public bool IsHidden { get; internal set; }
 
         ///<summary>
         /// Default is disabled ?
         ///</summary>   
-        public bool IsDisabled { get; set; }
+        public bool IsDisabled { get; internal set; }
 
         ///<summary>
         /// Read Only Property
         /// 
         ///</summary>   
-        public bool IsReadOnly { get; set; }
+        public bool IsReadOnly { get; internal set; }
 
         ///<summary>
         /// Default Value ?
         ///</summary>   
-        public object DefaultValue { get; set; }
+        public object DefaultValue { get; internal set; }
 
         /// <summary>
         /// Is enum ?
@@ -363,7 +363,7 @@ namespace Histria.Model
         ///<summary>
         /// Role detail
         ///</summary>   
-        internal RoleInfoItem Role { get; set; }
+        public  RoleInfoItem Role { get; internal set; }
 
         ///<summary>
         /// IsRole ?
@@ -467,7 +467,7 @@ namespace Histria.Model
                 {
                     throw new ModelException(String.Format(L.T("Invalid role definition {0}.{1}. Remote class not found."), ci.Name, PropInfo.Name), ci.Name);
                 }
-
+                role.RemoteClass = remoteClass;
                 if (!string.IsNullOrEmpty(role.InvRoleName))
                 {
                     PropInfoItem pp = remoteClass.PropertyByName(role.InvRoleName);

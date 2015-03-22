@@ -35,7 +35,6 @@ namespace Histria.Db.Model
             return tables.Contains(tableName.ToLower());
         }
 
-
         #region Database Management : create/drop/exists
         ///<summary>
         /// Create database
@@ -67,6 +66,10 @@ namespace Histria.Db.Model
         public virtual DbColumn Column()
         {
             return new DbColumn();
+        }
+        public virtual DbFk Foreignkey()
+        {
+            return new DbFk();
         }
         #endregion
 
