@@ -61,7 +61,7 @@ namespace Histria.Db.SqlServer.Model
                     ufields.Append(ic.UniqueColumnName);
 
                 }
-                string dc = ii.OnDeleteCascade ? " ON DELETE CASCADE" : string.Empty;
+                string dc = ii.OnDeleteCascade ? " ON DELETE CASCADE" : (ii.OnDeleteSetNull ? " ON DELETE SET NULL" : string.Empty);
                 structure.Add(string.Format("ALTER TABLE {0} ADD FOREIGN KEY ({2}) REFERENCES {1}({3}){4}", ii.TableName, ii.UniqueTableName, rfields.ToString(), ufields.ToString(), dc));
             }
         }

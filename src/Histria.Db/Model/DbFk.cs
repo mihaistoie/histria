@@ -9,6 +9,14 @@ namespace Histria.Db.Model
     {
         private string _indexFields;
         protected DbFkColumns columns = new DbFkColumns();
+        public void AddColumn(string columnName, string uniqueColumnName)
+        {
+            DbFkItem fk = new DbFkItem();
+            fk.ColumnName = columnName;
+            fk.UniqueColumnName = uniqueColumnName;
+            columns.Add(fk);
+        }
+
         public string IndexFields
         {
             get
@@ -28,6 +36,7 @@ namespace Histria.Db.Model
         }
         public string FKName { get; set; }
         public bool OnDeleteCascade { get; set; }
+        public bool OnDeleteSetNull { get; set; }
         public string TableName { get; set; }
         public string UniqueTableName { get; set; }
         public DbFkColumns Columns { get { return columns; } }

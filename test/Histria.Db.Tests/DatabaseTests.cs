@@ -464,7 +464,7 @@ namespace Histria.Db.Tests
                     cmd.Execute();
 
                     cmd.Clear();
-                    cmd.Sql = "Alter table anwser_bank Add foreign key (anwser_question_id) references question_bank(question_id)";
+                    cmd.Sql = "Alter table anwser_bank Add foreign key (anwser_question_id) references question_bank(question_id) ON DELETE SET NULL";
                     cmd.Execute();
 
                 }
@@ -491,6 +491,20 @@ namespace Histria.Db.Tests
                         Assert.AreEqual("exam_id", fkc.UniqueColumnName, true, "FK2");
 
                     }
+                }
+
+            }
+
+            table = ss.TableByName("anwser_bank");
+            if (table != null)
+            {
+                Assert.AreEqual(1, table.ForeignKeys.Count, "FK count");
+                if (table.ForeignKeys.Count > 0)
+                {
+                    var fk = table.ForeignKeys[0];
+                    Assert.AreEqual(1, fk.Columns.Count, "Number of fields in fkFK");
+                    Assert.AreEqual(true, fk.OnDeleteSetNull, "On delete set null");
+                   
                 }
 
             }
@@ -540,6 +554,19 @@ namespace Histria.Db.Tests
                     }
                 }
   
+            }
+            table = ss.TableByName("anwser_bank");
+            if (table != null)
+            {
+                Assert.AreEqual(1, table.ForeignKeys.Count, "FK count");
+                if (table.ForeignKeys.Count > 0)
+                {
+                    var fk = table.ForeignKeys[0];
+                    Assert.AreEqual(1, fk.Columns.Count, "Number of fields in fkFK");
+                    Assert.AreEqual(true, fk.OnDeleteSetNull, "On delete set null");
+
+                }
+
             }
             DropDB(dburl, ss);
         }

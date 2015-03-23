@@ -150,7 +150,9 @@ namespace Histria.Model
         #endregion
 
         #region Persistence initialization
-
+        // This property has db attribute ?  
+        private bool _dbAttribute = false;
+ 
         private void InitializePersistence()
         {
             this.DbName = this.PropInfo.Name;
@@ -159,7 +161,10 @@ namespace Histria.Model
             if (pa != null)
             {
                 if (!string.IsNullOrEmpty(pa.Name))
+                {
                     this.DbName = pa.Name;
+                    this._dbAttribute = true;
+                }
             }
             else
             {
@@ -538,7 +543,11 @@ namespace Histria.Model
                         //Using Uuid
                         role.UsePk = remoteClass.UseUuidAsPk;
                         role.PkFields = new List<PKeyInfo>() { new PKeyInfo() { Field = ModelConst.UUID } };
-                        role.FkFields = new List<ForeignKeyInfo>() { new ForeignKeyInfo() { Field = ModelConst.RefProperty(Name) } };
+                        ForeignKeyInfo fki = new ForeignKeyInfo() { Field = ModelConst.RefProperty(Name),  Prop = this };
+                        if (!fki.Prop._dbAttribute)
+                            fki.Prop.DbName = fki.Field;
+
+                        role.FkFields = new List<ForeignKeyInfo>() { fki };
                         role.FkFieldsExist = false;
 
                     }

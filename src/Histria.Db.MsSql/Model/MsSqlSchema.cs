@@ -363,7 +363,8 @@ namespace Histria.Db.SqlServer.Model
                         var fkName = rdr.GetString(idxCN);
                         if (fk == null || fk.FKName != fkName)
                         {
-                            fk = new DbFk() { FKName = fkName, TableName = rdr.GetString(idxRT), UniqueTableName = rdr.GetString(idxUT), OnDeleteCascade = (rdr.GetString(idxDR) == "CASCADE") };
+                            fk = new DbFk() { FKName = fkName, TableName = rdr.GetString(idxRT), UniqueTableName = rdr.GetString(idxUT), 
+                                OnDeleteCascade = (rdr.GetString(idxDR) == "CASCADE"), OnDeleteSetNull = (rdr.GetString(idxDR) == "SET NULL") };
                             rtable.ForeignKeys.Add(fk);
                         }
                         var fki = new DbFkItem() { ColumnName = rdr.GetString(idxRC), UniqueColumnName = rdr.GetString(idxUC) };

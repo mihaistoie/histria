@@ -67,6 +67,20 @@ namespace Histria.Model.Db
                         DbFk fk = schema.Foreignkey();
                         fk.TableName = cii.DbName;
                         fk.UniqueTableName = pi.Role.RemoteClass.DbName;
+                        for (int i = 0, len = pi.Role.FkFields.Count; i < len; i++)
+                        {
+                            ForeignKeyInfo fc = pi.Role.FkFields[i];
+                            PKeyInfo pc = pi.Role.PkFields[i];
+                            fk.AddColumn(fc.Prop.DbName, pc.Prop.DbName);
+                        }
+                        if (pi.Role.IsChild)
+                        {
+                            fk.OnDeleteCascade = true;
+                        }
+                        else if (pi.Role.Type == Relation.Aggregation)
+                        {
+                            fk.OnDeleteSetNull = true;
+                        }
                         tt.ForeignKeys.Add(fk);
                     }
 
