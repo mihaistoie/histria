@@ -119,13 +119,66 @@ namespace Histria.Model.Db.Tests
         [TestMethod]
         public void ForeingKeys()
         {
-            //by uuid
-            //by ccodes
-            //composition
-            //association 
-            Assert.AreEqual(true, false, "Not Implemented");
-        }
 
+            //composition by uuid
+
+            DbTable ff = schema.Tables[typeof(SteeringWheel).Name];
+            Assert.AreEqual(1, ff.ForeignKeys.Count, "One FK");
+            Assert.AreEqual(1, ff.ForeignKeys[0].Columns.Count, "FK One field");
+            Assert.AreEqual("uidCar", ff.ForeignKeys[0].Columns[0].ColumnName, true, "FK Column name");
+            Assert.AreEqual("uuid", ff.ForeignKeys[0].Columns[0].UniqueColumnName, true, "FK Column name");
+
+            //composition by uuid 
+            ff = schema.Tables[typeof(Engine).Name];
+            Assert.AreEqual(1, ff.ForeignKeys.Count, "One FK");
+            Assert.AreEqual(1, ff.ForeignKeys[0].Columns.Count, "FK One field");
+            Assert.AreEqual("car", ff.ForeignKeys[0].Columns[0].ColumnName, true, "FK Column name");
+            Assert.AreEqual("uuid", ff.ForeignKeys[0].Columns[0].UniqueColumnName, true, "FK Column name");
+
+            //association by uid
+            ff = schema.Tables[typeof(AccountingEntry).Name];
+            Assert.AreEqual(1, ff.ForeignKeys.Count, "One FK");
+            Assert.AreEqual(1, ff.ForeignKeys[0].Columns.Count, "FK One field");
+            Assert.AreEqual("uidAccount", ff.ForeignKeys[0].Columns[0].ColumnName, true, "FK Column name");
+            Assert.AreEqual("uuid", ff.ForeignKeys[0].Columns[0].UniqueColumnName, true, "FK Column name");
+
+            ff = schema.Tables[typeof(Car).Name];
+            Assert.AreEqual(0, ff.ForeignKeys.Count, "No FKs");
+           
+            //association by code
+
+            ff = schema.Tables[typeof(Address).Name];
+            Assert.AreEqual(2, ff.ForeignKeys.Count, "One FK");
+            DbFk dfkCity = ff.ForeignKeys[0];
+            DbFk dfkCountry = ff.ForeignKeys[1];
+            if (string.Compare(dfkCity.UniqueTableName, typeof(Country).Name, true) == 0)
+            {
+                dfkCity = ff.ForeignKeys[1];
+                dfkCountry = ff.ForeignKeys[0];
+
+            }
+            Assert.AreEqual(1, dfkCountry.Columns.Count, "FK One field");
+            Assert.AreEqual("CountryCode", dfkCity.Columns[0].ColumnName, true, "FK Column name");
+            Assert.AreEqual("CountryCode", dfkCity.Columns[0].UniqueColumnName, true, "FK Column name");
+
+            Assert.AreEqual(3, dfkCity.Columns.Count, "FK 3 field");
+            Assert.AreEqual("CountryCode", dfkCity.Columns[0].ColumnName, true, "FK Column name");
+            Assert.AreEqual("CountryCode", dfkCity.Columns[0].UniqueColumnName, true, "FK Column name");
+
+            Assert.AreEqual("CityCode", dfkCity.Columns[1].ColumnName, true, "FK Column name");
+            Assert.AreEqual("CityCode", dfkCity.Columns[1].UniqueColumnName, true, "FK Column name");
+            Assert.AreEqual("ZipCode", dfkCity.Columns[2].ColumnName, true, "FK Column name");
+            Assert.AreEqual("ZipCode", dfkCity.Columns[2].UniqueColumnName, true, "FK Column name");
+
+            //composition  by code 
+            ff = schema.Tables[typeof(Finger).Name];
+            Assert.AreEqual(1, ff.ForeignKeys.Count, "One FK");
+            Assert.AreEqual(1, ff.ForeignKeys[0].Columns.Count, "FK One field");
+            Assert.AreEqual("HandId", ff.ForeignKeys[0].Columns[0].ColumnName, true, "FK Column name");
+            Assert.AreEqual("Id", ff.ForeignKeys[0].Columns[0].UniqueColumnName, true, "FK Column name");
+            
+            
+        }
 
         [TestMethod]
         public void Indexes()

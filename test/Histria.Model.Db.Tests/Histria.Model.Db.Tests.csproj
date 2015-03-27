@@ -51,7 +51,6 @@
     </Otherwise>
   </Choose>
   <ItemGroup>
-    <Compile Include="Associations\AssociationList.cs" />
     <Compile Include="Associations\AssociationsByCode.cs" />
     <Compile Include="Associations\AssociationsByUids.cs" />
     <Compile Include="Associations\CompositionsByUids.cs" />

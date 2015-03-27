@@ -49,10 +49,46 @@ namespace Histria.Model.Db
         }
         #endregion
 
+        #region Indexes
         private static void LoadIndexes(ClassInfoItem ci, DbTable tt, DbSchema schema)
         {
-        }
+            List<ClassInfoItem> list = new List<ClassInfoItem>() { ci };
+            list.AddRange(ci.Descendants);
+            foreach (ClassInfoItem cii in list)
+            {
+            //    cii.Indexes
+            //    foreach (PropInfoItem pi in cii.Roles)
+            //    {
+            //        if (pi.IsRole && pi.Role.IsRef)
+            //        {
 
+            //            DbFk fk = schema.Foreignkey();
+            //            fk.TableName = cii.DbName;
+            //            fk.UniqueTableName = pi.Role.RemoteClass.DbName;
+            //            for (int i = 0, len = pi.Role.FkFields.Count; i < len; i++)
+            //            {
+            //                ForeignKeyInfo fc = pi.Role.FkFields[i];
+            //                PKeyInfo pc = pi.Role.PkFields[i];
+            //                fk.AddColumn(fc.Prop.DbName, pc.Prop.DbName);
+            //            }
+            //            if (pi.Role.IsChild)
+            //            {
+            //                fk.OnDeleteCascade = true;
+            //            }
+            //            else if (pi.Role.Type == Relation.Aggregation)
+            //            {
+            //                fk.OnDeleteSetNull = true;
+            //            }
+            //            tt.ForeignKeys.Add(fk);
+            //        }
+
+
+            //    }
+            }
+        }
+        #endregion
+
+        #region FKs
         private static void LoadFKs(ClassInfoItem ci, DbTable tt, DbSchema schema)
         {
             List<ClassInfoItem> list = new List<ClassInfoItem>() { ci };
@@ -89,6 +125,7 @@ namespace Histria.Model.Db
             }
 
         }
+        #endregion
 
         #region Table
         private static void LoadTable(ClassInfoItem ci, DbTable tt, DbSchema schema)

@@ -18,14 +18,14 @@ namespace Histria.Model
         ///<summary>
         private class IndexInfoItem
         {
-            public string FiledName { get; set; }
+            public string FieldName { get; set; }
             public PropertyInfo Property { get; set; }
             public bool Descendent { get; set; }
 
    
             public IndexInfoItem(PropertyInfo pi, string fieldName, bool descendent = false)
             {
-                this.FiledName = fieldName;
+                this.FieldName = fieldName;
                 this.Property = pi;
                 this.Descendent = descendent;
             }
@@ -41,7 +41,7 @@ namespace Histria.Model
             for (int i = 0; i < this.Items.Count; i++)
             {
                 IndexInfoItem ii = this.Items[i];
-                sfields[i] = ii.Descendent ? ii.FiledName  + " desc" : ii.FiledName;
+                sfields[i] = ii.Descendent ? ii.FieldName  + " desc" : ii.FieldName;
             }
             return string.Join(",", sfields);
         }
