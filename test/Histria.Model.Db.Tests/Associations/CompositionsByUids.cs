@@ -17,7 +17,7 @@ namespace Histria.DbModel.Tests
 
     }
 
-
+    [Index("Car")]
     public class SteeringWheel : InterceptedDbObject
     {
         public virtual string SerialNumber { get; set; }
@@ -25,6 +25,7 @@ namespace Histria.DbModel.Tests
         public virtual BelongsTo<Car> Car { get; set; }
     }
 
+    [Index("Car")]
     public class Engine : InterceptedDbObject
     {
         public virtual string SerialNumber { get; set; }

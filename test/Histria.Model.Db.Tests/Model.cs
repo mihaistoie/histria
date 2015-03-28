@@ -73,13 +73,13 @@ namespace Histria.DbModel.Tests
     /// <summary>
     /// Persistent Class (use Bird data table)
     /// </summary>
-    public class Bird : Animal
+    public class Bird : Animal, IPersistentObj
     {
     }
     /// <summary>
     /// Persistent Class (use Mammal data table)
     /// </summary>
-    public class Mammal : Animal
+    public class Mammal : Animal, IPersistentObj
     {
     }
 

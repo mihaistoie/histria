@@ -14,12 +14,13 @@ namespace Histria.Model
     public sealed class ModelManager
     {
         #region Private Members
-        private readonly EnumCollection enums;
-        private readonly ClassCollection viewsandclasses;
-        private readonly ClassCollection classes;
-        private readonly ClassCollection views;
+        private readonly bool _checkModel;
+        private readonly EnumCollection _enums;
+        private readonly ClassCollection _viewsandclasses;
+        private readonly ClassCollection _classes;
+        private readonly ClassCollection _views;
 
-        private static readonly IList<Type> frameworkTypes = new Type[]
+        private static readonly IList<Type> _frameworkTypes = new Type[]
         {
             typeof(PropertyState)
         };
@@ -28,10 +29,11 @@ namespace Histria.Model
 
         private ModelManager()
         {
-            this.enums = new EnumCollection();
-            this.views = new ClassCollection();
-            this.classes = new ClassCollection();
-            this.viewsandclasses = new ClassCollection();
+            this._enums = new EnumCollection();
+            this._views = new ClassCollection();
+            this._classes = new ClassCollection();
+            this._viewsandclasses = new ClassCollection();
+            this._checkModel = true;
         }
         //used only for tests
         public static ModelManager LoadModel(JsonObject config)
@@ -52,7 +54,7 @@ namespace Histria.Model
             //Load enums first
             types.FindAll(x => x.IsEnum).ToList().ForEach(x =>
             {
-                this.enums.Add(new EnumInfoItem(x));
+                this._enums.Add(new EnumInfoItem(x));
             });
 
             for (int i = 0, len = types.Count; i < len; i++)
@@ -67,20 +69,20 @@ namespace Histria.Model
                     if (iw.IsAssignableFrom(iType))
                     {
                         ci = new ViewInfoItem(iType);
-                        this.views.Add(ci);
-                        this.viewsandclasses.Add(ci);
+                        this._views.Add(ci);
+                        this._viewsandclasses.Add(ci);
                     }
                     else if (ii.IsAssignableFrom(iType))
                     {
                         ci = new ClassInfoItem(iType, false);
-                        this.classes.Add(ci);
-                        this.viewsandclasses.Add(ci);
+                        this._classes.Add(ci);
+                        this._viewsandclasses.Add(ci);
                     }
                     else if (ip.IsAssignableFrom(iType))
                     {
                         ci = new ClassInfoItem(iType, true);
-                        this.classes.Add(ci);
-                        this.viewsandclasses.Add(ci);
+                        this._classes.Add(ci);
+                        this._viewsandclasses.Add(ci);
                     }
                 }
 
@@ -100,16 +102,16 @@ namespace Histria.Model
 
         private void AfterLoad()
         {
-            foreach (ClassInfoItem cc in viewsandclasses)
+            foreach (ClassInfoItem cc in _viewsandclasses)
             {
                 cc.ValidateAndPrepare(this);
             }
-            foreach (ClassInfoItem cc in viewsandclasses)
+            foreach (ClassInfoItem cc in _viewsandclasses)
             {
                 cc.ResolveInheritance(this);
             }
 
-            foreach (ClassInfoItem cc in viewsandclasses)
+            foreach (ClassInfoItem cc in _viewsandclasses)
             {
                 cc.Loaded(this);
             }
@@ -118,32 +120,38 @@ namespace Histria.Model
         #endregion
 
         #region Properties
+
+        ///<summary>
+        /// Check model consistency during loading
+        ///</summary>
+        public bool CheckModel { get { return _checkModel; } }
+
         ///<summary>
         /// List of enums used by Application 
         ///</summary>
-        public EnumCollection Enums { get { return enums; } }
+        public EnumCollection Enums { get { return _enums; } }
 
         ///<summary>
         /// List of Model Classes used by Application 
         ///</summary>
-        public ClassCollection Classes { get { return classes; } }
+        public ClassCollection Classes { get { return _classes; } }
 
         ///<summary>
         /// List of View Model used by Application 
         ///</summary>
-        public ClassCollection Views { get { return views; } }
+        public ClassCollection Views { get { return _views; } }
 
         ///<summary>
         /// List of Views and Classes used by Application 
         ///</summary>
-        public ClassCollection ViewsAndClasses { get { return viewsandclasses; } }
+        public ClassCollection ViewsAndClasses { get { return _viewsandclasses; } }
         ///<summary>
         /// Class by type
         ///</summary>
         internal ClassInfoItem ClassByType(Type ct)
         {
             ClassInfoItem result;
-            viewsandclasses.TryGetClassInfo(ct, out result);
+            _viewsandclasses.TryGetClassInfo(ct, out result);
             return result;
         }
         ///<summary>
@@ -156,7 +164,7 @@ namespace Histria.Model
 
         public IList<Type> GetAOPInterceptedTypes()
         {
-            List<Type> interceptedTypes = new List<Type>(frameworkTypes);
+            List<Type> interceptedTypes = new List<Type>(_frameworkTypes);
             //TODO views?
             interceptedTypes.AddRange(this.ViewsAndClasses.Types);
             return interceptedTypes;

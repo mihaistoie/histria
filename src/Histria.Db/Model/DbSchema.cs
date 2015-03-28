@@ -67,6 +67,12 @@ namespace Histria.Db.Model
         {
             return new DbColumn();
         }
+
+        public virtual DbIndex Index()
+        {
+            return new DbIndex();
+        }
+
         public virtual DbFk Foreignkey()
         {
             return new DbFk();

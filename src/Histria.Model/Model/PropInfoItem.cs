@@ -152,7 +152,7 @@ namespace Histria.Model
         #region Persistence initialization
         // This property has db attribute ?  
         private bool _dbAttribute = false;
- 
+
         private void InitializePersistence()
         {
             this.DbName = this.PropInfo.Name;
@@ -368,7 +368,7 @@ namespace Histria.Model
         ///<summary>
         /// Role detail
         ///</summary>   
-        public  RoleInfoItem Role { get; internal set; }
+        public RoleInfoItem Role { get; internal set; }
 
         ///<summary>
         /// IsRole ?
@@ -543,7 +543,7 @@ namespace Histria.Model
                         //Using Uuid
                         role.UsePk = remoteClass.UseUuidAsPk;
                         role.PkFields = new List<PKeyInfo>() { new PKeyInfo() { Field = ModelConst.UUID } };
-                        ForeignKeyInfo fki = new ForeignKeyInfo() { Field = ModelConst.RefProperty(Name),  Prop = this };
+                        ForeignKeyInfo fki = new ForeignKeyInfo() { Field = ModelConst.RefProperty(Name), Prop = this };
                         if (!fki.Prop._dbAttribute)
                             fki.Prop.DbName = fki.Field;
 
@@ -566,28 +566,42 @@ namespace Histria.Model
                     //Check if fields exists  
                     for (int i = 0, len = role.PkFields.Count; i < len; i++)
                     {
+                        ForeignKeyInfo fi = role.FkFields[i];
                         PropInfoItem pp = remoteClass.PropertyByName(role.PkFields[i].Field);
-                        if (pp == null)
+                        role.PkFields[i].Prop = pp;
+                        #region Check Model
+                        if (model.CheckModel &&pp == null)
                         {
                             throw new ModelException(String.Format(L.T("Invalid role definition {0}.{1}. Field not found '{2}.{3}'."), ci.Name, PropInfo.Name, remoteClass.Name, role.PkFields[i]), ci.Name);
                         }
-                        role.PkFields[i].Prop = pp;
+                        #endregion
 
                         if (role.FkFieldsExist)
                         {
-                            PropInfoItem fp = ci.PropertyByName(role.FkFields[i].Field);
-                            if (fp == null)
-                            {
-                                throw new ModelException(String.Format(L.T("Invalid role definition {0}.{1}. Field not found '{2}.{3}'."), ci.Name, PropInfo.Name, ci.Name, role.FkFields[i]), ci.Name);
-                            }
-                            role.FkFields[i].Prop = fp;
-                            if (fp.PropInfo.PropertyType != pp.PropInfo.PropertyType)
-                            {
-                                throw new ModelException(String.Format(L.T("Invalid role definition {0}.{1}. Type mismatch '{2}({3}.{4}) != {5}({6}.{7})'."),
-                                    ci.Name, PropInfo.Name, fp.PropInfo.PropertyType.Name, ci.Name, fp.Name,
-                                    pp.PropInfo.PropertyType.Name, remoteClass.Name, pp.Name), ci.Name);
-                            }
+                            PropInfoItem fp = ci.PropertyByName(fi.Field);
+                            fi.Prop = fp;
                             fp.AddRole(role);
+                            #region Check Model
+                            if (model.CheckModel)
+                            {
+                                if (fp == null)
+                                {
+                                    throw new ModelException(String.Format(L.T("Invalid role definition {0}.{1}. Field not found '{2}.{3}'."), ci.Name, PropInfo.Name, ci.Name, fi), ci.Name);
+                                }
+
+                                if (fp.PropInfo.PropertyType != pp.PropInfo.PropertyType)
+                                {
+                                    throw new ModelException(String.Format(L.T("Invalid role definition {0}.{1}. Type mismatch '{2}({3}.{4}) != {5}({6}.{7})'."),
+                                        ci.Name, PropInfo.Name, fp.PropInfo.PropertyType.Name, ci.Name, fp.Name,
+                                        pp.PropInfo.PropertyType.Name, remoteClass.Name, pp.Name), ci.Name);
+                                }
+                                if (this.IsPersistent && (this.IsPersistent != fi.Prop.IsPersistent))
+                                {
+                                    throw new ModelException(String.Format(L.T("Invalid role definition {0}.{1}. Persistence error."), ci.Name, PropInfo.Name));
+
+                                }
+                            }
+                            #endregion
                         }
 
                     }

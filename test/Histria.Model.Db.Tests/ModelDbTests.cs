@@ -87,6 +87,7 @@ namespace Histria.Model.Db.Tests
         [TestMethod]
         public void NumbersColumns()
         {
+            Assert.AreEqual(true, false, "Not Implemented");
         }
 
         [TestMethod]
@@ -98,6 +99,7 @@ namespace Histria.Model.Db.Tests
         [TestMethod]
         public void NullablesColumns()
         {
+            Assert.AreEqual(true, false, "Not Implemented");
         }
 
         [TestMethod]
@@ -183,7 +185,12 @@ namespace Histria.Model.Db.Tests
         [TestMethod]
         public void Indexes()
         {
-            Assert.AreEqual(true, false, "Not Implemented");
+            //Loading
+            //
+            DbTable ff = schema.Tables[typeof(SteeringWheel).Name];
+            ff = schema.Tables[typeof(Nose).Name];
+            Assert.AreEqual(1, ff.IndexCount, "Index Count");
+           // Assert.AreEqual(true, false, "Not Implemented");
         }
 
     }
