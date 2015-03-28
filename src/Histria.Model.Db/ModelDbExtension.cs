@@ -30,6 +30,7 @@ namespace Histria.Model.Db
             {
                 foreach (PropInfoItem pi in cii.Properties)
                 {
+                    if (string.IsNullOrEmpty(pi.DbName)) continue;
                     if (!pi.IsPersistent || tt.ContainsColumn(pi.DbName)) continue;
                     DbColumn c = schema.Column();
                     Property2Column(pi, c, tt);
@@ -58,8 +59,21 @@ namespace Histria.Model.Db
             {
                 foreach (IndexInfo ii in cii.Indexes)
                 {
-                   // DbIndex dbindex = schema.Index();
-                   // tt.AddIndex(dbindex);
+                    DbIndex dbindex = schema.Index();
+                    dbindex.Unique = ii.Unique;
+                    bool canAdd = true;
+                    foreach (IndexInfo.IndexInfoItem item in ii.Items)
+                    {
+                        if (item.Props.IsPersistent || string.IsNullOrEmpty(item.Props.DbName))
+                        {
+                            canAdd = false;
+                            break;
+                        }
+                        dbindex.AddColumn(item.Props.DbName, item.Descending);
+                    }
+                    if (!canAdd) continue;
+                    //dbindex.AddColumn
+                    //tt.AddIndex(dbindex);
                 }
             }
         }

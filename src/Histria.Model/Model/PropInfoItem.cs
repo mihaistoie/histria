@@ -203,24 +203,28 @@ namespace Histria.Model
             Type roleChild = typeof(IRoleChild);
 
             //Association
-            if (associationType.IsAssignableFrom(PropInfo.PropertyType))
+            if (associationType.IsAssignableFrom(this.PropInfo.PropertyType))
             {
-                AssociationAttribute ra = PropInfo.GetCustomAttributes(typeof(AssociationAttribute), false).FirstOrDefault() as AssociationAttribute;
+                if (!this._dbAttribute)
+                {
+                    this.DbName = null;
+                } 
+                AssociationAttribute ra = this.PropInfo.GetCustomAttributes(typeof(AssociationAttribute), false).FirstOrDefault() as AssociationAttribute;
                 if (ra == null)
                 {
-                    throw new ModelException(String.Format(L.T("Association attribute is missing.({0}.{1})"), Name, ClassInfo.Name), ClassInfo.Name);
+                    throw new ModelException(String.Format(L.T("Association attribute is missing.({0}.{1})"), Name, this.ClassInfo.Name), this.ClassInfo.Name);
                 }
 
                 RoleInfoItem role = null;
 
-                if (roleListType.IsAssignableFrom(PropInfo.PropertyType))
+                if (roleListType.IsAssignableFrom(this.PropInfo.PropertyType))
                 {
-                    role = new RoleInfoItem(this) { Min = ra.Min, Max = ra.Max, InvRoleName = ra.Inv, Type = ra.Type, IsList = true, IsChild = false, ClassType = ClassInfo.CurrentType };
+                    role = new RoleInfoItem(this) { Min = ra.Min, Max = ra.Max, InvRoleName = ra.Inv, Type = ra.Type, IsList = true, IsChild = false, ClassType = this.ClassInfo.CurrentType };
                 }
-                else if (roleRefType.IsAssignableFrom(PropInfo.PropertyType))
+                else if (roleRefType.IsAssignableFrom(this.PropInfo.PropertyType))
                 {
-                    role = new RoleInfoItem(this) { Min = ra.Min, Max = ra.Max, InvRoleName = ra.Inv, Type = ra.Type, ForeignKey = ra.ForeignKey, IsList = false, IsChild = false, ClassType = ClassInfo.CurrentType };
-                    if (roleChild.IsAssignableFrom(PropInfo.PropertyType))
+                    role = new RoleInfoItem(this) { Min = ra.Min, Max = ra.Max, InvRoleName = ra.Inv, Type = ra.Type, ForeignKey = ra.ForeignKey, IsList = false, IsChild = false, ClassType = this.ClassInfo.CurrentType };
+                    if (roleChild.IsAssignableFrom(this.PropInfo.PropertyType))
                     {
                         if ((ra.Type != Relation.Embedded) || (ra.Type != Relation.Composition) || (ra.Type != Relation.Aggregation))
                         {
@@ -228,13 +232,13 @@ namespace Histria.Model
                             if (ra.Type != Relation.Aggregation)
                             {
                                 if (ClassInfo.Parent != null)
-                                    throw new ModelException(String.Format(L.T("Invalid model. Multiple parents : {0}.{1} - {2}.{1}.)"), Name, ClassInfo.Name, ClassInfo.Parent.Name), ClassInfo.Name);
+                                    throw new ModelException(String.Format(L.T("Invalid model. Multiple parents : {0}.{1} - {2}.{1}.)"), Name, this.ClassInfo.Name, ClassInfo.Parent.Name), this.ClassInfo.Name);
                                 ClassInfo.Parent = this;
                             }
                         }
                         else
                         {
-                            throw new ModelException(String.Format(L.T("Invalid association type.({0}.{1}. Excepted composition or aggregation.)"), Name, ClassInfo.Name), ClassInfo.Name);
+                            throw new ModelException(String.Format(L.T("Invalid association type.({0}.{1}. Excepted composition or aggregation.)"), Name, this.ClassInfo.Name), this.ClassInfo.Name);
                         }
                     }
                 }
@@ -496,6 +500,10 @@ namespace Histria.Model
                     role.UsePk = false;
                     if (!string.IsNullOrEmpty(role.ForeignKey))
                     {
+                        if (this._dbAttribute)
+                        {
+                            throw new ModelException(String.Format(L.T("Invalid db attribute for {0}.{1}."), ci.Name, PropInfo.Name), ci.Name);
+                        }
                         string[] fks = role.ForeignKey.Split(',');
                         role.PkFields = new List<PKeyInfo>(fks.Length);
                         role.FkFields = new List<ForeignKeyInfo>(fks.Length);

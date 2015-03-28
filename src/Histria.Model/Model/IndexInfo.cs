@@ -16,32 +16,33 @@ namespace Histria.Model
         /// A field in an index
         ///</summary>
         ///<summary>
-        private class IndexInfoItem
+        public class IndexInfoItem
         {
-            public string FieldName { get; set; }
-            public PropertyInfo Property { get; set; }
-            public bool Descendent { get; set; }
+            public string FieldName { get; private set; }
+            public PropInfoItem Props { get; private set; }
+            public bool Descending { get; private set; }
 
-   
-            public IndexInfoItem(PropertyInfo pi, string fieldName, bool descendent = false)
+
+            public IndexInfoItem(PropInfoItem pi, string fieldName, bool descending = false)
             {
                 this.FieldName = fieldName;
-                this.Property = pi;
-                this.Descendent = descendent;
+                this.Props = pi;
+                this.Descending = descending;
             }
-
         }
-       
-        internal bool Unique { get; set; }
-        internal string IndexName { get; set; }
-        private List<IndexInfoItem> Items = new List<IndexInfoItem>();
+        private List<IndexInfoItem> _items = new List<IndexInfoItem>();
+        
+        public bool Unique { get; private set; }
+        internal string IndexName { get; private set; }
+        public List<IndexInfoItem> Items { get { return _items; } }
+
         internal string ItemsAsString()
         {
-            string[] sfields = new string[this.Items.Count];
-            for (int i = 0; i < this.Items.Count; i++)
+            string[] sfields = new string[this._items.Count];
+            for (int i = 0; i < this._items.Count; i++)
             {
-                IndexInfoItem ii = this.Items[i];
-                sfields[i] = ii.Descendent ? ii.FieldName  + " desc" : ii.FieldName;
+                IndexInfoItem ii = this._items[i];
+                sfields[i] = ii.Descending ? ii.FieldName  + " desc" : ii.FieldName;
             }
             return string.Join(",", sfields);
         }
@@ -71,9 +72,9 @@ namespace Histria.Model
                     throw new ModelException(String.Format(L.T("Class {0}: Invalid property {1} for index {2}."), ci.Name, sfield, indexName), ci.Name);
                 PropInfoItem pp = ci.Properties[pi];
                 defIndexName += '_' + pp.DbName;
-                this.Items.Add(new IndexInfoItem(pi, sfield, desc));
+                this._items.Add(new IndexInfoItem(pp, sfield, desc));
             }
-            if (this.Items.Count == 0)
+            if (this._items.Count == 0)
             {
                 throw new ModelException(String.Format(L.T("Class {0}: Invalid index definition {1} no fields found."), ci.Name, indexName), ci.Name);
             }
