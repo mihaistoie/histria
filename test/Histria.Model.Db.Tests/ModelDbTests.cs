@@ -189,8 +189,10 @@ namespace Histria.Model.Db.Tests
             //
             DbTable ff = schema.Tables[typeof(SteeringWheel).Name];
             ff = schema.Tables[typeof(Nose).Name];
-            Assert.AreEqual(1, ff.IndexCount, "Index Count");
+            Assert.AreEqual(2, ff.IndexCount, "Index Count");
            // Assert.AreEqual(true, false, "Not Implemented");
+            //index with complexProperty (rel bycode / rel def name / rel def db name)
+            //
         }
 
     }

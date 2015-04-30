@@ -64,16 +64,19 @@ namespace Histria.Model.Db
                     bool canAdd = true;
                     foreach (IndexInfo.IndexInfoItem item in ii.Items)
                     {
-                        if (item.Props.IsPersistent || string.IsNullOrEmpty(item.Props.DbName))
+                        //TO do role expand items 
+                        //Todo complex expand iems
+                        if ((!item.Props.IsPersistent) || string.IsNullOrEmpty(item.Props.DbName))
                         {
                             canAdd = false;
                             break;
                         }
+
                         dbindex.AddColumn(item.Props.DbName, item.Descending);
                     }
                     if (!canAdd) continue;
                     //dbindex.AddColumn
-                    //tt.AddIndex(dbindex);
+                    tt.AddIndex(dbindex);
                 }
             }
         }

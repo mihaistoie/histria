@@ -9,7 +9,7 @@ using Histria.Core;
 namespace Histria.DbModel.Tests
 {
     [PrimaryKey("Id")]
-    [Index("BodyId")]
+    //[Index("BodyId")]
     [Index("Body")]
     public class Nose : InterceptedDbObject
     {
