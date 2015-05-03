@@ -61,10 +61,10 @@ namespace Histria.Db.Model
         #endregion
 
         #region Indexes
-        /////<summary>
-        ///// Table indexes
-        /////</summary>
-        //public DbIndexes Indexes { get { return indexes; } }
+        ///<summary>
+        /// Table indexes
+        ///</summary>
+        public DbIndexes Indexes { get { return indexes; } }
 
         ///<summary>
         /// Index By Name
@@ -131,7 +131,7 @@ namespace Histria.Db.Model
             return false;
         }
         ///<summary>
-        /// Vreate an index for evry foreign key
+        /// Create an index for evry foreign key
         ///</summary
         public virtual void CheckIndexesForFK()
         {

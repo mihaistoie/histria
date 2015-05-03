@@ -188,10 +188,20 @@ namespace Histria.Model.Db.Tests
             //Loading
             //
             DbTable ff = schema.Tables[typeof(SteeringWheel).Name];
+            Assert.AreEqual(1, ff.IndexCount, "Index declared on role with default name");
+            DbIndex dbi = ff.Indexes[0];
+            Assert.AreEqual(1, dbi.ColumnCount, "One field");
+            Assert.AreEqual("uidCar", dbi.ColumnByIndex(0).ColumnName, true, "FieldName");
+            ff = schema.Tables[typeof(Engine).Name];
+            Assert.AreEqual(1, ff.IndexCount, "Index declared on role with specified name");
+            dbi = ff.Indexes[0];
+            Assert.AreEqual(1, dbi.ColumnCount, "One field");
+            Assert.AreEqual("Car", dbi.ColumnByIndex(0).ColumnName, true, "FieldName");
+
             ff = schema.Tables[typeof(Nose).Name];
-            Assert.AreEqual(2, ff.IndexCount, "Index Count");
+            Assert.AreEqual(1, ff.IndexCount, "Index Count");
            // Assert.AreEqual(true, false, "Not Implemented");
-            //index with complexProperty (rel bycode / rel def name / rel def db name)
+            //index with complexProperty (rel by code / rel def name / rel def db name)
             //
         }
 

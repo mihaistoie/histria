@@ -24,7 +24,7 @@ namespace Histria.Db.Model
                 if (string.IsNullOrEmpty(indexName))
                 {
                     var inb = new StringBuilder().Append(TableName);
-                    for (var i = 0; i < columns.Count; ++i) 
+                    for (var i = 0; i < columns.Count; ++i)
                     {
                         var cc = columns[i];
                         inb.Append("_").Append(cc.ColumnName);
@@ -42,6 +42,7 @@ namespace Histria.Db.Model
                 indexName = value;
             }
         }
+
         ///<summary>
         /// Index unique
         ///</summary
@@ -57,7 +58,7 @@ namespace Histria.Db.Model
         ///<summary>
         /// Number of fields in index 
         ///</summary
-        public int ColumnCount { get { return columns.Count;  } }
+        public int ColumnCount { get { return columns.Count; } }
 
         ///<summary>
         /// Column by index
@@ -94,7 +95,7 @@ namespace Histria.Db.Model
             columns.Add(new DbIndexColumn() { ColumnName = columnName, Descending = descending });
         }
         #endregion
-        
+
         #region Schema SQL
         ///<summary>
         /// Generate create sql for the index
